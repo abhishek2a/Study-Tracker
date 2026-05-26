@@ -47,7 +47,7 @@
     color: var(--text-main);
   }
 
-  h1 { font-size: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 10px; text-align: center; }
+  h1 { font-size: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 10px; text-align: center; margin-top: 0; }
   h2 { font-size: 1.5rem; margin-top: 40px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
 
   /* Top Dashboard */
@@ -74,7 +74,7 @@
     text-align: center;
     border: 1px solid var(--border);
   }
-  .dash-item strong { display: block; font-size: 1.5rem; color: var(--act); }
+  .dash-item strong { display: block; font-size: 1.5rem; color: var(--act); margin-top: 5px; }
 
   /* Global Progress Bar */
   .progress-container {
@@ -99,12 +99,6 @@
     color: var(--success);
   }
 
-  /* Tables - Responsive */
-  .table-wrapper { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: var(--surface); }
-  th, td { border: 1px solid var(--border); padding: 12px; text-align: left; font-size: 0.95rem; }
-  th { background: #1a1a1a; font-weight: 600; color: var(--primary); }
-
   /* Detailed Syllabus Grid */
   .syllabus-grid {
     display: grid;
@@ -127,7 +121,7 @@
   .checklist li {
     display: flex;
     align-items: flex-start;
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
   .checklist li:last-child { border-bottom: none; }
@@ -136,32 +130,36 @@
     display: flex;
     align-items: flex-start;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-main);
     width: 100%;
+    transition: color 0.2s;
   }
+  .checklist label:hover { color: var(--primary); }
+
   .checklist input[type="checkbox"] {
     appearance: none;
-    background-color: var(--surface);
-    margin: 3px 12px 0 0;
+    background-color: var(--bg);
+    margin: 4px 12px 0 0;
     font: inherit;
     color: currentColor;
-    width: 1.25em;
-    height: 1.25em;
+    width: 1.35em;
+    height: 1.35em;
     border: 2px solid var(--text-muted);
     border-radius: 4px;
     display: grid;
     place-content: center;
     flex-shrink: 0;
     cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
   }
   .checklist input[type="checkbox"]::before {
     content: "";
-    width: 0.65em;
-    height: 0.65em;
+    width: 0.7em;
+    height: 0.7em;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em var(--bg);
+    box-shadow: inset 1em 1em var(--surface);
     transform-origin: center;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
@@ -169,17 +167,17 @@
   .checklist input[type="checkbox"]:checked::before { transform: scale(1); }
   .checklist input[type="checkbox"]:checked + span { text-decoration: line-through; color: var(--text-muted); }
 
-  /* Weekly Plan Styles */
-  .week-block {
+  /* Daily Routine Special Card */
+  .daily-card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 5px solid var(--primary);
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
   }
-  .week-header { font-weight: 700; font-size: 1.1rem; color: var(--primary); margin-bottom: 5px; }
-  .week-dates { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .daily-card h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;}
+  .daily-focus { color: var(--act); font-weight: 600; font-size: 1.05rem; margin-bottom: 15px; }
 
   /* Callout */
   .callout {
@@ -197,6 +195,7 @@
     h1 { font-size: 1.5rem; }
     .syllabus-grid { grid-template-columns: 1fr; }
     .dash-grid { grid-template-columns: 1fr 1fr; }
+    .daily-card h3 { flex-direction: column; align-items: flex-start; gap: 5px; }
   }
 </style>
 </head>
@@ -220,15 +219,34 @@
     <div class="progress-text"><span id="progress-text">0</span>% Completed</div>
   </div>
 
-  <h2>1. Detailed Interactive Syllabus</h2>
-  <p>Tick off topics as you master them. Your browser will save your progress automatically.</p>
+  <h2>1. Daily Study Routine (Auto-Resets Daily)</h2>
+  <p style="color: var(--text-muted); margin-bottom: 15px;">Your schedule adapts automatically to the Phase 2 timeline based on today's date.</p>
+
+  <div class="daily-card">
+    <h3>
+      Today's Schedule 
+      <span id="today-date-display" style="font-size: 0.95rem; color: var(--text-muted); font-weight: normal;"></span>
+    </h3>
+    <div id="today-focus-display" class="daily-focus"></div>
+    <ul class="checklist" id="daily-checklist">
+      <!-- Injected by JavaScript based on the exact date -->
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>Phase 2 (Cat 10 Revision):</strong> 12 Jul - 7 Aug. Deep dive into weak areas identified in the Cat 11 exam.<br>
+    <strong>Phase 3 (Cat 09 Revision):</strong> 9 Aug - 15 Aug. Final polish, heavy focus on Mock Tests and time management.
+  </div>
+
+  <h2>2. Detailed Interactive Syllabus</h2>
+  <p style="color: var(--text-muted); margin-bottom: 25px;">Tick off topics as you master them. Your browser will save your progress automatically.</p>
 
   <div class="syllabus-grid">
     
     <!-- BANKING -->
     <div class="subject-card">
       <h3>Banking <span class="marks-badge" style="background: var(--banking);">20 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="bnk1"><span>System: Scheduled/Non-Scheduled, RRBs, Foreign, Payment banks</span></label></li>
         <li><label><input type="checkbox" id="bnk2"><span>CRR, SLR, Repo, Re-repo, Bank Rates</span></label></li>
         <li><label><input type="checkbox" id="bnk3"><span>NABARD & NBFC</span></label></li>
@@ -252,7 +270,7 @@
     <!-- ACCOUNTING -->
     <div class="subject-card">
       <h3>Accounting <span class="marks-badge" style="background: var(--accounting);">20 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="acc1"><span>Principles, Concepts & Conventions</span></label></li>
         <li><label><input type="checkbox" id="acc2"><span>Journal, Ledger, Subsidiary books</span></label></li>
         <li><label><input type="checkbox" id="acc3"><span>Trial balance, Errors & Rectification</span></label></li>
@@ -275,7 +293,7 @@
     <!-- PRINCIPLES OF CO-OP -->
     <div class="subject-card">
       <h3>Principles of Co-op <span class="marks-badge" style="background: var(--principles);">15 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="prin1"><span>ICA Principles, Values, Ethics</span></label></li>
         <li><label><input type="checkbox" id="prin2"><span>Co-op vs Joint Stock, Capitalism, Socialism</span></label></li>
         <li><label><input type="checkbox" id="prin3"><span>Foreign: England (Robert Owen), Germany (Raiffeisen/Schulze), Denmark</span></label></li>
@@ -299,7 +317,7 @@
     <!-- ACT & RULES -->
     <div class="subject-card">
       <h3>Act & Rules <span class="marks-badge" style="background: var(--act);">15 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="act1"><span>KCS Act 1969: Registration & Membership</span></label></li>
         <li><label><input type="checkbox" id="act2"><span>KCS Act 1969: Management & Share Capital</span></label></li>
         <li><label><input type="checkbox" id="act3"><span>KCS Act 1969: Audit (S.28), Inspection (S.68)</span></label></li>
@@ -313,7 +331,7 @@
     <!-- ENGLISH -->
     <div class="subject-card">
       <h3>General English <span class="marks-badge" style="background: var(--english);">10 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="eng1"><span>Grammar: Types of Sentences, Parts of Speech</span></label></li>
         <li><label><input type="checkbox" id="eng2"><span>Grammar: Subject-Verb Agreement, Articles</span></label></li>
         <li><label><input type="checkbox" id="eng3"><span>Grammar: Aux Verbs, Question Tags, Gerunds</span></label></li>
@@ -330,7 +348,7 @@
     <!-- REASONING -->
     <div class="subject-card">
       <h3>Reasoning <span class="marks-badge" style="background: var(--reasoning);">10 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="res1"><span>Numbers, Fractions, Decimals, Percentage</span></label></li>
         <li><label><input type="checkbox" id="res2"><span>Profit & Loss, Simple & Compound Interest</span></label></li>
         <li><label><input type="checkbox" id="res3"><span>Ratio, Proportion, Average</span></label></li>
@@ -346,7 +364,7 @@
     <!-- GK -->
     <div class="subject-card">
       <h3>General Knowledge <span class="marks-badge" style="background: var(--gk);">10 Marks</span></h3>
-      <ul class="checklist">
+      <ul class="checklist main-syllabus">
         <li><label><input type="checkbox" id="gk1"><span>United Nations</span></label></li>
         <li><label><input type="checkbox" id="gk2"><span>History: Freedom Struggle, Travancore, Social Reform</span></label></li>
         <li><label><input type="checkbox" id="gk3"><span>Political History & Indian Constitution</span></label></li>
@@ -360,122 +378,129 @@
     </div>
   </div>
 
-  <h2>2. Phase 1: Full Syllabus Coverage Plan (27 May - 9 Jul)</h2>
-  <p>This plan distributes the newly expanded detailed syllabus into the original 7-week timeframe[cite: 3]. Note: English, GK, and Reasoning should be practiced for 1-2 hours <strong>every single day</strong>.</p>
-
-  <div class="week-block">
-    <div class="week-header">Week 1: Fundamentals of Accounting</div>
-    <span class="week-dates">27 May - 2 Jun</span>
-    <strong>Accounting I:</strong> Principles, Journal, Ledger, Trial balance, Final accounts & Adjustments.
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 2: Adv. Accounting & Banking Basics</div>
-    <span class="week-dates">3 - 9 Jun</span>
-    <strong>Accounting II:</strong> Depreciation, Bills of exchange, Co-op accounting, BRS.<br>
-    <strong>Banking I:</strong> Scheduled/Non-Scheduled, RBI functions, CRR/SLR, NABARD, Banker-Customer relation, KYC.
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 3: Costing & Core Banking Rules</div>
-    <span class="week-dates">10 - 16 Jun</span>
-    <strong>Accounting III:</strong> Cost accounting, Material control, Labour cost.<br>
-    <strong>Banking II:</strong> NI Act 1881, Cheques, Crossings, All 6 Endorsements, Payment Systems (RTGS, NEFT, UPI).
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 4: Financial Management & Deposits</div>
-    <span class="week-dates">17 - 23 Jun</span>
-    <strong>Accounting IV:</strong> Financial Planning, Ratios, Cash Flow, Fraud, Statutory Audit.<br>
-    <strong>Banking III:</strong> Grievance (Ombudsman, COPRA), Deposits, Drafts, Lockers, Nomination, Lien, Set Off.
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 5: Loans & Act/Rules Intro</div>
-    <span class="week-dates">24 - 30 Jun</span>
-    <strong>Banking IV:</strong> Priority Sector, KCC, MSME, SMA, NPA norms.<br>
-    <strong>Act & Rules I:</strong> KCS Act 1969 - Registration, Membership, Share capital, Management.
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 6: Act/Rules Completion & Principles Intro</div>
-    <span class="week-dates">1 - 7 Jul</span>
-    <strong>Act & Rules II:</strong> Surcharge (S.65), Audit (S.68), Arbitration (S.69), Disputes (S.70), Rules 1969.<br>
-    <strong>Principles I:</strong> ICA, Foreign Co-op (Owen, Raiffeisen), Committees (VL Metha, CRAFICARD), PACS, PCARDB.
-  </div>
-
-  <div class="week-block">
-    <div class="week-header">Week 7: Co-op Institutions & Mop-up</div>
-    <span class="week-dates">8 - 9 Jul</span>
-    <strong>Principles II:</strong> Urban, Housing, Marketing, Consumer, Dairy (APCOS), Industrial, SC/ST, Risk fund, Management, Dept Setup.<br>
-    <strong>Review:</strong> Full mock tests, English vocab revision, Reasoning speed run.
-  </div>
-
-  <h2>3. Daily Routine & Phases 2/3</h2>
-  <div class="table-wrapper">
-    <table>
-      <tr>
-        <th style="width: 140px;">Time Slot</th>
-        <th>Activity</th>
-      </tr>
-      <tr>
-        <td><strong>6:00 - 8:00 AM</strong></td>
-        <td>Heavy subject - Accounting or Banking (fresh mind)</td>
-      </tr>
-      <tr>
-        <td><strong>8:30 - 10:00 AM</strong></td>
-        <td>Co-op Principles or Act & Rules</td>
-      </tr>
-      <tr>
-        <td><strong>6:00 - 7:00 PM</strong></td>
-        <td>GK / Current affairs / Reasoning practice</td>
-      </tr>
-      <tr>
-        <td><strong>9:00 - 10:00 PM</strong></td>
-        <td>English vocabulary + previous day revision</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="callout">
-    <strong>Phase 2 (Cat 10 Revision):</strong> 12 Jul - 7 Aug. Deep dive into weak areas identified in the Cat 11 exam[cite: 3].<br>
-    <strong>Phase 3 (Cat 09 Revision):</strong> 9 Aug - 15 Aug. Final polish, heavy focus on Mock Tests and time management[cite: 3].
-  </div>
-
 </div>
 
 <script>
-  // Simple script to save checkbox states to LocalStorage and update the progress bar
   document.addEventListener('DOMContentLoaded', () => {
-    const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+
+    // --- Dynamic Daily Schedule Generator ---
+    const today = new Date();
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    document.getElementById('today-date-display').innerText = `- ${today.toLocaleDateString('en-US', dateOptions)}`;
+
+    const y = today.getFullYear();
+    const m = today.getMonth() + 1; // 1 to 12
+    const d = today.getDate();
+
+    // Ensures timezone safety for midnight resets
+    const todayStr = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+
+    let focusTitle = "Phase 1: General Study Schedule";
+    let focusTasks = [
+      "Heavy subject (Accounting or Banking)",
+      "Co-op Principles or Act & Rules",
+      "GK / Current affairs / Reasoning practice",
+      "English vocabulary + previous day revision"
+    ];
+
+    // Evaluate Phase 2 / Phase 3 Date logic
+    if (y === 2026) {
+      if (m === 7 && d >= 12 && d <= 15) {
+        focusTitle = "Phase 2: Accounting Revision";
+        focusTasks = ["Redo final accounts & depreciation", "Practise BRS, ratio analysis, and CVP sums", "GK / Current Affairs", "English Vocab & Revision"];
+      } else if (m === 7 && d >= 16 && d <= 19) {
+        focusTitle = "Phase 2: Banking Revision";
+        focusTasks = ["Re-read NI Act (endorsements & crossings)", "NPA norms, payment systems, ombudsman", "GK / Current Affairs", "English Vocab & Revision"];
+      } else if (m === 7 && d >= 20 && d <= 23) {
+        focusTitle = "Phase 2: Act & Rules Revision";
+        focusTasks = ["KCS Act: S.28, S.65, S.68, S.69, S.70", "Liquidation rules", "GK / Current Affairs", "English Vocab & Revision"];
+      } else if (m === 7 && d >= 24 && d <= 27) {
+        focusTitle = "Phase 2: Principles of Co-op";
+        focusTasks = ["PACS, PCARDB, housing co-ops", "Marketing/consumer/dairy/industrial co-ops", "GK / Current Affairs", "English Vocab & Revision"];
+      } else if (m === 7 && d >= 28 && d <= 31) {
+        focusTitle = "Phase 2: GK & Reasoning";
+        focusTasks = ["Current affairs update", "Indian & Kerala history, Constitution", "Full reasoning practice sets", "English Vocab & Revision"];
+      } else if (m === 8 && d >= 1 && d <= 4) {
+        focusTitle = "Phase 2: General English";
+        focusTasks = ["All grammar chapters & rules", "Attempt English mock papers", "Idioms & one-word substitutes", "GK / Current Affairs"];
+      } else if (m === 8 && (d === 5 || d === 6)) {
+        focusTitle = "Phase 2: Full Mock Tests";
+        focusTasks = ["Complete 100-mark mock test", "Review every wrong answer", "Note and revise weak topics"];
+      } else if (m === 8 && d === 7) {
+        focusTitle = "Phase 2: Exam Eve";
+        focusTasks = ["Review short notes", "Organize exam materials (Hall ticket, ID, Pens)", "Rest well for Cat 10 Exam tomorrow!"];
+      } else if (m === 8 && d > 7) {
+        focusTitle = "Phase 3: Cat 09 Revision";
+        focusTasks = ["Revise weak areas from Cat 10", "Full mock tests", "Time management practice"];
+      }
+    }
+
+    document.getElementById('today-focus-display').innerText = focusTitle;
+
+    // Inject generated tasks
+    const checklistEl = document.getElementById('daily-checklist');
+    checklistEl.innerHTML = '';
+    focusTasks.forEach((task, index) => {
+      checklistEl.innerHTML += `
+        <li>
+          <label>
+            <input type="checkbox" class="daily-check" id="dly_task_${index}">
+            <span>${task}</span>
+          </label>
+        </li>
+      `;
+    });
+
+    // --- Main Syllabus Progress Tracker Logic ---
+    const syllabusBoxes = document.querySelectorAll('.main-syllabus input[type="checkbox"]');
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
 
     function updateProgress() {
-      const total = checkboxes.length;
-      const checked = document.querySelectorAll('.checklist input[type="checkbox"]:checked').length;
+      const total = syllabusBoxes.length;
+      const checked = document.querySelectorAll('.main-syllabus input[type="checkbox"]:checked').length;
       const percentage = total === 0 ? 0 : Math.round((checked / total) * 100);
       
       progressFill.style.width = percentage + '%';
       progressText.textContent = percentage;
     }
 
-    checkboxes.forEach(box => {
-      // Load saved state
+    syllabusBoxes.forEach(box => {
       const savedState = localStorage.getItem('cseb_' + box.id);
       if (savedState === 'true') {
         box.checked = true;
       }
-
-      // Listen for changes
       box.addEventListener('change', (e) => {
         localStorage.setItem('cseb_' + e.target.id, e.target.checked);
         updateProgress();
       });
     });
-
-    // Initial calculation
     updateProgress();
+
+    // --- Daily Routine Auto-Reset Logic ---
+    const dailyBoxes = document.querySelectorAll('.daily-check');
+    const savedDate = localStorage.getItem('cseb_daily_date');
+
+    // If a new day has started, reset all daily checkboxes
+    if (savedDate !== todayStr) {
+      // Loop generously to clear old tasks just in case
+      for(let i=0; i<10; i++){
+        localStorage.removeItem('cseb_daily_dly_task_' + i);
+      }
+      localStorage.setItem('cseb_daily_date', todayStr);
+    }
+
+    // Load and save state for daily checkboxes
+    dailyBoxes.forEach(box => {
+      const savedDailyState = localStorage.getItem('cseb_daily_' + box.id);
+      if (savedDailyState === 'true') {
+        box.checked = true;
+      }
+      box.addEventListener('change', (e) => {
+        localStorage.setItem('cseb_daily_' + e.target.id, e.target.checked);
+      });
+    });
+
   });
 </script>
 
