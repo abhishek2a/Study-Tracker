@@ -76,7 +76,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .track{background:var(--border);border-radius:99px;height:6px;overflow:hidden;margin-bottom:14px}
 .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .5s}
 .spills{display:flex;flex-wrap:wrap;gap:7px}
-.spill{display:inline-flex;gap:10px;align-items:center;font-size:.68rem;font-family:var(--mono);padding:5px 11px;border-radius:7px;border:1px solid}
+.spill{display:inline-flex;gap:10px;align-items:center;font-size:.68rem;font-family:var(--mono);padding:5px 11px;border-radius:7px;border:1px solid;min-width:110px;flex-basis:110px}
 .sec{margin:28px 0 14px;display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
 .sec h2{font-size:.86rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em}
 .sec p{font-size:.7rem;color:var(--dim)}
@@ -106,7 +106,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .cl{list-style:none}
 .cl li{border-bottom:1px solid var(--border)}
 .cl li:last-child{border-bottom:none}
-.cl label{display:flex;align-items:flex-start;gap:13px;padding:11px 3px;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:.1s}
+.cl label{display:flex;align-items:flex-start;gap:13px;padding:11px 8px;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:.1s}
 .cl label:hover{opacity:.82}
 .cl input[type=checkbox]{appearance:none;flex-shrink:0;width:19px;height:19px;min-width:19px;border:1.5px solid var(--dim);border-radius:4px;background:transparent;cursor:pointer;margin-top:2px;display:grid;place-content:center;transition:.15s}
 .cl input[type=checkbox]::before{content:"";width:9px;height:9px;transform:scale(0);transition:.12s;clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:var(--bg)}
@@ -191,14 +191,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-user">
             <div class="pd-user-name" id="pd-name">—</div>
             <div class="pd-user-email" id="pd-email">—</div>
-            <div id="pd-sync" style="font-size:.62rem;font-family:var(--mono);margin-top:4px;color:var(--dim)">● Offline</div>
+            <div id="pd-sync" style="font-size:.6rem;font-family:var(--mono);margin-top:5px;color:var(--dim)">● Offline</div>
           </div>
-          <div id="pd-stats" style="display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:.72rem;font-family:var(--mono);color:var(--dim)"></div>
+          <div id="pd-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:3px 6px;padding:8px 12px 10px;border-bottom:1px solid var(--border);font-size:.68rem;font-family:var(--mono);color:var(--dim)"></div>
           <div class="pd-section">Appearance</div>
-          <button class="pd-item" data-t="amoled" role="menuitem">⬛ AMOLED</button>
-          <button class="pd-item" data-t="light" role="menuitem">☀️ Light</button>
+          <button class="pd-item" data-t="amoled" role="menuitem">AMOLED</button>
+          <button class="pd-item" data-t="light" role="menuitem">Light</button>
           <div class="pd-sep"></div>
-          <button class="pd-item danger" id="signout-item" role="menuitem">↩ Sign out</button>
+          <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
         </div>
       </div>
     </div>
@@ -394,7 +394,6 @@ initializeAppCheck(app,{
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
-enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
 
 let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
 const $=id=>document.getElementById(id);
@@ -597,6 +596,9 @@ function scheduleCloudSync(){
 }
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingCloudWrite)flushToCloud();});
+window.addEventListener('beforeunload',()=>{if(pendingCloudWrite)flushToCloud();});
+window.addEventListener('online',()=>syncState('synced'));
+window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
 
 function saveToFirestore(data){saveLocal(data);scheduleCloudSync();}
 
@@ -707,7 +709,8 @@ function bindSyllabus(){
 }
 
 function updateAll(){
-  const boxes=syllabusBoxes.length?syllabusBoxes:[...document.querySelectorAll('.main-sl input[type=checkbox]')];
+  const boxes=syllabusBoxes;
+  if(!boxes.length)return;
   const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
   $('gfill').style.width=pct+'%';$('pct').textContent=pct+'%';
   const sp=$('spills');sp.innerHTML='';
@@ -747,15 +750,19 @@ function initApp(user){
   $('d11').textContent=dLeft("2026-07-11");
   $('d10').textContent=dLeft("2026-08-08");
   $('d09').textContent=dLeft("2026-08-16");
+  // enable persistence per-session after auth established
+  enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
+  // seed from localStorage immediately to prevent empty-state flash
+  try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
+  makeCard();bindSyllabus();updateAll();renderPending();
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     const data=snap.exists()?snap.data():{};
-    remoteData={...data};
-    makeCard();bindSyllabus();updateAll();renderPending();syncState('synced');
+    remoteData={...remoteData,...data}; // merge: local wins for unsynced keys
+    applyData(remoteData);syncState('synced');
   },err=>{
     console.error('Snapshot error',err);syncState('');
-    makeCard();bindSyllabus();updateAll();renderPending();
   });
 }
 
