@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>CSEB Junior Clerk — Cat 11 Tracker</title>
+<title>CSEB</title>
 <style>
 :root {
   --bg:#030405; --s1:#0a0b0d; --s2:#0f1013; --s3:#16181c;
@@ -128,42 +128,62 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
 .mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s}
-#loading{position:fixed;inset:0;z-index:998;background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
-#loading.hidden{display:none}
+#splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .4s,visibility .4s}
+#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-logo{font-size:2.2rem;font-weight:800;letter-spacing:-.04em;color:var(--text)}
+.splash-logo span{color:var(--accent)}
+.splash-sub{font-size:.7rem;font-family:var(--mono);color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.splash-bar{width:120px;height:2px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:8px}
+.splash-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;animation:splashLoad 1.4s ease forwards}
+@keyframes splashLoad{0%{width:0%}60%{width:80%}100%{width:100%}}
 .hidden{display:none!important}
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 [data-theme="amoled"]{--bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868}
 [data-theme="light"]{--bg:#f4f5f7;--s1:#ffffff;--s2:#f0f1f3;--s3:#e8eaed;--border:#dde0e6;--text:#1a1d24;--dim:#6a7290;--green:#1a9c6e;--accent:#c07800;--blue:#2d7fe0}
 .profile-wrap{position:relative;flex-shrink:0}
-.profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:var(--s2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;border:none;color:var(--text)}
-.profile-btn:hover{background:var(--s3)}
-.profile-avatar{width:26px;height:26px;border-radius:50%;background:var(--blue);display:grid;place-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0;text-transform:uppercase}
+.profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;color:var(--text)}
+.profile-btn:hover{background:var(--s2)}
+.profile-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);display:grid;place-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0;text-transform:uppercase;letter-spacing:.03em}
 .profile-name{font-size:.76rem;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:480px){.profile-name{max-width:64px}}
-.profile-drop{position:absolute;top:calc(100% + 10px);right:0;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:6px;z-index:400;min-width:220px;box-shadow:0 16px 48px rgba(0,0,0,.7),0 2px 8px rgba(0,0,0,.4)}
+.profile-drop{
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:5px;z-index:400;min-width:248px;
+  box-shadow:0 24px 64px rgba(0,0,0,.85),0 4px 16px rgba(0,0,0,.4);
+  font-family:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+}
 .profile-drop.hidden{display:none!important}
-.pd-user{padding:12px 12px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;display:flex;flex-direction:column;gap:2px}
-.pd-user-name{font-size:.86rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
-.pd-user-email{font-size:.67rem;font-family:var(--mono);color:var(--dim);margin-top:1px;word-break:break-all}
-.pd-section{font-size:.58rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--dim);padding:8px 10px 4px;font-weight:700;opacity:.7}
-.pd-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;color:var(--dim);background:transparent;border:none;font-family:var(--font);transition:.12s;text-align:left;gap:8px}
+.pd-user{padding:14px 14px 12px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.pd-user-name{font-size:.94rem;font-weight:700;color:var(--text);letter-spacing:-.025em;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,sans-serif}
+.pd-user-email{font-size:.68rem;color:var(--dim);margin-top:3px;word-break:break-all;letter-spacing:.005em}
+.pd-stats-block{display:flex;flex-direction:column;gap:1px;padding:4px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.pd-stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:9px;transition:.12s}
+.pd-stat-row:hover{background:var(--s2)}
+.pd-stat-label{font-size:.74rem;color:var(--dim);letter-spacing:.005em}
+.pd-stat-value{font-size:.74rem;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.pd-section{font-size:.59rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);padding:6px 12px 2px;font-weight:600;opacity:.55}
+.pd-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:.84rem;color:var(--dim);background:transparent;border:none;font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,sans-serif;transition:.12s;text-align:left;letter-spacing:-.01em}
 .pd-item:hover{background:var(--s3);color:var(--text)}
 .pd-item.active{color:var(--text);font-weight:600}
-.pd-item.active::after{content:'✓';font-size:.65rem;color:var(--green);margin-left:auto;flex-shrink:0}
-.pd-theme-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.12)}
-.pd-sep{height:1px;background:var(--border);margin:4px 0}
+.pd-item.active::after{content:'✓';font-size:.7rem;color:var(--green);margin-left:auto;flex-shrink:0}
+.pd-sep{height:1px;background:var(--border);margin:3px 0}
 .pd-item.danger{color:var(--dim)}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
 </style>
 </head>
 <body>
 
-<div id="loading">Connecting…</div>
+<div id="splash">
+  <div class="splash-logo">CS<span>EB</span></div>
+  <div class="splash-sub">Study Tracker</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
 
 <div id="auth-overlay" class="hidden">
   <div class="auth-box">
-    <div class="auth-logo">CSEB <span>Junior Clerk</span></div>
+    <div class="auth-logo">Study <span>Tracker</span></div>
     <div class="auth-sub">Sign in to sync your progress across devices</div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
@@ -179,7 +199,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 <div id="app">
   <div class="topbar">
-    <div class="logo">CSEB <span>Junior Clerk</span><sub>Cat 11 · 100 Marks</sub></div>
+    <div class="logo">CSEB<sub>Cat 11 · 100 Marks</sub></div>
     <div class="topright">
       <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
@@ -194,9 +214,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-user">
             <div class="pd-user-name" id="pd-name">—</div>
             <div class="pd-user-email" id="pd-email">—</div>
-            <div id="pd-sync" style="font-size:.6rem;font-family:var(--mono);margin-top:5px;color:var(--dim)">● Offline</div>
+            <div id="pd-sync" class="pd-sync-row">● Offline</div>
           </div>
-          <div id="pd-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:3px 6px;padding:8px 12px 10px;border-bottom:1px solid var(--border);font-size:.68rem;font-family:var(--mono);color:var(--dim)"></div>
+          <div class="pd-stats-block" id="pd-stats"></div>
           <div class="pd-section">Appearance</div>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
           <button class="pd-item" data-t="light" role="menuitem">Light</button>
@@ -378,7 +398,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, enableIndexedDbPersistence
+  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -739,7 +759,10 @@ function updateAll(){
   const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
   const streak=calcStreak();
   const ps=$('pd-stats');
-  if(ps)ps.innerHTML=`<span>🔥 ${pct}% Complete</span><span>📅 ${streak}d Streak</span><span>🎯 ${examDiff>0?examDiff+'d to exam':'Exam day!'}</span>`;
+  if(ps)ps.innerHTML=`
+    <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
 }
 
 function calcStreak(){
@@ -754,7 +777,7 @@ function calcStreak(){
 }
 
 function initApp(user){
-  $('loading').classList.add('hidden');
+  $('splash').classList.add('hidden');
   $('auth-overlay').classList.add('hidden');
   $('app').classList.add('visible');
   const name=user.displayName||user.email.split('@')[0];
@@ -773,25 +796,29 @@ function initApp(user){
   domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
   // load deferred state
   try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-  // seed from localStorage immediately to prevent empty-state flash
+  // seed localStorage instantly → no empty flash
   try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
   makeCard();bindSyllabus();updateAll();renderPending();
+  $('splash').classList.add('hidden'); // hide splash as soon as local data ready
   if(unsubSnap)unsubSnap();
   syncState('syncing');
+  // fast path: getDoc once for immediate cloud data, then subscribe for live updates
+  getDoc(doc(db,'users',user.uid)).then(snap=>{
+    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
+    syncState('synced');
+  }).catch(()=>{});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
-    const data=snap.exists()?snap.data():{};
-    remoteData={...remoteData,...data}; // merge: local wins for unsynced keys
-    applyData(remoteData);syncState('synced');
-  },err=>{
-    console.error('Snapshot error',err);syncState('');
-  });
+    if(!snap.exists())return;
+    remoteData={...remoteData,...snap.data()};
+    applyData(remoteData);saveLocal(remoteData);syncState('synced');
+  },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
 onAuthStateChanged(auth,user=>{
   if(user){currentUid=user.uid;initApp(user);}
   else{
     currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
-    $('loading').classList.add('hidden');
+    $('splash').classList.add('hidden');
     $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
   }
