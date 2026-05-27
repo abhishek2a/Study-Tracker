@@ -221,7 +221,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
       <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
       <div class="profile-wrap">
-        <button class="profile-btn" onclick="event.stopPropagation();toggleProfileMenu()" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
+        <button class="profile-btn" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
           <div class="profile-avatar" id="profile-avatar">?</div>
           <span class="profile-name" id="profile-name">Account</span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -234,10 +234,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           </div>
           <div id="pd-stats" style="display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:.72rem;font-family:var(--mono);color:var(--dim)"></div>
           <div class="pd-section">Appearance</div>
-          <button class="pd-item" onclick="setTheme('amoled')" data-t="amoled" role="menuitem">⬛ AMOLED</button>
-          <button class="pd-item" onclick="setTheme('light')" data-t="light" role="menuitem">☀️ Light</button>
+          <button class="pd-item" data-t="amoled" role="menuitem">⬛ AMOLED</button>
+          <button class="pd-item" data-t="light" role="menuitem">☀️ Light</button>
           <div class="pd-sep"></div>
-          <button class="pd-item danger" onclick="doSignOut()" role="menuitem">↩ Sign out</button>
+          <button class="pd-item danger" id="signout-item" role="menuitem">↩ Sign out</button>
         </div>
       </div>
     </div>
