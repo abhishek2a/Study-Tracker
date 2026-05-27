@@ -20,8 +20,6 @@
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-
-/* ── AUTH OVERLAY ── */
 #auth-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
 #auth-overlay.hidden{display:none}
 .auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:36px 32px}
@@ -42,13 +40,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   #auth-overlay{align-items:flex-start;padding:0}
   .auth-box{border-radius:0;border-left:none;border-right:none;border-top:none;min-height:100svh;padding:40px 20px 32px}
 }
-
-/* ── APP ── */
 #app{display:none}
 #app.visible{display:block}
-
-/* TOP BAR */
-.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;overflow:hidden;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 @media(max-width:700px){.topbar{padding:0 14px;height:48px;position:fixed;width:100%}}
 #app.visible{padding-top:0}
 @media(max-width:700px){#app.visible .wrap{padding-top:64px}}
@@ -64,24 +58,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .signout-btn{font-size:.68rem;padding:4px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;flex-shrink:0}
 .signout-btn:hover{border-color:var(--red);color:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* WRAP */
 .wrap{max-width:1280px;margin:0 auto;padding:32px 40px}
 @media(max-width:900px){.wrap{padding:20px 18px}}
 @media(max-width:600px){.wrap{padding:14px 13px}}
-
 .hdr-row{margin-bottom:22px}
 .hdr-row h1{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;letter-spacing:-.03em}
 .hdr-row p{font-size:.78rem;font-family:var(--mono);color:var(--dim);margin-top:3px}
-
-/* EXAM STRIP */
 .exam-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:11px 18px;flex:1;min-width:130px}
 .epill .en{font-size:.6rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
 .epill .ed{font-size:.92rem;font-weight:700;color:var(--accent);margin:2px 0}
 .epill .edd{font-size:.65rem;font-family:var(--mono);color:var(--green)}
-
-/* PROGRESS */
 .prog-row{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:26px}
 .prog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:8px}
 .prog-top span{font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
@@ -90,18 +77,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .5s}
 .spills{display:flex;flex-wrap:wrap;gap:7px}
 .spill{display:inline-flex;gap:10px;align-items:center;font-size:.68rem;font-family:var(--mono);padding:5px 11px;border-radius:7px;border:1px solid}
-
-/* SEC */
 .sec{margin:28px 0 14px;display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
 .sec h2{font-size:.86rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em}
 .sec p{font-size:.7rem;color:var(--dim)}
-
-/* DAY GRID */
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:11px}
-
-/* DAY CARD */
 .day-card{border-radius:var(--radius);padding:20px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0}
 .day-card+.day-card{margin-top:12px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
@@ -122,8 +103,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-sub{font-size:.74rem;color:var(--dim);font-family:var(--mono);margin-bottom:13px}
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
-
-/* CHECKLIST */
 .cl{list-style:none}
 .cl li{border-bottom:1px solid var(--border)}
 .cl li:last-child{border-bottom:none}
@@ -138,8 +117,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .mock-mini{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
 .mock-mini-lbl{font-size:.62rem;font-family:var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
 .mock-mini .cl input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
-
-/* SUBJ GRID */
 .subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
 @media(max-width:820px){.subj-grid{grid-template-columns:1fr}}
 .subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
@@ -148,28 +125,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
 .mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s}
-
-/* LOADING */
 #loading{position:fixed;inset:0;z-index:998;background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
 #loading.hidden{display:none}
-
-/* GLOBAL HIDDEN */
 .hidden{display:none!important}
-
-/* FOCUS ACCESSIBILITY */
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
-
-/* THEMES */
-[data-theme="amoled"]{
-  --bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868
-}
-[data-theme="light"]{
-  --bg:#f4f5f7;--s1:#ffffff;--s2:#f0f1f3;--s3:#e8eaed;--border:#dde0e6;
-  --text:#1a1d24;--dim:#6a7290;--green:#1a9c6e;--accent:#c07800;--blue:#2d7fe0
-}
-
-/* PROFILE DROPDOWN */
+[data-theme="amoled"]{--bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868}
+[data-theme="light"]{--bg:#f4f5f7;--s1:#ffffff;--s2:#f0f1f3;--s3:#e8eaed;--border:#dde0e6;--text:#1a1d24;--dim:#6a7290;--green:#1a9c6e;--accent:#c07800;--blue:#2d7fe0}
 .profile-wrap{position:relative;flex-shrink:0}
 .profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:var(--s2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;border:none;color:var(--text)}
 .profile-btn:hover{background:var(--s3)}
@@ -192,10 +154,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading">Connecting…</div>
 
-<!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="hidden">
   <div class="auth-box">
     <div class="auth-logo">CSEB <span>Junior Clerk</span></div>
@@ -212,7 +172,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="logo">CSEB <span>Junior Clerk</span><sub>Cat 11 · 100 Marks</sub></div>
@@ -401,9 +360,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         </ul>
       </div>
 
-    </div><!-- subj-grid -->
-  </div><!-- wrap -->
-</div><!-- app -->
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
@@ -414,7 +373,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
+  getFirestore, doc, onSnapshot, setDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -433,20 +392,13 @@ initializeAppCheck(app,{
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
-// offline persistence — syncs automatically when back online
 enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
 
-// ── GLOBALS ──
-let currentUid = null;
-let unsubSnap = null;
-let remoteData = {};
-let writeDebounce = null;
-
+let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
 const $=id=>document.getElementById(id);
 function jmp(s){const e=document.querySelector(s);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 window.jmp=jmp;
 
-// ── AUTH UI ──
 window.switchTab=function(t){
   $('tab-login').classList.toggle('active',t==='login');
   $('tab-signup').classList.toggle('active',t==='signup');
@@ -456,7 +408,6 @@ window.switchTab=function(t){
   $('auth-overlay').dataset.mode=t;
 };
 $('auth-overlay').dataset.mode='login';
-// name field hidden via inline style already
 
 function authErrMsg(code){
   const m={
@@ -465,16 +416,13 @@ function authErrMsg(code){
     'auth/wrong-password':'Wrong password.',
     'auth/email-already-in-use':'Email already registered — sign in instead.',
     'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/popup-closed-by-user':'Google sign-in cancelled.',
     'auth/network-request-failed':'Network error. Check connection.'
   };
   return m[code]||'Error: '+code;
 }
 
 window.submitAuth=async function(){
-  const email=$('auth-email').value.trim();
-  const pass=$('auth-pass').value;
-  const mode=$('auth-overlay').dataset.mode;
+  const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
   if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
   try{
@@ -490,7 +438,6 @@ window.submitAuth=async function(){
 
 window.doSignOut=async function(){await signOut(auth);};
 
-// ── SCHEDULE DATA ──
 const SCH={
  "2026-05-27":{p:"banking",  l:"Banking · Day 1/8",      ids:["bnk1","bnk2"]},
  "2026-05-28":{p:"banking",  l:"Banking · Day 2/8",      ids:["bnk3","bnk4"]},
@@ -611,7 +558,6 @@ const SUBJS={
  gk:        {ids:["gk1","gk2","gk3","gk4","gk5","gk6","gk7","gk8","gk9"],c:"var(--gk)",n:"GK"}
 };
 
-// ── DATE ──
 const now=new Date();
 const pad=n=>String(n).padStart(2,'0');
 const ts=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
@@ -622,109 +568,62 @@ function dLeft(s){
   return diff<0?diff+'d ago':diff===0?'🎯 TODAY':diff+' days left';
 }
 
-// ── SYNC → shown in profile dropdown ──
 function syncState(s){
-  const el=$('pd-sync');
-  if(!el)return;
+  const el=$('pd-sync');if(!el)return;
   if(s==='syncing'){el.textContent='⏳ Syncing…';el.style.color='var(--accent)';}
   else if(s==='synced'){el.textContent='✓ Synced';el.style.color='var(--green)';}
   else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
 
-// ── SAVE: localStorage first, cloud every 10s ──
-const LS_KEY='cseb_state';
 let pendingCloudWrite=false;
-
-function saveLocal(data){
-  try{localStorage.setItem(LS_KEY,JSON.stringify(data));}catch(e){}
-}
-function loadLocal(){
-  try{const r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):{};}catch(e){return {};}
-}
+function saveLocal(data){try{localStorage.setItem('cseb_state',JSON.stringify(data));}catch(e){}}
 
 async function flushToCloud(){
   if(!currentUid||!pendingCloudWrite)return;
   syncState('syncing');
   try{
     await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
-    pendingCloudWrite=false;
-    syncState('synced');
+    pendingCloudWrite=false;syncState('synced');
   }catch(e){console.error('Cloud save failed',e);syncState('');}
 }
 
 function scheduleCloudSync(){
   if(!pendingCloudWrite){
-    pendingCloudWrite=true;
-    syncState('syncing');
-    clearTimeout(writeDebounce);
-    writeDebounce=setTimeout(flushToCloud,10000);
+    pendingCloudWrite=true;syncState('syncing');
+    clearTimeout(writeDebounce);writeDebounce=setTimeout(flushToCloud,10000);
   }
 }
 
-// visibilitychange: flush immediately when tab goes background
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden&&pendingCloudWrite)flushToCloud();
-});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingCloudWrite)flushToCloud();});
 
-function saveToFirestore(data){
-  saveLocal(data);
-  scheduleCloudSync();
-}
+function saveToFirestore(data){saveLocal(data);scheduleCloudSync();}
 
-// ── APPLY DATA FROM FIRESTORE ──
 function applyData(data){
   remoteData={...data};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{
-    b.checked=!!data[b.id];
-  });
-  // daily checkboxes
-  document.querySelectorAll('.ds').forEach(b=>{
-    b.checked=!!data[b.getAttribute('data-id')];
-  });
-  // pending
-  document.querySelectorAll('.pending-ds').forEach(b=>{
-    b.checked=!!data[b.getAttribute('data-id')];
-  });
-  // daily mock
-  const dm=$('daily_mock');
-  if(dm)dm.checked=!!data['mock_'+ts];
-  // misc
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)b.checked=!!data['misc_'+id];
-  });
-  updateAll();
-  renderPending();
+  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
+  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts];
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
+  updateAll();renderPending();
 }
 
-// ── GET CURRENT STATE ──
 function getState(){
   const state={...remoteData};
   document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{state[b.id]=b.checked;});
-  const dm=$('daily_mock');
-  if(dm)state['mock_'+ts]=dm.checked;
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)state['misc_'+id]=b.checked;
-  });
+  const dm=$('daily_mock');if(dm)state['mock_'+ts]=dm.checked;
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)state['misc_'+id]=b.checked;});
   return state;
 }
 
-// ── CHECKBOX CHANGE ──
 function onCheck(id,val){
-  remoteData[id]=val;
-  saveToFirestore(getState());
-  // sync daily ↔ main
-  const main=document.getElementById(id);
-  if(main&&main!==document.activeElement)main.checked=val;
-  const daily=document.querySelector(`.ds[data-id="${id}"]`);
-  if(daily&&daily!==document.activeElement)daily.checked=val;
-  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);
-  if(pend&&pend!==document.activeElement)pend.checked=val;
+  remoteData[id]=val;saveToFirestore(getState());
+  const main=document.getElementById(id);if(main&&main!==document.activeElement)main.checked=val;
+  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily&&daily!==document.activeElement)daily.checked=val;
+  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend&&pend!==document.activeElement)pend.checked=val;
   updateAll();
 }
 
-// ── PENDING ──
 function getPending(){
   const r=[];
   for(const[date,s] of Object.entries(SCH)){
@@ -736,8 +635,7 @@ function getPending(){
 }
 
 function renderPending(){
-  const pc=$('pendingcard');
-  const pending=getPending();
+  const pc=$('pendingcard'),pending=getPending();
   if(!pending.length){pc.innerHTML='<div class="no-pending">✓ All caught up!</div>';return;}
   pc.innerHTML=pending.map(({date,s,unchecked})=>{
     const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
@@ -750,20 +648,15 @@ function renderPending(){
   pc.querySelectorAll('.pending-ds').forEach(b=>{
     b.addEventListener('change',e=>{
       const sid=e.target.getAttribute('data-id');
-      remoteData[sid]=e.target.checked;
-      onCheck(sid,e.target.checked);
-      renderPending();
+      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);renderPending();
     });
   });
 }
 
-// ── DAY CARD ──
 function makeCard(){
-  const dc=$('daycard');
-  const sched=SCH[ts];
+  const dc=$('daycard'),sched=SCH[ts];
   const tag='<span class="exam-tag">Junior Clerk · Cat 11 · 11 Jul 2026</span>';
   const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
-
   if(!sched){
     const done=ts>"2026-07-11";
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
@@ -771,7 +664,6 @@ function makeCard(){
       <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
     return;
   }
-
   let inner='';
   if(sched.p==='mock'){
     inner=`${tag}<div class="day-sub">Full 100-mark timed mock — review wrong answers</div><ul class="cl">
@@ -790,10 +682,8 @@ function makeCard(){
       <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
     </ul></div>`;
   }
-
   dc.innerHTML=`<div class="day-card ${sched.p}">
     <div class="day-top"><h2>📌 Today's Topics</h2>${dateBadge}</div>${inner}</div>`;
-
   dc.querySelectorAll('.ds').forEach(b=>{
     b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
   });
@@ -805,8 +695,7 @@ function makeCard(){
   });
 }
 
-// ── MAIN SYLLABUS ──
-let syllabusBoxes=[];// cached after first bind
+let syllabusBoxes=[];
 function bindSyllabus(){
   syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
   syllabusBoxes.forEach(b=>{
@@ -815,22 +704,16 @@ function bindSyllabus(){
   });
 }
 
-// ── STATS ──
 function updateAll(){
-  const total=syllabusBoxes.length||document.querySelectorAll('.main-sl input[type=checkbox]').length;
   const boxes=syllabusBoxes.length?syllabusBoxes:[...document.querySelectorAll('.main-sl input[type=checkbox]')];
-  const done=boxes.filter(b=>b.checked).length;
-  const pct=total?Math.round(done/total*100):0;
-  $('gfill').style.width=pct+'%';
-  $('pct').textContent=pct+'%';
+  const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
+  $('gfill').style.width=pct+'%';$('pct').textContent=pct+'%';
   const sp=$('spills');sp.innerHTML='';
   for(const[k,v] of Object.entries(SUBJS)){
     const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
-    const mf=document.getElementById('mf-'+k);
-    if(mf)mf.style.width=Math.round(d/t*100)+'%';
+    const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
     sp.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
   }
-  // update profile dropdown stats
   const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
   const streak=calcStreak();
   const ps=$('pd-stats');
@@ -842,21 +725,16 @@ function calcStreak(){
   while(true){
     d.setDate(d.getDate()-1);
     const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const sc=SCH[k];
-    if(!sc||!sc.ids||!sc.ids.length)break;
-    const allDone=sc.ids.every(id=>remoteData[id]);
-    if(allDone)s++;else break;
+    const sc=SCH[k];if(!sc||!sc.ids||!sc.ids.length)break;
+    if(sc.ids.every(id=>remoteData[id]))s++;else break;
   }
   return s;
 }
 
-// ── INIT APP ──
 function initApp(user){
   $('loading').classList.add('hidden');
   $('auth-overlay').classList.add('hidden');
   $('app').classList.add('visible');
-
-  // profile dropdown
   const name=user.displayName||user.email.split('@')[0];
   const initials=name.slice(0,2).toUpperCase();
   $('profile-avatar').textContent=initials;
@@ -867,54 +745,58 @@ function initApp(user){
   $('d11').textContent=dLeft("2026-07-11");
   $('d10').textContent=dLeft("2026-08-08");
   $('d09').textContent=dLeft("2026-08-16");
-
-  // listen Firestore realtime
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     const data=snap.exists()?snap.data():{};
     remoteData={...data};
-    makeCard();
-    bindSyllabus();
-    updateAll();
-    renderPending();
-    syncState('synced');
+    makeCard();bindSyllabus();updateAll();renderPending();syncState('synced');
   },err=>{
-    console.error('Snapshot error',err);
-    syncState('');
-    // fallback: render with empty data
+    console.error('Snapshot error',err);syncState('');
     makeCard();bindSyllabus();updateAll();renderPending();
   });
 }
 
-// ── AUTH STATE ──
 onAuthStateChanged(auth,user=>{
-  if(user){
-    currentUid=user.uid;
-    initApp(user);
-  } else {
-    currentUid=null;
-    if(unsubSnap){unsubSnap();unsubSnap=null;}
+  if(user){currentUid=user.uid;initApp(user);}
+  else{
+    currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
     $('loading').classList.add('hidden');
     $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
   }
 });
 
-// ── THEME ──
 function setTheme(t){
-  document.body.dataset.theme=t;
-  localStorage.setItem('cseb_theme',t);
+  document.body.dataset.theme=t;localStorage.setItem('cseb_theme',t);
   document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
-  $('profile-drop')&&$('profile-drop').classList.add('hidden');
 }
-window.setTheme=setTheme;
-window.toggleProfileMenu=function(){$('profile-drop').classList.toggle('hidden');};
+
+// ── PROFILE DROPDOWN FIX ──
+// btn click toggles; stopPropagation on BOTH btn AND dropdown prevents doc-click closing it
+document.getElementById('profile-btn').addEventListener('click',function(e){
+  e.stopPropagation();
+  $('profile-drop').classList.toggle('hidden');
+});
+$('profile-drop').addEventListener('click',function(e){
+  e.stopPropagation(); // FIX: without this, doc listener closes dropdown immediately
+});
+
+document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    setTheme(this.dataset.t);
+    $('profile-drop').classList.add('hidden');
+  });
+});
+document.getElementById('signout-item').addEventListener('click',function(e){
+  e.stopPropagation();doSignOut();
+});
 document.addEventListener('click',function(){
   $('profile-drop')&&$('profile-drop').classList.add('hidden');
 });
-// default = amoled
-(function(){setTheme(localStorage.getItem('cseb_theme')||'amoled');})();
+
+setTheme(localStorage.getItem('cseb_theme')||'amoled');
 </script>
 </body>
 </html>
