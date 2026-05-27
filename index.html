@@ -155,6 +155,42 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 /* LOADING */
 #loading{position:fixed;inset:0;z-index:998;background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
 #loading.hidden{display:none}
+
+/* GLOBAL HIDDEN */
+.hidden{display:none!important}
+
+/* FOCUS ACCESSIBILITY */
+*:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+.cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* THEMES */
+[data-theme="amoled"]{
+  --bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868
+}
+[data-theme="light"]{
+  --bg:#f4f5f7;--s1:#ffffff;--s2:#f0f1f3;--s3:#e8eaed;--border:#dde0e6;
+  --text:#1a1d24;--dim:#6a7290;--green:#1a9c6e;--accent:#c07800;--blue:#2d7fe0
+}
+
+/* PROFILE DROPDOWN */
+.profile-wrap{position:relative;flex-shrink:0}
+.profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:var(--s2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;border:none;color:var(--text)}
+.profile-btn:hover{background:var(--s3)}
+.profile-avatar{width:26px;height:26px;border-radius:50%;background:var(--blue);display:grid;place-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0;text-transform:uppercase}
+.profile-name{font-size:.76rem;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:480px){.profile-name{max-width:64px}}
+.profile-drop{position:absolute;top:calc(100% + 8px);right:0;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:400;min-width:180px;box-shadow:0 12px 32px rgba(0,0,0,.6)}
+.profile-drop.hidden{display:none!important}
+.pd-user{padding:8px 10px 10px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.pd-user-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.pd-user-email{font-size:.66rem;font-family:var(--mono);color:var(--dim);margin-top:1px;word-break:break-all}
+.pd-section{font-size:.6rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);padding:4px 10px 2px;font-weight:700}
+.pd-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:.78rem;color:var(--dim);background:transparent;border:none;font-family:var(--font);transition:.15s;text-align:left}
+.pd-item:hover{background:var(--s3);color:var(--text)}
+.pd-item.active{color:var(--text);font-weight:600}
+.pd-item.active::after{content:'✓';font-size:.7rem;color:var(--green)}
+.pd-sep{height:1px;background:var(--border);margin:6px 0}
+.pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
 </style>
 </head>
 <body>
@@ -171,9 +207,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
       <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
     </div>
-    <div class="auth-field"><label>Email</label><input type="email" id="auth-email" placeholder="you@email.com"></div>
-    <div class="auth-field"><label>Password</label><input type="password" id="auth-pass" placeholder="••••••••"></div>
-    <div class="auth-field" id="signup-name-field" style="display:none"><label>Your Name</label><input type="text" id="auth-name" placeholder="e.g. Arjun"></div>
+    <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
+    <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
+    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="e.g. Arjun" aria-label="Your name" autocomplete="name"></div>
     <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
     <div class="auth-err" id="auth-err"></div>
   </div>
@@ -184,12 +220,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="topbar">
     <div class="logo">CSEB <span>Junior Clerk</span><sub>Cat 11 · 100 Marks</sub></div>
     <div class="topright">
-      <button class="tnav" onclick="jmp('#today-sec')">📌 <span class="tl">Today</span></button>
-      <button class="tnav" onclick="jmp('#pending-sec')">⚠ <span class="tl">Pending</span></button>
-      <button class="tnav" onclick="jmp('#syllabus-sec')">📚 <span class="tl">Syllabus</span></button>
+      <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
+      <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
+      <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
       <div class="sync-dot" id="sync-dot" title="Sync status"></div>
-      <span class="user-chip" id="user-chip"></span>
-      <button class="signout-btn" onclick="doSignOut()">Sign out</button>
+      <div class="profile-wrap">
+        <button class="profile-btn" onclick="toggleProfileMenu()" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
+          <div class="profile-avatar" id="profile-avatar">?</div>
+          <span class="profile-name" id="profile-name">Account</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="profile-drop hidden" id="profile-drop" role="menu">
+          <div class="pd-user">
+            <div class="pd-user-name" id="pd-name">—</div>
+            <div class="pd-user-email" id="pd-email">—</div>
+          </div>
+          <div class="pd-section">Appearance</div>
+          <button class="pd-item" onclick="setTheme('')" data-t="" role="menuitem">🌑 Dark</button>
+          <button class="pd-item" onclick="setTheme('amoled')" data-t="amoled" role="menuitem">⬛ AMOLED</button>
+          <button class="pd-item" onclick="setTheme('light')" data-t="light" role="menuitem">☀️ Light</button>
+          <div class="pd-sep"></div>
+          <button class="pd-item danger" onclick="doSignOut()" role="menuitem">↩ Sign out</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -399,7 +452,7 @@ window.switchTab=function(t){
   $('auth-overlay').dataset.mode=t;
 };
 $('auth-overlay').dataset.mode='login';
-$('signup-name-field').classList.add('hidden');
+// name field hidden via inline style already
 
 function authErrMsg(code){
   const m={
@@ -572,17 +625,48 @@ function syncState(s){
   dot.title=s==='synced'?'Synced':s==='syncing'?'Syncing…':'Offline';
 }
 
-// ── FIRESTORE SAVE (debounced) ──
-async function saveToFirestore(data){
-  if(!currentUid)return;
+// ── SAVE: localStorage first, cloud every 10s ──
+const LS_KEY='cseb_state';
+let pendingCloudWrite=false;
+
+function saveLocal(data){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(data));}catch(e){}
+}
+function loadLocal(){
+  try{const r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):{};}catch(e){return {};}
+}
+
+async function flushToCloud(){
+  if(!currentUid||!pendingCloudWrite)return;
   syncState('syncing');
-  clearTimeout(writeDebounce);
-  writeDebounce=setTimeout(async()=>{
-    try{
-      await setDoc(doc(db,'users',currentUid),data,{merge:true});
-      syncState('synced');
-    }catch(e){console.error('Save error',e);syncState('');}
-  },800);
+  try{
+    await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
+    pendingCloudWrite=false;
+    syncState('synced');
+  }catch(e){console.error('Cloud save failed',e);syncState('');}
+}
+
+function scheduleCloudSync(){
+  if(!pendingCloudWrite){
+    pendingCloudWrite=true;
+    syncState('syncing');
+    clearTimeout(writeDebounce);
+    writeDebounce=setTimeout(flushToCloud,10000);
+  }
+}
+
+// flush on tab close
+window.addEventListener('beforeunload',()=>{
+  if(pendingCloudWrite)flushToCloud();
+});
+// also flush on visibility hidden (mobile background)
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden&&pendingCloudWrite)flushToCloud();
+});
+
+function saveToFirestore(data){
+  saveLocal(data);
+  scheduleCloudSync();
 }
 
 // ── APPLY DATA FROM FIRESTORE ──
@@ -749,8 +833,13 @@ function initApp(user){
   $('auth-overlay').classList.add('hidden');
   $('app').classList.add('visible');
 
-  // topbar user
-  $('user-chip').textContent=user.displayName||user.email;
+  // profile dropdown
+  const name=user.displayName||user.email.split('@')[0];
+  const initials=name.slice(0,2).toUpperCase();
+  $('profile-avatar').textContent=initials;
+  $('profile-name').textContent=name;
+  $('pd-name').textContent=user.displayName||name;
+  $('pd-email').textContent=user.email;
   $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('d11').textContent=dLeft("2026-07-11");
   $('d10').textContent=dLeft("2026-08-08");
@@ -788,6 +877,20 @@ onAuthStateChanged(auth,user=>{
     $('auth-overlay').classList.remove('hidden');
   }
 });
+
+// ── THEME ──
+function setTheme(t){
+  document.body.dataset.theme=t;
+  localStorage.setItem('cseb_theme',t);
+  document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
+  $('profile-drop')&&$('profile-drop').classList.add('hidden');
+}
+window.setTheme=setTheme;
+window.toggleProfileMenu=function(){$('profile-drop').classList.toggle('hidden');};
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.profile-wrap'))$('profile-drop')&&$('profile-drop').classList.add('hidden');
+});
+(function(){setTheme(localStorage.getItem('cseb_theme')||'');})();
 </script>
 </body>
 </html>
