@@ -195,7 +195,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           </div>
           <div id="pd-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:3px 6px;padding:8px 12px 10px;border-bottom:1px solid var(--border);font-size:.68rem;font-family:var(--mono);color:var(--dim)"></div>
           <div class="pd-section">Appearance</div>
-          <button class="pd-item" data-t="amoled" role="menuitem">AMOLED</button>
+          <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
           <button class="pd-item" data-t="light" role="menuitem">Light</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
@@ -776,10 +776,23 @@ onAuthStateChanged(auth,user=>{
   }
 });
 
-function setTheme(t){
-  document.body.dataset.theme=t;localStorage.setItem('cseb_theme',t);
+function detectSystemTheme(){
+  return window.matchMedia('(prefers-color-scheme: dark)').matches?'amoled':'light';
+}
+function applyTheme(t){
+  document.body.dataset.theme=t;
   document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
+function setTheme(t){
+  applyTheme(t);localStorage.setItem('cseb_theme',t);
+}
+function initTheme(){
+  const saved=localStorage.getItem('cseb_theme');
+  applyTheme(saved||detectSystemTheme());
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
+  if(!localStorage.getItem('cseb_theme'))applyTheme(e.matches?'amoled':'light');
+});
 
 // ── PROFILE DROPDOWN FIX ──
 // btn click toggles; stopPropagation on BOTH btn AND dropdown prevents doc-click closing it
@@ -805,7 +818,7 @@ document.addEventListener('click',function(){
   $('profile-drop')&&$('profile-drop').classList.add('hidden');
 });
 
-setTheme(localStorage.getItem('cseb_theme')||'amoled');
+initTheme();
 </script>
 </body>
 </html>
