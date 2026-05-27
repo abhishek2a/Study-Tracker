@@ -63,9 +63,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .user-chip{font-size:.68rem;color:var(--dim);font-family:var(--mono);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
 .signout-btn{font-size:.68rem;padding:4px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;flex-shrink:0}
 .signout-btn:hover{border-color:var(--red);color:var(--red)}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:.3s}
-.sync-dot.syncing{background:var(--accent);animation:pulse .8s infinite}
-.sync-dot.synced{background:var(--green)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* WRAP */
@@ -223,9 +220,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
       <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
-      <div class="sync-dot" id="sync-dot" title="Sync status"></div>
       <div class="profile-wrap">
-        <button class="profile-btn" onclick="toggleProfileMenu()" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
+        <button class="profile-btn" onclick="event.stopPropagation();toggleProfileMenu()" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
           <div class="profile-avatar" id="profile-avatar">?</div>
           <span class="profile-name" id="profile-name">Account</span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -234,9 +230,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-user">
             <div class="pd-user-name" id="pd-name">—</div>
             <div class="pd-user-email" id="pd-email">—</div>
+            <div id="pd-sync" style="font-size:.62rem;font-family:var(--mono);margin-top:4px;color:var(--dim)">● Offline</div>
           </div>
+          <div id="pd-stats" style="display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:.72rem;font-family:var(--mono);color:var(--dim)"></div>
           <div class="pd-section">Appearance</div>
-          <button class="pd-item" onclick="setTheme('')" data-t="" role="menuitem">🌑 Dark</button>
           <button class="pd-item" onclick="setTheme('amoled')" data-t="amoled" role="menuitem">⬛ AMOLED</button>
           <button class="pd-item" onclick="setTheme('light')" data-t="light" role="menuitem">☀️ Light</button>
           <div class="pd-sep"></div>
@@ -411,12 +408,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, getDoc
+  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -429,8 +427,14 @@ const app = initializeApp({
   measurementId:"G-W0VWF51FSW"
 });
 getAnalytics(app);
+initializeAppCheck(app,{
+  provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
+  isTokenAutoRefreshEnabled:true
+});
 const auth = getAuth(app);
 const db = getFirestore(app);
+// offline persistence — syncs automatically when back online
+enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
 
 // ── GLOBALS ──
 let currentUid = null;
@@ -618,11 +622,13 @@ function dLeft(s){
   return diff<0?diff+'d ago':diff===0?'🎯 TODAY':diff+' days left';
 }
 
-// ── SYNC DOT ──
+// ── SYNC → shown in profile dropdown ──
 function syncState(s){
-  const dot=$('sync-dot');
-  dot.className='sync-dot '+(s==='syncing'?'syncing':s==='synced'?'synced':'');
-  dot.title=s==='synced'?'Synced':s==='syncing'?'Syncing…':'Offline';
+  const el=$('pd-sync');
+  if(!el)return;
+  if(s==='syncing'){el.textContent='⏳ Syncing…';el.style.color='var(--accent)';}
+  else if(s==='synced'){el.textContent='✓ Synced';el.style.color='var(--green)';}
+  else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
 
 // ── SAVE: localStorage first, cloud every 10s ──
@@ -655,11 +661,7 @@ function scheduleCloudSync(){
   }
 }
 
-// flush on tab close
-window.addEventListener('beforeunload',()=>{
-  if(pendingCloudWrite)flushToCloud();
-});
-// also flush on visibility hidden (mobile background)
+// visibilitychange: flush immediately when tab goes background
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&pendingCloudWrite)flushToCloud();
 });
@@ -804,8 +806,10 @@ function makeCard(){
 }
 
 // ── MAIN SYLLABUS ──
+let syllabusBoxes=[];// cached after first bind
 function bindSyllabus(){
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{
+  syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
+  syllabusBoxes.forEach(b=>{
     b.checked=!!remoteData[b.id];
     b.addEventListener('change',e=>{onCheck(e.target.id,e.target.checked);});
   });
@@ -813,8 +817,9 @@ function bindSyllabus(){
 
 // ── STATS ──
 function updateAll(){
-  const allBoxes=document.querySelectorAll('.main-sl input[type=checkbox]');
-  const total=allBoxes.length,done=[...allBoxes].filter(b=>b.checked).length;
+  const total=syllabusBoxes.length||document.querySelectorAll('.main-sl input[type=checkbox]').length;
+  const boxes=syllabusBoxes.length?syllabusBoxes:[...document.querySelectorAll('.main-sl input[type=checkbox]')];
+  const done=boxes.filter(b=>b.checked).length;
   const pct=total?Math.round(done/total*100):0;
   $('gfill').style.width=pct+'%';
   $('pct').textContent=pct+'%';
@@ -825,6 +830,24 @@ function updateAll(){
     if(mf)mf.style.width=Math.round(d/t*100)+'%';
     sp.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
   }
+  // update profile dropdown stats
+  const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
+  const streak=calcStreak();
+  const ps=$('pd-stats');
+  if(ps)ps.innerHTML=`<span>🔥 ${pct}% Complete</span><span>📅 ${streak}d Streak</span><span>🎯 ${examDiff>0?examDiff+'d to exam':'Exam day!'}</span>`;
+}
+
+function calcStreak(){
+  let s=0,d=new Date();
+  while(true){
+    d.setDate(d.getDate()-1);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const sc=SCH[k];
+    if(!sc||!sc.ids||!sc.ids.length)break;
+    const allDone=sc.ids.every(id=>remoteData[id]);
+    if(allDone)s++;else break;
+  }
+  return s;
 }
 
 // ── INIT APP ──
@@ -887,10 +910,11 @@ function setTheme(t){
 }
 window.setTheme=setTheme;
 window.toggleProfileMenu=function(){$('profile-drop').classList.toggle('hidden');};
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.profile-wrap'))$('profile-drop')&&$('profile-drop').classList.add('hidden');
+document.addEventListener('click',function(){
+  $('profile-drop')&&$('profile-drop').classList.add('hidden');
 });
-(function(){setTheme(localStorage.getItem('cseb_theme')||'');})();
+// default = amoled
+(function(){setTheme(localStorage.getItem('cseb_theme')||'amoled');})();
 </script>
 </body>
 </html>
