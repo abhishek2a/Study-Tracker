@@ -83,7 +83,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:11px}
-.day-card{border-radius:var(--radius);padding:20px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0}
+@keyframes cardHighlight{from{box-shadow:0 0 0 2px var(--blue)}to{box-shadow:0 0 0 0px transparent}}
+.day-card{border-radius:var(--radius);padding:20px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;animation:cardHighlight 2.5s ease-out}
 .day-card+.day-card{margin-top:12px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:rgba(77,150,240,.035)}.day-card.banking::before{background:var(--banking)}
@@ -103,6 +104,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-sub{font-size:.74rem;color:var(--dim);font-family:var(--mono);margin-bottom:13px}
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
+.defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0}
+.defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cl{list-style:none}
 .cl li{border-bottom:1px solid var(--border)}
 .cl li:last-child{border-bottom:none}
@@ -396,6 +399,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
+// cached DOM refs
+let domGfill,domPct,domSpills;
+// deferred dates: {date -> deferUntilTimestamp}
+let deferred={};
 const $=id=>document.getElementById(id);
 function jmp(s){const e=document.querySelector(s);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 window.jmp=jmp;
@@ -629,13 +636,20 @@ function onCheck(id,val){
 }
 
 function getPending(){
-  const r=[];
+  const now=Date.now(),r=[];
   for(const[date,s] of Object.entries(SCH)){
     if(date>=ts||!s.ids||!s.ids.length)continue;
+    if(deferred[date]&&deferred[date]>now)continue; // skip if deferred
     const u=s.ids.filter(id=>!remoteData[id]);
     if(u.length)r.push({date,s,unchecked:u});
   }
   return r;
+}
+
+function deferDate(date){
+  deferred[date]=Date.now()+86400000; // 24h
+  try{localStorage.setItem('cseb_deferred',JSON.stringify(deferred));}catch(e){}
+  renderPending();
 }
 
 function renderPending(){
@@ -645,7 +659,7 @@ function renderPending(){
     const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
     const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${LABELS[id]||id}</span></label></li>`).join('');
     return `<div class="day-card pending-card" style="margin-bottom:10px">
-      <div class="day-top"><h2>⚠ ${s.l}</h2><span class="day-badge">${dl} · Missed</span></div>
+      <div class="day-top"><h2>⚠ ${s.l}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
       <div class="day-sub">Complete pending topics</div>
       <ul class="cl">${items}</ul></div>`;
   }).join('');
@@ -654,6 +668,9 @@ function renderPending(){
       const sid=e.target.getAttribute('data-id');
       remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);renderPending();
     });
+  });
+  pc.querySelectorAll('.defer-btn').forEach(b=>{
+    b.addEventListener('click',e=>{deferDate(e.target.getAttribute('data-date'));});
   });
 }
 
@@ -712,12 +729,12 @@ function updateAll(){
   const boxes=syllabusBoxes;
   if(!boxes.length)return;
   const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
-  $('gfill').style.width=pct+'%';$('pct').textContent=pct+'%';
-  const sp=$('spills');sp.innerHTML='';
+  domGfill.style.width=pct+'%';domPct.textContent=pct+'%';
+  domSpills.innerHTML='';
   for(const[k,v] of Object.entries(SUBJS)){
     const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
     const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-    sp.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+    domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
   }
   const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
   const streak=calcStreak();
@@ -752,6 +769,10 @@ function initApp(user){
   $('d09').textContent=dLeft("2026-08-16");
   // enable persistence per-session after auth established
   enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
+  // cache DOM refs once
+  domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
+  // load deferred state
+  try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
   // seed from localStorage immediately to prevent empty-state flash
   try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
   makeCard();bindSyllabus();updateAll();renderPending();
