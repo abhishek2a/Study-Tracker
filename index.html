@@ -10,7 +10,7 @@
   --text:#dde1ea; --dim:#4e5668; --border:#1c1f26;
   --green:#2bbd88; --accent:#e09500; --blue:#4d96f0;
   --banking:#4d96f0; --accounting:#2bbd88; --act:#e09500;
-  --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#7a8aa0;
+  --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#7a8aa0; --audit:#f07850;
   --red:#e05555;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
@@ -99,6 +99,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-card.english{border-color:rgba(155,118,245,.2);background:rgba(155,118,245,.035)}.day-card.english::before{background:var(--english)}
 .day-card.reasoning{border-color:rgba(232,98,154,.2);background:rgba(232,98,154,.035)}.day-card.reasoning::before{background:var(--reasoning)}
 .day-card.gk{border-color:rgba(122,138,160,.2);background:rgba(122,138,160,.035)}.day-card.gk::before{background:var(--gk)}
+.day-card.audit{border-color:rgba(240,120,80,.2);background:rgba(240,120,80,.035)}.day-card.audit::before{background:var(--audit)}
 .day-card.mock{border-color:rgba(224,149,0,.25);background:rgba(224,149,0,.045)}.day-card.mock::before{background:var(--accent)}
 .day-card.eve{border-color:rgba(77,150,240,.3);background:rgba(77,150,240,.05)}.day-card.eve::before{background:linear-gradient(90deg,var(--accent),var(--blue))}
 .day-card.done{border-color:rgba(43,189,136,.28);background:rgba(43,189,136,.045)}.day-card.done::before{background:var(--green)}
@@ -150,7 +151,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   --text:#111318;--dim:#6b7385;--green:#1a9c6e;--accent:#b86e00;--blue:#2466c8;
   --red:#c0392b;
   --banking:#2466c8;--accounting:#1a9c6e;--act:#b86e00;
-  --principles:#0e9f9a;--english:#7c55e0;--reasoning:#c94d82;--gk:#5a6880
+  --principles:#0e9f9a;--english:#7c55e0;--reasoning:#c94d82;--gk:#5a6880;--audit:#d4602a
 }
 .profile-wrap{position:relative;flex-shrink:0}
 .profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;color:var(--text)}
@@ -466,7 +467,17 @@ const LABELS={
  gk5:"Governance & Systems (India/Kerala), Indian States & Characteristics",
  gk6:"Oceans, Continents, Global Warming — Kerala Geography, Districts, Rivers",
  gk7:"Agricultural Crops, Minerals, Green Revolution",
- gk8:"Art, Sports, Literature & Culture (World, India, Kerala)",gk9:"Current Affairs"
+ gk8:"Art, Sports, Literature & Culture (World, India, Kerala)",gk9:"Current Affairs",
+ aud1:"Origin, Definition, Scope & Advantages of Audit",
+ aud2:"Objects of Audit",
+ aud3:"Audit Classification, Audit Fees & Audit Cost",
+ aud4:"Types of Audit: Concurrent, Team, Test, Administrative Audit",
+ aud5:"Special Features of Co-op Audit",
+ aud6:"Vouching, Internal Control & Internal Check",
+ aud7:"Valuation of Assets & Liabilities — Auditor's Duty",
+ aud8:"Preparation of Audit Note & Certificate",
+ aud9:"Audit Defects & Rectification",
+ aud10:"Asset Classification & Provisioning Norms"
 };
 const SUBJS={
  banking:   {ids:["bnk1","bnk2","bnk3","bnk4","bnk5","bnk6","bnk7","bnk8","bnk9","bnk10","bnk11","bnk12","bnk13","bnk14","bnk15","bnk16"],c:"var(--banking)",n:"Banking",m:"20 Marks"},
@@ -479,6 +490,57 @@ const SUBJS={
 };
 // register CSEB11 course data — add new courses in same pattern
 COURSE_DATA['CSEB11']={sch:SCH,labels:LABELS,subjs:SUBJS};
+
+// ── CAT09: Assistant Secretary (exam 16 Aug 2026) ──
+const SUBJS_CAT09={
+ banking:   {ids:["bnk1","bnk2","bnk3","bnk4","bnk5","bnk6","bnk7","bnk8","bnk9","bnk10","bnk11","bnk12","bnk13","bnk14","bnk15","bnk16"],c:"var(--banking)",n:"Banking",m:"20 Marks"},
+ accounting:{ids:["acc1","acc2","acc3","acc4","acc5","acc6","acc7","acc8","acc9","acc10","acc11","acc12","acc13","acc14"],c:"var(--accounting)",n:"Accounting",m:"15 Marks"},
+ principles:{ids:["prin1","prin2","prin3","prin4","prin5","prin6","prin7","prin8","prin9","prin10","prin11","prin12","prin13","prin14","prin15","prin16","prin17"],c:"var(--principles)",n:"Principles of Co-op",m:"10 Marks"},
+ act:       {ids:["act1","act2","act3","act4","act5","act6","act7"],c:"var(--act)",n:"Act & Rules",m:"15 Marks"},
+ audit:     {ids:["aud1","aud2","aud3","aud4","aud5","aud6","aud7","aud8","aud9","aud10"],c:"var(--accent)",n:"Audit",m:"10 Marks"},
+ english:   {ids:["eng1","eng2","eng3","eng4","eng5","eng6","eng7","eng8","eng9","eng10"],c:"var(--english)",n:"General English",m:"10 Marks"},
+ reasoning: {ids:["res1","res2","res3","res4","res5","res6","res7","res8","res9"],c:"var(--reasoning)",n:"Reasoning",m:"10 Marks"},
+ gk:        {ids:["gk1","gk2","gk3","gk4","gk5","gk6","gk7","gk8","gk9"],c:"var(--gk)",n:"General Knowledge",m:"10 Marks"}
+};
+const SCH_CAT09={
+ "2026-07-12":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
+ "2026-07-13":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
+ "2026-07-14":{p:"principles",l:"Principles · Day 1/6",  ids:["prin1","prin2","prin3"]},
+ "2026-07-15":{p:"act",       l:"Act & Rules · Day 1/4", ids:["act1","act2"]},
+ "2026-07-16":{p:"english",   l:"English · Day 1/5",     ids:["eng1","eng2"]},
+ "2026-07-17":{p:"reasoning", l:"Reasoning · Day 1/5",   ids:["res1","res2"]},
+ "2026-07-18":{p:"banking",   l:"Banking · Day 2/8",     ids:["bnk3","bnk4"]},
+ "2026-07-19":{p:"accounting",l:"Accounting · Day 2/7",  ids:["acc3","acc4"]},
+ "2026-07-20":{p:"principles",l:"Principles · Day 2/6",  ids:["prin4","prin5","prin6"]},
+ "2026-07-21":{p:"act",       l:"Act & Rules · Day 2/4", ids:["act3","act4"]},
+ "2026-07-22":{p:"english",   l:"English · Day 2/5",     ids:["eng3","eng4"]},
+ "2026-07-23":{p:"reasoning", l:"Reasoning · Day 2/5",   ids:["res3","res4"]},
+ "2026-07-24":{p:"banking",   l:"Banking · Day 3/8",     ids:["bnk5","bnk6"]},
+ "2026-07-25":{p:"accounting",l:"Accounting · Day 3/7",  ids:["acc5","acc6"]},
+ "2026-07-26":{p:"principles",l:"Principles · Day 3/6",  ids:["prin7","prin8","prin9"]},
+ "2026-07-27":{p:"act",       l:"Act & Rules · Day 3/4", ids:["act5","act6"]},
+ "2026-07-28":{p:"english",   l:"English · Day 3/5",     ids:["eng5","eng6"]},
+ "2026-07-29":{p:"reasoning", l:"Reasoning · Day 3/5",   ids:["res5","res6"]},
+ "2026-07-30":{p:"banking",   l:"Banking · Day 4/8",     ids:["bnk7","bnk8"]},
+ "2026-07-31":{p:"accounting",l:"Accounting · Day 4/7",  ids:["acc7","acc8"]},
+ "2026-08-01":{p:"principles",l:"Principles · Day 4/6",  ids:["prin10","prin11","prin12"]},
+ "2026-08-02":{p:"act",       l:"Act & Rules · Day 4/4", ids:["act7"]},
+ "2026-08-03":{p:"banking",   l:"Banking · Day 5/8",     ids:["bnk9","bnk10"]},
+ "2026-08-04":{p:"accounting",l:"Accounting · Day 5/7",  ids:["acc9","acc10"]},
+ "2026-08-05":{p:"principles",l:"Principles · Day 5/6",  ids:["prin13","prin14","prin15"]},
+ "2026-08-06":{p:"audit",     l:"Audit · Day 1/5",       ids:["aud1","aud2"]},
+ "2026-08-07":{p:"banking",   l:"Banking · Day 6/8",     ids:["bnk11","bnk12"]},
+ "2026-08-08":{p:"accounting",l:"Accounting · Day 6/7",  ids:["acc11","acc12"]},
+ "2026-08-09":{p:"principles",l:"Principles · Day 6/6 🎉",ids:["prin16","prin17"]},
+ "2026-08-10":{p:"audit",     l:"Audit · Day 2/5",       ids:["aud3","aud4"]},
+ "2026-08-11":{p:"banking",   l:"Banking · Day 7/8",     ids:["bnk13","bnk14"]},
+ "2026-08-12":{p:"accounting",l:"Accounting · Day 7/7 🎉",ids:["acc13","acc14"]},
+ "2026-08-13":{p:"audit",     l:"Audit · Day 3/5",       ids:["aud5","aud6"]},
+ "2026-08-14":{p:"banking",   l:"Banking · Day 8/8 🎉",  ids:["bnk15","bnk16"]},
+ "2026-08-15":{p:"audit",     l:"Audit · Day 4/5",       ids:["aud7","aud8"]},
+ "2026-08-16":{p:"eve",       l:"Exam Day — Cat 09",     ids:[]}
+};
+COURSE_DATA['CAT09']={sch:SCH_CAT09,labels:LABELS,subjs:SUBJS_CAT09};
 // get active course data, fallback CSEB11
 function getCourseData(){return COURSE_DATA[remoteData.activeCourse||DEFAULT_COURSE]||COURSE_DATA[DEFAULT_COURSE];}
 
@@ -723,7 +785,7 @@ function calcStreak(){
   return s;
 }
 
-const COURSE_CODES={'CSEB11':'CSEB'};
+const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary'};
 const DEFAULT_COURSE='CSEB11';
 
 function renderCourses(data){
