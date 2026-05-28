@@ -483,6 +483,8 @@ window.submitAuth=async function(){
 
 window.doSignOut=async function(){await signOut(auth);};
 
+// Course data registry — add new courses here as COURSE_CODES[key]
+const COURSE_DATA={};
 const SCH={
  "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
  "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
@@ -602,6 +604,10 @@ const SUBJS={
  reasoning: {ids:["res1","res2","res3","res4","res5","res6","res7","res8","res9"],c:"var(--reasoning)",n:"Reasoning"},
  gk:        {ids:["gk1","gk2","gk3","gk4","gk5","gk6","gk7","gk8","gk9"],c:"var(--gk)",n:"GK"}
 };
+// register CSEB11 course data — add new courses in same pattern
+COURSE_DATA['CSEB11']={sch:SCH,labels:LABELS,subjs:SUBJS};
+// get active course data, fallback CSEB11
+function getCourseData(){return COURSE_DATA[remoteData.activeCourse||DEFAULT_COURSE]||COURSE_DATA[DEFAULT_COURSE];}
 
 const now=new Date();
 const pad=n=>String(n).padStart(2,'0');
@@ -683,10 +689,11 @@ function getPending(){
   return r;
 }
 
-function deferDate(date){
-  deferred[date]=Date.now()+86400000; // 24h
+function deferDate(date,cardEl){
+  deferred[date]=Date.now()+86400000;
   try{localStorage.setItem('cseb_deferred',JSON.stringify(deferred));}catch(e){}
-  renderPending();
+  if(cardEl){cardEl.style.transition='opacity .3s';cardEl.style.opacity='0';setTimeout(renderPending,320);}
+  else renderPending();
 }
 
 function renderPending(){
@@ -707,7 +714,7 @@ function renderPending(){
     });
   });
   pc.querySelectorAll('.defer-btn').forEach(b=>{
-    b.addEventListener('click',e=>{deferDate(e.target.getAttribute('data-date'));});
+    b.addEventListener('click',e=>{deferDate(b.getAttribute('data-date'),b.closest('.day-card'));});
   });
 }
 
@@ -829,8 +836,9 @@ document.getElementById('pd-course-add-btn').addEventListener('click',async func
   inp.value='';renderCourses(remoteData);
 });
 
+function hideSplash(){setTimeout(()=>$('splash').classList.add('hidden'),1400);}
+
 function initApp(user){
-  $('splash').classList.add('hidden');
   $('auth-overlay').classList.add('hidden');
   $('app').classList.add('visible');
   const name=user.displayName||user.email.split('@')[0];
@@ -850,14 +858,13 @@ function initApp(user){
   // seed localStorage instantly → no empty flash
   try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
   makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
-  $('splash').classList.add('hidden'); // hide splash as soon as local data ready
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   // fast path: getDoc once for immediate cloud data, then subscribe for live updates
   getDoc(doc(db,'users',user.uid)).then(snap=>{
     if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    renderCourses(remoteData);syncState('synced');
-  }).catch(()=>{renderCourses(remoteData);});
+    renderCourses(remoteData);syncState('synced');hideSplash();
+  }).catch(()=>{renderCourses(remoteData);hideSplash();});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
@@ -870,7 +877,6 @@ onAuthStateChanged(auth,user=>{
   else{
     currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
     $('splash').classList.add('hidden');
-    $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
   }
 });
