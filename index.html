@@ -327,8 +327,7 @@ function authErrMsg(code){
 }
 
 // course codes map — add new courses here
-const COURSE_CODES={'CSEB11':'CSEB Junior Clerk Cat 11'};
-const DEFAULT_COURSE='CSEB11';
+// course codes — add new courses here
 
 window.submitAuth=async function(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
@@ -586,8 +585,9 @@ function renderPending(){
 }
 
 function makeCard(){
-  const dc=$('daycard'),sched=SCH[ts];
-  const tag='<span class="exam-tag">Junior Clerk · Cat 11 · 11 Jul 2026</span>';
+  const {sch,labels}=getCourseData();
+  const dc=$('daycard'),sched=sch[ts];
+  const tag='<span class="exam-tag">CSEB · Cat 11 · 11 Jul 2026</span>';
   const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
   if(!sched){
     const done=ts>"2026-07-11";
@@ -598,9 +598,9 @@ function makeCard(){
   }
   let inner='';
   if(sched.p==='mock'){
-    inner=`${tag}<div class="day-sub">Full 100-mark timed mock — review wrong answers</div><ul class="cl">
-      <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full 100-mark mock (timed)</span></label></li>
-      <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer — note weak areas</span></label></li>
+    inner=`${tag}<div class="day-sub">${sched.l}</div><ul class="cl">
+      <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
+      <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='eve'){
     inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
@@ -608,7 +608,7 @@ function makeCard(){
       <li><label><input type="checkbox" id="e2" ${remoteData['misc_e2']?'checked':''}><span>Prepare: Hall ticket, ID, pens, water</span></label></li>
       <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
   } else {
-    const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${LABELS[id]||id}</span></label></li>`).join('');
+    const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     inner=`${tag}<div class="day-sub">${sched.l} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
     <div class="mock-mini"><div class="mock-mini-lbl">📝 Daily Practice Quiz</div><ul class="cl">
       <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
@@ -627,8 +627,21 @@ function makeCard(){
   });
 }
 
+function renderSyllabus(){
+  const {subjs,labels}=getCourseData();
+  const sg=$('dynamic-syllabus');if(!sg)return;
+  sg.innerHTML=Object.entries(subjs).map(([k,v])=>{
+    const items=v.ids.map(id=>`<li><label><input type="checkbox" id="${id}"><span>${labels[id]||id}</span></label></li>`).join('');
+    return `<div class="subj-card">
+      <div class="subj-hdr"><h3 style="color:${v.c}">${v.n}</h3><span class="mbadge" style="background:${v.c}1a;color:${v.c};border:1px solid ${v.c}33">${v.m||''}</span></div>
+      <div class="mini-track"><div class="mini-fill" id="mf-${k}" style="background:${v.c}"></div></div>
+      <ul class="cl main-sl" data-s="${k}">${items}</ul></div>`;
+  }).join('');
+}
+
 let syllabusBoxes=[];
 function bindSyllabus(){
+  renderSyllabus();
   syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
   syllabusBoxes.forEach(b=>{
     b.checked=!!remoteData[b.id];
@@ -637,15 +650,19 @@ function bindSyllabus(){
 }
 
 function updateAll(){
+  const {subjs}=getCourseData();
   const boxes=syllabusBoxes;
   if(!boxes.length)return;
   const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
-  domGfill.style.width=pct+'%';domPct.textContent=pct+'%';
-  domSpills.innerHTML='';
-  for(const[k,v] of Object.entries(SUBJS)){
-    const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
-    const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-    domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+  if(domGfill)domGfill.style.width=pct+'%';
+  if(domPct)domPct.textContent=pct+'%';
+  if(domSpills){
+    domSpills.innerHTML='';
+    for(const[k,v] of Object.entries(subjs)){
+      const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
+      const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+      domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+    }
   }
   const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
   const streak=calcStreak();
@@ -657,15 +674,18 @@ function updateAll(){
 }
 
 function calcStreak(){
-  let s=0,d=new Date();
+  const {sch}=getCourseData();let s=0,d=new Date();
   while(true){
     d.setDate(d.getDate()-1);
     const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const sc=SCH[k];if(!sc||!sc.ids||!sc.ids.length)break;
+    const sc=sch[k];if(!sc||!sc.ids||!sc.ids.length)break;
     if(sc.ids.every(id=>remoteData[id]))s++;else break;
   }
   return s;
 }
+
+const COURSE_CODES={'CSEB11':'CSEB'};
+const DEFAULT_COURSE='CSEB11';
 
 function renderCourses(data){
   const pc=$('pd-courses');if(!pc)return;
@@ -681,7 +701,9 @@ function renderCourses(data){
       const code=btn.getAttribute('data-course');
       remoteData.activeCourse=code;
       await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
-      renderCourses(remoteData);$('profile-drop').classList.add('hidden');
+      renderCourses(remoteData);
+      makeCard();bindSyllabus();updateAll();renderPending();
+      $('profile-drop').classList.add('hidden');
     });
   });
 }
