@@ -65,10 +65,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .hdr-row h1{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;letter-spacing:-.03em}
 .hdr-row p{font-size:.78rem;font-family:var(--mono);color:var(--dim);margin-top:3px}
 .exam-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:11px 18px;flex:1;min-width:130px}
+.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:11px 18px;flex:1;min-width:130px;transition:.2s}
+.epill.next-exam{border-color:rgba(77,150,240,.4);background:rgba(77,150,240,.06)}
+.epill.done-exam{border-color:rgba(43,189,136,.3);background:rgba(43,189,136,.04);opacity:.7}
 .epill .en{font-size:.6rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
 .epill .ed{font-size:.92rem;font-weight:700;color:var(--accent);margin:2px 0}
+.epill .en2{font-size:.62rem;color:var(--dim);margin-top:2px;line-height:1.3}
 .epill .edd{font-size:.65rem;font-family:var(--mono);color:var(--green)}
+.epill.done-exam .ed{color:var(--green)}
+.epill.done-exam .edd{color:var(--green)}
 .prog-row{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:26px}
 .prog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:8px}
 .prog-top span{font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
@@ -244,11 +249,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="wrap">
     <div class="hdr-row"><h1>Study Tracker</h1><p id="todaydisp"></p></div>
 
-    <div class="exam-strip">
-      <div class="epill"><div class="en">Cat 11 · TARGET</div><div class="ed">11 Jul 2026</div><div class="edd" id="d11"></div></div>
-      <div class="epill"><div class="en">Cat 10</div><div class="ed">08 Aug 2026</div><div class="edd" id="d10"></div></div>
-      <div class="epill"><div class="en">Cat 09</div><div class="ed">16 Aug 2026</div><div class="edd" id="d09"></div></div>
-    </div>
+    <div class="exam-strip" id="exam-strip"></div>
 
     <div class="prog-row">
       <div class="prog-top"><span>Syllabus Complete</span><strong id="pct">0%</strong></div>
@@ -679,12 +680,45 @@ function updateAll(){
     <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
 }
 
+const EXAMS=[
+  {cat:'Cat 11/2026',name:'Junior Clerk / Cashier',sub:'Special Grade · Class-I Banks',date:'2026-07-11',omr:true,target:true},
+  {cat:'Cat 10/2026',name:'Junior Clerk / Cashier',sub:'Super Grade Banks',date:'2026-08-08',omr:true},
+  {cat:'Cat 09/2026',name:'Assistant Secretary',sub:'',date:'2026-08-16',omr:false},
+  {cat:'Cat 12/2026',name:'Junior Clerk / Cashier',sub:'Class-II to Class-VII Banks',date:'2026-07-26',omr:true},
+];
+
+function renderExamStrip(){
+  const es=$('exam-strip');if(!es)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  // find next upcoming exam
+  const upcoming=EXAMS.filter(e=>new Date(e.date)>=today).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const nextDate=upcoming.length?upcoming[0].date:null;
+  es.innerHTML=EXAMS.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>{
+    const[y,m,d]=e.date.split('-').map(Number);
+    const diff=Math.ceil((new Date(y,m-1,d)-today)/86400000);
+    const isDone=diff<0;const isNext=e.date===nextDate;
+    const cls=isDone?'done-exam':isNext?'next-exam':'';
+    const status=isDone?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
+    const statusColor=isDone?'var(--green)':diff===0?'var(--accent)':'var(--green)';
+    const label=isDone?'Completed':(e.target?'Target':'Upcoming');
+    return `<div class="epill ${cls}">
+      <div class="en">${e.cat} · ${label}</div>
+      <div class="ed">${new Date(e.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="en2">${e.name}${e.sub?'<br><span style="opacity:.7">'+e.sub+'</span>':''}</div>
+      <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div>
+    </div>`;
+  }).join('');
+}
+
 function calcStreak(){
-  const {sch}=getCourseData();let s=0,d=new Date();
-  while(true){
+  const {sch}=getCourseData();let s=0,d=new Date(),tries=0;
+  while(tries<60){
+    tries++;
     d.setDate(d.getDate()-1);
     const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const sc=sch[k];if(!sc||!sc.ids||!sc.ids.length)break;
+    const sc=sch[k];
+    if(!sc)break; // outside schedule entirely
+    if(!sc.ids||!sc.ids.length)continue; // mock/eve day — skip, don't break streak
     if(sc.ids.every(id=>remoteData[id]))s++;else break;
   }
   return s;
@@ -743,9 +777,7 @@ function initApp(user){
   $('pd-name').textContent=user.displayName||name;
   $('pd-email').textContent=user.email;
   $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  $('d11').textContent=dLeft("2026-07-11");
-  $('d10').textContent=dLeft("2026-08-08");
-  $('d09').textContent=dLeft("2026-08-16");
+  renderExamStrip();
   // cache DOM refs once
   domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
   // load deferred state
