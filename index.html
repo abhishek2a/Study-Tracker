@@ -140,7 +140,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 [data-theme="amoled"]{--bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868}
-[data-theme="light"]{--bg:#f4f5f7;--s1:#ffffff;--s2:#f0f1f3;--s3:#e8eaed;--border:#dde0e6;--text:#1a1d24;--dim:#6a7290;--green:#1a9c6e;--accent:#c07800;--blue:#2d7fe0}
+[data-theme="light"]{
+  --bg:#f2f3f5;--s1:#ffffff;--s2:#eceef1;--s3:#e2e4e8;--border:#d0d3da;
+  --text:#111318;--dim:#6b7385;--green:#1a9c6e;--accent:#b86e00;--blue:#2466c8;
+  --red:#c0392b;
+  --banking:#2466c8;--accounting:#1a9c6e;--act:#b86e00;
+  --principles:#0e9f9a;--english:#7c55e0;--reasoning:#c94d82;--gk:#5a6880
+}
 .profile-wrap{position:relative;flex-shrink:0}
 .profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;color:var(--text)}
 .profile-btn:hover{background:var(--s2)}
@@ -227,7 +233,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-sep"></div>
           <div class="pd-section">Appearance</div>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
-          <button class="pd-item" data-t="light" role="menuitem">Light</button>
+          <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
         </div>
