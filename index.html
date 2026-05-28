@@ -6,15 +6,15 @@
 <title>CSEB</title>
 <style>
 :root {
-  --bg:#030405; --s1:#0a0b0d; --s2:#0f1013; --s3:#16181c;
-  --text:#dde1ea; --dim:#4e5668; --border:#1c1f26;
-  --green:#2bbd88; --accent:#e09500; --blue:#4d96f0;
-  --banking:#4d96f0; --accounting:#2bbd88; --act:#e09500;
-  --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#7a8aa0;
-  --red:#e05555;
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
-  --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
-  --radius:12px;
+  --bg:#030405; --s1:#0a0b0d; --s2:#0f1013; --s3:#16181c;
+  --text:#dde1ea; --dim:#4e5668; --border:#1c1f26;
+  --green:#2bbd88; --accent:#e09500; --blue:#4d96f0;
+  --banking:#4d96f0; --accounting:#2bbd88; --act:#e09500;
+  --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#7a8aa0;
+  --red:#e05555;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
+  --radius:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:18px;scroll-behavior:smooth}
@@ -37,8 +37,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .auth-btn:hover{opacity:.88}
 .auth-err{font-size:.75rem;color:var(--red);margin-top:10px;min-height:18px;font-family:var(--mono)}
 @media(max-width:480px){
-  #auth-overlay{align-items:flex-start;padding:0}
-  .auth-box{border-radius:0;border-left:none;border-right:none;border-top:none;min-height:100svh;padding:40px 20px 32px}
+  #auth-overlay{align-items:flex-start;padding:0}
+  .auth-box{border-radius:0;border-left:none;border-right:none;border-top:none;min-height:100svh;padding:40px 20px 32px}
 }
 #app{display:none}
 #app.visible{display:block}
@@ -148,11 +148,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .profile-name{font-size:.76rem;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:480px){.profile-name{max-width:64px}}
 .profile-drop{
-  position:absolute;top:calc(100% + 10px);right:0;
-  background:var(--s1);border:1px solid var(--border);border-radius:16px;
-  padding:5px;z-index:400;min-width:248px;
-  box-shadow:0 24px 64px rgba(0,0,0,.85),0 4px 16px rgba(0,0,0,.4);
-  font-family:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:5px;z-index:400;min-width:248px;
+  box-shadow:0 24px 64px rgba(0,0,0,.85),0 4px 16px rgba(0,0,0,.4);
+  font-family:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
 }
 .profile-drop.hidden{display:none!important}
 .pd-user{padding:14px 14px 12px;border-bottom:1px solid var(--border);margin-bottom:4px}
@@ -176,225 +176,92 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <body>
 
 <div id="splash">
-  <div class="splash-logo">Study <span>Tracker</span></div>
-  <div class="splash-bar"><div class="splash-fill"></div></div>
+  <div class="splash-logo">Study <span>Tracker</span></div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
 </div>
 
 <div id="auth-overlay" class="hidden">
-  <div class="auth-box">
-    <div class="auth-logo">Study <span>Tracker</span></div>
-    <div class="auth-sub">Sign in to sync your progress across devices</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
-    </div>
-    <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
-    <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
-    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="" aria-label="Your name" autocomplete="name"></div>
-    <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
-    <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
-    <div class="auth-err" id="auth-err"></div>
-  </div>
+  <div class="auth-box">
+    <div class="auth-logo">Study <span>Tracker</span></div>
+    <div class="auth-sub">Sign in to sync your progress across devices</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+    <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
+    <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
+    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="" aria-label="Your name" autocomplete="name"></div>
+    <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
+    <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
 </div>
 
 <div id="app">
-  <div class="topbar">
-    <div class="logo">CSEB<sub>Cat 11 · 100 Marks</sub></div>
-    <div class="topright">
-      <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
-      <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
-      <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
-      <div class="profile-wrap">
-        <button class="profile-btn" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
-          <div class="profile-avatar" id="profile-avatar">?</div>
-          <span class="profile-name" id="profile-name">Account</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </button>
-        <div class="profile-drop hidden" id="profile-drop" role="menu">
-          <div class="pd-user">
-            <div class="pd-user-name" id="pd-name">—</div>
-            <div class="pd-user-email" id="pd-email">—</div>
-            <div id="pd-sync" class="pd-sync-row">● Offline</div>
-          </div>
-          <div class="pd-stats-block" id="pd-stats"></div>
-          <div class="pd-section">Course</div>
-          <div id="pd-courses"></div>
-          <div id="pd-add-course-row" style="padding:4px 4px 2px;display:flex;gap:4px;align-items:center">
-            <input id="pd-course-input" type="text" placeholder="Course code" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:.75rem;color:var(--text);font-family:var(--font);outline:none;text-transform:uppercase;letter-spacing:.05em" aria-label="Add course code">
-            <button id="pd-course-add-btn" style="padding:7px 11px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap">Add</button>
-          </div>
-          <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
-          <div class="pd-sep"></div>
-          <div class="pd-section">Appearance</div>
-          <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
-          <button class="pd-item" data-t="light" role="menuitem">Light</button>
-          <div class="pd-sep"></div>
-          <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="topbar">
+    <div class="logo">CSEB<sub>Cat 11 · 100 Marks</sub></div>
+    <div class="topright">
+      <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
+      <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
+      <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
+      <div class="profile-wrap">
+        <button class="profile-btn" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
+          <div class="profile-avatar" id="profile-avatar">?</div>
+          <span class="profile-name" id="profile-name">Account</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="profile-drop hidden" id="profile-drop" role="menu">
+          <div class="pd-user">
+            <div class="pd-user-name" id="pd-name">—</div>
+            <div class="pd-user-email" id="pd-email">—</div>
+            <div id="pd-sync" class="pd-sync-row">● Offline</div>
+          </div>
+          <div class="pd-stats-block" id="pd-stats"></div>
+          <div class="pd-section">Course</div>
+          <div id="pd-courses"></div>
+          <div id="pd-add-course-row" style="padding:4px 4px 2px;display:flex;gap:4px;align-items:center">
+            <input id="pd-course-input" type="text" placeholder="Course code" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:.75rem;color:var(--text);font-family:var(--font);outline:none;text-transform:uppercase;letter-spacing:.05em" aria-label="Add course code">
+            <button id="pd-course-add-btn" style="padding:7px 11px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap">Add</button>
+          </div>
+          <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
+          <div class="pd-sep"></div>
+          <div class="pd-section">Appearance</div>
+          <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
+          <button class="pd-item" data-t="light" role="menuitem">Light</button>
+          <div class="pd-sep"></div>
+          <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="wrap">
-    <div class="hdr-row"><h1>Study Tracker</h1><p id="todaydisp"></p></div>
+  <div class="wrap">
+    <div class="hdr-row"><h1>Study Tracker</h1><p id="todaydisp"></p></div>
 
-    <div class="exam-strip">
-      <div class="epill"><div class="en">Cat 11 · TARGET</div><div class="ed">11 Jul 2026</div><div class="edd" id="d11"></div></div>
-      <div class="epill"><div class="en">Cat 10</div><div class="ed">08 Aug 2026</div><div class="edd" id="d10"></div></div>
-      <div class="epill"><div class="en">Cat 09</div><div class="ed">16 Aug 2026</div><div class="edd" id="d09"></div></div>
-    </div>
+    <div class="exam-strip">
+      <div class="epill"><div class="en">Cat 11 · TARGET</div><div class="ed">11 Jul 2026</div><div class="edd" id="d11"></div></div>
+      <div class="epill"><div class="en">Cat 10</div><div class="ed">08 Aug 2026</div><div class="edd" id="d10"></div></div>
+      <div class="epill"><div class="en">Cat 09</div><div class="ed">16 Aug 2026</div><div class="edd" id="d09"></div></div>
+    </div>
 
-    <div class="prog-row">
-      <div class="prog-top"><span>Syllabus Complete</span><strong id="pct">0%</strong></div>
-      <div class="track"><div class="fill" id="gfill"></div></div>
-      <div class="spills" id="spills"></div>
-    </div>
+    <div class="prog-row">
+      <div class="prog-top"><span>Syllabus Complete</span><strong id="pct">0%</strong></div>
+      <div class="track"><div class="fill" id="gfill"></div></div>
+      <div class="spills" id="spills"></div>
+    </div>
 
-    <div class="sec" id="today-sec"><h2>📌 Today's Plan</h2><p>Auto refreshes daily</p></div>
-    <div class="day-grid">
-      <div id="daycard"></div>
-      <div>
-        <div class="pending-lbl" id="pending-sec">⚠ Pending Topics</div>
-        <div id="pendingcard"></div>
-      </div>
-    </div>
+    <div class="sec" id="today-sec"><h2>📌 Today's Plan</h2><p>Auto refreshes daily</p></div>
+    <div class="day-grid">
+      <div id="daycard"></div>
+      <div>
+        <div class="pending-lbl" id="pending-sec">⚠ Pending Topics</div>
+        <div id="pendingcard"></div>
+      </div>
+    </div>
 
-    <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
-    <div class="subj-grid">
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--banking)">Banking</h3><span class="mbadge" style="background:rgba(77,150,240,.1);color:var(--banking);border:1px solid rgba(77,150,240,.2)">20 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-banking" style="background:var(--banking)"></div></div>
-        <ul class="cl main-sl" data-s="banking">
-          <li><label><input type="checkbox" id="bnk1"><span>Banking System: Scheduled/Non-Scheduled, RRBs, Co-op Banks, Foreign, Small Finance, Payment Banks</span></label></li>
-          <li><label><input type="checkbox" id="bnk2"><span>CRR, SLR, Repo, Re-repo, Bank Rates — NABARD, NBFC</span></label></li>
-          <li><label><input type="checkbox" id="bnk3"><span>Banker & Customer Relationship — Types of Customers</span></label></li>
-          <li><label><input type="checkbox" id="bnk4"><span>Special Customers: Minors, Pardanishan Ladies, Blind, Lunatic, Insolvent</span></label></li>
-          <li><label><input type="checkbox" id="bnk5"><span>KYC — Know Your Customer Guidelines</span></label></li>
-          <li><label><input type="checkbox" id="bnk6"><span>Anti Money Laundering (AML) Guidelines of RBI</span></label></li>
-          <li><label><input type="checkbox" id="bnk7"><span>Regulatory & Supervisory Functions of RBI</span></label></li>
-          <li><label><input type="checkbox" id="bnk8"><span>NI Act 1881: Promissory Notes, Bills of Exchange, Cheques</span></label></li>
-          <li><label><input type="checkbox" id="bnk9"><span>Types of Crossings: General, Special, Non-Negotiable</span></label></li>
-          <li><label><input type="checkbox" id="bnk10"><span>Endorsements: Blank, Full, Conditional, Restrictive, Sans Recourse, Facultative</span></label></li>
-          <li><label><input type="checkbox" id="bnk11"><span>Payment Systems: RTGS, NEFT, UPI, ATMs, POS, QR Code, CBS, Debit/Credit Cards</span></label></li>
-          <li><label><input type="checkbox" id="bnk12"><span>Grievance: Integrated Ombudsman Scheme 2021 & COPRA 2019</span></label></li>
-          <li><label><input type="checkbox" id="bnk13"><span>Deposits: Savings, BSBDA, PMJDY, Small Accounts, FD, RD, Current A/c</span></label></li>
-          <li><label><input type="checkbox" id="bnk14"><span>Demand Drafts, Safe Deposit Lockers, Safe Custody of Articles</span></label></li>
-          <li><label><input type="checkbox" id="bnk15"><span>Nomination, Garnishee, Lien, Set Off, Power of Attorney, Pledge, Mortgage</span></label></li>
-          <li><label><input type="checkbox" id="bnk16"><span>Priority Sector (Agri, KCC, MSME) — Loan Types, SMA & NPA Norms</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--accounting)">Accounting</h3><span class="mbadge" style="background:rgba(43,189,136,.1);color:var(--accounting);border:1px solid rgba(43,189,136,.2)">20 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-accounting" style="background:var(--accounting)"></div></div>
-        <ul class="cl main-sl" data-s="accounting">
-          <li><label><input type="checkbox" id="acc1"><span>Definition, Objects, Branches, Advantages & Limitations of Financial Accounting</span></label></li>
-          <li><label><input type="checkbox" id="acc2"><span>Accounting Principles, Concepts & Conventions</span></label></li>
-          <li><label><input type="checkbox" id="acc3"><span>Journal, Ledger, Subsidiary Books, Trial Balance</span></label></li>
-          <li><label><input type="checkbox" id="acc4"><span>Errors & Rectification, Final Accounts & Adjustments</span></label></li>
-          <li><label><input type="checkbox" id="acc5"><span>Depreciation Methods, Bills of Exchange, Consignment</span></label></li>
-          <li><label><input type="checkbox" id="acc6"><span>Non-Trading Concern Accounts, Co-op Accounting (Day Book, Ledger, R&D Statement, BRS)</span></label></li>
-          <li><label><input type="checkbox" id="acc7"><span>Cost Types: Marginal, Standard, Opportunity, Sunk, Differential Cost</span></label></li>
-          <li><label><input type="checkbox" id="acc8"><span>Material Control: Bin Card, Stores Ledger, EOQ, Methods of Valuing Issues</span></label></li>
-          <li><label><input type="checkbox" id="acc9"><span>Labour Cost & Systems of Wage Payment</span></label></li>
-          <li><label><input type="checkbox" id="acc10"><span>Financial Planning: Forecasting, SWOT, Budgeting, Capital Budgeting, Cost of Capital</span></label></li>
-          <li><label><input type="checkbox" id="acc11"><span>Analysis: T&P&L, Balance Sheet, Ratio Analysis, Working Capital</span></label></li>
-          <li><label><input type="checkbox" id="acc12"><span>CVP Analysis: Break-Even, Margin of Safety, Comparative, Trend, Common Size Analysis</span></label></li>
-          <li><label><input type="checkbox" id="acc13"><span>Cash & Fund Flow Analysis</span></label></li>
-          <li><label><input type="checkbox" id="acc14"><span>Fraud: Causes, Fraud Triangle, Prevention — Statutory Audit</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--principles)">Principles of Co-op</h3><span class="mbadge" style="background:rgba(31,191,184,.1);color:var(--principles);border:1px solid rgba(31,191,184,.2)">15 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-principles" style="background:var(--principles)"></div></div>
-        <ul class="cl main-sl" data-s="principles">
-          <li><label><input type="checkbox" id="prin1"><span>ICA Principles, Values, Ethics, Co-op Commonwealth, Distinctive Features</span></label></li>
-          <li><label><input type="checkbox" id="prin2"><span>Co-op vs Joint Stock Company — Balancing Capitalism, Socialism, Communism</span></label></li>
-          <li><label><input type="checkbox" id="prin3"><span>Foreign Co-ops: England (Robert Owen), Germany (Raiffeisen/Schulze), Denmark Dairy</span></label></li>
-          <li><label><input type="checkbox" id="prin4"><span>Committees: AIRCS, VL Metha, AIRCRC, CRAFICARD, ACRC</span></label></li>
-          <li><label><input type="checkbox" id="prin5"><span>State Aid: NCDC, NDDB, NHB, NABARD</span></label></li>
-          <li><label><input type="checkbox" id="prin6"><span>Education & Training: NCUI, SCU, NCCT, VAMNICOM, ICM, CAPE, Co-op Week</span></label></li>
-          <li><label><input type="checkbox" id="prin7"><span>PACS, KSCB, KCC, Principal State Partnership Fund, NAFSCOB, COBI</span></label></li>
-          <li><label><input type="checkbox" id="prin8"><span>PCARDB, KSCARDB, Debenture Redemption Fund, NFARDB (Long Term Loans)</span></label></li>
-          <li><label><input type="checkbox" id="prin9"><span>Urban Co-op Banks, Employee Credit Societies, Housing Co-ops, Housefed, NFUCB</span></label></li>
-          <li><label><input type="checkbox" id="prin10"><span>Marketing & Processing: Market Fed, Kerafed, Rubco, RAIDCO, CAMPCO</span></label></li>
-          <li><label><input type="checkbox" id="prin11"><span>Consumer Co-ops: Consumerfed, Neethi Stores, Student Stores, NCCF</span></label></li>
-          <li><label><input type="checkbox" id="prin12"><span>Dairy Co-ops: APCOS, Primary Milk Societies, KCMMF</span></label></li>
-          <li><label><input type="checkbox" id="prin13"><span>Industrial Co-ops: Handloom, Coir, Beedi, Handicrafts — Hantex, Coirfed, Dinesh Beedi</span></label></li>
-          <li><label><input type="checkbox" id="prin14"><span>SC/ST Fed, Matsyafed, Vanithafed, Hospitalfed, Tourfed, Labourfed, ULCCS</span></label></li>
-          <li><label><input type="checkbox" id="prin15"><span>Schemes: Risk Fund, Deposit Guarantee, Pension, Ombudsman, Member Relief, Welfare Board</span></label></li>
-          <li><label><input type="checkbox" id="prin16"><span>Co-op Management: HRM, TNA, Budgeting, Asset/Liability Mgt, Leadership, Decision Making</span></label></li>
-          <li><label><input type="checkbox" id="prin17"><span>Co-operatives Departmental Set Up in Kerala</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--act)">Act & Rules</h3><span class="mbadge" style="background:rgba(224,149,0,.1);color:var(--act);border:1px solid rgba(224,149,0,.2)">15 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-act" style="background:var(--act)"></div></div>
-        <ul class="cl main-sl" data-s="act">
-          <li><label><input type="checkbox" id="act1"><span>KCS Act 1969: Registration of Societies & Membership</span></label></li>
-          <li><label><input type="checkbox" id="act2"><span>KCS Act 1969: Management, Share Capital & Funds</span></label></li>
-          <li><label><input type="checkbox" id="act3"><span>KCS Act 1969: Audit — Section 28 (Procedure & Requirements)</span></label></li>
-          <li><label><input type="checkbox" id="act4"><span>KCS Act 1969: Inspection (S.68) & Surcharge (S.65)</span></label></li>
-          <li><label><input type="checkbox" id="act5"><span>KCS Act 1969: Disputes (S.70) & Arbitration (S.69)</span></label></li>
-          <li><label><input type="checkbox" id="act6"><span>KCS Act 1969: Liquidation & Winding Up Process</span></label></li>
-          <li><label><input type="checkbox" id="act7"><span>Kerala Co-operative Societies Rules 1969 (As Amended) — Full</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--english)">General English</h3><span class="mbadge" style="background:rgba(155,118,245,.1);color:var(--english);border:1px solid rgba(155,118,245,.2)">10 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-english" style="background:var(--english)"></div></div>
-        <ul class="cl main-sl" data-s="english">
-          <li><label><input type="checkbox" id="eng1"><span>Types of Sentences, Interchange of Sentences, Parts of Speech</span></label></li>
-          <li><label><input type="checkbox" id="eng2"><span>Subject-Verb Agreement, Articles</span></label></li>
-          <li><label><input type="checkbox" id="eng3"><span>Primary & Modal Auxiliary Verbs, Question Tags</span></label></li>
-          <li><label><input type="checkbox" id="eng4"><span>Infinitive & Gerunds, Tenses, Conditional Sentences</span></label></li>
-          <li><label><input type="checkbox" id="eng5"><span>Prepositions & Use of Correlatives</span></label></li>
-          <li><label><input type="checkbox" id="eng6"><span>Direct & Indirect Speech, Active & Passive Voice, Correction of Sentences</span></label></li>
-          <li><label><input type="checkbox" id="eng7"><span>Singular & Plural, Change of Gender, Collective Nouns, Compound Words</span></label></li>
-          <li><label><input type="checkbox" id="eng8"><span>Synonyms, Antonyms, Phrasal Verbs, Words Often Confused</span></label></li>
-          <li><label><input type="checkbox" id="eng9"><span>Foreign Words & Phrases, One Word Substitutes</span></label></li>
-          <li><label><input type="checkbox" id="eng10"><span>Spelling Test, Idioms & Meanings, Common Abbreviations</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--reasoning)">Reasoning</h3><span class="mbadge" style="background:rgba(232,98,154,.1);color:var(--reasoning);border:1px solid rgba(232,98,154,.2)">10 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-reasoning" style="background:var(--reasoning)"></div></div>
-        <ul class="cl main-sl" data-s="reasoning">
-          <li><label><input type="checkbox" id="res1"><span>Numbers, Basic Operations, Fractions, Decimals, Percentage</span></label></li>
-          <li><label><input type="checkbox" id="res2"><span>Profit & Loss, Simple Interest & Compound Interest</span></label></li>
-          <li><label><input type="checkbox" id="res3"><span>Ratio & Proportion, Average</span></label></li>
-          <li><label><input type="checkbox" id="res4"><span>Time & Distance, Time & Work</span></label></li>
-          <li><label><input type="checkbox" id="res5"><span>Series, Problems on Math Signs, Position Determination Test</span></label></li>
-          <li><label><input type="checkbox" id="res6"><span>Analogy (Word, Alphabet, Number), Odd Man Out</span></label></li>
-          <li><label><input type="checkbox" id="res7"><span>Coding & Decoding, Number Review System, Clerical Ability</span></label></li>
-          <li><label><input type="checkbox" id="res8"><span>Family Relations, Sense of Direction</span></label></li>
-          <li><label><input type="checkbox" id="res9"><span>Time & Angles, Clock Reflection, Date & Calendar</span></label></li>
-        </ul>
-      </div>
-
-      <div class="subj-card">
-        <div class="subj-hdr"><h3 style="color:var(--gk)">General Knowledge</h3><span class="mbadge" style="background:rgba(122,138,160,.1);color:var(--gk);border:1px solid rgba(122,138,160,.2)">10 Marks</span></div>
-        <div class="mini-track"><div class="mini-fill" id="mf-gk" style="background:var(--gk)"></div></div>
-        <ul class="cl main-sl" data-s="gk">
-          <li><label><input type="checkbox" id="gk1"><span>United Nations: Structure, Organs, Specialised Agencies</span></label></li>
-          <li><label><input type="checkbox" id="gk2"><span>History: Freedom Struggle, History of Travancore, Social Reform Movements</span></label></li>
-          <li><label><input type="checkbox" id="gk3"><span>Political History (India & Kerala), Indian Constitution</span></label></li>
-          <li><label><input type="checkbox" id="gk4"><span>Five-Year Plans, Economic Reforms, Reorganisation of States</span></label></li>
-          <li><label><input type="checkbox" id="gk5"><span>Governance & Systems (India/Kerala), Indian States & Characteristics</span></label></li>
-          <li><label><input type="checkbox" id="gk6"><span>Oceans, Continents, Global Warming — Kerala Geography, Districts, Rivers</span></label></li>
-          <li><label><input type="checkbox" id="gk7"><span>Agricultural Crops, Minerals, Green Revolution</span></label></li>
-          <li><label><input type="checkbox" id="gk8"><span>Art, Sports, Literature & Culture (World, India, Kerala)</span></label></li>
-          <li><label><input type="checkbox" id="gk9"><span>Current Affairs</span></label></li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
+    <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
+    <div class="subj-grid" id="dynamic-syllabus"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -402,26 +269,26 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
 import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, signOut, updateProfile
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut, updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
+  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
-  apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
-  authDomain:"study-tracker-4ba08.firebaseapp.com",
-  projectId:"study-tracker-4ba08",
-  storageBucket:"study-tracker-4ba08.firebasestorage.app",
-  messagingSenderId:"388281368121",
-  appId:"1:388281368121:web:da2f142aaf7b4c1688d7e8",
-  measurementId:"G-W0VWF51FSW"
+  apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
+  authDomain:"study-tracker-4ba08.firebaseapp.com",
+  projectId:"study-tracker-4ba08",
+  storageBucket:"study-tracker-4ba08.firebasestorage.app",
+  messagingSenderId:"388281368121",
+  appId:"1:388281368121:web:da2f142aaf7b4c1688d7e8",
+  measurementId:"G-W0VWF51FSW"
 });
 getAnalytics(app);
 initializeAppCheck(app,{
-  provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
-  isTokenAutoRefreshEnabled:true
+  provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
+  isTokenAutoRefreshEnabled:true
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -437,26 +304,26 @@ function jmp(s){const e=document.querySelector(s);if(e)e.scrollIntoView({behavio
 window.jmp=jmp;
 
 window.switchTab=function(t){
-  $('tab-login').classList.toggle('active',t==='login');
-  $('tab-signup').classList.toggle('active',t==='signup');
-  $('auth-submit-btn').textContent=t==='login'?'Sign In':'Create Account';
-  $('signup-name-field').style.display=t==='signup'?'block':'none';
-  $('signup-code-field').style.display=t==='signup'?'block':'none';
-  $('auth-err').textContent='';
-  $('auth-overlay').dataset.mode=t;
+  $('tab-login').classList.toggle('active',t==='login');
+  $('tab-signup').classList.toggle('active',t==='signup');
+  $('auth-submit-btn').textContent=t==='login'?'Sign In':'Create Account';
+  $('signup-name-field').style.display=t==='signup'?'block':'none';
+  $('signup-code-field').style.display=t==='signup'?'block':'none';
+  $('auth-err').textContent='';
+  $('auth-overlay').dataset.mode=t;
 };
 $('auth-overlay').dataset.mode='login';
 
 function authErrMsg(code){
-  const m={
-    'auth/invalid-email':'Invalid email.',
-    'auth/user-not-found':'No account with that email.',
-    'auth/wrong-password':'Wrong password.',
-    'auth/email-already-in-use':'Email already registered — sign in instead.',
-    'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/network-request-failed':'Network error. Check connection.'
-  };
-  return m[code]||'Error: '+code;
+  const m={
+    'auth/invalid-email':'Invalid email.',
+    'auth/user-not-found':'No account with that email.',
+    'auth/wrong-password':'Wrong password.',
+    'auth/email-already-in-use':'Email already registered — sign in instead.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/network-request-failed':'Network error. Check connection.'
+  };
+  return m[code]||'Error: '+code;
 }
 
 // course codes map — add new courses here
@@ -464,21 +331,21 @@ const COURSE_CODES={'CSEB11':'CSEB Junior Clerk Cat 11'};
 const DEFAULT_COURSE='CSEB11';
 
 window.submitAuth=async function(){
-  const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
-  $('auth-err').textContent='';
-  if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
-  try{
-    if(mode==='signup'){
-      const rawCode=($('auth-code').value||'').trim().toUpperCase();
-      const code=rawCode&&COURSE_CODES[rawCode]?rawCode:DEFAULT_COURSE;
-      const name=$('auth-name').value.trim()||email.split('@')[0];
-      const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      await updateProfile(cred.user,{displayName:name});
-      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
-    } else {
-      await signInWithEmailAndPassword(auth,email,pass);
-    }
-  } catch(e){$('auth-err').textContent=authErrMsg(e.code);}
+  const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
+  $('auth-err').textContent='';
+  if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
+  try{
+    if(mode==='signup'){
+      const rawCode=($('auth-code').value||'').trim().toUpperCase();
+      const code=rawCode&&COURSE_CODES[rawCode]?rawCode:DEFAULT_COURSE;
+      const name=$('auth-name').value.trim()||email.split('@')[0];
+      const cred=await createUserWithEmailAndPassword(auth,email,pass);
+      await updateProfile(cred.user,{displayName:name});
+      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
+    } else {
+      await signInWithEmailAndPassword(auth,email,pass);
+    }
+  } catch(e){$('auth-err').textContent=authErrMsg(e.code);}
 };
 
 window.doSignOut=async function(){await signOut(auth);};
@@ -486,123 +353,123 @@ window.doSignOut=async function(){await signOut(auth);};
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_DATA={};
 const SCH={
- "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
- "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
- "2026-05-29":{p:"principles",l:"Principles · Day 1/9",  ids:["prin1","prin2"]},
- "2026-05-30":{p:"act",       l:"Act & Rules · Day 1/4", ids:["act1","act2"]},
- "2026-05-31":{p:"english",   l:"English · Day 1/5",     ids:["eng1","eng2"]},
- "2026-06-01":{p:"reasoning", l:"Reasoning · Day 1/5",   ids:["res1","res2"]},
- "2026-06-02":{p:"banking",   l:"Banking · Day 2/8",     ids:["bnk3","bnk4"]},
- "2026-06-03":{p:"accounting",l:"Accounting · Day 2/7",  ids:["acc3","acc4"]},
- "2026-06-04":{p:"principles",l:"Principles · Day 2/9",  ids:["prin3","prin4"]},
- "2026-06-05":{p:"act",       l:"Act & Rules · Day 2/4", ids:["act3","act4"]},
- "2026-06-06":{p:"english",   l:"English · Day 2/5",     ids:["eng3","eng4"]},
- "2026-06-07":{p:"reasoning", l:"Reasoning · Day 2/5",   ids:["res3","res4"]},
- "2026-06-08":{p:"banking",   l:"Banking · Day 3/8",     ids:["bnk5","bnk6"]},
- "2026-06-09":{p:"accounting",l:"Accounting · Day 3/7",  ids:["acc5","acc6"]},
- "2026-06-10":{p:"principles",l:"Principles · Day 3/9",  ids:["prin5","prin6"]},
- "2026-06-11":{p:"act",       l:"Act & Rules · Day 3/4", ids:["act5","act6"]},
- "2026-06-12":{p:"english",   l:"English · Day 3/5",     ids:["eng5","eng6"]},
- "2026-06-13":{p:"reasoning", l:"Reasoning · Day 3/5",   ids:["res5","res6"]},
- "2026-06-14":{p:"banking",   l:"Banking · Day 4/8",     ids:["bnk7","bnk8"]},
- "2026-06-15":{p:"accounting",l:"Accounting · Day 4/7",  ids:["acc7","acc8"]},
- "2026-06-16":{p:"principles",l:"Principles · Day 4/9",  ids:["prin7","prin8"]},
- "2026-06-17":{p:"act",       l:"Act & Rules · Day 4/4", ids:["act7"]},
- "2026-06-18":{p:"english",   l:"English · Day 4/5",     ids:["eng7","eng8"]},
- "2026-06-19":{p:"reasoning", l:"Reasoning · Day 4/5",   ids:["res7","res8"]},
- "2026-06-20":{p:"banking",   l:"Banking · Day 5/8",     ids:["bnk9","bnk10"]},
- "2026-06-21":{p:"accounting",l:"Accounting · Day 5/7",  ids:["acc9","acc10"]},
- "2026-06-22":{p:"principles",l:"Principles · Day 5/9",  ids:["prin9","prin10"]},
- "2026-06-23":{p:"english",   l:"English · Day 5/5",     ids:["eng9","eng10"]},
- "2026-06-24":{p:"reasoning", l:"Reasoning · Day 5/5",   ids:["res9"]},
- "2026-06-25":{p:"banking",   l:"Banking · Day 6/8",     ids:["bnk11","bnk12"]},
- "2026-06-26":{p:"accounting",l:"Accounting · Day 6/7",  ids:["acc11","acc12"]},
- "2026-06-27":{p:"principles",l:"Principles · Day 6/9",  ids:["prin11","prin12"]},
- "2026-06-28":{p:"banking",   l:"Banking · Day 7/8",     ids:["bnk13","bnk14"]},
- "2026-06-29":{p:"accounting",l:"Accounting · Day 7/7",  ids:["acc13","acc14"]},
- "2026-06-30":{p:"principles",l:"Principles · Day 7/9",  ids:["prin13","prin14"]},
- "2026-07-01":{p:"banking",   l:"Banking · Day 8/8",     ids:["bnk15","bnk16"]},
- "2026-07-02":{p:"principles",l:"Principles · Day 8/9",  ids:["prin15","prin16"]},
- "2026-07-03":{p:"principles",l:"Principles · Day 9/9 🎉",ids:["prin17"]},
- "2026-07-04":{p:"mock",      l:"Revision — Banking & Accounting", ids:[]},
- "2026-07-05":{p:"mock",      l:"Revision — Principles & Act",     ids:[]},
- "2026-07-06":{p:"mock",      l:"Revision — English & Reasoning",  ids:[]},
- "2026-07-07":{p:"mock",      l:"Revision — Weak Areas",           ids:[]},
- "2026-07-08":{p:"mock",      l:"Full Syllabus Revision",          ids:[]},
- "2026-07-09":{p:"mock",      l:"Full Mock Test Day",              ids:[]},
- "2026-07-10":{p:"eve",       l:"Exam Eve — Rest",                 ids:[]}
+ "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
+ "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
+ "2026-05-29":{p:"principles",l:"Principles · Day 1/9",  ids:["prin1","prin2"]},
+ "2026-05-30":{p:"act",       l:"Act & Rules · Day 1/4", ids:["act1","act2"]},
+ "2026-05-31":{p:"english",   l:"English · Day 1/5",     ids:["eng1","eng2"]},
+ "2026-06-01":{p:"reasoning", l:"Reasoning · Day 1/5",   ids:["res1","res2"]},
+ "2026-06-02":{p:"banking",   l:"Banking · Day 2/8",     ids:["bnk3","bnk4"]},
+ "2026-06-03":{p:"accounting",l:"Accounting · Day 2/7",  ids:["acc3","acc4"]},
+ "2026-06-04":{p:"principles",l:"Principles · Day 2/9",  ids:["prin3","prin4"]},
+ "2026-06-05":{p:"act",       l:"Act & Rules · Day 2/4", ids:["act3","act4"]},
+ "2026-06-06":{p:"english",   l:"English · Day 2/5",     ids:["eng3","eng4"]},
+ "2026-06-07":{p:"reasoning", l:"Reasoning · Day 2/5",   ids:["res3","res4"]},
+ "2026-06-08":{p:"banking",   l:"Banking · Day 3/8",     ids:["bnk5","bnk6"]},
+ "2026-06-09":{p:"accounting",l:"Accounting · Day 3/7",  ids:["acc5","acc6"]},
+ "2026-06-10":{p:"principles",l:"Principles · Day 3/9",  ids:["prin5","prin6"]},
+ "2026-06-11":{p:"act",       l:"Act & Rules · Day 3/4", ids:["act5","act6"]},
+ "2026-06-12":{p:"english",   l:"English · Day 3/5",     ids:["eng5","eng6"]},
+ "2026-06-13":{p:"reasoning", l:"Reasoning · Day 3/5",   ids:["res5","res6"]},
+ "2026-06-14":{p:"banking",   l:"Banking · Day 4/8",     ids:["bnk7","bnk8"]},
+ "2026-06-15":{p:"accounting",l:"Accounting · Day 4/7",  ids:["acc7","acc8"]},
+ "2026-06-16":{p:"principles",l:"Principles · Day 4/9",  ids:["prin7","prin8"]},
+ "2026-06-17":{p:"act",       l:"Act & Rules · Day 4/4", ids:["act7"]},
+ "2026-06-18":{p:"english",   l:"English · Day 4/5",     ids:["eng7","eng8"]},
+ "2026-06-19":{p:"reasoning", l:"Reasoning · Day 4/5",   ids:["res7","res8"]},
+ "2026-06-20":{p:"banking",   l:"Banking · Day 5/8",     ids:["bnk9","bnk10"]},
+ "2026-06-21":{p:"accounting",l:"Accounting · Day 5/7",  ids:["acc9","acc10"]},
+ "2026-06-22":{p:"principles",l:"Principles · Day 5/9",  ids:["prin9","prin10"]},
+ "2026-06-23":{p:"english",   l:"English · Day 5/5",     ids:["eng9","eng10"]},
+ "2026-06-24":{p:"reasoning", l:"Reasoning · Day 5/5",   ids:["res9"]},
+ "2026-06-25":{p:"banking",   l:"Banking · Day 6/8",     ids:["bnk11","bnk12"]},
+ "2026-06-26":{p:"accounting",l:"Accounting · Day 6/7",  ids:["acc11","acc12"]},
+ "2026-06-27":{p:"principles",l:"Principles · Day 6/9",  ids:["prin11","prin12"]},
+ "2026-06-28":{p:"banking",   l:"Banking · Day 7/8",     ids:["bnk13","bnk14"]},
+ "2026-06-29":{p:"accounting",l:"Accounting · Day 7/7",  ids:["acc13","acc14"]},
+ "2026-06-30":{p:"principles",l:"Principles · Day 7/9",  ids:["prin13","prin14"]},
+ "2026-07-01":{p:"banking",   l:"Banking · Day 8/8",     ids:["bnk15","bnk16"]},
+ "2026-07-02":{p:"principles",l:"Principles · Day 8/9",  ids:["prin15","prin16"]},
+ "2026-07-03":{p:"principles",l:"Principles · Day 9/9 🎉",ids:["prin17"]},
+ "2026-07-04":{p:"mock",      l:"Revision — Banking & Accounting", ids:[]},
+ "2026-07-05":{p:"mock",      l:"Revision — Principles & Act",     ids:[]},
+ "2026-07-06":{p:"mock",      l:"Revision — English & Reasoning",  ids:[]},
+ "2026-07-07":{p:"mock",      l:"Revision — Weak Areas",           ids:[]},
+ "2026-07-08":{p:"mock",      l:"Full Syllabus Revision",          ids:[]},
+ "2026-07-09":{p:"mock",      l:"Full Mock Test Day",              ids:[]},
+ "2026-07-10":{p:"eve",       l:"Exam Eve — Rest",                 ids:[]}
 };
 const LABELS={
- bnk1:"Banking System: Scheduled/Non-Scheduled, RRBs, Co-op Banks, Foreign, Small Finance, Payment Banks",
- bnk2:"CRR, SLR, Repo, Re-repo, Bank Rates — NABARD & NBFC",bnk3:"Banker & Customer Relationship — Types of Customers",
- bnk4:"Special Customers: Minors, Pardanishan Ladies, Blind, Lunatic, Insolvent",bnk5:"KYC — Know Your Customer Guidelines",
- bnk6:"Anti Money Laundering (AML) Guidelines of RBI",bnk7:"Regulatory & Supervisory Functions of RBI",
- bnk8:"NI Act 1881: Promissory Notes, Bills of Exchange, Cheques",bnk9:"Types of Crossings: General, Special, Non-Negotiable",
- bnk10:"Endorsements: Blank, Full, Conditional, Restrictive, Sans Recourse, Facultative",
- bnk11:"Payment Systems: RTGS, NEFT, UPI, ATMs, POS, QR Code, CBS, Debit/Credit Cards",
- bnk12:"Grievance: Integrated Ombudsman Scheme 2021 & COPRA 2019",
- bnk13:"Deposits: Savings, BSBDA, PMJDY, Small Accounts, FD, RD, Current A/c",
- bnk14:"Demand Drafts, Safe Deposit Lockers, Safe Custody of Articles",
- bnk15:"Nomination, Garnishee, Lien, Set Off, Power of Attorney, Pledge, Mortgage",
- bnk16:"Priority Sector (Agri, KCC, MSME) — Loan Types, SMA & NPA Norms",
- acc1:"Definition, Objects, Branches, Advantages & Limitations of Financial Accounting",
- acc2:"Accounting Principles, Concepts & Conventions",acc3:"Journal, Ledger, Subsidiary Books, Trial Balance",
- acc4:"Errors & Rectification, Final Accounts & Adjustments",acc5:"Depreciation Methods, Bills of Exchange, Consignment",
- acc6:"Non-Trading Concern Accounts + Co-op Accounting (Day Book, Ledger, R&D, BRS)",
- acc7:"Cost Types: Marginal, Standard, Opportunity, Sunk, Differential Cost",
- acc8:"Material Control: Bin Card, Stores Ledger, EOQ, Methods of Valuing Issues",
- acc9:"Labour Cost & Systems of Wage Payment",
- acc10:"Financial Planning: SWOT, Budgeting, Capital Budgeting, Cost of Capital",
- acc11:"Analysis: T&P&L, Balance Sheet, Ratio Analysis, Working Capital",
- acc12:"CVP: Break-Even, Margin of Safety, Comparative, Trend, Common Size Analysis",
- acc13:"Cash & Fund Flow Analysis",acc14:"Fraud: Causes, Fraud Triangle, Prevention — Statutory Audit",
- prin1:"ICA Principles, Values, Ethics, Co-op Commonwealth, Distinctive Features",
- prin2:"Co-op vs Joint Stock — Balancing Capitalism, Socialism, Communism",
- prin3:"Foreign Co-ops: England (Robert Owen), Germany (Raiffeisen/Schulze), Denmark Dairy",
- prin4:"Committees: AIRCS, VL Metha, AIRCRC, CRAFICARD, ACRC",prin5:"State Aid: NCDC, NDDB, NHB, NABARD",
- prin6:"Education & Training: NCUI, SCU, NCCT, VAMNICOM, ICM, CAPE, Co-op Week",
- prin7:"PACS, KSCB, KCC, Principal State Partnership Fund, NAFSCOB, COBI",
- prin8:"PCARDB, KSCARDB, Debenture Redemption Fund, NFARDB (Long Term Loans)",
- prin9:"Urban Co-op Banks, Employee Credit Societies, Housing Co-ops, Housefed, NFUCB",
- prin10:"Marketing & Processing: Market Fed, Kerafed, Rubco, RAIDCO, CAMPCO",
- prin11:"Consumer Co-ops: Consumerfed, Neethi Stores, Student Stores, NCCF",
- prin12:"Dairy Co-ops: APCOS, Primary Milk Societies, KCMMF",
- prin13:"Industrial Co-ops: Handloom, Coir, Beedi, Handicrafts — Hantex, Coirfed, Dinesh Beedi",
- prin14:"SC/ST Fed, Matsyafed, Vanithafed, Hospitalfed, Tourfed, Labourfed, ULCCS",
- prin15:"Schemes: Risk Fund, Deposit Guarantee, Pension, Ombudsman, Member Relief, Welfare Board",
- prin16:"Co-op Management: HRM, TNA, Budgeting, Asset/Liability Mgt, Leadership, Decision Making",
- prin17:"Co-operatives Departmental Set Up in Kerala",
- act1:"KCS Act 1969: Registration of Societies & Membership",act2:"KCS Act 1969: Management, Share Capital & Funds",
- act3:"KCS Act 1969: Audit — Section 28",act4:"KCS Act 1969: Inspection (S.68) & Surcharge (S.65)",
- act5:"KCS Act 1969: Disputes (S.70) & Arbitration (S.69)",act6:"KCS Act 1969: Liquidation & Winding Up",
- act7:"Kerala Co-operative Societies Rules 1969 (As Amended) — Full",
- eng1:"Types of Sentences, Interchange, Parts of Speech",eng2:"Subject-Verb Agreement, Articles",
- eng3:"Primary & Modal Auxiliary Verbs, Question Tags",eng4:"Infinitive & Gerunds, Tenses, Conditional Sentences",
- eng5:"Prepositions & Correlatives",eng6:"Direct/Indirect Speech, Active/Passive Voice, Correction of Sentences",
- eng7:"Singular/Plural, Gender, Collective Nouns, Compound Words",eng8:"Synonyms, Antonyms, Phrasal Verbs, Words Often Confused",
- eng9:"Foreign Words & Phrases, One Word Substitutes",eng10:"Spelling Test, Idioms & Meanings, Common Abbreviations",
- res1:"Numbers, Basic Operations, Fractions, Decimals, Percentage",res2:"Profit & Loss, Simple & Compound Interest",
- res3:"Ratio & Proportion, Average",res4:"Time & Distance, Time & Work",
- res5:"Series, Math Signs, Position Determination Test",res6:"Analogy (Word, Alphabet, Number), Odd Man Out",
- res7:"Coding & Decoding, Number Review System, Clerical Ability",res8:"Family Relations, Sense of Direction",
- res9:"Time & Angles, Clock Reflection, Date & Calendar",
- gk1:"United Nations: Structure, Organs, Specialised Agencies",
- gk2:"History: Freedom Struggle, Travancore, Social Reform Movements",
- gk3:"Political History (India & Kerala), Indian Constitution",
- gk4:"Five-Year Plans, Economic Reforms, Reorganisation of States",
- gk5:"Governance & Systems (India/Kerala), Indian States & Characteristics",
- gk6:"Oceans, Continents, Global Warming — Kerala Geography, Districts, Rivers",
- gk7:"Agricultural Crops, Minerals, Green Revolution",
- gk8:"Art, Sports, Literature & Culture (World, India, Kerala)",gk9:"Current Affairs"
+ bnk1:"Banking System: Scheduled/Non-Scheduled, RRBs, Co-op Banks, Foreign, Small Finance, Payment Banks",
+ bnk2:"CRR, SLR, Repo, Re-repo, Bank Rates — NABARD & NBFC",bnk3:"Banker & Customer Relationship — Types of Customers",
+ bnk4:"Special Customers: Minors, Pardanishan Ladies, Blind, Lunatic, Insolvent",bnk5:"KYC — Know Your Customer Guidelines",
+ bnk6:"Anti Money Laundering (AML) Guidelines of RBI",bnk7:"Regulatory & Supervisory Functions of RBI",
+ bnk8:"NI Act 1881: Promissory Notes, Bills of Exchange, Cheques",bnk9:"Types of Crossings: General, Special, Non-Negotiable",
+ bnk10:"Endorsements: Blank, Full, Conditional, Restrictive, Sans Recourse, Facultative",
+ bnk11:"Payment Systems: RTGS, NEFT, UPI, ATMs, POS, QR Code, CBS, Debit/Credit Cards",
+ bnk12:"Grievance: Integrated Ombudsman Scheme 2021 & COPRA 2019",
+ bnk13:"Deposits: Savings, BSBDA, PMJDY, Small Accounts, FD, RD, Current A/c",
+ bnk14:"Demand Drafts, Safe Deposit Lockers, Safe Custody of Articles",
+ bnk15:"Nomination, Garnishee, Lien, Set Off, Power of Attorney, Pledge, Mortgage",
+ bnk16:"Priority Sector (Agri, KCC, MSME) — Loan Types, SMA & NPA Norms",
+ acc1:"Definition, Objects, Branches, Advantages & Limitations of Financial Accounting",
+ acc2:"Accounting Principles, Concepts & Conventions",acc3:"Journal, Ledger, Subsidiary Books, Trial Balance",
+ acc4:"Errors & Rectification, Final Accounts & Adjustments",acc5:"Depreciation Methods, Bills of Exchange, Consignment",
+ acc6:"Non-Trading Concern Accounts + Co-op Accounting (Day Book, Ledger, R&D, BRS)",
+ acc7:"Cost Types: Marginal, Standard, Opportunity, Sunk, Differential Cost",
+ acc8:"Material Control: Bin Card, Stores Ledger, EOQ, Methods of Valuing Issues",
+ acc9:"Labour Cost & Systems of Wage Payment",
+ acc10:"Financial Planning: SWOT, Budgeting, Capital Budgeting, Cost of Capital",
+ acc11:"Analysis: T&P&L, Balance Sheet, Ratio Analysis, Working Capital",
+ acc12:"CVP: Break-Even, Margin of Safety, Comparative, Trend, Common Size Analysis",
+ acc13:"Cash & Fund Flow Analysis",acc14:"Fraud: Causes, Fraud Triangle, Prevention — Statutory Audit",
+ prin1:"ICA Principles, Values, Ethics, Co-op Commonwealth, Distinctive Features",
+ prin2:"Co-op vs Joint Stock — Balancing Capitalism, Socialism, Communism",
+ prin3:"Foreign Co-ops: England (Robert Owen), Germany (Raiffeisen/Schulze), Denmark Dairy",
+ prin4:"Committees: AIRCS, VL Metha, AIRCRC, CRAFICARD, ACRC",prin5:"State Aid: NCDC, NDDB, NHB, NABARD",
+ prin6:"Education & Training: NCUI, SCU, NCCT, VAMNICOM, ICM, CAPE, Co-op Week",
+ prin7:"PACS, KSCB, KCC, Principal State Partnership Fund, NAFSCOB, COBI",
+ prin8:"PCARDB, KSCARDB, Debenture Redemption Fund, NFARDB (Long Term Loans)",
+ prin9:"Urban Co-op Banks, Employee Credit Societies, Housing Co-ops, Housefed, NFUCB",
+ prin10:"Marketing & Processing: Market Fed, Kerafed, Rubco, RAIDCO, CAMPCO",
+ prin11:"Consumer Co-ops: Consumerfed, Neethi Stores, Student Stores, NCCF",
+ prin12:"Dairy Co-ops: APCOS, Primary Milk Societies, KCMMF",
+ prin13:"Industrial Co-ops: Handloom, Coir, Beedi, Handicrafts — Hantex, Coirfed, Dinesh Beedi",
+ prin14:"SC/ST Fed, Matsyafed, Vanithafed, Hospitalfed, Tourfed, Labourfed, ULCCS",
+ prin15:"Schemes: Risk Fund, Deposit Guarantee, Pension, Ombudsman, Member Relief, Welfare Board",
+ prin16:"Co-op Management: HRM, TNA, Budgeting, Asset/Liability Mgt, Leadership, Decision Making",
+ prin17:"Co-operatives Departmental Set Up in Kerala",
+ act1:"KCS Act 1969: Registration of Societies & Membership",act2:"KCS Act 1969: Management, Share Capital & Funds",
+ act3:"KCS Act 1969: Audit — Section 28",act4:"KCS Act 1969: Inspection (S.68) & Surcharge (S.65)",
+ act5:"KCS Act 1969: Disputes (S.70) & Arbitration (S.69)",act6:"KCS Act 1969: Liquidation & Winding Up",
+ act7:"Kerala Co-operative Societies Rules 1969 (As Amended) — Full",
+ eng1:"Types of Sentences, Interchange, Parts of Speech",eng2:"Subject-Verb Agreement, Articles",
+ eng3:"Primary & Modal Auxiliary Verbs, Question Tags",eng4:"Infinitive & Gerunds, Tenses, Conditional Sentences",
+ eng5:"Prepositions & Correlatives",eng6:"Direct/Indirect Speech, Active/Passive Voice, Correction of Sentences",
+ eng7:"Singular/Plural, Gender, Collective Nouns, Compound Words",eng8:"Synonyms, Antonyms, Phrasal Verbs, Words Often Confused",
+ eng9:"Foreign Words & Phrases, One Word Substitutes",eng10:"Spelling Test, Idioms & Meanings, Common Abbreviations",
+ res1:"Numbers, Basic Operations, Fractions, Decimals, Percentage",res2:"Profit & Loss, Simple & Compound Interest",
+ res3:"Ratio & Proportion, Average",res4:"Time & Distance, Time & Work",
+ res5:"Series, Math Signs, Position Determination Test",res6:"Analogy (Word, Alphabet, Number), Odd Man Out",
+ res7:"Coding & Decoding, Number Review System, Clerical Ability",res8:"Family Relations, Sense of Direction",
+ res9:"Time & Angles, Clock Reflection, Date & Calendar",
+ gk1:"United Nations: Structure, Organs, Specialised Agencies",
+ gk2:"History: Freedom Struggle, Travancore, Social Reform Movements",
+ gk3:"Political History (India & Kerala), Indian Constitution",
+ gk4:"Five-Year Plans, Economic Reforms, Reorganisation of States",
+ gk5:"Governance & Systems (India/Kerala), Indian States & Characteristics",
+ gk6:"Oceans, Continents, Global Warming — Kerala Geography, Districts, Rivers",
+ gk7:"Agricultural Crops, Minerals, Green Revolution",
+ gk8:"Art, Sports, Literature & Culture (World, India, Kerala)",gk9:"Current Affairs"
 };
 const SUBJS={
- banking:   {ids:["bnk1","bnk2","bnk3","bnk4","bnk5","bnk6","bnk7","bnk8","bnk9","bnk10","bnk11","bnk12","bnk13","bnk14","bnk15","bnk16"],c:"var(--banking)",n:"Banking"},
- accounting:{ids:["acc1","acc2","acc3","acc4","acc5","acc6","acc7","acc8","acc9","acc10","acc11","acc12","acc13","acc14"],c:"var(--accounting)",n:"Accounting"},
- principles:{ids:["prin1","prin2","prin3","prin4","prin5","prin6","prin7","prin8","prin9","prin10","prin11","prin12","prin13","prin14","prin15","prin16","prin17"],c:"var(--principles)",n:"Principles"},
- act:       {ids:["act1","act2","act3","act4","act5","act6","act7"],c:"var(--act)",n:"Act"},
- english:   {ids:["eng1","eng2","eng3","eng4","eng5","eng6","eng7","eng8","eng9","eng10"],c:"var(--english)",n:"English"},
- reasoning: {ids:["res1","res2","res3","res4","res5","res6","res7","res8","res9"],c:"var(--reasoning)",n:"Reasoning"},
- gk:        {ids:["gk1","gk2","gk3","gk4","gk5","gk6","gk7","gk8","gk9"],c:"var(--gk)",n:"GK"}
+ banking:   {ids:["bnk1","bnk2","bnk3","bnk4","bnk5","bnk6","bnk7","bnk8","bnk9","bnk10","bnk11","bnk12","bnk13","bnk14","bnk15","bnk16"],c:"var(--banking)",n:"Banking",m:"20 Marks"},
+ accounting:{ids:["acc1","acc2","acc3","acc4","acc5","acc6","acc7","acc8","acc9","acc10","acc11","acc12","acc13","acc14"],c:"var(--accounting)",n:"Accounting",m:"20 Marks"},
+ principles:{ids:["prin1","prin2","prin3","prin4","prin5","prin6","prin7","prin8","prin9","prin10","prin11","prin12","prin13","prin14","prin15","prin16","prin17"],c:"var(--principles)",n:"Principles of Co-op",m:"15 Marks"},
+ act:       {ids:["act1","act2","act3","act4","act5","act6","act7"],c:"var(--act)",n:"Act & Rules",m:"15 Marks"},
+ english:   {ids:["eng1","eng2","eng3","eng4","eng5","eng6","eng7","eng8","eng9","eng10"],c:"var(--english)",n:"General English",m:"10 Marks"},
+ reasoning: {ids:["res1","res2","res3","res4","res5","res6","res7","res8","res9"],c:"var(--reasoning)",n:"Reasoning",m:"10 Marks"},
+ gk:        {ids:["gk1","gk2","gk3","gk4","gk5","gk6","gk7","gk8","gk9"],c:"var(--gk)",n:"General Knowledge",m:"10 Marks"}
 };
 // register CSEB11 course data — add new courses in same pattern
 COURSE_DATA['CSEB11']={sch:SCH,labels:LABELS,subjs:SUBJS};
@@ -614,35 +481,35 @@ const pad=n=>String(n).padStart(2,'0');
 const ts=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
 
 function dLeft(s){
-  const[y,m,d]=s.split('-').map(Number);
-  const diff=Math.ceil((new Date(y,m-1,d)-now)/86400000);
-  return diff<0?diff+'d ago':diff===0?'🎯 TODAY':diff+' days left';
+  const[y,m,d]=s.split('-').map(Number);
+  const diff=Math.ceil((new Date(y,m-1,d)-now)/86400000);
+  return diff<0?diff+'d ago':diff===0?'🎯 TODAY':diff+' days left';
 }
 
 function syncState(s){
-  const el=$('pd-sync');if(!el)return;
-  if(s==='syncing'){el.textContent='✓ Saved locally';el.style.color='var(--green)';}
-  else if(s==='synced'){el.textContent='☁ Synced';el.style.color='var(--blue)';}
-  else{el.textContent='● Offline';el.style.color='var(--dim)';}
+  const el=$('pd-sync');if(!el)return;
+  if(s==='syncing'){el.textContent='✓ Saved locally';el.style.color='var(--green)';}
+  else if(s==='synced'){el.textContent='☁ Synced';el.style.color='var(--blue)';}
+  else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
 
 let pendingCloudWrite=false;
 function saveLocal(data){try{localStorage.setItem('cseb_state',JSON.stringify(data));}catch(e){}}
 
 async function flushToCloud(){
-  if(!currentUid||!pendingCloudWrite)return;
-  syncState('syncing');
-  try{
-    await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
-    pendingCloudWrite=false;syncState('synced');
-  }catch(e){console.error('Cloud save failed',e);syncState('');}
+  if(!currentUid||!pendingCloudWrite)return;
+  syncState('syncing');
+  try{
+    await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
+    pendingCloudWrite=false;syncState('synced');
+  }catch(e){console.error('Cloud save failed',e);syncState('');}
 }
 
 function scheduleCloudSync(){
-  pendingCloudWrite=true;
-  syncState('syncing');
-  clearTimeout(writeDebounce);
-  writeDebounce=setTimeout(flushToCloud,2000);
+  pendingCloudWrite=true;
+  syncState('syncing');
+  clearTimeout(writeDebounce);
+  writeDebounce=setTimeout(flushToCloud,2000);
 }
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingCloudWrite)flushToCloud();});
@@ -653,274 +520,274 @@ window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textConte
 function saveToFirestore(data){saveLocal(data);scheduleCloudSync();}
 
 function applyData(data){
-  remoteData={...data};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
-  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts];
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
-  updateAll();renderPending();
+  remoteData={...data};
+  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
+  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts];
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
+  updateAll();renderPending();
 }
 
 function getState(){
-  const state={...remoteData};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{state[b.id]=b.checked;});
-  const dm=$('daily_mock');if(dm)state['mock_'+ts]=dm.checked;
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)state['misc_'+id]=b.checked;});
-  return state;
+  const state={...remoteData};
+  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{state[b.id]=b.checked;});
+  const dm=$('daily_mock');if(dm)state['mock_'+ts]=dm.checked;
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)state['misc_'+id]=b.checked;});
+  return state;
 }
 
 function onCheck(id,val){
-  remoteData[id]=val;saveToFirestore(getState());
-  const main=document.getElementById(id);if(main&&main!==document.activeElement)main.checked=val;
-  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily&&daily!==document.activeElement)daily.checked=val;
-  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend&&pend!==document.activeElement)pend.checked=val;
-  updateAll();
+  remoteData[id]=val;saveToFirestore(getState());
+  const main=document.getElementById(id);if(main&&main!==document.activeElement)main.checked=val;
+  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily&&daily!==document.activeElement)daily.checked=val;
+  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend&&pend!==document.activeElement)pend.checked=val;
+  updateAll();
 }
 
 function getPending(){
-  const now=Date.now(),r=[];
-  for(const[date,s] of Object.entries(SCH)){
-    if(date>=ts||!s.ids||!s.ids.length)continue;
-    if(deferred[date]&&deferred[date]>now)continue; // skip if deferred
-    const u=s.ids.filter(id=>!remoteData[id]);
-    if(u.length)r.push({date,s,unchecked:u});
-  }
-  return r;
+  const {sch}=getCourseData(),now=Date.now(),r=[];
+  for(const[date,s] of Object.entries(sch)){
+    if(date>=ts||!s.ids||!s.ids.length)continue;
+    if(deferred[date]&&deferred[date]>now)continue;
+    const u=s.ids.filter(id=>!remoteData[id]);
+    if(u.length)r.push({date,s,unchecked:u});
+  }
+  return r;
 }
 
 function deferDate(date,cardEl){
-  deferred[date]=Date.now()+86400000;
-  try{localStorage.setItem('cseb_deferred',JSON.stringify(deferred));}catch(e){}
-  if(cardEl){cardEl.style.transition='opacity .3s';cardEl.style.opacity='0';setTimeout(renderPending,320);}
-  else renderPending();
+  deferred[date]=Date.now()+86400000;
+  try{localStorage.setItem('cseb_deferred',JSON.stringify(deferred));}catch(e){}
+  if(cardEl){cardEl.style.transition='opacity .3s';cardEl.style.opacity='0';setTimeout(renderPending,320);}
+  else renderPending();
 }
 
 function renderPending(){
-  const pc=$('pendingcard'),pending=getPending();
-  if(!pending.length){pc.innerHTML='<div class="no-pending">✓ All caught up!</div>';return;}
-  pc.innerHTML=pending.map(({date,s,unchecked})=>{
-    const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-    const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${LABELS[id]||id}</span></label></li>`).join('');
-    return `<div class="day-card pending-card" style="margin-bottom:10px">
-      <div class="day-top"><h2>⚠ ${s.l}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
-      <div class="day-sub">Complete pending topics</div>
-      <ul class="cl">${items}</ul></div>`;
-  }).join('');
-  pc.querySelectorAll('.pending-ds').forEach(b=>{
-    b.addEventListener('change',e=>{
-      const sid=e.target.getAttribute('data-id');
-      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);renderPending();
-    });
-  });
-  pc.querySelectorAll('.defer-btn').forEach(b=>{
-    b.addEventListener('click',e=>{deferDate(b.getAttribute('data-date'),b.closest('.day-card'));});
-  });
+  const {labels}=getCourseData(),pc=$('pendingcard'),pending=getPending();
+  if(!pending.length){pc.innerHTML='<div class="no-pending">✓ All caught up!</div>';return;}
+  pc.innerHTML=pending.map(({date,s,unchecked})=>{
+    const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
+    return `<div class="day-card pending-card" style="margin-bottom:10px">
+      <div class="day-top"><h2>⚠ ${s.l}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
+      <div class="day-sub">Complete pending topics</div>
+      <ul class="cl">${items}</ul></div>`;
+  }).join('');
+  pc.querySelectorAll('.pending-ds').forEach(b=>{
+    b.addEventListener('change',e=>{
+      const sid=e.target.getAttribute('data-id');
+      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);renderPending();
+    });
+  });
+  pc.querySelectorAll('.defer-btn').forEach(b=>{
+    b.addEventListener('click',e=>{deferDate(b.getAttribute('data-date'),b.closest('.day-card'));});
+  });
 }
 
 function makeCard(){
-  const dc=$('daycard'),sched=SCH[ts];
-  const tag='<span class="exam-tag">Junior Clerk · Cat 11 · 11 Jul 2026</span>';
-  const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
-  if(!sched){
-    const done=ts>"2026-07-11";
-    dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
-      <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
-      <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
-    return;
-  }
-  let inner='';
-  if(sched.p==='mock'){
-    inner=`${tag}<div class="day-sub">Full 100-mark timed mock — review wrong answers</div><ul class="cl">
-      <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full 100-mark mock (timed)</span></label></li>
-      <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer — note weak areas</span></label></li>
-      <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
-  } else if(sched.p==='eve'){
-    inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
-      <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
-      <li><label><input type="checkbox" id="e2" ${remoteData['misc_e2']?'checked':''}><span>Prepare: Hall ticket, ID, pens, water</span></label></li>
-      <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
-  } else {
-    const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${LABELS[id]||id}</span></label></li>`).join('');
-    inner=`${tag}<div class="day-sub">${sched.l} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
-    <div class="mock-mini"><div class="mock-mini-lbl">📝 Daily Practice Quiz</div><ul class="cl">
-      <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
-    </ul></div>`;
-  }
-  dc.innerHTML=`<div class="day-card ${sched.p}">
-    <div class="day-top"><h2>📌 Today's Topics</h2>${dateBadge}</div>${inner}</div>`;
-  dc.querySelectorAll('.ds').forEach(b=>{
-    b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
-  });
-  const dm=$('daily_mock');
-  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts]=e.target.checked;saveToFirestore(getState());});
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore(getState());});
-  });
+  const dc=$('daycard'),sched=SCH[ts];
+  const tag='<span class="exam-tag">Junior Clerk · Cat 11 · 11 Jul 2026</span>';
+  const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
+  if(!sched){
+    const done=ts>"2026-07-11";
+    dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
+      <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
+      <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
+    return;
+  }
+  let inner='';
+  if(sched.p==='mock'){
+    inner=`${tag}<div class="day-sub">Full 100-mark timed mock — review wrong answers</div><ul class="cl">
+      <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full 100-mark mock (timed)</span></label></li>
+      <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer — note weak areas</span></label></li>
+      <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
+  } else if(sched.p==='eve'){
+    inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
+      <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
+      <li><label><input type="checkbox" id="e2" ${remoteData['misc_e2']?'checked':''}><span>Prepare: Hall ticket, ID, pens, water</span></label></li>
+      <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
+  } else {
+    const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${LABELS[id]||id}</span></label></li>`).join('');
+    inner=`${tag}<div class="day-sub">${sched.l} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
+    <div class="mock-mini"><div class="mock-mini-lbl">📝 Daily Practice Quiz</div><ul class="cl">
+      <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
+    </ul></div>`;
+  }
+  dc.innerHTML=`<div class="day-card ${sched.p}">
+    <div class="day-top"><h2>📌 Today's Topics</h2>${dateBadge}</div>${inner}</div>`;
+  dc.querySelectorAll('.ds').forEach(b=>{
+    b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
+  });
+  const dm=$('daily_mock');
+  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts]=e.target.checked;saveToFirestore(getState());});
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore(getState());});
+  });
 }
 
 let syllabusBoxes=[];
 function bindSyllabus(){
-  syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
-  syllabusBoxes.forEach(b=>{
-    b.checked=!!remoteData[b.id];
-    b.addEventListener('change',e=>{onCheck(e.target.id,e.target.checked);});
-  });
+  syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
+  syllabusBoxes.forEach(b=>{
+    b.checked=!!remoteData[b.id];
+    b.addEventListener('change',e=>{onCheck(e.target.id,e.target.checked);});
+  });
 }
 
 function updateAll(){
-  const boxes=syllabusBoxes;
-  if(!boxes.length)return;
-  const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
-  domGfill.style.width=pct+'%';domPct.textContent=pct+'%';
-  domSpills.innerHTML='';
-  for(const[k,v] of Object.entries(SUBJS)){
-    const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
-    const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-    domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
-  }
-  const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
-  const streak=calcStreak();
-  const ps=$('pd-stats');
-  if(ps)ps.innerHTML=`
-    <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
+  const boxes=syllabusBoxes;
+  if(!boxes.length)return;
+  const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
+  domGfill.style.width=pct+'%';domPct.textContent=pct+'%';
+  domSpills.innerHTML='';
+  for(const[k,v] of Object.entries(SUBJS)){
+    const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
+    const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+    domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+  }
+  const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
+  const streak=calcStreak();
+  const ps=$('pd-stats');
+  if(ps)ps.innerHTML=`
+    <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
 }
 
 function calcStreak(){
-  let s=0,d=new Date();
-  while(true){
-    d.setDate(d.getDate()-1);
-    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const sc=SCH[k];if(!sc||!sc.ids||!sc.ids.length)break;
-    if(sc.ids.every(id=>remoteData[id]))s++;else break;
-  }
-  return s;
+  let s=0,d=new Date();
+  while(true){
+    d.setDate(d.getDate()-1);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const sc=SCH[k];if(!sc||!sc.ids||!sc.ids.length)break;
+    if(sc.ids.every(id=>remoteData[id]))s++;else break;
+  }
+  return s;
 }
 
 function renderCourses(data){
-  const pc=$('pd-courses');if(!pc)return;
-  const courses=data.courses&&data.courses.length?data.courses:[DEFAULT_COURSE];
-  const active=data.activeCourse||DEFAULT_COURSE;
-  pc.innerHTML=courses.map(c=>{
-    const isActive=c===active;
-    return `<button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem">${COURSE_CODES[c]||c}</button>`;
-  }).join('');
-  pc.querySelectorAll('[data-course]').forEach(btn=>{
-    btn.addEventListener('click',async e=>{
-      e.stopPropagation();
-      const code=btn.getAttribute('data-course');
-      remoteData.activeCourse=code;
-      await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
-      renderCourses(remoteData);$('profile-drop').classList.add('hidden');
-    });
-  });
+  const pc=$('pd-courses');if(!pc)return;
+  const courses=data.courses&&data.courses.length?data.courses:[DEFAULT_COURSE];
+  const active=data.activeCourse||DEFAULT_COURSE;
+  pc.innerHTML=courses.map(c=>{
+    const isActive=c===active;
+    return `<button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem">${COURSE_CODES[c]||c}</button>`;
+  }).join('');
+  pc.querySelectorAll('[data-course]').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const code=btn.getAttribute('data-course');
+      remoteData.activeCourse=code;
+      await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
+      renderCourses(remoteData);$('profile-drop').classList.add('hidden');
+    });
+  });
 }
 
 // wire add-course button (runs once after DOM ready)
 document.getElementById('pd-course-add-btn').addEventListener('click',async function(e){
-  e.stopPropagation();
-  const inp=$('pd-course-input');
-  const code=(inp.value||'').trim().toUpperCase();
-  const err=$('pd-course-err');
-  err.textContent='';
-  if(!code){err.textContent='Enter a code.';return;}
-  if(!COURSE_CODES[code]){err.textContent='Invalid code.';return;}
-  const existing=remoteData.courses||[DEFAULT_COURSE];
-  if(existing.includes(code)){err.textContent='Already added.';return;}
-  const updated=[...existing,code];
-  remoteData.courses=updated;remoteData.activeCourse=code;
-  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
-  inp.value='';renderCourses(remoteData);
+  e.stopPropagation();
+  const inp=$('pd-course-input');
+  const code=(inp.value||'').trim().toUpperCase();
+  const err=$('pd-course-err');
+  err.textContent='';
+  if(!code){err.textContent='Enter a code.';return;}
+  if(!COURSE_CODES[code]){err.textContent='Invalid code.';return;}
+  const existing=remoteData.courses||[DEFAULT_COURSE];
+  if(existing.includes(code)){err.textContent='Already added.';return;}
+  const updated=[...existing,code];
+  remoteData.courses=updated;remoteData.activeCourse=code;
+  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
+  inp.value='';renderCourses(remoteData);
 });
 
 function hideSplash(){setTimeout(()=>$('splash').classList.add('hidden'),1400);}
 
 function initApp(user){
-  $('auth-overlay').classList.add('hidden');
-  $('app').classList.add('visible');
-  const name=user.displayName||user.email.split('@')[0];
-  const initials=name.slice(0,2).toUpperCase();
-  $('profile-avatar').textContent=initials;
-  $('profile-name').textContent=name;
-  $('pd-name').textContent=user.displayName||name;
-  $('pd-email').textContent=user.email;
-  $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  $('d11').textContent=dLeft("2026-07-11");
-  $('d10').textContent=dLeft("2026-08-08");
-  $('d09').textContent=dLeft("2026-08-16");
-  // cache DOM refs once
-  domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
-  // load deferred state
-  try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-  // seed localStorage instantly → no empty flash
-  try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
-  makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
-  if(unsubSnap)unsubSnap();
-  syncState('syncing');
-  // fast path: getDoc once for immediate cloud data, then subscribe for live updates
-  getDoc(doc(db,'users',user.uid)).then(snap=>{
-    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    renderCourses(remoteData);syncState('synced');hideSplash();
-  }).catch(()=>{renderCourses(remoteData);hideSplash();});
-  unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
-    if(!snap.exists())return;
-    remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);syncState('synced');
-  },err=>{console.error('Snapshot error',err);syncState('');});
+  $('auth-overlay').classList.add('hidden');
+  $('app').classList.add('visible');
+  const name=user.displayName||user.email.split('@')[0];
+  const initials=name.slice(0,2).toUpperCase();
+  $('profile-avatar').textContent=initials;
+  $('profile-name').textContent=name;
+  $('pd-name').textContent=user.displayName||name;
+  $('pd-email').textContent=user.email;
+  $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $('d11').textContent=dLeft("2026-07-11");
+  $('d10').textContent=dLeft("2026-08-08");
+  $('d09').textContent=dLeft("2026-08-16");
+  // cache DOM refs once
+  domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
+  // load deferred state
+  try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
+  // seed localStorage instantly → no empty flash
+  try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
+  makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
+  if(unsubSnap)unsubSnap();
+  syncState('syncing');
+  // fast path: getDoc once for immediate cloud data, then subscribe for live updates
+  getDoc(doc(db,'users',user.uid)).then(snap=>{
+    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
+    renderCourses(remoteData);syncState('synced');hideSplash();
+  }).catch(()=>{renderCourses(remoteData);hideSplash();});
+  unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
+    if(!snap.exists())return;
+    remoteData={...remoteData,...snap.data()};
+    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);syncState('synced');
+  },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
 onAuthStateChanged(auth,user=>{
-  if(user){currentUid=user.uid;initApp(user);}
-  else{
-    currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
-    $('splash').classList.add('hidden');
-    $('auth-overlay').classList.remove('hidden');
-  }
+  if(user){currentUid=user.uid;initApp(user);}
+  else{
+    currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
+    $('splash').classList.add('hidden');
+    $('auth-overlay').classList.remove('hidden');
+  }
 });
 
 function detectSystemTheme(){
-  return window.matchMedia('(prefers-color-scheme: dark)').matches?'amoled':'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches?'amoled':'light';
 }
 function applyTheme(t){
-  document.body.dataset.theme=t;
-  document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
 function setTheme(t){
-  applyTheme(t);localStorage.setItem('cseb_theme',t);
+  applyTheme(t);localStorage.setItem('cseb_theme',t);
 }
 function initTheme(){
-  const saved=localStorage.getItem('cseb_theme');
-  applyTheme(saved||detectSystemTheme());
+  const saved=localStorage.getItem('cseb_theme');
+  applyTheme(saved||detectSystemTheme());
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
-  if(!localStorage.getItem('cseb_theme'))applyTheme(e.matches?'amoled':'light');
+  if(!localStorage.getItem('cseb_theme'))applyTheme(e.matches?'amoled':'light');
 });
 
 // ── PROFILE DROPDOWN FIX ──
 // btn click toggles; stopPropagation on BOTH btn AND dropdown prevents doc-click closing it
 document.getElementById('profile-btn').addEventListener('click',function(e){
-  e.stopPropagation();
-  $('profile-drop').classList.toggle('hidden');
+  e.stopPropagation();
+  $('profile-drop').classList.toggle('hidden');
 });
 $('profile-drop').addEventListener('click',function(e){
-  e.stopPropagation(); // FIX: without this, doc listener closes dropdown immediately
+  e.stopPropagation(); // FIX: without this, doc listener closes dropdown immediately
 });
 
 document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
-  btn.addEventListener('click',function(e){
-    e.stopPropagation();
-    setTheme(this.dataset.t);
-    $('profile-drop').classList.add('hidden');
-  });
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    setTheme(this.dataset.t);
+    $('profile-drop').classList.add('hidden');
+  });
 });
 document.getElementById('signout-item').addEventListener('click',function(e){
-  e.stopPropagation();doSignOut();
+  e.stopPropagation();doSignOut();
 });
 document.addEventListener('click',function(){
-  $('profile-drop')&&$('profile-drop').classList.add('hidden');
+  $('profile-drop')&&$('profile-drop').classList.add('hidden');
 });
 
 initTheme();
