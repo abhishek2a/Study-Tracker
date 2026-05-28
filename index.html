@@ -176,8 +176,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <body>
 
 <div id="splash">
-  <div class="splash-logo">CS<span>EB</span></div>
-  <div class="splash-sub">Study Tracker</div>
+  <div class="splash-logo">Study <span>Tracker</span></div>
   <div class="splash-bar"><div class="splash-fill"></div></div>
 </div>
 
@@ -192,6 +191,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
     <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
     <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="e.g. Arjun" aria-label="Your name" autocomplete="name"></div>
+    <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="Leave blank for CSEB default" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
     <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
     <div class="auth-err" id="auth-err"></div>
   </div>
@@ -217,6 +217,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
             <div id="pd-sync" class="pd-sync-row">● Offline</div>
           </div>
           <div class="pd-stats-block" id="pd-stats"></div>
+          <div class="pd-section">Course</div>
+          <div id="pd-courses"></div>
+          <div class="pd-sep"></div>
           <div class="pd-section">Appearance</div>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
           <button class="pd-item" data-t="light" role="menuitem">Light</button>
@@ -417,6 +420,7 @@ initializeAppCheck(app,{
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
+enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
 
 let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
 // cached DOM refs
@@ -432,6 +436,7 @@ window.switchTab=function(t){
   $('tab-signup').classList.toggle('active',t==='signup');
   $('auth-submit-btn').textContent=t==='login'?'Sign In':'Create Account';
   $('signup-name-field').style.display=t==='signup'?'block':'none';
+  $('signup-code-field').style.display=t==='signup'?'block':'none';
   $('auth-err').textContent='';
   $('auth-overlay').dataset.mode=t;
 };
@@ -449,15 +454,22 @@ function authErrMsg(code){
   return m[code]||'Error: '+code;
 }
 
+// course codes map — add new courses here
+const COURSE_CODES={'CSEB11':'CSEB Junior Clerk Cat 11'};
+const DEFAULT_COURSE='CSEB11';
+
 window.submitAuth=async function(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
   if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
   try{
     if(mode==='signup'){
+      const rawCode=($('auth-code').value||'').trim().toUpperCase();
+      const code=rawCode&&COURSE_CODES[rawCode]?rawCode:DEFAULT_COURSE;
       const name=$('auth-name').value.trim()||email.split('@')[0];
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
+      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
     } else {
       await signInWithEmailAndPassword(auth,email,pass);
     }
@@ -467,51 +479,51 @@ window.submitAuth=async function(){
 window.doSignOut=async function(){await signOut(auth);};
 
 const SCH={
- "2026-05-27":{p:"banking",  l:"Banking · Day 1/8",      ids:["bnk1","bnk2"]},
- "2026-05-28":{p:"banking",  l:"Banking · Day 2/8",      ids:["bnk3","bnk4"]},
- "2026-05-29":{p:"banking",  l:"Banking · Day 3/8",      ids:["bnk5","bnk6"]},
- "2026-05-30":{p:"banking",  l:"Banking · Day 4/8",      ids:["bnk7","bnk8"]},
- "2026-05-31":{p:"banking",  l:"Banking · Day 5/8",      ids:["bnk9","bnk10"]},
- "2026-06-01":{p:"banking",  l:"Banking · Day 6/8",      ids:["bnk11","bnk12"]},
- "2026-06-02":{p:"banking",  l:"Banking · Day 7/8",      ids:["bnk13","bnk14"]},
- "2026-06-03":{p:"banking",  l:"Banking · Day 8/8",      ids:["bnk15","bnk16"]},
- "2026-06-04":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
- "2026-06-05":{p:"accounting",l:"Accounting · Day 2/7",  ids:["acc3","acc4"]},
- "2026-06-06":{p:"accounting",l:"Accounting · Day 3/7",  ids:["acc5","acc6"]},
- "2026-06-07":{p:"accounting",l:"Accounting · Day 4/7",  ids:["acc7","acc8"]},
- "2026-06-08":{p:"accounting",l:"Accounting · Day 5/7",  ids:["acc9","acc10"]},
- "2026-06-09":{p:"accounting",l:"Accounting · Day 6/7",  ids:["acc11","acc12"]},
- "2026-06-10":{p:"accounting",l:"Accounting · Day 7/7",  ids:["acc13","acc14"]},
- "2026-06-11":{p:"principles",l:"Principles · Day 1/9",  ids:["prin1","prin2"]},
- "2026-06-12":{p:"principles",l:"Principles · Day 2/9",  ids:["prin3","prin4"]},
- "2026-06-13":{p:"principles",l:"Principles · Day 3/9",  ids:["prin5","prin6"]},
- "2026-06-14":{p:"principles",l:"Principles · Day 4/9",  ids:["prin7","prin8"]},
- "2026-06-15":{p:"principles",l:"Principles · Day 5/9",  ids:["prin9","prin10"]},
- "2026-06-16":{p:"principles",l:"Principles · Day 6/9",  ids:["prin11","prin12"]},
- "2026-06-17":{p:"principles",l:"Principles · Day 7/9",  ids:["prin13","prin14"]},
- "2026-06-18":{p:"principles",l:"Principles · Day 8/9",  ids:["prin15","prin16"]},
- "2026-06-19":{p:"principles",l:"Principles · Day 9/9",  ids:["prin17"]},
- "2026-06-20":{p:"act",       l:"Act & Rules · Day 1/4", ids:["act1","act2"]},
- "2026-06-21":{p:"act",       l:"Act & Rules · Day 2/4", ids:["act3","act4"]},
- "2026-06-22":{p:"act",       l:"Act & Rules · Day 3/4", ids:["act5","act6"]},
- "2026-06-23":{p:"act",       l:"Act & Rules · Day 4/4", ids:["act7"]},
- "2026-06-24":{p:"english",   l:"English · Day 1/5",     ids:["eng1","eng2"]},
- "2026-06-25":{p:"english",   l:"English · Day 2/5",     ids:["eng3","eng4"]},
- "2026-06-26":{p:"english",   l:"English · Day 3/5",     ids:["eng5","eng6"]},
- "2026-06-27":{p:"english",   l:"English · Day 4/5",     ids:["eng7","eng8"]},
- "2026-06-28":{p:"english",   l:"English · Day 5/5",     ids:["eng9","eng10"]},
- "2026-06-29":{p:"reasoning", l:"Reasoning · Day 1/5",   ids:["res1","res2"]},
- "2026-06-30":{p:"reasoning", l:"Reasoning · Day 2/5",   ids:["res3","res4"]},
- "2026-07-01":{p:"reasoning", l:"Reasoning · Day 3/5",   ids:["res5","res6"]},
- "2026-07-02":{p:"reasoning", l:"Reasoning · Day 4/5",   ids:["res7","res8"]},
- "2026-07-03":{p:"reasoning", l:"Reasoning · Day 5/5",   ids:["res9"]},
- "2026-07-04":{p:"gk",        l:"GK · Day 1/5",          ids:["gk1","gk2"]},
- "2026-07-05":{p:"gk",        l:"GK · Day 2/5",          ids:["gk3","gk4"]},
- "2026-07-06":{p:"gk",        l:"GK · Day 3/5",          ids:["gk5","gk6"]},
- "2026-07-07":{p:"gk",        l:"GK · Day 4/5",          ids:["gk7","gk8"]},
- "2026-07-08":{p:"gk",        l:"GK · Day 5/5 🎉",       ids:["gk9"]},
- "2026-07-09":{p:"mock",      l:"Full Mock Test Day",     ids:[]},
- "2026-07-10":{p:"eve",       l:"Exam Eve — Rest",        ids:[]}
+ "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
+ "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
+ "2026-05-29":{p:"principles",l:"Principles · Day 1/9",  ids:["prin1","prin2"]},
+ "2026-05-30":{p:"act",       l:"Act & Rules · Day 1/4", ids:["act1","act2"]},
+ "2026-05-31":{p:"english",   l:"English · Day 1/5",     ids:["eng1","eng2"]},
+ "2026-06-01":{p:"reasoning", l:"Reasoning · Day 1/5",   ids:["res1","res2"]},
+ "2026-06-02":{p:"banking",   l:"Banking · Day 2/8",     ids:["bnk3","bnk4"]},
+ "2026-06-03":{p:"accounting",l:"Accounting · Day 2/7",  ids:["acc3","acc4"]},
+ "2026-06-04":{p:"principles",l:"Principles · Day 2/9",  ids:["prin3","prin4"]},
+ "2026-06-05":{p:"act",       l:"Act & Rules · Day 2/4", ids:["act3","act4"]},
+ "2026-06-06":{p:"english",   l:"English · Day 2/5",     ids:["eng3","eng4"]},
+ "2026-06-07":{p:"reasoning", l:"Reasoning · Day 2/5",   ids:["res3","res4"]},
+ "2026-06-08":{p:"banking",   l:"Banking · Day 3/8",     ids:["bnk5","bnk6"]},
+ "2026-06-09":{p:"accounting",l:"Accounting · Day 3/7",  ids:["acc5","acc6"]},
+ "2026-06-10":{p:"principles",l:"Principles · Day 3/9",  ids:["prin5","prin6"]},
+ "2026-06-11":{p:"act",       l:"Act & Rules · Day 3/4", ids:["act5","act6"]},
+ "2026-06-12":{p:"english",   l:"English · Day 3/5",     ids:["eng5","eng6"]},
+ "2026-06-13":{p:"reasoning", l:"Reasoning · Day 3/5",   ids:["res5","res6"]},
+ "2026-06-14":{p:"banking",   l:"Banking · Day 4/8",     ids:["bnk7","bnk8"]},
+ "2026-06-15":{p:"accounting",l:"Accounting · Day 4/7",  ids:["acc7","acc8"]},
+ "2026-06-16":{p:"principles",l:"Principles · Day 4/9",  ids:["prin7","prin8"]},
+ "2026-06-17":{p:"act",       l:"Act & Rules · Day 4/4", ids:["act7"]},
+ "2026-06-18":{p:"english",   l:"English · Day 4/5",     ids:["eng7","eng8"]},
+ "2026-06-19":{p:"reasoning", l:"Reasoning · Day 4/5",   ids:["res7","res8"]},
+ "2026-06-20":{p:"banking",   l:"Banking · Day 5/8",     ids:["bnk9","bnk10"]},
+ "2026-06-21":{p:"accounting",l:"Accounting · Day 5/7",  ids:["acc9","acc10"]},
+ "2026-06-22":{p:"principles",l:"Principles · Day 5/9",  ids:["prin9","prin10"]},
+ "2026-06-23":{p:"english",   l:"English · Day 5/5",     ids:["eng9","eng10"]},
+ "2026-06-24":{p:"reasoning", l:"Reasoning · Day 5/5",   ids:["res9"]},
+ "2026-06-25":{p:"banking",   l:"Banking · Day 6/8",     ids:["bnk11","bnk12"]},
+ "2026-06-26":{p:"accounting",l:"Accounting · Day 6/7",  ids:["acc11","acc12"]},
+ "2026-06-27":{p:"principles",l:"Principles · Day 6/9",  ids:["prin11","prin12"]},
+ "2026-06-28":{p:"banking",   l:"Banking · Day 7/8",     ids:["bnk13","bnk14"]},
+ "2026-06-29":{p:"accounting",l:"Accounting · Day 7/7",  ids:["acc13","acc14"]},
+ "2026-06-30":{p:"principles",l:"Principles · Day 7/9",  ids:["prin13","prin14"]},
+ "2026-07-01":{p:"banking",   l:"Banking · Day 8/8",     ids:["bnk15","bnk16"]},
+ "2026-07-02":{p:"principles",l:"Principles · Day 8/9",  ids:["prin15","prin16"]},
+ "2026-07-03":{p:"principles",l:"Principles · Day 9/9 🎉",ids:["prin17"]},
+ "2026-07-04":{p:"mock",      l:"Revision — Banking & Accounting", ids:[]},
+ "2026-07-05":{p:"mock",      l:"Revision — Principles & Act",     ids:[]},
+ "2026-07-06":{p:"mock",      l:"Revision — English & Reasoning",  ids:[]},
+ "2026-07-07":{p:"mock",      l:"Revision — Weak Areas",           ids:[]},
+ "2026-07-08":{p:"mock",      l:"Full Syllabus Revision",          ids:[]},
+ "2026-07-09":{p:"mock",      l:"Full Mock Test Day",              ids:[]},
+ "2026-07-10":{p:"eve",       l:"Exam Eve — Rest",                 ids:[]}
 };
 const LABELS={
  bnk1:"Banking System: Scheduled/Non-Scheduled, RRBs, Co-op Banks, Foreign, Small Finance, Payment Banks",
@@ -598,8 +610,8 @@ function dLeft(s){
 
 function syncState(s){
   const el=$('pd-sync');if(!el)return;
-  if(s==='syncing'){el.textContent='⏳ Syncing…';el.style.color='var(--accent)';}
-  else if(s==='synced'){el.textContent='✓ Synced';el.style.color='var(--green)';}
+  if(s==='syncing'){el.textContent='✓ Saved locally';el.style.color='var(--green)';}
+  else if(s==='synced'){el.textContent='☁ Synced';el.style.color='var(--blue)';}
   else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
 
@@ -616,10 +628,10 @@ async function flushToCloud(){
 }
 
 function scheduleCloudSync(){
-  if(!pendingCloudWrite){
-    pendingCloudWrite=true;syncState('syncing');
-    clearTimeout(writeDebounce);writeDebounce=setTimeout(flushToCloud,10000);
-  }
+  pendingCloudWrite=true;
+  syncState('syncing');
+  clearTimeout(writeDebounce);
+  writeDebounce=setTimeout(flushToCloud,2000);
 }
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingCloudWrite)flushToCloud();});
@@ -776,6 +788,27 @@ function calcStreak(){
   return s;
 }
 
+function renderCourses(data){
+  const pc=$('pd-courses');if(!pc)return;
+  // existing users without course field default to CSEB11
+  const courses=data.courses&&data.courses.length?data.courses:[DEFAULT_COURSE];
+  const active=data.activeCourse||DEFAULT_COURSE;
+  pc.innerHTML=courses.map(c=>{
+    const isActive=c===active;
+    return `<button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem">${COURSE_CODES[c]||c}</button>`;
+  }).join('');
+  pc.querySelectorAll('[data-course]').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const code=btn.getAttribute('data-course');
+      remoteData.activeCourse=code;
+      await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
+      renderCourses(remoteData);
+      $('profile-drop').classList.add('hidden');
+    });
+  });
+}
+
 function initApp(user){
   $('splash').classList.add('hidden');
   $('auth-overlay').classList.add('hidden');
@@ -790,27 +823,25 @@ function initApp(user){
   $('d11').textContent=dLeft("2026-07-11");
   $('d10').textContent=dLeft("2026-08-08");
   $('d09').textContent=dLeft("2026-08-16");
-  // enable persistence per-session after auth established
-  enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
   // cache DOM refs once
   domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
   // load deferred state
   try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
   // seed localStorage instantly → no empty flash
   try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
-  makeCard();bindSyllabus();updateAll();renderPending();
+  makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
   $('splash').classList.add('hidden'); // hide splash as soon as local data ready
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   // fast path: getDoc once for immediate cloud data, then subscribe for live updates
   getDoc(doc(db,'users',user.uid)).then(snap=>{
     if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    syncState('synced');
-  }).catch(()=>{});
+    renderCourses(remoteData);syncState('synced');
+  }).catch(()=>{renderCourses(remoteData);});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);saveLocal(remoteData);syncState('synced');
+    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);syncState('synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
