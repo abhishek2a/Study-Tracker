@@ -627,11 +627,56 @@ const FR_PLAN=[
 
 function buildFRSch(startDateStr){
   const sch={};
-  let d=new Date(startDateStr);
-  FR_PLAN.forEach(s=>{
-    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    sch[k]=s;d.setDate(d.getDate()+1);
-  });
+  const EXAM_DATE=new Date('2026-09-10');
+  const MOCK_BUFFER=5; // reserve 5 days before exam for mock/revision
+  const lastStudy=new Date(EXAM_DATE);lastStudy.setDate(lastStudy.getDate()-MOCK_BUFFER);
+  const start=new Date(startDateStr);
+
+  // study items (non-empty ids only)
+  const studyItems=FR_PLAN.filter(s=>s.ids&&s.ids.length>0);
+  const n=studyItems.length; // 20
+
+  // total available days for study
+  const totalDays=Math.max(1,Math.ceil((lastStudy-start)/86400000)+1);
+
+  // build day list: assign study items spread across available days
+  const dayKeys=[];
+  let d=new Date(start);
+  while(d<=lastStudy){
+    dayKeys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+    d.setDate(d.getDate()+1);
+  }
+
+  if(totalDays>=n){
+    // spread: place items evenly, rest days between
+    const step=totalDays/n;
+    studyItems.forEach((s,i)=>{
+      const idx=Math.min(Math.round(i*step),dayKeys.length-1);
+      sch[dayKeys[idx]]=s;
+    });
+  } else {
+    // compress: stack multiple items per day
+    let dayIdx=0;
+    const itemsPerDay=Math.ceil(n/totalDays);
+    for(let i=0;i<n;i+=itemsPerDay){
+      if(dayIdx>=dayKeys.length)break;
+      const batch=studyItems.slice(i,i+itemsPerDay);
+      sch[dayKeys[dayIdx]]={
+        p:batch[0].p,
+        l:batch.map(b=>b.l).join(' + '),
+        ids:batch.flatMap(b=>b.ids)
+      };
+      dayIdx++;
+    }
+  }
+
+  // mock/revision days: Sep 5–9
+  for(let i=0;i<MOCK_BUFFER;i++){
+    const md=new Date(EXAM_DATE);md.setDate(md.getDate()-(MOCK_BUFFER-i));
+    const mk=`${md.getFullYear()}-${String(md.getMonth()+1).padStart(2,'0')}-${String(md.getDate()).padStart(2,'0')}`;
+    const labels=['Revision — Framework & Transactions','Revision — Analysis & Preparation','Full Mock Test (Timed)','Review Weak Areas','Exam Eve — Light Revision'];
+    sch[mk]={p:'mock',l:labels[i]||'Revision',ids:[]};
+  }
   return sch;
 }
 
@@ -759,19 +804,27 @@ function makeCard(){
   const {sch,labels}=getCourseData();
   const dc=$('daycard'),sched=sch[ts];
   if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
-    const today=new Date();
-    const deadline=new Date('2026-07-01');
-    const isLate=today>=deadline;
-    const daysLeft=Math.ceil((deadline-today)/86400000);
+    const today=new Date();today.setHours(0,0,0,0);
+    const examDate=new Date('2026-09-10');
+    const daysToExam=Math.ceil((examDate-today)/86400000);
+    const studyDays=Math.max(1,daysToExam-5);
+    const isVeryLate=daysToExam<12;
+    const isTight=daysToExam<30;
+    const paceNote=isVeryLate
+      ?'<span style="color:var(--red)">⚠ Very tight — topics will be compressed</span>'
+      :isTight?'<span style="color:var(--accent)">⚡ Tight pace — ~1 topic/day</span>'
+      :'<span style="color:var(--green)">✓ Comfortable pace — topics spread with rest days</span>';
     dc.innerHTML=`<div class="day-card framework">
       <div class="day-top"><h2>📚 ACCA FR</h2><span class="day-badge">Not Activated</span></div>
-      <div class="day-sub" style="margin-bottom:4px">Financial Reporting · 21-day schedule · Sep 2026 exam</div>
-      ${isLate
-        ?`<div style="font-size:.74rem;color:var(--red);font-family:var(--mono);margin:10px 0;padding:8px 12px;background:rgba(224,80,80,.08);border-radius:8px;border:1px solid rgba(224,80,80,.2)">⚠ Activate deadline was 1 Jul 2026. You may not cover all 21 topics before the Sep exam. Proceed with caution.</div>`
-        :`<div style="font-size:.72rem;color:var(--green);font-family:var(--mono);margin:10px 0">✓ Activate by 1 Jul 2026 to finish before Sep · ${daysLeft} days left to activate</div>`
-      }
+      <div class="day-sub" style="margin-bottom:8px">Financial Reporting · Sep 10 2026 exam · 3hr CBE</div>
+      <div style="font-size:.72rem;font-family:var(--mono);margin:8px 0;padding:8px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);line-height:1.8">
+        📅 ${daysToExam} days to exam<br>
+        📖 ${studyDays} study days — 20 topics auto-distributed<br>
+        🎯 Last 5 days: mock &amp; revision<br>
+        ${paceNote}
+      </div>
       <div id="acca-confirm-row" style="display:none;margin-bottom:12px;padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);font-size:.8rem;color:var(--text)">
-        Schedule starts <strong>tomorrow</strong> and runs 21 days. All 37 FR topics will be covered. Ready to begin?
+        Schedule starts <strong>tomorrow</strong>. 20 FR topics auto-spread across ${studyDays} study days. Ready?
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="acca-activate-btn" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-size:.84rem;font-weight:700;cursor:pointer;font-family:var(--font)">🚀 Activate Schedule</button>
