@@ -367,6 +367,8 @@ window.submitAuth=async function(){
 window.doSignOut=async function(){await signOut(auth);};
 
 // Course data registry — add new courses here as COURSE_CODES[key]
+const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
+const DEFAULT_COURSE='CSEB11';
 const COURSE_DATA={};
 const SCH={
  "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
@@ -997,8 +999,6 @@ function calcStreak(){
   return s;
 }
 
-const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
-const DEFAULT_COURSE='CSEB11';
 
 
 
