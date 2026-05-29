@@ -299,10 +299,12 @@ const app = initializeApp({
   measurementId:"G-W0VWF51FSW"
 });
 getAnalytics(app);
-initializeAppCheck(app,{
-  provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
-  isTokenAutoRefreshEnabled:true
-});
+try{
+  initializeAppCheck(app,{
+    provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
+    isTokenAutoRefreshEnabled:true
+  });
+}catch(e){console.warn('AppCheck failed:',e);}
 const auth = getAuth(app);
 const db = getFirestore(app);
 enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
@@ -1056,7 +1058,25 @@ document.getElementById('pd-course-add-btn').addEventListener('click',async func
   inp.value='';renderCourses(remoteData);
 });
 
-function hideSplash(){setTimeout(()=>$('splash').classList.add('hidden'),1400);}
+function hideSplash(){
+  setTimeout(()=>{
+    $('splash').classList.add('hidden');
+    // if app not visible after splash, show auth (fallback)
+    if(!$('app').classList.contains('visible')){
+      $('auth-overlay').classList.remove('hidden');
+    }
+  },1400);
+}
+
+// Hard fallback: if auth never resolves in 5s, hide splash and show auth
+setTimeout(()=>{
+  if(!$('splash').classList.contains('hidden')){
+    $('splash').classList.add('hidden');
+    if(!$('app').classList.contains('visible')){
+      $('auth-overlay').classList.remove('hidden');
+    }
+  }
+},5000);
 
 
 
