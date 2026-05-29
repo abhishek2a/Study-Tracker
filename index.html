@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Study Tracker</title>
 <style>
 :root {
@@ -1091,17 +1094,25 @@ function initApp(user){
   $('pd-name').textContent=user.displayName||name;
   $('pd-email').textContent=user.email;
   $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  renderExamStrip();
-  domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
-  try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-  try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
-  makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
+  try{
+    renderExamStrip();
+    domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
+    try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
+    try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
+    makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
+  }catch(err){
+    console.error('initApp render error:',err);
+    // show error in UI temporarily
+    const wrap=document.querySelector('.wrap');
+    if(wrap){const d=document.createElement('div');d.style.cssText='color:var(--red);font-family:var(--mono);font-size:.7rem;padding:12px;background:rgba(224,80,80,.08);border-radius:8px;margin-bottom:12px;white-space:pre-wrap';d.textContent='Debug: '+err.message;wrap.prepend(d);}
+  }
+  hideSplash();
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   getDoc(doc(db,'users',user.uid)).then(snap=>{
     if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    renderCourses(remoteData);renderExamStrip();updatePageTitle();syncState('synced');hideSplash();
-  }).catch(()=>{renderCourses(remoteData);hideSplash();});
+    renderCourses(remoteData);renderExamStrip();updatePageTitle();syncState('synced');
+  }).catch(()=>{renderCourses(remoteData);});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
