@@ -978,15 +978,15 @@ function renderExamStrip(){
 }
 
 function calcStreak(){
-  const {sch}=getCourseData();let s=0,d=new Date(),tries=0;
-  while(tries<60){
-    tries++;
-    d.setDate(d.getDate()-1);
-    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const sc=sch[k];
-    if(!sc)break; // outside schedule entirely
-    if(!sc.ids||!sc.ids.length)continue; // mock/eve day — skip, don't break streak
-    if(sc.ids.every(id=>remoteData[id]))s++;else break;
+  const {sch}=getCourseData();
+  // collect all past scheduled dates with real topics, sorted newest first
+  const scheduledDates=Object.keys(sch)
+    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=ts)
+    .sort().reverse();
+  let s=0;
+  for(const k of scheduledDates){
+    if(sch[k].ids.every(id=>remoteData[id]))s++;
+    else break; // streak broken
   }
   return s;
 }
