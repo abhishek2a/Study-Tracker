@@ -13,7 +13,7 @@
   --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#7a8aa0; --audit:#f07850;
   --framework:#6c8ebf; --transactions:#82b366; --analysis:#d6a500; --preparation:#9b59b6;
   --red:#e05555;
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --font:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
   --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
   --radius:12px;
 }
@@ -234,7 +234,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
             <div id="pd-sync" class="pd-sync-row">● Offline</div>
           </div>
           <div class="pd-stats-block" id="pd-stats"></div>
-          <div id="pd-session" style="display:flex;flex-direction:column;gap:1px;padding:4px;border-bottom:1px solid var(--border);margin-bottom:4px"></div>
           <div class="pd-section">Course</div>
           <div id="pd-courses"></div>
           <div id="pd-add-course-row" style="padding:4px 4px 2px;display:flex;gap:4px;align-items:center">
@@ -343,7 +342,6 @@ function authErrMsg(code){
 // course codes map — add new courses here
 // course codes — add new courses here
 
-function addMonths(dateStr,n){const d=new Date(dateStr);d.setMonth(d.getMonth()+n);return d.toISOString().split('T')[0];}
 
 window.submitAuth=async function(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
@@ -357,8 +355,7 @@ window.submitAuth=async function(){
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
       const today=new Date().toISOString().split('T')[0];
-      const enrollments={[code]:{start:today,end:addMonths(today,6)}};
-      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,enrollments},{merge:true});
+      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
     } else {
       await signInWithEmailAndPassword(auth,email,pass);
     }
@@ -944,30 +941,9 @@ function calcStreak(){
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
 
-function enrollCourse(code){
-  const today=new Date().toISOString().split('T')[0];
-  const end=addMonths(today,6);
-  if(!remoteData.enrollments)remoteData.enrollments={};
-  remoteData.enrollments[code]={start:today,end};
-  return {start:today,end};
-}
-function getCourseValidity(code){
-  if(remoteData.enrollments&&remoteData.enrollments[code])return remoteData.enrollments[code];
-  // ACCA: validity starts from activation date
-  if(code==='ACCA26'&&remoteData.acca26_start){
-    return{start:remoteData.acca26_start,end:addMonths(remoteData.acca26_start,6)};
-  }
-  // existing users: use Firestore creationTime stored in remoteData._created
-  if(remoteData._created){
-    return{start:remoteData._created,end:addMonths(remoteData._created,6)};
-  }
-  return null;
-}
-function isCourseExpired(code){
-  const v=getCourseValidity(code);
-  if(!v)return false;
-  return new Date(v.end)<new Date();
-}
+
+
+
 
 function renderCourses(data){
   const pc=$('pd-courses');if(!pc)return;
@@ -976,43 +952,20 @@ function renderCourses(data){
   pc.innerHTML=courses.map(c=>{
     const isActive=c===active;
     const canRemove=c!==DEFAULT_COURSE;
-    const v=getCourseValidity(c);
-    const expired=isCourseExpired(c);
-    const validityHtml=v
-      ?`<div style="font-size:.58rem;font-family:var(--mono);color:${expired?'var(--red)':'var(--dim)'};padding:0 12px 4px;line-height:1.6">
-          ${expired?'⚠ Expired':'Valid'} · ${v.start} → ${v.end}
-         </div>`
-      :'';
-    return `<div>
-      <div style="display:flex;align-items:center;gap:2px">
-        <button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem;flex:1;${expired?'opacity:.5':''}">
-          ${COURSE_CODES[c]||c}${expired?' (Expired)':''}
-        </button>
-        ${expired?`<button class="pd-renew" data-renew="${c}" style="flex-shrink:0;padding:4px 8px;border:1px solid var(--green);border-radius:6px;background:transparent;color:var(--green);cursor:pointer;font-size:.62rem;font-family:var(--mono);font-weight:700" e.stopPropagation>Renew</button>`:''}
-        ${canRemove?`<button class="pd-remove" data-remove="${c}" style="flex-shrink:0;width:26px;height:26px;border:none;background:transparent;color:var(--dim);cursor:pointer;border-radius:6px;font-size:.75rem">✕</button>`:''}
-      </div>
-      ${validityHtml}
+    return `<div style="display:flex;align-items:center;gap:2px">
+      <button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem;flex:1">${COURSE_CODES[c]||c}</button>
+      ${canRemove?`<button class="pd-remove" data-remove="${c}" style="flex-shrink:0;width:26px;height:26px;border:none;background:transparent;color:var(--dim);cursor:pointer;border-radius:6px;font-size:.75rem">✕</button>`:''}
     </div>`;
   }).join('');
   pc.querySelectorAll('[data-course]').forEach(btn=>{
     btn.addEventListener('click',async e=>{
       e.stopPropagation();
       const code=btn.getAttribute('data-course');
-      if(isCourseExpired(code))return; // block switch to expired
       remoteData.activeCourse=code;
       await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
       renderCourses(remoteData);renderExamStrip();
       makeCard();bindSyllabus();updateAll();renderPending();
       $('profile-drop').classList.add('hidden');
-    });
-  });
-  pc.querySelectorAll('.pd-renew').forEach(btn=>{
-    btn.addEventListener('click',async e=>{
-      e.stopPropagation();
-      const code=btn.getAttribute('data-renew');
-      const v=enrollCourse(code); // reset 6 months from today
-      await setDoc(doc(db,'users',currentUid),{enrollments:remoteData.enrollments},{merge:true});
-      renderCourses(remoteData);
     });
   });
   pc.querySelectorAll('.pd-remove').forEach(btn=>{
@@ -1042,30 +995,14 @@ document.getElementById('pd-course-add-btn').addEventListener('click',async func
   if(existing.includes(code)){err.textContent='Already added.';return;}
   const updated=[...existing,code];
   remoteData.courses=updated;remoteData.activeCourse=code;
-  const v=enrollCourse(code);
-  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code,enrollments:remoteData.enrollments},{merge:true});
+  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
   inp.value='';renderCourses(remoteData);
 });
 
 function hideSplash(){setTimeout(()=>$('splash').classList.add('hidden'),1400);}
 
-let currentSessionId=null;
 
-function genId(){return Math.random().toString(36).slice(2,10).toUpperCase();}
 
-function renderSession(){
-  const el=$('pd-session');if(!el||!currentSessionId)return;
-  const loginTime=remoteData._sessions&&remoteData._sessions[currentSessionId]
-    ?new Date(remoteData._sessions[currentSessionId].login).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
-    :'—';
-  const lastLogout=remoteData._lastLogout
-    ?new Date(remoteData._lastLogout).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
-    :'—';
-  el.innerHTML=`
-    <div class="pd-stat-row"><span class="pd-stat-label">Session</span><span class="pd-stat-value" style="font-size:.6rem;font-family:var(--mono)">${currentSessionId}</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">Login</span><span class="pd-stat-value">${loginTime}</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">Last logout</span><span class="pd-stat-value">${lastLogout}</span></div>`;
-}
 
 function initApp(user){
   $('auth-overlay').classList.add('hidden');
@@ -1084,40 +1021,20 @@ function initApp(user){
   makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
   if(unsubSnap)unsubSnap();
   syncState('syncing');
-  // create session
-  currentSessionId=genId();
-  const loginIso=new Date().toISOString();
-  // get _created from Firebase Auth metadata for existing users
-  const createdIso=user.metadata.creationTime
-    ?new Date(user.metadata.creationTime).toISOString().split('T')[0]
-    :new Date().toISOString().split('T')[0];
-  const sessionPatch={
-    [`_sessions.${currentSessionId}`]:{login:loginIso},
-    _created:createdIso // safe: merge:true won't overwrite if already set via Firestore rules — we set it once
-  };
-  setDoc(doc(db,'users',user.uid),sessionPatch,{merge:true}).catch(()=>{});
   getDoc(doc(db,'users',user.uid)).then(snap=>{
     if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    renderCourses(remoteData);renderSession();syncState('synced');hideSplash();
+    renderCourses(remoteData);syncState('synced');hideSplash();
   }).catch(()=>{renderCourses(remoteData);hideSplash();});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);renderSession();syncState('synced');
+    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);syncState('synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
 onAuthStateChanged(auth,user=>{
   if(user){currentUid=user.uid;initApp(user);}
   else{
-    // save logout time
-    if(currentUid&&currentSessionId){
-      setDoc(doc(db,'users',currentUid),{
-        [`_sessions.${currentSessionId}.logout`]:new Date().toISOString(),
-        _lastLogout:new Date().toISOString()
-      },{merge:true}).catch(()=>{});
-    }
-    currentSessionId=null;
     currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
     remoteData={};syllabusBoxes=[];
     pendingCloudWrite=false;clearTimeout(writeDebounce);
