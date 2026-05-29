@@ -216,7 +216,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 <div id="app">
   <div class="topbar">
-    <div class="logo">CSEB</div>
+    <div class="logo">Study <span>Tracker</span></div>
     <div class="topright">
       <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
@@ -234,6 +234,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
             <div id="pd-sync" class="pd-sync-row">● Offline</div>
           </div>
           <div class="pd-stats-block" id="pd-stats"></div>
+          <div id="pd-session" style="display:flex;flex-direction:column;gap:1px;padding:4px;border-bottom:1px solid var(--border);margin-bottom:4px"></div>
           <div class="pd-section">Course</div>
           <div id="pd-courses"></div>
           <div id="pd-add-course-row" style="padding:4px 4px 2px;display:flex;gap:4px;align-items:center">
@@ -342,6 +343,8 @@ function authErrMsg(code){
 // course codes map — add new courses here
 // course codes — add new courses here
 
+function addMonths(dateStr,n){const d=new Date(dateStr);d.setMonth(d.getMonth()+n);return d.toISOString().split('T')[0];}
+
 window.submitAuth=async function(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
@@ -353,7 +356,9 @@ window.submitAuth=async function(){
       const name=$('auth-name').value.trim()||email.split('@')[0];
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
-      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
+      const today=new Date().toISOString().split('T')[0];
+      const enrollments={[code]:{start:today,end:addMonths(today,6)}};
+      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,enrollments},{merge:true});
     } else {
       await signInWithEmailAndPassword(auth,email,pass);
     }
@@ -890,11 +895,16 @@ function renderExamStrip(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
   // ACCA course — show single TBD pill
   if(active==='ACCA26'){
-    es.innerHTML=`<div class="epill next-exam">
-      <div class="en">ACCA FR · Sep 2026–Jun 2027</div>
-      <div class="ed">Exam Date TBC</div>
+    const today=new Date();today.setHours(0,0,0,0);
+    const examDate=new Date('2026-09-10');
+    const diff=Math.ceil((examDate-today)/86400000);
+    const status=diff<0?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
+    const statusColor=diff<0?'var(--green)':diff===0?'var(--accent)':'var(--green)';
+    es.innerHTML=`<div class="epill ${diff<0?'done-exam':'next-exam'}">
+      <div class="en">ACCA FR · ${diff<0?'Completed':'Target'}</div>
+      <div class="ed">10 Sep 2026</div>
       <div class="en2">Financial Reporting<br><span style="opacity:.7">Applied Skills · 3hr CBE</span></div>
-      <div class="edd" style="color:var(--blue)">Sep 2026 session onward</div></div>`;
+      <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div></div>`;
     return;
   }
   const today=new Date();today.setHours(0,0,0,0);
@@ -934,24 +944,87 @@ function calcStreak(){
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
 
+function enrollCourse(code){
+  const today=new Date().toISOString().split('T')[0];
+  const end=addMonths(today,6);
+  if(!remoteData.enrollments)remoteData.enrollments={};
+  remoteData.enrollments[code]={start:today,end};
+  return {start:today,end};
+}
+function getCourseValidity(code){
+  if(remoteData.enrollments&&remoteData.enrollments[code])return remoteData.enrollments[code];
+  // ACCA: validity starts from activation date
+  if(code==='ACCA26'&&remoteData.acca26_start){
+    return{start:remoteData.acca26_start,end:addMonths(remoteData.acca26_start,6)};
+  }
+  // existing users: use Firestore creationTime stored in remoteData._created
+  if(remoteData._created){
+    return{start:remoteData._created,end:addMonths(remoteData._created,6)};
+  }
+  return null;
+}
+function isCourseExpired(code){
+  const v=getCourseValidity(code);
+  if(!v)return false;
+  return new Date(v.end)<new Date();
+}
+
 function renderCourses(data){
   const pc=$('pd-courses');if(!pc)return;
   const courses=data.courses&&data.courses.length?data.courses:[DEFAULT_COURSE];
   const active=data.activeCourse||DEFAULT_COURSE;
   pc.innerHTML=courses.map(c=>{
     const isActive=c===active;
-    return `<button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem">${COURSE_CODES[c]||c}</button>`;
+    const canRemove=c!==DEFAULT_COURSE;
+    const v=getCourseValidity(c);
+    const expired=isCourseExpired(c);
+    const validityHtml=v
+      ?`<div style="font-size:.58rem;font-family:var(--mono);color:${expired?'var(--red)':'var(--dim)'};padding:0 12px 4px;line-height:1.6">
+          ${expired?'⚠ Expired':'Valid'} · ${v.start} → ${v.end}
+         </div>`
+      :'';
+    return `<div>
+      <div style="display:flex;align-items:center;gap:2px">
+        <button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem;flex:1;${expired?'opacity:.5':''}">
+          ${COURSE_CODES[c]||c}${expired?' (Expired)':''}
+        </button>
+        ${expired?`<button class="pd-renew" data-renew="${c}" style="flex-shrink:0;padding:4px 8px;border:1px solid var(--green);border-radius:6px;background:transparent;color:var(--green);cursor:pointer;font-size:.62rem;font-family:var(--mono);font-weight:700" e.stopPropagation>Renew</button>`:''}
+        ${canRemove?`<button class="pd-remove" data-remove="${c}" style="flex-shrink:0;width:26px;height:26px;border:none;background:transparent;color:var(--dim);cursor:pointer;border-radius:6px;font-size:.75rem">✕</button>`:''}
+      </div>
+      ${validityHtml}
+    </div>`;
   }).join('');
   pc.querySelectorAll('[data-course]').forEach(btn=>{
     btn.addEventListener('click',async e=>{
       e.stopPropagation();
       const code=btn.getAttribute('data-course');
+      if(isCourseExpired(code))return; // block switch to expired
       remoteData.activeCourse=code;
       await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
-      renderCourses(remoteData);
-      renderExamStrip();
+      renderCourses(remoteData);renderExamStrip();
       makeCard();bindSyllabus();updateAll();renderPending();
       $('profile-drop').classList.add('hidden');
+    });
+  });
+  pc.querySelectorAll('.pd-renew').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const code=btn.getAttribute('data-renew');
+      const v=enrollCourse(code); // reset 6 months from today
+      await setDoc(doc(db,'users',currentUid),{enrollments:remoteData.enrollments},{merge:true});
+      renderCourses(remoteData);
+    });
+  });
+  pc.querySelectorAll('.pd-remove').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const code=btn.getAttribute('data-remove');
+      const updated=(remoteData.courses||[DEFAULT_COURSE]).filter(c=>c!==code);
+      remoteData.courses=updated;
+      if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=DEFAULT_COURSE;
+      await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:remoteData.activeCourse},{merge:true});
+      renderCourses(remoteData);renderExamStrip();
+      makeCard();bindSyllabus();updateAll();renderPending();
     });
   });
 }
@@ -969,11 +1042,30 @@ document.getElementById('pd-course-add-btn').addEventListener('click',async func
   if(existing.includes(code)){err.textContent='Already added.';return;}
   const updated=[...existing,code];
   remoteData.courses=updated;remoteData.activeCourse=code;
-  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
+  const v=enrollCourse(code);
+  await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code,enrollments:remoteData.enrollments},{merge:true});
   inp.value='';renderCourses(remoteData);
 });
 
 function hideSplash(){setTimeout(()=>$('splash').classList.add('hidden'),1400);}
+
+let currentSessionId=null;
+
+function genId(){return Math.random().toString(36).slice(2,10).toUpperCase();}
+
+function renderSession(){
+  const el=$('pd-session');if(!el||!currentSessionId)return;
+  const loginTime=remoteData._sessions&&remoteData._sessions[currentSessionId]
+    ?new Date(remoteData._sessions[currentSessionId].login).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
+    :'—';
+  const lastLogout=remoteData._lastLogout
+    ?new Date(remoteData._lastLogout).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
+    :'—';
+  el.innerHTML=`
+    <div class="pd-stat-row"><span class="pd-stat-label">Session</span><span class="pd-stat-value" style="font-size:.6rem;font-family:var(--mono)">${currentSessionId}</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">Login</span><span class="pd-stat-value">${loginTime}</span></div>
+    <div class="pd-stat-row"><span class="pd-stat-label">Last logout</span><span class="pd-stat-value">${lastLogout}</span></div>`;
+}
 
 function initApp(user){
   $('auth-overlay').classList.add('hidden');
@@ -986,32 +1078,52 @@ function initApp(user){
   $('pd-email').textContent=user.email;
   $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   renderExamStrip();
-  // cache DOM refs once
   domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
-  // load deferred state
   try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-  // seed localStorage instantly → no empty flash
   try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
   makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
   if(unsubSnap)unsubSnap();
   syncState('syncing');
-  // fast path: getDoc once for immediate cloud data, then subscribe for live updates
+  // create session
+  currentSessionId=genId();
+  const loginIso=new Date().toISOString();
+  // get _created from Firebase Auth metadata for existing users
+  const createdIso=user.metadata.creationTime
+    ?new Date(user.metadata.creationTime).toISOString().split('T')[0]
+    :new Date().toISOString().split('T')[0];
+  const sessionPatch={
+    [`_sessions.${currentSessionId}`]:{login:loginIso},
+    _created:createdIso // safe: merge:true won't overwrite if already set via Firestore rules — we set it once
+  };
+  setDoc(doc(db,'users',user.uid),sessionPatch,{merge:true}).catch(()=>{});
   getDoc(doc(db,'users',user.uid)).then(snap=>{
     if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
-    renderCourses(remoteData);syncState('synced');hideSplash();
+    renderCourses(remoteData);renderSession();syncState('synced');hideSplash();
   }).catch(()=>{renderCourses(remoteData);hideSplash();});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);syncState('synced');
+    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);renderSession();syncState('synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
 onAuthStateChanged(auth,user=>{
   if(user){currentUid=user.uid;initApp(user);}
   else{
+    // save logout time
+    if(currentUid&&currentSessionId){
+      setDoc(doc(db,'users',currentUid),{
+        [`_sessions.${currentSessionId}.logout`]:new Date().toISOString(),
+        _lastLogout:new Date().toISOString()
+      },{merge:true}).catch(()=>{});
+    }
+    currentSessionId=null;
     currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
+    remoteData={};syllabusBoxes=[];
+    pendingCloudWrite=false;clearTimeout(writeDebounce);
+    try{localStorage.removeItem('cseb_state');localStorage.removeItem('cseb_deferred');}catch(e){}
     $('splash').classList.add('hidden');
+    $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
   }
 });
