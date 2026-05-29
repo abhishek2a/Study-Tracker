@@ -953,6 +953,7 @@ function updatePageTitle(){
 }
 
 function renderExamStrip(){
+  const es=$('exam-strip');if(!es)return;
   const active=remoteData.activeCourse||DEFAULT_COURSE;
   // ACCA course — show single TBD pill
   if(active==='ACCA26'){
