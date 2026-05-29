@@ -949,7 +949,8 @@ const EXAMS=[
 
 function updatePageTitle(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
-  document.title=COURSE_CODES[active]||'Study Tracker';
+  const courseName=COURSE_CODES[active]||'';
+  document.title=courseName?`Study Tracker · ${courseName}`:'Study Tracker';
 }
 
 function renderExamStrip(){
