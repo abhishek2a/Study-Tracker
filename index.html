@@ -213,6 +213,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="" aria-label="Your name" autocomplete="name"></div>
     <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
     <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
+    <div id="forgot-link" style="text-align:center;margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
+    <div id="forgot-form" style="display:none;margin-top:10px">
+      <div class="auth-field"><label>Email to reset</label><input type="email" id="reset-email" placeholder="you@email.com" autocomplete="email"></div>
+      <button class="auth-btn" id="reset-btn" onclick="doReset()" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Reset Link</button>
+      <div id="reset-msg" style="font-size:.72rem;margin-top:8px;min-height:16px;font-family:var(--mono)"></div>
+    </div>
     <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
@@ -286,7 +292,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebas
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, signOut, updateProfile
+  createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
   getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
@@ -327,6 +333,8 @@ window.switchTab=function(t){
   $('auth-submit-btn').textContent=t==='login'?'Sign In':'Create Account';
   $('signup-name-field').style.display=t==='signup'?'block':'none';
   $('signup-code-field').style.display=t==='signup'?'block':'none';
+  $('forgot-link').style.display=t==='signup'?'none':'block';
+  $('forgot-form').style.display='none';
   $('auth-err').textContent='';
   $('auth-overlay').dataset.mode=t;
 };
@@ -368,6 +376,28 @@ window.submitAuth=async function(){
 };
 
 window.doSignOut=async function(){await signOut(auth);};
+
+window.showForgot=function(){
+  $('forgot-form').style.display='block';
+  $('forgot-link').style.display='none';
+  $('reset-email').value=$('auth-email').value||'';
+  $('reset-msg').textContent='';
+};
+
+window.doReset=async function(){
+  const email=$('reset-email').value.trim();
+  const msg=$('reset-msg');
+  if(!email){msg.style.color='var(--red)';msg.textContent='Enter your email.';return;}
+  try{
+    await sendPasswordResetEmail(auth,email);
+    msg.style.color='var(--green)';
+    msg.textContent='✓ Reset link sent — check your inbox.';
+    $('reset-btn').disabled=true;
+  }catch(e){
+    msg.style.color='var(--red)';
+    msg.textContent=e.code==='auth/user-not-found'?'No account with that email.':'Error: '+e.code;
+  }
+};
 
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
