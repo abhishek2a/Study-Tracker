@@ -48,6 +48,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 #app{display:none}
 #app.visible{display:block}
 .topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+[data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
 @media(max-width:700px){.topbar{padding:0 14px;height:48px;position:fixed;width:100%}}
 #app.visible{padding-top:0}
 @media(max-width:700px){#app.visible .wrap{padding-top:64px}}
