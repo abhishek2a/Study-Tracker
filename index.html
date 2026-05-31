@@ -258,6 +258,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
           <div class="pd-sep"></div>
           <div class="pd-section">Appearance</div>
+          <button class="pd-item" data-t="system" role="menuitem">System Default</button>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
           <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
           <div class="pd-sep"></div>
@@ -1186,32 +1187,36 @@ function detectSystemTheme(){
   return window.matchMedia('(prefers-color-scheme: dark)').matches?'amoled':'light';
 }
 function applyTheme(t){
-  document.body.dataset.theme=t;
-  localStorage.setItem('cseb_theme',t);
+  const actual=t==='system'?detectSystemTheme():t;
+  document.body.dataset.theme=actual;
   document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
-function setTheme(t){applyTheme(t);}
+function setTheme(t){
+  applyTheme(t);
+  if(t==='system'){localStorage.removeItem('cseb_theme');localStorage.removeItem('cseb_theme_manual');}
+  else{localStorage.setItem('cseb_theme',t);localStorage.setItem('cseb_theme_manual','1');}
+}
 function initTheme(){
-  // migrate old amoled-only users: if saved='amoled' but system is light, respect system on first load
   const saved=localStorage.getItem('cseb_theme');
-  const sys=detectSystemTheme();
-  // only use saved if user explicitly set it (not just default amoled)
-  const hasManual=localStorage.getItem('cseb_theme_manual')==='1';
-  applyTheme(hasManual&&saved?saved:sys);
+  const manual=localStorage.getItem('cseb_theme_manual')==='1';
+  if(manual&&saved)applyTheme(saved);
+  else applyTheme('system');
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
-  if(localStorage.getItem('cseb_theme_manual')!=='1')applyTheme(e.matches?'amoled':'light');
+  if(localStorage.getItem('cseb_theme_manual')!=='1')applyTheme('system');
 });
 
-// ── PROFILE DROPDOWN FIX ──
-// btn click toggles; stopPropagation on BOTH btn AND dropdown prevents doc-click closing it
+// ── PROFILE DROPDOWN ──
+let dropLastTouch=0;
 document.getElementById('profile-btn').addEventListener('click',function(e){
   e.stopPropagation();
-  $('profile-drop').classList.toggle('hidden');
+  // on mobile, click fires ~300ms after touchstart — ignore if we just had a touch close
+  if(Date.now()-dropLastTouch<400)return;
+  const drop=$('profile-drop');
+  drop.classList.toggle('hidden');
 });
-$('profile-drop').addEventListener('click',function(e){
-  e.stopPropagation(); // FIX: without this, doc listener closes dropdown immediately
-});
+$('profile-drop').addEventListener('click',function(e){e.stopPropagation();});
+$('profile-drop').addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
 
 document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
   btn.addEventListener('click',function(e){
@@ -1225,7 +1230,10 @@ document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
 document.addEventListener('click',function(){$('profile-drop')&&$('profile-drop').classList.add('hidden');});
-document.addEventListener('touchstart',function(){$('profile-drop')&&$('profile-drop').classList.add('hidden');},{passive:true});
+document.addEventListener('touchstart',function(){
+  const drop=$('profile-drop');
+  if(drop&&!drop.classList.contains('hidden')){drop.classList.add('hidden');dropLastTouch=Date.now();}
+},{passive:true});
 
 initTheme();
 </script>
