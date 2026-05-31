@@ -1180,6 +1180,8 @@ onAuthStateChanged(auth,user=>{
     $('splash').classList.add('splash-done');
     $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
+    const ab=$('auth-submit-btn');
+    if(ab){ab.disabled=false;ab.textContent='Sign In';switchTab('login');}
   }
 });
 
@@ -1209,39 +1211,36 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
 // ── PROFILE DROPDOWN ──
 const profileBtn=document.getElementById('profile-btn');
 const profileDrop=$('profile-drop');
-let dropOpen=false;
+let dropOpen=false,_dropTouch=false;
 
-document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
-  btn.addEventListener('click',function(e){
-    e.stopPropagation();
-    setTheme(this.dataset.t);
-    $('profile-drop').classList.add('hidden');
-  });
+function closeDrop(){dropOpen=false;profileDrop&&profileDrop.classList.add('hidden');}
+function toggleDrop(){dropOpen=!dropOpen;profileDrop.classList.toggle('hidden',!dropOpen);}
+
+// touchend handles tap; preventDefault stops synthetic click from also firing
+profileBtn.addEventListener('touchend',function(e){
+  e.preventDefault();_dropTouch=true;toggleDrop();
+  setTimeout(()=>{_dropTouch=false;},400);
 });
-document.getElementById('signout-item').addEventListener('click',function(e){
-  e.stopPropagation();doSignOut();
+// click handles mouse; skip if already handled by touchend
+profileBtn.addEventListener('click',function(e){
+  e.stopPropagation();if(_dropTouch)return;toggleDrop();
 });
-// ── PROFILE DROPDOWN ──
-
-function toggleDrop(e){
-  e.stopPropagation();
-  dropOpen=!dropOpen;
-  profileDrop.classList.toggle('hidden',!dropOpen);
-}
-function closeDrop(){
-  dropOpen=false;
-  profileDrop&&profileDrop.classList.add('hidden');
-}
-
-profileBtn.addEventListener('click',toggleDrop);
-profileBtn.addEventListener('touchend',function(e){e.preventDefault();toggleDrop(e);});
-profileDrop.addEventListener('click',function(e){e.stopPropagation();});
-profileDrop.addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
+profileDrop.addEventListener('click',e=>e.stopPropagation());
+profileDrop.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
 
 document.addEventListener('click',closeDrop);
 document.addEventListener('touchstart',function(e){
   if(!profileBtn.contains(e.target)&&!profileDrop.contains(e.target))closeDrop();
 },{passive:true});
+
+document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();setTheme(this.dataset.t);closeDrop();
+  });
+});
+document.getElementById('signout-item').addEventListener('click',function(e){
+  e.stopPropagation();doSignOut();
+});
 
 initTheme();
 </script>
