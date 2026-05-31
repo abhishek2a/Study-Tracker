@@ -1207,21 +1207,13 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
 });
 
 // ── PROFILE DROPDOWN ──
-let dropLastTouch=0;
-document.getElementById('profile-btn').addEventListener('click',function(e){
-  e.stopPropagation();
-  // on mobile, click fires ~300ms after touchstart — ignore if we just had a touch close
-  if(Date.now()-dropLastTouch<400)return;
-  const drop=$('profile-drop');
-  drop.classList.toggle('hidden');
-});
-$('profile-drop').addEventListener('click',function(e){e.stopPropagation();});
-$('profile-drop').addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
+const profileBtn=document.getElementById('profile-btn');
+const profileDrop=$('profile-drop');
+let dropOpen=false;
 
 document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
   btn.addEventListener('click',function(e){
     e.stopPropagation();
-    localStorage.setItem('cseb_theme_manual','1');
     setTheme(this.dataset.t);
     $('profile-drop').classList.add('hidden');
   });
@@ -1229,10 +1221,26 @@ document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
 document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
-document.addEventListener('click',function(){$('profile-drop')&&$('profile-drop').classList.add('hidden');});
-document.addEventListener('touchstart',function(){
-  const drop=$('profile-drop');
-  if(drop&&!drop.classList.contains('hidden')){drop.classList.add('hidden');dropLastTouch=Date.now();}
+// ── PROFILE DROPDOWN ──
+
+function toggleDrop(e){
+  e.stopPropagation();
+  dropOpen=!dropOpen;
+  profileDrop.classList.toggle('hidden',!dropOpen);
+}
+function closeDrop(){
+  dropOpen=false;
+  profileDrop&&profileDrop.classList.add('hidden');
+}
+
+profileBtn.addEventListener('click',toggleDrop);
+profileBtn.addEventListener('touchend',function(e){e.preventDefault();toggleDrop(e);});
+profileDrop.addEventListener('click',function(e){e.stopPropagation();});
+profileDrop.addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
+
+document.addEventListener('click',closeDrop);
+document.addEventListener('touchstart',function(e){
+  if(!profileBtn.contains(e.target)&&!profileDrop.contains(e.target))closeDrop();
 },{passive:true});
 
 initTheme();
