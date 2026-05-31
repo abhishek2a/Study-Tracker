@@ -6,6 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Study Tracker">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Study Tracker</title>
 <style>
 :root {
@@ -144,14 +148,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
 .mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s}
-#splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .4s,visibility .4s}
-#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .3s,visibility .3s}
+#splash.splash-done{opacity:0;visibility:hidden;pointer-events:none}
 .splash-logo{font-size:2.4rem;font-weight:800;letter-spacing:-.04em;color:var(--text)}
 .splash-logo span{color:var(--accent)}
 .splash-sub{font-size:.7rem;font-family:var(--mono);color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
 .splash-bar{width:140px;height:2px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:12px}
-.splash-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;animation:splashLoad 1.4s ease forwards}
-@keyframes splashLoad{0%{width:0%}60%{width:80%}100%{width:100%}}
+.splash-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;animation:splashLoad .8s ease forwards}
+@keyframes splashLoad{0%{width:0%}50%{width:75%}100%{width:100%}}
 .hidden{display:none!important}
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
@@ -297,7 +301,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, getDoc, enableIndexedDbPersistence
+  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -317,8 +321,7 @@ try{
   });
 }catch(e){console.warn('AppCheck failed:',e);}
 const auth = getAuth(app);
-const db = getFirestore(app);
-enableIndexedDbPersistence(db).catch(e=>console.warn('Persistence:',e.code));
+const db=initializeFirestore(app,{localCache:persistentLocalCache()});
 
 let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
 // cached DOM refs
@@ -362,6 +365,8 @@ window.submitAuth=async function(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
   if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
+  const btn=$('auth-submit-btn');
+  btn.disabled=true;btn.textContent='Loading…';
   try{
     if(mode==='signup'){
       const rawCode=($('auth-code').value||'').trim().toUpperCase();
@@ -374,7 +379,11 @@ window.submitAuth=async function(){
     } else {
       await signInWithEmailAndPassword(auth,email,pass);
     }
-  } catch(e){$('auth-err').textContent=authErrMsg(e.code);}
+  } catch(e){
+    $('auth-err').textContent=authErrMsg(e.code);
+    btn.disabled=false;
+    btn.textContent=mode==='login'?'Sign In':'Create Account';
+  }
 };
 
 window.doSignOut=async function(){await signOut(auth);};
@@ -393,7 +402,7 @@ window.doReset=async function(){
   try{
     await sendPasswordResetEmail(auth,email);
     msg.style.color='var(--green)';
-    msg.textContent='✓ Reset link sent — check your inbox.';
+    msg.textContent='✓ Reset link sent. Check spam/junk if it doesn\'t appear in a few minutes.';
     $('reset-btn').disabled=true;
   }catch(e){
     msg.style.color='var(--red)';
@@ -666,7 +675,7 @@ const FR_PLAN=[
 
 function buildFRSch(startDateStr){
   const sch={};
-  const EXAM_DATE=new Date('2026-09-10');
+  const EXAM_DATE=new Date(2026,8,10);
   const MOCK_BUFFER=5; // reserve 5 days before exam for mock/revision
   const lastStudy=new Date(EXAM_DATE);lastStudy.setDate(lastStudy.getDate()-MOCK_BUFFER);
   const start=new Date(startDateStr);
@@ -756,7 +765,10 @@ async function flushToCloud(){
   try{
     await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
     pendingCloudWrite=false;syncState('synced');
-  }catch(e){console.error('Cloud save failed',e);syncState('');}
+  }catch(e){
+    console.error('Cloud save failed',e);syncState('');
+    writeDebounce=setTimeout(flushToCloud,5000); // retry in 5s
+  }
 }
 
 function scheduleCloudSync(){
@@ -771,7 +783,7 @@ window.addEventListener('beforeunload',()=>{if(pendingCloudWrite)flushToCloud();
 window.addEventListener('online',()=>syncState('synced'));
 window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
 
-function saveToFirestore(data){saveLocal(data);scheduleCloudSync();}
+function saveToFirestore(){saveLocal(remoteData);scheduleCloudSync();}
 
 function applyData(data){
   remoteData={...data};
@@ -792,7 +804,7 @@ function getState(){
 }
 
 function onCheck(id,val){
-  remoteData[id]=val;saveToFirestore(getState());
+  remoteData[id]=val;saveToFirestore();
   const main=document.getElementById(id);if(main&&main!==document.activeElement)main.checked=val;
   const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily&&daily!==document.activeElement)daily.checked=val;
   const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend&&pend!==document.activeElement)pend.checked=val;
@@ -844,7 +856,7 @@ function makeCard(){
   const dc=$('daycard'),sched=sch[ts];
   if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
     const today=new Date();today.setHours(0,0,0,0);
-    const examDate=new Date('2026-09-10');
+    const examDate=new Date(2026,8,10);
     const daysToExam=Math.ceil((examDate-today)/86400000);
     const studyDays=Math.max(1,daysToExam-5);
     const isVeryLate=daysToExam<12;
@@ -920,10 +932,10 @@ function makeCard(){
     b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
   });
   const dm=$('daily_mock');
-  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts]=e.target.checked;saveToFirestore(getState());});
+  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts]=e.target.checked;saveToFirestore();});
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore(getState());});
+    if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore();});
   });
 }
 
@@ -991,7 +1003,7 @@ function renderExamStrip(){
   // ACCA course — show single TBD pill
   if(active==='ACCA26'){
     const today=new Date();today.setHours(0,0,0,0);
-    const examDate=new Date('2026-09-10');
+    const examDate=new Date(2026,8,10);
     const diff=Math.ceil((examDate-today)/86400000);
     const status=diff<0?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
     const statusColor=diff<0?'var(--green)':diff===0?'var(--accent)':'var(--green)';
@@ -1024,15 +1036,18 @@ function renderExamStrip(){
 
 function calcStreak(){
   const {sch}=getCourseData();
-  // collect all past scheduled dates with real topics, sorted newest first
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=`${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
   const scheduledDates=Object.keys(sch)
-    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=ts)
+    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=yStr)
     .sort().reverse();
   let s=0;
   for(const k of scheduledDates){
     if(sch[k].ids.every(id=>remoteData[id]))s++;
-    else break; // streak broken
+    else break;
   }
+  // also count today if all done
+  if(sch[ts]&&sch[ts].ids&&sch[ts].ids.length&&sch[ts].ids.every(id=>remoteData[id]))s++;
   return s;
 }
 
@@ -1096,22 +1111,20 @@ document.getElementById('pd-course-add-btn').addEventListener('click',async func
 });
 
 function hideSplash(){
+  const isPWA=window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches;
+  const delay=isPWA?600:900;
   setTimeout(()=>{
-    $('splash').classList.add('hidden');
-    // if app not visible after splash, show auth (fallback)
+    $('splash').classList.add('splash-done');
     if(!$('app').classList.contains('visible')){
       $('auth-overlay').classList.remove('hidden');
     }
-  },1400);
+  },delay);
 }
 
-// Hard fallback: if auth never resolves in 5s, hide splash and show auth
 setTimeout(()=>{
-  if(!$('splash').classList.contains('hidden')){
-    $('splash').classList.add('hidden');
-    if(!$('app').classList.contains('visible')){
-      $('auth-overlay').classList.remove('hidden');
-    }
+  if(!$('splash').classList.contains('splash-done')){
+    $('splash').classList.add('splash-done');
+    if(!$('app').classList.contains('visible'))$('auth-overlay').classList.remove('hidden');
   }
 },5000);
 
@@ -1161,7 +1174,7 @@ onAuthStateChanged(auth,user=>{
     remoteData={};syllabusBoxes=[];
     pendingCloudWrite=false;clearTimeout(writeDebounce);
     try{localStorage.removeItem('cseb_state');localStorage.removeItem('cseb_deferred');}catch(e){}
-    $('splash').classList.add('hidden');
+    $('splash').classList.add('splash-done');
     $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
   }
@@ -1172,17 +1185,20 @@ function detectSystemTheme(){
 }
 function applyTheme(t){
   document.body.dataset.theme=t;
+  localStorage.setItem('cseb_theme',t);
   document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
-function setTheme(t){
-  applyTheme(t);localStorage.setItem('cseb_theme',t);
-}
+function setTheme(t){applyTheme(t);}
 function initTheme(){
+  // migrate old amoled-only users: if saved='amoled' but system is light, respect system on first load
   const saved=localStorage.getItem('cseb_theme');
-  applyTheme(saved||detectSystemTheme());
+  const sys=detectSystemTheme();
+  // only use saved if user explicitly set it (not just default amoled)
+  const hasManual=localStorage.getItem('cseb_theme_manual')==='1';
+  applyTheme(hasManual&&saved?saved:sys);
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
-  if(!localStorage.getItem('cseb_theme'))applyTheme(e.matches?'amoled':'light');
+  if(localStorage.getItem('cseb_theme_manual')!=='1')applyTheme(e.matches?'amoled':'light');
 });
 
 // ── PROFILE DROPDOWN FIX ──
@@ -1198,6 +1214,7 @@ $('profile-drop').addEventListener('click',function(e){
 document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
   btn.addEventListener('click',function(e){
     e.stopPropagation();
+    localStorage.setItem('cseb_theme_manual','1');
     setTheme(this.dataset.t);
     $('profile-drop').classList.add('hidden');
   });
@@ -1205,9 +1222,8 @@ document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
 document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
-document.addEventListener('click',function(){
-  $('profile-drop')&&$('profile-drop').classList.add('hidden');
-});
+document.addEventListener('click',function(){$('profile-drop')&&$('profile-drop').classList.add('hidden');});
+document.addEventListener('touchstart',function(){$('profile-drop')&&$('profile-drop').classList.add('hidden');},{passive:true});
 
 initTheme();
 </script>
