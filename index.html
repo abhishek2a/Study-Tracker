@@ -965,18 +965,19 @@ function updateAll(){
   const {subjs}=getCourseData();
   const boxes=syllabusBoxes;
   if(!boxes.length)return;
-  const total=boxes.length,done=boxes.filter(b=>b.checked).length,pct=total?Math.round(done/total*100):0;
+  const total=boxes.length,done=boxes.filter(b=>!!remoteData[b.id]).length,pct=total?Math.round(done/total*100):0;
   if(domGfill)domGfill.style.width=pct+'%';
   if(domPct)domPct.textContent=pct+'%';
   if(domSpills){
     domSpills.innerHTML='';
     for(const[k,v] of Object.entries(subjs)){
-      const d=v.ids.filter(id=>{const b=document.getElementById(id);return b&&b.checked}).length,t=v.ids.length;
+      const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
       const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
       domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
     }
   }
-  const examDiff=Math.ceil((new Date(2026,6,11)-new Date())/86400000);
+  const _t=new Date();_t.setHours(0,0,0,0);
+  const examDiff=Math.ceil((new Date(2026,6,11)-_t)/86400000);
   const streak=calcStreak();
   const ps=$('pd-stats');
   if(ps)ps.innerHTML=`
@@ -1015,11 +1016,12 @@ function renderExamStrip(){
     return;
   }
   const today=new Date();today.setHours(0,0,0,0);
-  const upcoming=EXAMS.filter(e=>new Date(e.date)>=today).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const parseLocal=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+  const upcoming=EXAMS.filter(e=>parseLocal(e.date)>=today).sort((a,b)=>parseLocal(a.date)-parseLocal(b.date));
   const nextDate=upcoming.length?upcoming[0].date:null;
-  es.innerHTML=EXAMS.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>{
-    const[y,m,d]=e.date.split('-').map(Number);
-    const diff=Math.ceil((new Date(y,m-1,d)-today)/86400000);
+  es.innerHTML=EXAMS.slice().sort((a,b)=>parseLocal(a.date)-parseLocal(b.date)).map(e=>{
+    const ed=parseLocal(e.date);
+    const diff=Math.ceil((ed-today)/86400000);
     const isDone=diff<0;const isNext=e.date===nextDate;
     const cls=isDone?'done-exam':isNext?'next-exam':'';
     const status=isDone?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
@@ -1027,7 +1029,7 @@ function renderExamStrip(){
     const label=isDone?'Completed':(e.target?'Target':'Upcoming');
     return `<div class="epill ${cls}">
       <div class="en">${e.cat} · ${label}</div>
-      <div class="ed">${new Date(e.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="ed">${ed.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
       <div class="en2">${e.name}${e.sub?'<br><span style="opacity:.7">'+e.sub+'</span>':''}</div>
       <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div>
     </div>`;
