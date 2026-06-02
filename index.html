@@ -1166,14 +1166,15 @@ function renderRevisions(){
 function calcStreak(){
   const {sch}=getCourseData();
   const today=ts();
-  // collect all scheduled topic dates up to today, newest first
   const scheduledDates=Object.keys(sch)
     .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=today)
     .sort().reverse();
   let s=0;
   for(const k of scheduledDates){
-    if(sch[k].ids.every(id=>!!remoteData[id]))s++;
-    else break; // streak broken — stop counting
+    const ids=sch[k].ids;
+    if(ids.some(id=>!!remoteData[id]))s++; // any activity = streak day
+    else if(k===today)continue;            // today not started yet — don't break
+    else break;                            // past day with zero activity — break
   }
   return s;
 }
