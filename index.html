@@ -220,18 +220,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="auth-logo">Study <span>Tracker</span></div>
     <div class="auth-sub">Sign in to sync your progress across devices</div>
     <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+      <button class="auth-tab active" id="tab-login">Sign In</button>
+      <button class="auth-tab" id="tab-signup">Create Account</button>
     </div>
     <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
     <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
     <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="" aria-label="Your name" autocomplete="name"></div>
     <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
-    <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
-    <div id="forgot-link" style="text-align:center;margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
+    <button class="auth-btn" id="auth-submit-btn">Sign In</button>
+    <div id="forgot-link" style="text-align:center;margin-top:10px"><button id="forgot-link-btn" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
     <div id="forgot-form" style="display:none;margin-top:10px">
       <div class="auth-field"><label>Email to reset</label><input type="email" id="reset-email" placeholder="you@email.com" autocomplete="email"></div>
-      <button class="auth-btn" id="reset-btn" onclick="doReset()" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Reset Link</button>
+      <button class="auth-btn" id="reset-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Reset Link</button>
       <div id="reset-msg" style="font-size:.72rem;margin-top:8px;min-height:16px;font-family:var(--mono)"></div>
     </div>
     <div class="auth-err" id="auth-err"></div>
@@ -244,6 +244,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="topright">
       <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
+      <button class="tnav" id="revise-nav" onclick="jmp('#revise-sec')" aria-label="Jump to Revisions" style="display:none">🧠 <span class="tl">Revise</span> <span id="revise-badge" style="background:var(--principles);color:#fff;font-size:.58rem;padding:1px 6px;border-radius:99px;font-weight:700;margin-left:2px"></span></button>
       <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
       <div class="profile-wrap">
         <button class="profile-btn" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
@@ -314,7 +315,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc
+  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteField
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -345,7 +346,7 @@ const $=id=>document.getElementById(id);
 function jmp(s){const e=document.querySelector(s);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 window.jmp=jmp;
 
-window.switchTab=function(t){
+function switchTab(t){
   $('tab-login').classList.toggle('active',t==='login');
   $('tab-signup').classList.toggle('active',t==='signup');
   $('auth-submit-btn').textContent=t==='login'?'Sign In':'Create Account';
@@ -374,7 +375,7 @@ function authErrMsg(code){
 // course codes — add new courses here
 
 
-window.submitAuth=async function(){
+async function submitAuth(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
   if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
@@ -387,8 +388,7 @@ window.submitAuth=async function(){
       const name=$('auth-name').value.trim()||email.split('@')[0];
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
-      const today=new Date().toISOString().split('T')[0];
-      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code},{merge:true});
+      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true});
     } else {
       await signInWithEmailAndPassword(auth,email,pass);
     }
@@ -399,16 +399,16 @@ window.submitAuth=async function(){
   }
 };
 
-window.doSignOut=async function(){await signOut(auth);};
+async function doSignOut(){await signOut(auth);};
 
-window.showForgot=function(){
+function showForgot(){
   $('forgot-form').style.display='block';
   $('forgot-link').style.display='none';
   $('reset-email').value=$('auth-email').value||'';
   $('reset-msg').textContent='';
 };
 
-window.doReset=async function(){
+async function doReset(){
   const email=$('reset-email').value.trim();
   const msg=$('reset-msg');
   if(!email){msg.style.color='var(--red)';msg.textContent='Enter your email.';return;}
@@ -752,9 +752,9 @@ function getCourseData(){
   return cd;
 }
 
-const now=new Date();
-const pad=n=>String(n).padStart(2,'0');
-const ts=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const now=new Date(); // keep for initApp display only
+function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+const ts=getTodayStr; // ts() now function call everywhere
 
 function dLeft(s){
   const[y,m,d]=s.split('-').map(Number);
@@ -799,20 +799,23 @@ window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textConte
 function saveToFirestore(){saveLocal(remoteData);scheduleCloudSync();}
 
 function backfillSR(){
-  // Add SR entries for ticked topics that predate the SR system
-  const {subjs}=getCourseData();
   if(!remoteData._sr)remoteData._sr={};
+  const courses=remoteData.courses&&remoteData.courses.length?remoteData.courses:[DEFAULT_COURSE];
   let dirty=false;
-  Object.values(subjs).forEach(v=>{
-    v.ids.forEach(id=>{
-      if(remoteData[id]&&!remoteData._sr[id]){
-        // topic was ticked before SR existed — start from today, due tomorrow
-        remoteData._sr[id]={completed:ts,count:0,next:srNextDate(ts,0)};
-        dirty=true;
-      }
+  courses.forEach(c=>{
+    const cd=COURSE_DATA[c];if(!cd)return;
+    Object.values(cd.subjs).forEach(v=>{
+      v.ids.forEach(id=>{
+        const entry=remoteData._sr[id];
+        // only backfill if ticked, no SR entry (or entry is invalid/deleteField object)
+        if(remoteData[id]&&(!entry||typeof entry!=='object'||!entry.next)){
+          remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
+          dirty=true;
+        }
+      });
     });
   });
-  if(dirty){saveToFirestore();} // persist backfill silently
+  if(dirty)saveToFirestore();
 }
 
 function applyData(data){
@@ -820,7 +823,7 @@ function applyData(data){
   document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
   document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
   document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts];
+  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
   backfillSR();
   updateAll();renderPending();renderRevisions();
@@ -829,7 +832,7 @@ function applyData(data){
 function getState(){
   const state={...remoteData};
   document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{state[b.id]=b.checked;});
-  const dm=$('daily_mock');if(dm)state['mock_'+ts]=dm.checked;
+  const dm=$('daily_mock');if(dm)state['mock_'+ts()]=dm.checked;
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)state['misc_'+id]=b.checked;});
   return state;
 }
@@ -839,7 +842,7 @@ function getState(){
 function getPending(){
   const {sch}=getCourseData(),now=Date.now(),r=[];
   for(const[date,s] of Object.entries(sch)){
-    if(date>=ts||!s.ids||!s.ids.length)continue;
+    if(date>=ts()||!s.ids||!s.ids.length)continue;
     if(deferred[date]&&deferred[date]>now)continue;
     const u=s.ids.filter(id=>!remoteData[id]);
     if(u.length)r.push({date,s,unchecked:u});
@@ -878,7 +881,7 @@ function renderPending(){
 
 function makeCard(){
   const {sch,labels}=getCourseData();
-  const dc=$('daycard'),sched=sch[ts];
+  const dc=$('daycard'),sched=sch[ts()];
   if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
     const today=new Date();today.setHours(0,0,0,0);
     const examDate=new Date(2026,8,10);
@@ -927,7 +930,9 @@ function makeCard(){
   const tag='<span class="exam-tag">CSEB · Cat 11 · 11 Jul 2026</span>';
   const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
   if(!sched){
-    const done=ts>"2026-07-11";
+    const activeExam=EXAMS.find(e=>e.target)||EXAMS[0];
+    const examDateStr=activeExam?activeExam.date:'2026-07-11';
+    const done=ts()>examDateStr;
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
       <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
       <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
@@ -948,7 +953,7 @@ function makeCard(){
     const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     inner=`${tag}<div class="day-sub">${sched.l} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
     <div class="mock-mini"><div class="mock-mini-lbl">📝 Daily Practice Quiz</div><ul class="cl">
-      <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
+      <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts()]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
     </ul></div>`;
   }
   dc.innerHTML=`<div class="day-card ${sched.p}">
@@ -957,7 +962,7 @@ function makeCard(){
     b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
   });
   const dm=$('daily_mock');
-  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts]=e.target.checked;saveToFirestore();});
+  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts()]=e.target.checked;saveToFirestore();});
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
     if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore();});
@@ -988,6 +993,7 @@ function bindSyllabus(){
 }
 
 function updateAll(){
+  if(!domGfill||!domPct||!domSpills)return;
   const {subjs}=getCourseData();
   const boxes=syllabusBoxes;
   if(!boxes.length)return;
@@ -1079,11 +1085,14 @@ function onCheck(id,val){
     // start spaced repetition for this topic
     if(!remoteData._sr)remoteData._sr={};
     if(!remoteData._sr[id]){
-      remoteData._sr[id]={completed:ts,count:0,next:srNextDate(ts,0)};
+      remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
     }
   } else {
-    // unchecked — remove SR entry
-    if(remoteData._sr)delete remoteData._sr[id];
+    if(remoteData._sr&&remoteData._sr[id]){
+      delete remoteData._sr[id]; // clean local state
+      // mark for deletion in Firestore via a targeted write
+      setDoc(doc(db,'users',currentUid),{[`_sr.${id}`]:deleteField()},{merge:true}).catch(()=>{});
+    }
   }
   saveToFirestore();
   const main=document.getElementById(id);if(main)main.checked=val;
@@ -1099,7 +1108,7 @@ function getRevisionsDue(){
   const allLabels={};
   courses.forEach(c=>{const cd=COURSE_DATA[c];if(cd)Object.assign(allLabels,cd.labels);});
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s.next&&s.next<=ts&&remoteData[id])
+    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&remoteData[id]===true)
     .map(([id,s])=>({id,label:allLabels[id]||id,count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
@@ -1108,7 +1117,7 @@ function markRevised(id){
   if(!remoteData._sr||!remoteData._sr[id])return;
   const s=remoteData._sr[id];
   s.count++;
-  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts,s.count); // null = mastered
+  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts(),s.count); // null = mastered
   if(!s.next)delete remoteData._sr[id]; // mastered — remove
   saveToFirestore();
   renderRevisions();updateAll();
@@ -1117,12 +1126,15 @@ function markRevised(id){
 function renderRevisions(){
   const rc=$('revisecard'),sec=$('revise-sec');if(!rc||!sec)return;
   const due=getRevisionsDue();
+  const nav=$('revise-nav'),badge=$('revise-badge');
   sec.style.display=due.length?'flex':'none';
+  if(nav){nav.style.display=due.length?'inline-flex':'none';}
+  if(badge){badge.textContent=due.length||'';}
   if(!due.length){rc.innerHTML='';return;}
   const intervalLabels=['1st review','2nd review','3rd review','4th review','5th review','6th review'];
   const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
   rc.innerHTML=`<div class="revise-grid">${due.map(({id,label,count,next})=>{
-    const overdue=next<ts;
+    const overdue=next<ts();
     const c=colors[Math.min(count,colors.length-1)];
     return `<div class="revise-item">
       <div class="revise-dot" style="background:${c}"></div>
@@ -1151,7 +1163,7 @@ function calcStreak(){
     else break;
   }
   // also count today if all done
-  if(sch[ts]&&sch[ts].ids&&sch[ts].ids.length&&sch[ts].ids.every(id=>remoteData[id]))s++;
+  if(sch[ts()]&&sch[ts()].ids&&sch[ts()].ids.length&&sch[ts()].ids.every(id=>remoteData[id]))s++;
   return s;
 }
 
@@ -1344,6 +1356,14 @@ document.getElementById('signout-item').addEventListener('click',function(e){
 });
 
 initTheme();
+// Wire auth buttons
+$('tab-login').addEventListener('click',()=>switchTab('login'));
+$('tab-signup').addEventListener('click',()=>switchTab('signup'));
+$('auth-submit-btn').addEventListener('click',submitAuth);
+$('forgot-link-btn').addEventListener('click',showForgot);
+$('reset-btn').addEventListener('click',doReset);
+$('auth-email').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+$('auth-pass').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 </script>
 </body>
 </html>
