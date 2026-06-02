@@ -124,6 +124,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-sub{font-size:.74rem;color:var(--dim);font-family:var(--mono);margin-bottom:13px}
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
+.revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+@media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
+.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:.15s}
+.revise-item:hover{border-color:var(--principles)}
+.revise-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.revise-text{flex:1;font-size:.82rem;line-height:1.45;color:var(--text)}
+.revise-meta{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
+.revise-btn{flex-shrink:0;padding:5px 12px;border:1px solid var(--green);border-radius:7px;background:transparent;color:var(--green);font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap}
+.revise-btn:hover{background:var(--green);color:#000}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0}
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cl{list-style:none}
@@ -287,6 +296,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div id="pendingcard"></div>
       </div>
     </div>
+
+    <div class="sec" id="revise-sec" style="display:none"><h2>🧠 Due for Revision</h2><p>Spaced repetition · based on memory science</p></div>
+    <div id="revisecard" style="margin-bottom:20px"></div>
 
     <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
     <div class="subj-grid" id="dynamic-syllabus"></div>
@@ -786,6 +798,23 @@ window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textConte
 
 function saveToFirestore(){saveLocal(remoteData);scheduleCloudSync();}
 
+function backfillSR(){
+  // Add SR entries for ticked topics that predate the SR system
+  const {subjs}=getCourseData();
+  if(!remoteData._sr)remoteData._sr={};
+  let dirty=false;
+  Object.values(subjs).forEach(v=>{
+    v.ids.forEach(id=>{
+      if(remoteData[id]&&!remoteData._sr[id]){
+        // topic was ticked before SR existed — start from today, due tomorrow
+        remoteData._sr[id]={completed:ts,count:0,next:srNextDate(ts,0)};
+        dirty=true;
+      }
+    });
+  });
+  if(dirty){saveToFirestore();} // persist backfill silently
+}
+
 function applyData(data){
   remoteData={...data};
   document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
@@ -793,7 +822,8 @@ function applyData(data){
   document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
   const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts];
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
-  updateAll();renderPending();
+  backfillSR();
+  updateAll();renderPending();renderRevisions();
 }
 
 function getState(){
@@ -804,13 +834,7 @@ function getState(){
   return state;
 }
 
-function onCheck(id,val){
-  remoteData[id]=val;saveToFirestore();
-  const main=document.getElementById(id);if(main&&main!==document.activeElement)main.checked=val;
-  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily&&daily!==document.activeElement)daily.checked=val;
-  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend&&pend!==document.activeElement)pend.checked=val;
-  updateAll();
-}
+
 
 function getPending(){
   const {sch}=getCourseData(),now=Date.now(),r=[];
@@ -960,6 +984,7 @@ function bindSyllabus(){
     b.checked=!!remoteData[b.id];
     b.addEventListener('change',e=>{onCheck(e.target.id,e.target.checked);});
   });
+  backfillSR();
 }
 
 function updateAll(){
@@ -1035,6 +1060,82 @@ function renderExamStrip(){
       <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div>
     </div>`;
   }).join('');
+}
+
+// ── SPACED REPETITION ──
+// Intervals in days: review 1d, 3d, 7d, 14d, 30d, 60d after completion
+const SR_INTERVALS=[1,3,7,14,30,60];
+
+function srNextDate(completedDateStr,count){
+  const d=new Date(completedDateStr);
+  const days=SR_INTERVALS[Math.min(count,SR_INTERVALS.length-1)];
+  d.setDate(d.getDate()+days);
+  return d.toISOString().split('T')[0];
+}
+
+function onCheck(id,val){
+  remoteData[id]=val;
+  if(val){
+    // start spaced repetition for this topic
+    if(!remoteData._sr)remoteData._sr={};
+    if(!remoteData._sr[id]){
+      remoteData._sr[id]={completed:ts,count:0,next:srNextDate(ts,0)};
+    }
+  } else {
+    // unchecked — remove SR entry
+    if(remoteData._sr)delete remoteData._sr[id];
+  }
+  saveToFirestore();
+  const main=document.getElementById(id);if(main)main.checked=val;
+  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily)daily.checked=val;
+  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend)pend.checked=val;
+  updateAll();renderRevisions();
+}
+
+function getRevisionsDue(){
+  if(!remoteData._sr)return[];
+  // merge labels from all enrolled courses so CSEB+ACCA topics show correct names
+  const courses=remoteData.courses&&remoteData.courses.length?remoteData.courses:[DEFAULT_COURSE];
+  const allLabels={};
+  courses.forEach(c=>{const cd=COURSE_DATA[c];if(cd)Object.assign(allLabels,cd.labels);});
+  return Object.entries(remoteData._sr)
+    .filter(([id,s])=>s.next&&s.next<=ts&&remoteData[id])
+    .map(([id,s])=>({id,label:allLabels[id]||id,count:s.count,completed:s.completed,next:s.next}))
+    .sort((a,b)=>a.next.localeCompare(b.next));
+}
+
+function markRevised(id){
+  if(!remoteData._sr||!remoteData._sr[id])return;
+  const s=remoteData._sr[id];
+  s.count++;
+  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts,s.count); // null = mastered
+  if(!s.next)delete remoteData._sr[id]; // mastered — remove
+  saveToFirestore();
+  renderRevisions();updateAll();
+}
+
+function renderRevisions(){
+  const rc=$('revisecard'),sec=$('revise-sec');if(!rc||!sec)return;
+  const due=getRevisionsDue();
+  sec.style.display=due.length?'flex':'none';
+  if(!due.length){rc.innerHTML='';return;}
+  const intervalLabels=['1st review','2nd review','3rd review','4th review','5th review','6th review'];
+  const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
+  rc.innerHTML=`<div class="revise-grid">${due.map(({id,label,count,next})=>{
+    const overdue=next<ts;
+    const c=colors[Math.min(count,colors.length-1)];
+    return `<div class="revise-item">
+      <div class="revise-dot" style="background:${c}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="revise-text">${label}</div>
+        <div class="revise-meta">${intervalLabels[count]||'Review'} · ${overdue?'Overdue':'Due today'} · completed ${count} reviews</div>
+      </div>
+      <button class="revise-btn" data-rid="${id}">✓ Revised</button>
+    </div>`;
+  }).join('')}</div>`;
+  rc.querySelectorAll('.revise-btn').forEach(b=>{
+    b.addEventListener('click',()=>markRevised(b.getAttribute('data-rid')));
+  });
 }
 
 function calcStreak(){
@@ -1149,7 +1250,7 @@ function initApp(user){
     domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
     try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
     try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
-    makeCard();bindSyllabus();updateAll();renderPending();renderCourses(remoteData);
+    makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderCourses(remoteData);
   }catch(err){
     console.error('initApp render error:',err);
     // show error in UI temporarily
