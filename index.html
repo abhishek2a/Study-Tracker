@@ -692,7 +692,8 @@ function buildFRSch(startDateStr){
   const EXAM_DATE=new Date(2026,8,10);
   const MOCK_BUFFER=5; // reserve 5 days before exam for mock/revision
   const lastStudy=new Date(EXAM_DATE);lastStudy.setDate(lastStudy.getDate()-MOCK_BUFFER);
-  const start=new Date(startDateStr);
+  const [sy,sm,sd]=startDateStr.split('-').map(Number);
+  const start=new Date(sy,sm-1,sd); // local midnight — avoids UTC parse bug
 
   // study items (non-empty ids only)
   const studyItems=FR_PLAN.filter(s=>s.ids&&s.ids.length>0);
@@ -828,6 +829,7 @@ function applyData(data){
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
   backfillSR();
   updateAll();renderPending();renderRevisions();
+  renderCourses(remoteData);renderExamStrip();updatePageTitle();
 }
 
 function getState(){
@@ -883,6 +885,7 @@ function renderPending(){
 function makeCard(){
   const {sch,labels}=getCourseData();
   const dc=$('daycard'),sched=sch[ts()];
+  const todayObj=new Date(); // fresh — not stale global now
   if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
     const today=new Date();today.setHours(0,0,0,0);
     const examDate=new Date(2026,8,10);
@@ -928,8 +931,15 @@ function makeCard(){
     });
     return;
   }
-  const tag='<span class="exam-tag">CSEB · Cat 11 · 11 Jul 2026</span>';
-  const dateBadge=`<span class="day-badge">${now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
+  const activeCourse=remoteData.activeCourse||DEFAULT_COURSE;
+  const examMeta={
+    CSEB11:{text:'CSEB · Cat 11 · 11 Jul 2026',date:new Date(2026,6,11)},
+    CAT09: {text:'Asst Secretary · Cat 09 · 16 Aug 2026',date:new Date(2026,7,16)},
+    ACCA26:{text:'ACCA FR · 10 Sep 2026',date:new Date(2026,8,10)},
+  };
+  const meta=examMeta[activeCourse]||examMeta.CSEB11;
+  const tag=`<span class="exam-tag">${meta.text}</span>`;
+  const dateBadge=`<span class="day-badge">${todayObj.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
   if(!sched){
     const activeExam=EXAMS.find(e=>e.target)||EXAMS[0];
     const examDateStr=activeExam?activeExam.date:'2026-07-11';
@@ -1010,7 +1020,9 @@ function updateAll(){
     }
   }
   const _t=new Date();_t.setHours(0,0,0,0);
-  const examDiff=Math.ceil((new Date(2026,6,11)-_t)/86400000);
+  const _ac=remoteData.activeCourse||DEFAULT_COURSE;
+  const _examDates={CSEB11:new Date(2026,6,11),CAT09:new Date(2026,7,16),ACCA26:new Date(2026,8,10)};
+  const examDiff=Math.ceil(((_examDates[_ac]||_examDates.CSEB11)-_t)/86400000);
   const streak=calcStreak();
   const ps=$('pd-stats');
   if(ps)ps.innerHTML=`
@@ -1091,9 +1103,8 @@ function onCheck(id,val){
     }
   } else {
     if(remoteData._sr&&remoteData._sr[id]){
-      delete remoteData._sr[id]; // clean local state
-      // mark for deletion in Firestore via a targeted write
-      setDoc(doc(db,'users',currentUid),{[`_sr.${id}`]:deleteField()},{merge:true}).catch(()=>{});
+      delete remoteData._sr[id];
+      setDoc(doc(db,'users',currentUid),{_sr:{[id]:deleteField()}},{merge:true}).catch(()=>{});
     }
   }
   saveToFirestore();
@@ -1279,7 +1290,7 @@ function initApp(user){
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
     remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);saveLocal(remoteData);renderCourses(remoteData);renderExamStrip();updatePageTitle();syncState('synced');
+    applyData(remoteData);syncState('synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
