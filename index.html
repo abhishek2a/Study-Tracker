@@ -273,6 +273,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
+          <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.3</div>
         </div>
       </div>
     </div>
@@ -1082,9 +1083,10 @@ function srNextDate(completedDateStr,count){
 function onCheck(id,val){
   remoteData[id]=val;
   if(val){
-    // start spaced repetition for this topic
     if(!remoteData._sr)remoteData._sr={};
-    if(!remoteData._sr[id]){
+    // only create SR entry if none exists (don't reset on double-tick)
+    const existing=remoteData._sr[id];
+    if(!existing||typeof existing!=='object'||!existing.next){
       remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
     }
   } else {
@@ -1108,7 +1110,7 @@ function getRevisionsDue(){
   const allLabels={};
   courses.forEach(c=>{const cd=COURSE_DATA[c];if(cd)Object.assign(allLabels,cd.labels);});
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&remoteData[id]===true)
+    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==deleteField())
     .map(([id,s])=>({id,label:allLabels[id]||id,count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
@@ -1152,18 +1154,16 @@ function renderRevisions(){
 
 function calcStreak(){
   const {sch}=getCourseData();
-  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  const yStr=`${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+  const today=ts();
+  // collect all scheduled topic dates up to today, newest first
   const scheduledDates=Object.keys(sch)
-    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=yStr)
+    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=today)
     .sort().reverse();
   let s=0;
   for(const k of scheduledDates){
-    if(sch[k].ids.every(id=>remoteData[id]))s++;
-    else break;
+    if(sch[k].ids.every(id=>!!remoteData[id]))s++;
+    else break; // streak broken — stop counting
   }
-  // also count today if all done
-  if(sch[ts()]&&sch[ts()].ids&&sch[ts()].ids.length&&sch[ts()].ids.every(id=>remoteData[id]))s++;
   return s;
 }
 
