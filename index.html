@@ -183,13 +183,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .profile-name{font-size:.76rem;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:480px){.profile-name{max-width:64px}}
 .profile-drop{
-  position:absolute;top:calc(100% + 10px);right:0;
+  position:absolute;top:calc(100% + 8px);right:0;
   background:var(--s1);border:1px solid rgba(255,255,255,.07);border-radius:18px;
   padding:5px;z-index:400;min-width:256px;
-  box-shadow:0 32px 80px rgba(0,0,0,.9),0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);
+  box-shadow:0 16px 48px rgba(0,0,0,.7),0 4px 16px rgba(0,0,0,.4);
   font-family:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  transform-origin:top right;
+  transition:opacity .15s ease,transform .15s ease,visibility .15s;
+  will-change:transform,opacity;
 }
-.profile-drop.hidden{display:none!important}
+.profile-drop:not([data-open='1']){
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:scale(.95) translateY(-4px);
+}
+.profile-drop[data-open='1']{
+  opacity:1;visibility:visible;
+  transform:scale(1) translateY(0);
+}
 .pd-user{padding:14px 14px 12px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .pd-user-name{font-size:.94rem;font-weight:700;color:var(--text);letter-spacing:-.025em;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,sans-serif}
 .pd-user-email{font-size:.68rem;color:var(--dim);margin-top:3px;word-break:break-all;letter-spacing:.005em}
@@ -244,7 +254,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="topright">
       <button class="tnav" onclick="jmp('#today-sec')" aria-label="Jump to Today">📌 <span class="tl">Today</span></button>
       <button class="tnav" onclick="jmp('#pending-sec')" aria-label="Jump to Pending">⚠ <span class="tl">Pending</span></button>
-      <button class="tnav" id="revise-nav" onclick="jmp('#revise-sec')" aria-label="Jump to Revisions" style="display:none">🧠 <span class="tl">Revise</span> <span id="revise-badge" style="background:var(--principles);color:#fff;font-size:.58rem;padding:1px 6px;border-radius:99px;font-weight:700;margin-left:2px"></span></button>
+      <button class="tnav" id="revise-nav" onclick="jmp('#revise-sec')" aria-label="Jump to Revisions" style="display:none;align-items:center;gap:5px">↺ <span class="tl">Revise</span><span id="revise-badge" style="background:var(--green);color:#000;font-size:.58rem;padding:1px 6px;border-radius:99px;font-weight:800;line-height:1.4"></span></button>
       <button class="tnav" onclick="jmp('#syllabus-sec')" aria-label="Jump to Syllabus">📚 <span class="tl">Syllabus</span></button>
       <div class="profile-wrap">
         <button class="profile-btn" id="profile-btn" aria-label="Profile menu" aria-haspopup="true">
@@ -252,7 +262,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <span class="profile-name" id="profile-name">Account</span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:.4;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </button>
-        <div class="profile-drop hidden" id="profile-drop" role="menu">
+        <div class="profile-drop" id="profile-drop" role="menu">
           <div class="pd-user">
             <div class="pd-user-name" id="pd-name">—</div>
             <div class="pd-user-email" id="pd-email">—</div>
@@ -1204,7 +1214,7 @@ function renderCourses(data){
       await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
       makeCard();bindSyllabus();updateAll();renderPending();
-      $('profile-drop').classList.add('hidden');
+      closeDrop();
     });
   });
   pc.querySelectorAll('.pd-remove').forEach(btn=>{
@@ -1338,8 +1348,8 @@ const profileBtn=document.getElementById('profile-btn');
 const profileDrop=$('profile-drop');
 let dropOpen=false,_dropTouch=false;
 
-function closeDrop(){dropOpen=false;profileDrop&&profileDrop.classList.add('hidden');}
-function toggleDrop(){dropOpen=!dropOpen;profileDrop.classList.toggle('hidden',!dropOpen);}
+function closeDrop(){dropOpen=false;if(profileDrop){dropOpen=false;profileDrop.dataset.open='';}}
+function toggleDrop(){dropOpen=!dropOpen;profileDrop.dataset.open=dropOpen?'1':'';}
 
 // touchend handles tap; preventDefault stops synthetic click from also firing
 profileBtn.addEventListener('touchend',function(e){
