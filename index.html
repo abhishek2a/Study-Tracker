@@ -64,6 +64,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .tnav{font-size:.73rem;font-weight:600;padding:5px 11px;border-radius:7px;color:var(--dim);cursor:pointer;border:none;background:transparent;font-family:var(--font);transition:.15s;white-space:nowrap}
 .tnav:hover{background:var(--s3);color:var(--text)}
 @media(max-width:600px){.tnav{display:none}}
+#btt{display:none;position:fixed;bottom:28px;right:20px;z-index:300;width:46px;height:46px;border-radius:50%;background:var(--s1);color:var(--text);border:1px solid var(--border);font-size:1rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);align-items:center;justify-content:center;transition:opacity .2s,transform .2s,box-shadow .2s;will-change:transform;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-weight:600;letter-spacing:0}
+#btt:active{transform:scale(.92);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+@media(min-width:601px){#btt{display:none!important}}
 .user-chip{font-size:.68rem;color:var(--dim);font-family:var(--mono);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
 .signout-btn{font-size:.68rem;padding:4px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;flex-shrink:0}
 .signout-btn:hover{border-color:var(--red);color:var(--red)}
@@ -249,6 +252,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 </div>
 
 <div id="app">
+<button id="btt" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <div class="topbar">
     <div class="logo">Study <span>Tracker</span></div>
     <div class="topright">
@@ -283,7 +287,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.3</div>
+          <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.4</div>
         </div>
       </div>
     </div>
@@ -807,6 +811,12 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingClo
 window.addEventListener('beforeunload',()=>{if(pendingCloudWrite)flushToCloud();});
 window.addEventListener('online',()=>syncState('synced'));
 window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
+// back-to-top FAB — mobile only
+window.addEventListener('scroll',()=>{
+  const btt=$('btt');if(!btt)return;
+  const show=window.scrollY>300;
+  btt.style.display=show?'flex':'none';
+},{passive:true});
 
 function saveToFirestore(){saveLocal(remoteData);scheduleCloudSync();}
 
@@ -1151,7 +1161,7 @@ function renderRevisions(){
   const due=getRevisionsDue();
   const nav=$('revise-nav'),badge=$('revise-badge');
   sec.style.display=due.length?'flex':'none';
-  if(nav){nav.style.display=due.length?'inline-flex':'none';}
+  if(nav){nav.style.display=due.length&&window.innerWidth>600?'inline-flex':'none';}
   if(badge){badge.textContent=due.length||'';}
   if(!due.length){rc.innerHTML='';return;}
   const intervalLabels=['1st review','2nd review','3rd review','4th review','5th review','6th review'];
