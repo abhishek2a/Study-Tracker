@@ -102,7 +102,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:11px}
 @keyframes cardHighlight{from{box-shadow:0 0 0 2px var(--blue)}to{box-shadow:0 0 0 0px transparent}}
-.day-card{border-radius:var(--radius);padding:22px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;animation:cardHighlight 2.5s ease-out;box-shadow:var(--shadow)}
+.day-card{border-radius:var(--radius);padding:22px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:var(--shadow)}
 .day-card+.day-card{margin-top:12px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:rgba(77,150,240,.035)}.day-card.banking::before{background:var(--banking)}
@@ -874,16 +874,22 @@ function getPending(){
 }
 
 function deferDate(date,cardEl){
+  _lastPendingHtml=''; // force re-render after defer
   deferred[date]=Date.now()+86400000;
   try{localStorage.setItem('cseb_deferred',JSON.stringify(deferred));}catch(e){}
   if(cardEl){cardEl.style.transition='opacity .3s';cardEl.style.opacity='0';setTimeout(renderPending,320);}
   else renderPending();
 }
 
+let _lastPendingHtml='';
 function renderPending(){
   const {labels}=getCourseData(),pc=$('pendingcard'),pending=getPending();
-  if(!pending.length){pc.innerHTML='<div class="no-pending">✓ All caught up!</div>';return;}
-  pc.innerHTML=pending.map(({date,s,unchecked})=>{
+  if(!pending.length){
+    const html='<div class="no-pending">✓ All caught up!</div>';
+    if(_lastPendingHtml===html)return;
+    _lastPendingHtml=html;pc.innerHTML=html;return;
+  }
+  const html=pending.map(({date,s,unchecked})=>{
     const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
     const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     return `<div class="day-card pending-card" style="margin-bottom:10px">
@@ -891,6 +897,9 @@ function renderPending(){
       <div class="day-sub">Complete pending topics</div>
       <ul class="cl">${items}</ul></div>`;
   }).join('');
+  if(_lastPendingHtml===html)return; // no change — skip repaint
+  _lastPendingHtml=html;
+  pc.innerHTML=html;
   pc.querySelectorAll('.pending-ds').forEach(b=>{
     b.addEventListener('change',e=>{
       const sid=e.target.getAttribute('data-id');
