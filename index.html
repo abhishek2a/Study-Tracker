@@ -129,13 +129,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
 .revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
 @media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
-.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:.15s}
-.revise-item:hover{border-color:var(--principles)}
+.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
+
 .revise-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .revise-text{flex:1;font-size:.82rem;line-height:1.45;color:var(--text)}
 .revise-meta{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
-.revise-btn{flex-shrink:0;padding:5px 12px;border:1px solid var(--green);border-radius:7px;background:transparent;color:var(--green);font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap}
-.revise-btn:hover{background:var(--green);color:#000}
+.revise-btn{flex-shrink:0;padding:6px 13px;border:1px solid var(--green);border-radius:8px;background:transparent;color:var(--green);font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
+@media(hover:hover){.revise-btn:hover{background:var(--green);color:#000}}.revise-btn:active{background:var(--green);color:#000;transform:scale(.94)}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0}
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cl{list-style:none}
@@ -1178,8 +1178,17 @@ function renderRevisions(){
       <button class="revise-btn" data-rid="${id}">✓ Revised</button>
     </div>`;
   }).join('')}</div>`;
+  let _reviseTouch=false;
   rc.querySelectorAll('.revise-btn').forEach(b=>{
-    b.addEventListener('click',()=>markRevised(b.getAttribute('data-rid')));
+    b.addEventListener('touchend',function(e){
+      e.preventDefault();_reviseTouch=true;
+      markRevised(b.getAttribute('data-rid'));
+      setTimeout(()=>{_reviseTouch=false;},500);
+    });
+    b.addEventListener('click',function(){
+      if(_reviseTouch)return;
+      markRevised(b.getAttribute('data-rid'));
+    });
   });
 }
 
