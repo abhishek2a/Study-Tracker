@@ -842,11 +842,14 @@ function backfillSR(){
 
 function applyData(data){
   remoteData={...data};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
-  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
+  if(!pendingCloudWrite){
+    // only sync DOM from cloud when no local changes pending
+    document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
+    document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+    document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+    const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
+    ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
+  }
   backfillSR();
   updateAll();renderPending();renderRevisions();
   renderCourses(remoteData);renderExamStrip();updatePageTitle();
@@ -1328,7 +1331,16 @@ function initApp(user){
   }).catch(()=>{renderCourses(remoteData);});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
     if(!snap.exists())return;
-    remoteData={...remoteData,...snap.data()};
+    // don't let stale cloud data overwrite pending local changes
+    if(pendingCloudWrite){
+      // only merge non-topic metadata (courses, activeCourse etc) — not topic booleans
+      const cloud=snap.data();
+      const safe={};
+      Object.keys(cloud).forEach(k=>{if(typeof cloud[k]!=='boolean')safe[k]=cloud[k];});
+      remoteData={...remoteData,...safe};
+    } else {
+      remoteData={...remoteData,...snap.data()};
+    }
     applyData(remoteData);syncState('synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
