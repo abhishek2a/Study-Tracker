@@ -335,7 +335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.7</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.8</div>
         </div>
       </div>
     </div>
@@ -544,7 +544,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.3.7';
+const APP_VERSION = '1.3.8';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1282,13 +1282,14 @@ function onCheck(id, val) {
 
 function getRevisionsDue(){
   if(!remoteData._sr)return[];
-  // merge labels from all enrolled courses so CSEB+ACCA topics show correct names
-  const courses=remoteData.courses&&remoteData.courses.length?remoteData.courses:[DEFAULT_COURSE];
-  const allLabels={};
-  courses.forEach(c=>{const cd=COURSE_DATA[c];if(cd)Object.assign(allLabels,cd.labels);});
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const cd = COURSE_DATA[activeCourse];
+  if (!cd || !cd.labels) return [];
+  const activeLabels = cd.labels;
+  
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==deleteField())
-    .map(([id,s])=>({id,label:allLabels[id]||id,count:s.count,completed:s.completed,next:s.next}))
+    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==deleteField()&&activeLabels[id])
+    .map(([id,s])=>({id,label:activeLabels[id],count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'study-tracker-v1.3.7';
+const CACHE_NAME = 'study-tracker-v1.3.8';
 
 const ASSETS = [
   './',
