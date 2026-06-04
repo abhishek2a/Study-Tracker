@@ -137,7 +137,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-pod.silver{border-color:rgba(180,180,200,.3);background:rgba(180,180,200,.04)}
 .lb-pod.bronze{border-color:rgba(200,120,60,.3);background:rgba(200,120,60,.04)}
 .lb-pod-medal{font-size:1.6rem;margin-bottom:4px}
-.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);word-break:break-word;line-height:1.25;margin-bottom:3px}
 .lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
 .lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
 .lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
@@ -148,7 +148,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
 .lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
 .lb-rank{font-size:.78rem;font-weight:800;color:var(--dim);font-family:var(--mono);width:28px;flex-shrink:0;text-align:center}
-.lb-name{flex:1;font-size:.86rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-name{flex:1;font-size:.86rem;font-weight:600;color:var(--text);word-break:break-word;line-height:1.25;padding-right:6px}
 .lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;margin-left:6px;flex-shrink:0}
 .lb-pct{font-size:.86rem;font-weight:800;color:var(--text);letter-spacing:-.01em;flex-shrink:0}
 .lb-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:4px}
@@ -310,7 +310,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-user">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
               <div class="pd-user-name" id="pd-name">—</div>
-              <button id="pd-edit-name-btn" title="Edit Name" aria-label="Edit Name" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:0.75rem;padding:2px 4px;border-radius:4px;transition:0.15s">✏️</button>
             </div>
             <div class="pd-user-email" id="pd-email">—</div>
             <div id="pd-sync" class="pd-sync-row" style="font-size:0.65rem;margin-top:4px;font-family:var(--mono)">● Offline</div>
@@ -330,6 +329,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" data-t="system" role="menuitem">System Default</button>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
           <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
+          <div class="pd-sep"></div>
+          <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
           <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.5</div>
@@ -371,12 +372,49 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="lb-box">
     <div class="lb-hdr">
       <div>
-        <h2>🏆 Leaderboard</h2>
-        <p>CSEB11 · Live rankings</p>
+        <h2 style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0">🏆 Leaderboard</h2>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)">CSEB · Live rankings</p>
       </div>
       <button class="lb-close" id="lb-close" aria-label="Close leaderboard">✕</button>
     </div>
     <div class="lb-body" id="lb-wrap"></div>
+  </div>
+</div>
+
+<div id="settings-overlay" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden">
+  <div class="lb-box" style="max-width:400px;width:100%;background:var(--s1);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden">
+    <div class="lb-hdr" style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s1);flex-shrink:0">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0">⚙️ Settings</h2>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)">Account & App</p>
+      </div>
+      <button class="lb-close" id="settings-close" aria-label="Close settings">✕</button>
+    </div>
+    <div class="lb-body" style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Change Name</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="settings-name-input" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
+          <button id="settings-name-save" class="auth-btn" style="width:auto;margin:0;padding:0 16px">Save</button>
+        </div>
+      </div>
+      <div>
+        <button id="settings-reset-pw" class="auth-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Password Reset Email</button>
+      </div>
+      <div>
+        <button id="settings-update-btn" class="auth-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Check for App Update</button>
+      </div>
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Account Info</label>
+        <div id="settings-login-info" style="font-size:.75rem;color:var(--dim);font-family:var(--mono);line-height:1.5">
+          Loading activity...
+        </div>
+      </div>
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid rgba(224,80,80,.2)">
+        <label style="display:block;font-size:.72rem;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Danger Zone</label>
+        <button id="settings-delete-btn" class="auth-btn" style="background:rgba(224,80,80,.1);color:var(--red);border:1px solid rgba(224,80,80,.3)">Delete Account Permanently</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -386,7 +424,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebas
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail
+  createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
   getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteField, collection, query, where, orderBy
@@ -868,13 +906,8 @@ window.addEventListener('scroll',()=>{
 
 function saveToFirestore(){
   if(!currentUid) return;
-  syncState('syncing');
-  setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).then(() => {
-    syncState('synced');
-  }).catch(e => {
-    console.error('Cloud save failed', e);
-    syncState('');
-  });
+  // Fire and forget; onSnapshot's hasPendingWrites metadata handles the UI state natively
+  setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).catch(()=>{});
 }
 
 function backfillSR(){
@@ -1190,8 +1223,11 @@ function onCheck(id,val){
       remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
     }
   } else {
-    // Preserve SR history: Do not delete data here.
-    // It is ignored in the UI if remoteData[id] is false.
+    // Preserve SR history, unless it was just a misclick (count === 0)
+    if(remoteData._sr && remoteData._sr[id] && remoteData._sr[id].count === 0){
+      delete remoteData._sr[id];
+      setDoc(doc(db,'users',currentUid),{_sr:{[id]:deleteField()}},{merge:true}).catch(()=>{});
+    }
   }
   saveToFirestore();
   updateLBData();
@@ -1566,30 +1602,120 @@ document.addEventListener('touchstart',function(e){
   if(!profileBtn.contains(e.target)&&!profileDrop.contains(e.target))closeDrop();
 },{passive:true});
 
-document.getElementById('pd-edit-name-btn').addEventListener('click', async function(e) {
+$('pd-settings-item').addEventListener('click', (e) => {
   e.stopPropagation();
-  if(!auth.currentUser) return;
-  const currentName = remoteData._displayName || auth.currentUser.displayName || '';
-  const newName = prompt('Enter your new name:', currentName);
-  if (newName !== null && newName.trim() !== '' && newName.trim() !== currentName) {
-    const trimmed = newName.trim();
+  closeDrop();
+  $('settings-overlay').style.visibility = 'visible';
+  $('settings-overlay').style.opacity = '1';
+  $('settings-name-input').value = remoteData._displayName || auth.currentUser?.displayName || '';
+  
+  if (auth.currentUser && auth.currentUser.metadata) {
     try {
-      const btn = this;
-      btn.textContent = '⏳';
-      await updateProfile(auth.currentUser, { displayName: trimmed });
-      remoteData._displayName = trimmed;
-      
-      const initials = trimmed.slice(0, 2).toUpperCase();
-      $('profile-avatar').textContent = initials;
-      $('profile-name').textContent = trimmed;
-      $('pd-name').textContent = trimmed;
-      
-      updateLBData(); // sync to leaderboard
-      btn.textContent = '✏️';
+      const lastLogin = new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString(undefined, {dateStyle:'medium', timeStyle:'short'});
+      const created = new Date(auth.currentUser.metadata.creationTime).toLocaleDateString(undefined, {dateStyle:'medium'});
+      $('settings-login-info').innerHTML = `Last Sign In: <strong style="color:var(--text)">${lastLogin}</strong><br>Member Since: <strong style="color:var(--text)">${created}</strong>`;
     } catch(err) {
-      console.error('Error updating name:', err);
-      alert('Failed to update name. Try again.');
-      this.textContent = '✏️';
+      $('settings-login-info').textContent = 'Activity info unavailable';
+    }
+  }
+});
+$('settings-close').addEventListener('click', () => {
+  $('settings-overlay').style.opacity = '0';
+  setTimeout(() => $('settings-overlay').style.visibility = 'hidden', 200);
+});
+$('settings-overlay').addEventListener('click', function(e) {
+  if(e.target === this) {
+    $('settings-overlay').style.opacity = '0';
+    setTimeout(() => $('settings-overlay').style.visibility = 'hidden', 200);
+  }
+});
+
+$('settings-name-save').addEventListener('click', async function() {
+  if(!auth.currentUser) return;
+  if(!navigator.onLine) { alert('You must be online to change your account name.'); return; }
+  const currentName = remoteData._displayName || auth.currentUser.displayName || '';
+  const newName = $('settings-name-input').value.trim();
+  if(newName !== '' && newName !== currentName) {
+    const btn = this;
+    btn.textContent = '...';
+    btn.disabled = true;
+    try {
+      await updateProfile(auth.currentUser, { displayName: newName });
+      remoteData._displayName = newName;
+      $('profile-avatar').textContent = newName.slice(0, 2).toUpperCase();
+      $('profile-name').textContent = newName;
+      $('pd-name').textContent = newName;
+      updateLBData();
+      btn.textContent = 'Saved!';
+      setTimeout(()=>btn.textContent='Save', 2000);
+    } catch(e) {
+      console.error(e);
+      alert('Failed to update name');
+      btn.textContent = 'Save';
+    }
+    btn.disabled = false;
+  }
+});
+
+$('settings-reset-pw').addEventListener('click', async function() {
+  if(!auth.currentUser) return;
+  const btn = this;
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  try {
+    await sendPasswordResetEmail(auth, auth.currentUser.email);
+    btn.textContent = '✓ Reset Link Sent';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = 'Send Password Reset Email';
+  }
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = 'Send Password Reset Email';
+    btn.style.color = 'var(--text)';
+    btn.style.borderColor = 'var(--border)';
+  }, 4000);
+});
+
+$('settings-update-btn').addEventListener('click', function() {
+  const btn = this;
+  btn.textContent = 'Checking...';
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg) {
+        reg.update().then(() => {
+          btn.textContent = '✓ Checked (v1.2.5)';
+          setTimeout(()=>btn.textContent='Check for App Update', 3000);
+        });
+      } else {
+        btn.textContent = 'No SW found';
+        setTimeout(()=>btn.textContent='Check for App Update', 3000);
+      }
+    });
+  } else {
+    btn.textContent = 'Not Supported';
+    setTimeout(()=>btn.textContent='Check for App Update', 3000);
+  }
+});
+
+$('settings-delete-btn').addEventListener('click', async function() {
+  if(!auth.currentUser) return;
+  if(confirm('Are you absolutely sure? This will permanently delete all your data and progress. This CANNOT be undone!')) {
+    const btn = this;
+    btn.textContent = 'Deleting...';
+    btn.disabled = true;
+    try {
+      await deleteUser(auth.currentUser);
+    } catch(e) {
+      if (e.code === 'auth/requires-recent-login') {
+        alert('Security Required: Please sign out and sign back in to delete your account.');
+      } else {
+        alert('Error deleting account: ' + e.message);
+      }
+      btn.textContent = 'Delete Account Permanently';
+      btn.disabled = false;
     }
   }
 });
@@ -1637,7 +1763,7 @@ if('serviceWorker' in navigator) {
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
             if(confirm('New version (1.2.5) available! Reload now?')) {
-              window.location.reload(true);
+              window.location.reload();
             }
           }
         });
