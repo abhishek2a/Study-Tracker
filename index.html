@@ -149,12 +149,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
 .lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
 .lb-rank{font-size:.78rem;font-weight:800;color:var(--dim);font-family:var(--mono);width:28px;flex-shrink:0;text-align:center}
-.lb-name-wrap{flex:1;display:flex;align-items:center;min-width:0;gap:6px}
+.lb-name-col{flex:1;display:flex;flex-direction:column;min-width:0;justify-content:center}
+.lb-name-wrap{display:flex;align-items:center;min-width:0;gap:6px}
 .lb-name{font-size:.86rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;flex-shrink:0}
 .lb-pct{font-size:.86rem;font-weight:800;color:var(--text);letter-spacing:-.01em;flex-shrink:0}
 .lb-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:4px}
-.lb-status{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:6px}
+.lb-status{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lb-empty{padding:24px;text-align:center;font-size:.8rem;color:var(--dim);font-family:var(--mono)}
 @media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
 .revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
@@ -1366,11 +1367,13 @@ function renderLeaderboard(users){
     const status=lbStatus(rank,total);
     return `<div class="lb-row${isMe?' lb-me':''}">
       <div class="lb-rank">#${rank}</div>
-      <div class="lb-name-wrap">
-        <div class="lb-name">${safeName(u.name)}</div>
-        ${isMe?'<div class="lb-you">YOU</div>':''}
+      <div class="lb-name-col">
+        <div class="lb-name-wrap">
+          <div class="lb-name">${safeName(u.name)}</div>
+          ${isMe?'<div class="lb-you">YOU</div>':''}
+        </div>
+        <div class="lb-status">${status}</div>
       </div>
-      <div class="lb-status">${status}</div>
       <div class="lb-topics">${u.topics}t</div>
       <div class="lb-pct">${u.pct}%</div>
     </div>`;
