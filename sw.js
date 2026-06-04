@@ -1,10 +1,11 @@
-const CACHE_NAME = 'study-tracker-v1.3.1';
+const CACHE_NAME = 'study-tracker-v1.3.2';
 
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './logo.png'
+  './logo.svg',
+  './logo.ico'
 ];
 
 self.addEventListener('message', event => {
