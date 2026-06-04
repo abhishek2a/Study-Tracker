@@ -52,13 +52,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   #auth-overlay{align-items:flex-start;padding:0}
   .auth-box{border-radius:0;border-left:none;border-right:none;border-top:none;min-height:100svh;padding:40px 20px 32px}
 }
-#app{display:none; max-width:600px; margin:0 auto; position:relative; min-height:100vh; background:var(--bg); border-left:1px solid var(--border); border-right:1px solid var(--border); box-shadow:0 0 40px rgba(0,0,0,0.15)}
-@media(max-width:600px){#app{border:none;box-shadow:none}}
+#app{display:none}
 #app.visible{display:block}
-.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
 [data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
-@media(max-width:700px){.topbar{padding:0 14px;height:48px}}
+@media(max-width:700px){.topbar{padding:0 14px;height:48px;position:fixed;width:100%}}
 #app.visible{padding-top:0}
+@media(max-width:700px){#app.visible .wrap{padding-top:64px}}
 .logo{font-size:1rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--accent)}
 .logo sub{font-size:.57rem;font-family:var(--mono);color:var(--dim);margin-left:6px;font-weight:400;vertical-align:middle}
