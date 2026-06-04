@@ -128,6 +128,31 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
 .revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+/* Leaderboard */
+.lb-podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:600px){.lb-podium{grid-template-columns:1fr 1fr 1fr;gap:8px}}
+.lb-pod{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;text-align:center;position:relative;box-shadow:var(--shadow)}
+.lb-pod.gold{border-color:rgba(255,200,0,.3);background:rgba(255,200,0,.04)}
+.lb-pod.silver{border-color:rgba(180,180,200,.3);background:rgba(180,180,200,.04)}
+.lb-pod.bronze{border-color:rgba(200,120,60,.3);background:rgba(200,120,60,.04)}
+.lb-pod-medal{font-size:1.6rem;margin-bottom:4px}
+.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
+.lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
+.lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.lb-stat{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 16px;flex:1;min-width:90px;box-shadow:var(--shadow)}
+.lb-stat-val{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.lb-stat-lbl{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
+.lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
+.lb-rank{font-size:.78rem;font-weight:800;color:var(--dim);font-family:var(--mono);width:28px;flex-shrink:0;text-align:center}
+.lb-name{flex:1;font-size:.86rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;margin-left:6px;flex-shrink:0}
+.lb-pct{font-size:.86rem;font-weight:800;color:var(--text);letter-spacing:-.01em;flex-shrink:0}
+.lb-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:4px}
+.lb-status{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:6px}
+.lb-empty{padding:24px;text-align:center;font-size:.8rem;color:var(--dim);font-family:var(--mono)}
 @media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
 .revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
 
@@ -160,7 +185,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
 .mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s}
-#splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .3s,visibility .3s}
+#splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .3s,visibility .3s}
 #splash.splash-done{opacity:0;visibility:hidden;pointer-events:none}
 .splash-logo{font-size:2.4rem;font-weight:800;letter-spacing:-.04em;color:var(--text)}
 .splash-logo span{color:var(--accent)}
@@ -219,6 +244,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .pd-sep{height:1px;background:var(--border);margin:3px 0}
 .pd-item.danger{color:var(--dim)}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
+#lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden}
+#lb-overlay.open{opacity:1;visibility:visible}
+.lb-box{width:100%;max-width:540px;max-height:90vh;background:var(--bg);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden}
+.lb-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s1);flex-shrink:0}
+.lb-hdr h2{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0}
+.lb-hdr p{font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)}
+.lb-close{background:transparent;border:none;color:var(--dim);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:0.15s;line-height:1;width:32px;height:32px}
+.lb-close:hover{background:var(--s2);color:var(--text)}
+.lb-body{padding:24px;overflow-y:auto;flex:1}
+@media(max-width:600px){
+  #lb-overlay{align-items:flex-end;padding:0}
+  .lb-box{max-width:100%;max-height:85vh;border-radius:24px 24px 0 0;border-bottom:none}
+  .lb-body{padding:16px}
+}
 </style>
 </head>
 <body>
@@ -281,6 +320,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           </div>
           <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
           <div class="pd-sep"></div>
+          <button class="pd-item" id="pd-lb-item" role="menuitem">🏆 Leaderboard</button>
+          <div class="pd-sep"></div>
           <div class="pd-section">Appearance</div>
           <button class="pd-item" data-t="system" role="menuitem">System Default</button>
           <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
@@ -318,6 +359,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
     <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
     <div class="subj-grid" id="dynamic-syllabus"></div>
+
+  </div>
+</div>
+
+<div id="lb-overlay">
+  <div class="lb-box">
+    <div class="lb-hdr">
+      <div>
+        <h2>🏆 Leaderboard</h2>
+        <p>CSEB11 · Live rankings</p>
+      </div>
+      <button class="lb-close" id="lb-close" aria-label="Close leaderboard">✕</button>
+    </div>
+    <div class="lb-body" id="lb-wrap"></div>
   </div>
 </div>
 
@@ -330,7 +385,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteField
+  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteField, collection, query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -442,6 +497,13 @@ async function doReset(){
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
 const COURSE_DATA={};
+
+const EXAMS=[
+  {cat:'Cat 11/2026',name:'Junior Clerk / Cashier',sub:'Special Grade · Class-I Banks',date:'2026-07-11',omr:true,target:true},
+  {cat:'Cat 10/2026',name:'Junior Clerk / Cashier',sub:'Super Grade Banks',date:'2026-08-08',omr:true},
+  {cat:'Cat 09/2026',name:'Assistant Secretary',sub:'',date:'2026-08-16',omr:false},
+];
+
 const SCH={
  "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
  "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
@@ -769,7 +831,13 @@ function getCourseData(){
 }
 
 const now=new Date(); // keep for initApp display only
-function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function getTodayStr(){
+  // Force India Standard Time (UTC+5:30) for consistent chronological tracking
+  const localDate = new Date();
+  const utc = localDate.getTime() + (localDate.getTimezoneOffset() * 60000);
+  const ist = new Date(utc + (3600000 * 5.5));
+  return `${ist.getFullYear()}-${String(ist.getMonth()+1).padStart(2,'0')}-${String(ist.getDate()).padStart(2,'0')}`;
+}
 const ts=getTodayStr; // ts() now function call everywhere
 
 function dLeft(s){
@@ -785,30 +853,6 @@ function syncState(s){
   else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
 
-let pendingCloudWrite=false;
-function saveLocal(data){try{localStorage.setItem('cseb_state',JSON.stringify(data));}catch(e){}}
-
-async function flushToCloud(){
-  if(!currentUid||!pendingCloudWrite)return;
-  syncState('syncing');
-  try{
-    await setDoc(doc(db,'users',currentUid),remoteData,{merge:true});
-    pendingCloudWrite=false;syncState('synced');
-  }catch(e){
-    console.error('Cloud save failed',e);syncState('');
-    writeDebounce=setTimeout(flushToCloud,5000); // retry in 5s
-  }
-}
-
-function scheduleCloudSync(){
-  pendingCloudWrite=true;
-  syncState('syncing');
-  clearTimeout(writeDebounce);
-  writeDebounce=setTimeout(flushToCloud,2000);
-}
-
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&pendingCloudWrite)flushToCloud();});
-window.addEventListener('beforeunload',()=>{if(pendingCloudWrite)flushToCloud();});
 window.addEventListener('online',()=>syncState('synced'));
 window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
 // back-to-top FAB — mobile only
@@ -818,7 +862,16 @@ window.addEventListener('scroll',()=>{
   btt.style.display=show?'flex':'none';
 },{passive:true});
 
-function saveToFirestore(){saveLocal(remoteData);scheduleCloudSync();}
+function saveToFirestore(){
+  if(!currentUid) return;
+  syncState('syncing');
+  setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).then(() => {
+    syncState('synced');
+  }).catch(e => {
+    console.error('Cloud save failed', e);
+    syncState('');
+  });
+}
 
 function backfillSR(){
   if(!remoteData._sr)remoteData._sr={};
@@ -842,14 +895,11 @@ function backfillSR(){
 
 function applyData(data){
   remoteData={...data};
-  if(!pendingCloudWrite){
-    // only sync DOM from cloud when no local changes pending
-    document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
-    document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-    document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-    const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
-    ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
-  }
+  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
+  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
+  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
   backfillSR();
   updateAll();renderPending();renderRevisions();
   renderCourses(remoteData);renderExamStrip();updatePageTitle();
@@ -1035,39 +1085,41 @@ function bindSyllabus(){
   backfillSR();
 }
 
+let updateAllTicking = false;
 function updateAll(){
   if(!domGfill||!domPct||!domSpills)return;
-  const {subjs}=getCourseData();
-  const boxes=syllabusBoxes;
-  if(!boxes.length)return;
-  const total=boxes.length,done=boxes.filter(b=>!!remoteData[b.id]).length,pct=total?Math.round(done/total*100):0;
-  if(domGfill)domGfill.style.width=pct+'%';
-  if(domPct)domPct.textContent=pct+'%';
-  if(domSpills){
-    domSpills.innerHTML='';
-    for(const[k,v] of Object.entries(subjs)){
-      const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
-      const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-      domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+  if(updateAllTicking) return;
+  updateAllTicking = true;
+  requestAnimationFrame(() => {
+    updateAllTicking = false;
+    const {subjs}=getCourseData();
+    const boxes=syllabusBoxes;
+    if(!boxes.length)return;
+    const total=boxes.length,done=boxes.filter(b=>!!remoteData[b.id]).length,pct=total?Math.round(done/total*100):0;
+    if(domGfill)domGfill.style.width=pct+'%';
+    if(domPct)domPct.textContent=pct+'%';
+    if(domSpills){
+      domSpills.innerHTML='';
+      for(const[k,v] of Object.entries(subjs)){
+        const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
+        const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+        domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+      }
     }
-  }
-  const _t=new Date();_t.setHours(0,0,0,0);
-  const _ac=remoteData.activeCourse||DEFAULT_COURSE;
-  const _examDates={CSEB11:new Date(2026,6,11),CAT09:new Date(2026,7,16),ACCA26:new Date(2026,8,10)};
-  const examDiff=Math.ceil(((_examDates[_ac]||_examDates.CSEB11)-_t)/86400000);
-  const streak=calcStreak();
-  const ps=$('pd-stats');
-  if(ps)ps.innerHTML=`
-    <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
-    <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
+    const _t=new Date();_t.setHours(0,0,0,0);
+    const _ac=remoteData.activeCourse||DEFAULT_COURSE;
+    const _examDates={CSEB11:new Date(2026,6,11),CAT09:new Date(2026,7,16),ACCA26:new Date(2026,8,10)};
+    const examDiff=Math.ceil(((_examDates[_ac]||_examDates.CSEB11)-_t)/86400000);
+    const streak=calcStreak();
+    const ps=$('pd-stats');
+    if(ps)ps.innerHTML=`
+      <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
+      <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
+      <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':'Today!'}</span></div>`;
+  });
 }
 
-const EXAMS=[
-  {cat:'Cat 11/2026',name:'Junior Clerk / Cashier',sub:'Special Grade · Class-I Banks',date:'2026-07-11',omr:true,target:true},
-  {cat:'Cat 10/2026',name:'Junior Clerk / Cashier',sub:'Super Grade Banks',date:'2026-08-08',omr:true},
-  {cat:'Cat 09/2026',name:'Assistant Secretary',sub:'',date:'2026-08-16',omr:false},
-];
+
 
 function updatePageTitle(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
@@ -1134,12 +1186,11 @@ function onCheck(id,val){
       remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
     }
   } else {
-    if(remoteData._sr&&remoteData._sr[id]){
-      delete remoteData._sr[id];
-      setDoc(doc(db,'users',currentUid),{_sr:{[id]:deleteField()}},{merge:true}).catch(()=>{});
-    }
+    // Preserve SR history: Do not delete data here.
+    // It is ignored in the UI if remoteData[id] is false.
   }
   saveToFirestore();
+  updateLBData();
   const main=document.getElementById(id);if(main)main.checked=val;
   const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily)daily.checked=val;
   const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend)pend.checked=val;
@@ -1204,6 +1255,114 @@ function renderRevisions(){
   });
 }
 
+// ── LEADERBOARD ──
+let lbUnsub=null;
+const TOTAL_CSEB_TOPICS=82; // total topics in CSEB11 syllabus
+
+function lbStatus(rank,total){
+  const pct=rank/total;
+  if(pct<=0.1)return'🔥 Top Performer';
+  if(pct<=0.3)return'🚀 Rising Fast';
+  return'📚 Consistent Learner';
+}
+
+function renderLeaderboard(users){
+  const wrap=$('lb-wrap');
+  if(!wrap)return;
+  const isCSEB=(remoteData.activeCourse||DEFAULT_COURSE)==='CSEB11';
+  if(!isCSEB){wrap.innerHTML='<div class="lb-empty">Leaderboard is only for CSEB11 right now.</div>';return;}
+  if(!users||!users.length){wrap.innerHTML='<div class="lb-empty">No rankings yet — be the first!</div>';return;}
+
+  // sort: % desc → topics desc → signupDate asc
+  const sorted=[...users].sort((a,b)=>{
+    if(b.pct!==a.pct)return b.pct-a.pct;
+    if(b.topics!==a.topics)return b.topics-a.topics;
+    return (a.signupDate||'').localeCompare(b.signupDate||'');
+  });
+
+  const myRank=sorted.findIndex(u=>u.uid===currentUid)+1;
+  const total=sorted.length;
+  const me=sorted.find(u=>u.uid===currentUid);
+
+  // stats bar
+  const statsHtml=me?`<div class="lb-stats">
+    <div class="lb-stat"><div class="lb-stat-val">#${myRank}</div><div class="lb-stat-lbl">Your Rank</div></div>
+    <div class="lb-stat"><div class="lb-stat-val">${myRank-1}</div><div class="lb-stat-lbl">Ahead of You</div></div>
+    <div class="lb-stat"><div class="lb-stat-val">${total-myRank}</div><div class="lb-stat-lbl">Behind You</div></div>
+    <div class="lb-stat"><div class="lb-stat-val">${total}</div><div class="lb-stat-lbl">Total Users</div></div>
+  </div>`:'';
+
+  // podium top 3
+  const medals=['🥇','🥈','🥉'];
+  const podClasses=['gold','silver','bronze'];
+  const podiumHtml=`<div class="lb-podium">${sorted.slice(0,3).map((u,i)=>`
+    <div class="lb-pod ${podClasses[i]}">
+      <div class="lb-pod-medal">${medals[i]}</div>
+      <div class="lb-pod-name">${u.name}${u.uid===currentUid?' 👈':''}</div>
+      <div class="lb-pod-pct">${u.pct}%</div>
+      <div class="lb-pod-topics">${u.topics} topics</div>
+    </div>`).join('')}</div>`;
+
+  // full list
+  const listHtml=`<div class="lb-list">${sorted.map((u,i)=>{
+    const rank=i+1;
+    const isMe=u.uid===currentUid;
+    const status=lbStatus(rank,total);
+    return `<div class="lb-row${isMe?' lb-me':''}">
+      <div class="lb-rank">#${rank}</div>
+      <div class="lb-name">${u.name}${isMe?'<span class="lb-you">YOU</span>':''}</div>
+      <div class="lb-status">${status}</div>
+      <div class="lb-topics">${u.topics}t</div>
+      <div class="lb-pct">${u.pct}%</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  wrap.innerHTML=statsHtml+podiumHtml+listHtml;
+}
+
+function updateLBData(){
+  if(!currentUid||(remoteData.activeCourse||DEFAULT_COURSE)!=='CSEB11')return;
+  const {subjs}=getCourseData();
+  const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
+  const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
+  const pct=total?Math.round(done/total*100):0;
+  console.log(`[Leaderboard] Auto-backfilling/updating leaderboard doc for user: ${currentUid}`);
+  setDoc(doc(db,'leaderboard',currentUid),{
+    displayName:remoteData._displayName||'',
+    progressPercent:pct,
+    completedTopics:done,
+    activeCourse:remoteData.activeCourse||DEFAULT_COURSE,
+    signupDate:remoteData.signupDate||'',
+    updatedAt:new Date().toISOString()
+  },{merge:true}).catch(err => {
+    console.error('[Leaderboard] Error writing to leaderboard:', err);
+  });
+}
+
+function startLBListener(){
+  if(lbUnsub){lbUnsub();lbUnsub=null;}
+  if((remoteData.activeCourse||DEFAULT_COURSE)!=='CSEB11'){renderLeaderboard([]);return;}
+  const q=query(collection(db,'leaderboard'),where('activeCourse','==','CSEB11'));
+  lbUnsub=onSnapshot(q,snap=>{
+    console.log(`[Leaderboard] Number of leaderboard documents loaded: ${snap.docs.length}`);
+    const users=snap.docs
+      .map(d=>{
+        const data=d.data();
+        return{
+          uid:d.id,
+          name:data.displayName||'User',
+          pct:data.progressPercent||0,
+          topics:data.completedTopics||0,
+          signupDate:data.signupDate||''
+        };
+      });
+    console.log(`[Leaderboard] Number of CSEB11 users found: ${users.length}`);
+    renderLeaderboard(users);
+  },err=>{
+    console.error('[Leaderboard] Firestore permission error:',err);
+  });
+}
+
 function calcStreak(){
   const {sch}=getCourseData();
   const today=ts();
@@ -1244,6 +1403,7 @@ function renderCourses(data){
       remoteData.activeCourse=code;
       await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
+      startLBListener();updateLBData();
       makeCard();bindSyllabus();updateAll();renderPending();
       closeDrop();
     });
@@ -1257,6 +1417,7 @@ function renderCourses(data){
       if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=DEFAULT_COURSE;
       await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:remoteData.activeCourse},{merge:true});
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
+      startLBListener();updateLBData();
       makeCard();bindSyllabus();updateAll();renderPending();
     });
   });
@@ -1309,12 +1470,12 @@ function initApp(user){
   $('profile-name').textContent=name;
   $('pd-name').textContent=user.displayName||name;
   $('pd-email').textContent=user.email;
+  remoteData._displayName=user.displayName||name; // cache for leaderboard
   $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   try{
     renderExamStrip();
     domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
     try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-    try{const ls=localStorage.getItem('cseb_state');if(ls)remoteData={...JSON.parse(ls)};}catch(e){}
     makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderCourses(remoteData);
   }catch(err){
     console.error('initApp render error:',err);
@@ -1326,22 +1487,15 @@ function initApp(user){
   if(unsubSnap)unsubSnap();
   syncState('syncing');
   getDoc(doc(db,'users',user.uid)).then(snap=>{
-    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);saveLocal(remoteData);}
+    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);}
     renderCourses(remoteData);renderExamStrip();updatePageTitle();syncState('synced');
+    updateLBData();startLBListener();
   }).catch(()=>{renderCourses(remoteData);});
-  unsubSnap=onSnapshot(doc(db,'users',user.uid),snap=>{
+  unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
     if(!snap.exists())return;
-    // don't let stale cloud data overwrite pending local changes
-    if(pendingCloudWrite){
-      // only merge non-topic metadata (courses, activeCourse etc) — not topic booleans
-      const cloud=snap.data();
-      const safe={};
-      Object.keys(cloud).forEach(k=>{if(typeof cloud[k]!=='boolean')safe[k]=cloud[k];});
-      remoteData={...remoteData,...safe};
-    } else {
-      remoteData={...remoteData,...snap.data()};
-    }
-    applyData(remoteData);syncState('synced');
+    remoteData={...remoteData,...snap.data()};
+    applyData(remoteData);
+    syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
@@ -1349,9 +1503,9 @@ onAuthStateChanged(auth,user=>{
   if(user){currentUid=user.uid;initApp(user);}
   else{
     currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
+    if(lbUnsub){lbUnsub();lbUnsub=null;}
     remoteData={};syllabusBoxes=[];
-    pendingCloudWrite=false;clearTimeout(writeDebounce);
-    try{localStorage.removeItem('cseb_state');localStorage.removeItem('cseb_deferred');}catch(e){}
+    try{localStorage.removeItem('cseb_deferred');}catch(e){}
     $('splash').classList.add('splash-done');
     $('app').classList.remove('visible');
     $('auth-overlay').classList.remove('hidden');
@@ -1412,6 +1566,21 @@ document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
   btn.addEventListener('click',function(e){
     e.stopPropagation();setTheme(this.dataset.t);closeDrop();
   });
+});
+const lbItem=document.getElementById('pd-lb-item');
+if(lbItem) lbItem.addEventListener('click',function(e){
+  e.stopPropagation();
+  closeDrop();
+  const ov = document.getElementById('lb-overlay');
+  if(ov) ov.classList.add('open');
+});
+const lbClose=document.getElementById('lb-close');
+if(lbClose) lbClose.addEventListener('click', function(e) {
+  const ov = document.getElementById('lb-overlay');
+  if(ov) ov.classList.remove('open');
+});
+document.getElementById('lb-overlay').addEventListener('click', function(e) {
+  if(e.target === this) this.classList.remove('open');
 });
 document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
