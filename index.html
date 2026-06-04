@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Study Tracker">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json?v=1.2.8">
-<link rel="icon" href="icon.svg?v=1.2.8" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg?v=1.2.8">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg?v=1.2.9" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg?v=1.2.9">
 <title>Study Tracker</title>
 <style>
 :root {
@@ -258,7 +258,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-hdr p{font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)}
 .lb-close{background:transparent;border:none;color:var(--dim);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:0.15s;line-height:1;width:32px;height:32px}
 .lb-close:hover{background:var(--s2);color:var(--text)}
-.lb-body{padding:24px;overflow-y:auto;flex:1}
+.lb-body{padding:24px;overflow-y:auto;flex:1;scrollbar-width:none;-ms-overflow-style:none}
+.lb-body::-webkit-scrollbar{display:none}
 @media(max-width:600px){
   #lb-overlay{align-items:flex-end;padding:0}
   .lb-box{max-width:100%;max-height:85vh;border-radius:24px 24px 0 0;border-bottom:none}
@@ -334,7 +335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.8</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.9</div>
         </div>
       </div>
     </div>
@@ -543,7 +544,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.2.8';
+const APP_VERSION = '1.2.9';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -872,13 +873,18 @@ function buildFRSch(startDateStr){
 
 COURSE_DATA['ACCA26']={sch:{},labels:LABELS_FR,subjs:SUBJS_FR,dynamic:true};
 // get active course data, fallback CSEB11
-function getCourseData(){
-  const cd=COURSE_DATA[remoteData.activeCourse||DEFAULT_COURSE]||COURSE_DATA[DEFAULT_COURSE];
-  // rebuild FR schedule dynamically from saved start date
-  if(cd.dynamic&&remoteData.acca26_start){
-    cd.sch=buildFRSch(remoteData.acca26_start);
+function getCourseData() {
+  const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
+  const baseConfig = COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
+  
+  if (!baseConfig.dynamic || !remoteData.acca26_start) {
+    return baseConfig;
   }
-  return cd;
+  
+  return {
+    ...baseConfig,
+    sch: buildFRSch(remoteData.acca26_start)
+  };
 }
 
 const now=new Date(); // keep for initApp display only
@@ -1229,28 +1235,49 @@ function srNextDate(completedDateStr,count){
   return d.toISOString().split('T')[0];
 }
 
-function onCheck(id,val){
-  remoteData[id]=val;
-  if(val){
-    if(!remoteData._sr)remoteData._sr={};
-    // only create SR entry if none exists (don't reset on double-tick)
-    const existing=remoteData._sr[id];
-    if(!existing||typeof existing!=='object'||!existing.next){
-      remoteData._sr[id]={completed:ts(),count:0,next:srNextDate(ts(),0)};
+function onCheck(id, val) {
+  const todayStr = ts(); 
+  remoteData[id] = val;
+
+  let srDelta = {};
+
+  if (val) {
+    if (!remoteData._sr) remoteData._sr = {};
+    if (!remoteData._sr[id] || typeof remoteData._sr[id] !== 'object' || !remoteData._sr[id].next) {
+      const entry = { completed: todayStr, count: 0, next: srNextDate(todayStr, 0) };
+      remoteData._sr[id] = entry;
+      srDelta[`_sr.${id}`] = entry;
     }
   } else {
-    // Preserve SR history, unless it was just a misclick (count === 0)
-    if(remoteData._sr && remoteData._sr[id] && remoteData._sr[id].count === 0){
+    if (remoteData._sr && remoteData._sr[id]) {
+      const wasNewEntry = remoteData._sr[id].count === 0;
       delete remoteData._sr[id];
-      setDoc(doc(db,'users',currentUid),{_sr:{[id]:deleteField()}},{merge:true}).catch(()=>{});
+      
+      if (wasNewEntry) {
+        srDelta[`_sr.${id}`] = deleteField();
+      }
     }
   }
-  saveToFirestore();
+
+  if (currentUid) {
+    const atomicUpdatePayload = {
+      ...srDelta,
+      [id]: val,
+      [`mock_${todayStr}`]: !!remoteData[`mock_${todayStr}`]
+    };
+
+    setDoc(doc(db, 'users', currentUid), atomicUpdatePayload, { merge: true })
+      .catch(err => console.error('[Sync] Direct payload sync write aborted:', err));
+  }
+
+  const mainBox = document.getElementById(id); if (mainBox) mainBox.checked = val;
+  const dailyBox = document.querySelector(`.ds[data-id="${id}"]`); if (dailyBox) dailyBox.checked = val;
+  const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = val;
+  
+  updateAll();
+  renderPending();
+  renderRevisions();
   updateLBData();
-  const main=document.getElementById(id);if(main)main.checked=val;
-  const daily=document.querySelector(`.ds[data-id="${id}"]`);if(daily)daily.checked=val;
-  const pend=document.querySelector(`.pending-ds[data-id="${id}"]`);if(pend)pend.checked=val;
-  updateAll();renderRevisions();
 }
 
 function getRevisionsDue(){
@@ -1403,27 +1430,37 @@ function updateLBData(){
   });
 }
 
-function startLBListener(){
-  if(lbUnsub){lbUnsub();lbUnsub=null;}
-  if((remoteData.activeCourse||DEFAULT_COURSE)!=='CSEB11'){renderLeaderboard([]);return;}
-  const q=query(collection(db,'leaderboard'),where('activeCourse','==','CSEB11'));
-  lbUnsub=onSnapshot(q,snap=>{
-    console.log(`[Leaderboard] Number of leaderboard documents loaded: ${snap.docs.length}`);
-    const users=snap.docs
-      .map(d=>{
-        const data=d.data();
-        return{
-          uid:d.id,
-          name:data.displayName||'User',
-          pct:data.progressPercent||0,
-          topics:data.completedTopics||0,
-          signupDate:data.signupDate||''
-        };
-      });
-    console.log(`[Leaderboard] Number of CSEB11 users found: ${users.length}`);
+function startLBListener() {
+  if (lbUnsub) { lbUnsub(); lbUnsub = null; }
+  
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  if (activeCourse !== 'CSEB11') {
+    renderLeaderboard([]);
+    return;
+  }
+
+  const q = query(
+    collection(db, 'leaderboard'),
+    where('activeCourse', '==', 'CSEB11'),
+    orderBy('progressPercent', 'desc'),
+    orderBy('completedTopics', 'desc'),
+    limit(50)
+  );
+
+  lbUnsub = onSnapshot(q, snap => {
+    const users = snap.docs.map(d => {
+      const data = d.data();
+      return {
+        uid: d.id,
+        name: data.displayName || 'Anonymous Learner',
+        pct: data.progressPercent || 0,
+        topics: data.completedTopics || 0,
+        signupDate: data.signupDate || ''
+      };
+    });
     renderLeaderboard(users);
-  },err=>{
-    console.error('[Leaderboard] Firestore permission error:',err);
+  }, err => {
+    console.error('[Leaderboard] Constrained connection pipeline error:', err);
   });
 }
 
@@ -1550,15 +1587,16 @@ function initApp(user){
   hideSplash();
   if(unsubSnap)unsubSnap();
   syncState('syncing');
-  getDoc(doc(db,'users',user.uid)).then(snap=>{
-    if(snap.exists()){remoteData={...remoteData,...snap.data()};applyData(remoteData);}
-    renderCourses(remoteData);renderExamStrip();updatePageTitle();syncState('synced');
-    updateLBData();startLBListener();
-  }).catch(()=>{renderCourses(remoteData);});
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
-    if(!snap.exists())return;
-    remoteData={...remoteData,...snap.data()};
-    applyData(remoteData);
+    if(snap.exists()){
+      remoteData={...remoteData,...snap.data()};
+      applyData(remoteData);
+    }
+    renderCourses(remoteData);
+    renderExamStrip();
+    updatePageTitle();
+    updateLBData();
+    startLBListener();
     syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
