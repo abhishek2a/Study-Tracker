@@ -335,7 +335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.8</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.9</div>
         </div>
       </div>
     </div>
@@ -436,7 +436,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteField, collection, query, where, orderBy, limit
+  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -544,7 +544,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.3.8';
+const APP_VERSION = '1.3.9';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1779,19 +1779,27 @@ $('settings-update-btn').addEventListener('click', function() {
 
 $('settings-delete-btn').addEventListener('click', async function() {
   if(!auth.currentUser) return;
-  if(confirm('Do you want to delete the account?')) {
+  if(confirm('Are you sure you want to permanently delete your account and all data? This cannot be undone.')) {
     const btn = this;
     btn.textContent = 'Deleting...';
     btn.disabled = true;
     try {
+      const uid = auth.currentUser.uid;
+      try { await deleteDoc(doc(db, 'users', uid)); } catch(e){}
+      try { await deleteDoc(doc(db, 'leaderboard', uid)); } catch(e){}
+      
       await deleteUser(auth.currentUser);
+      $('settings-modal').classList.remove('open');
     } catch(e) {
       if (e.code === 'auth/requires-recent-login') {
         alert('Security Required: Please sign out and sign back in to delete your account.');
+      } else if (e.code && e.code.includes('token')) {
+        alert('Your session has expired. You will be signed out.');
+        signOut(auth);
       } else {
         alert('Error deleting account: ' + e.message);
       }
-      btn.textContent = 'Delete Account Permanently';
+      btn.textContent = 'Delete Account';
       btn.disabled = false;
     }
   }
