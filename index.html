@@ -1772,8 +1772,7 @@ $('forgot-link-btn').addEventListener('click',showForgot);
 $('reset-btn').addEventListener('click',doReset);
 $('auth-email').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 $('auth-pass').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
-</script>
-<script>
+
 if('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(reg => {
