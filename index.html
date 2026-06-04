@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Study Tracker">
 <meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
 <title>Study Tracker</title>
 <style>
 :root {
@@ -307,9 +308,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         </button>
         <div class="profile-drop" id="profile-drop" role="menu">
           <div class="pd-user">
-            <div class="pd-user-name" id="pd-name">—</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+              <div class="pd-user-name" id="pd-name">—</div>
+              <button id="pd-edit-name-btn" title="Edit Name" aria-label="Edit Name" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:0.75rem;padding:2px 4px;border-radius:4px;transition:0.15s">✏️</button>
+            </div>
             <div class="pd-user-email" id="pd-email">—</div>
-            <div id="pd-sync" class="pd-sync-row">● Offline</div>
+            <div id="pd-sync" class="pd-sync-row" style="font-size:0.65rem;margin-top:4px;font-family:var(--mono)">● Offline</div>
           </div>
           <div class="pd-stats-block" id="pd-stats"></div>
           <div class="pd-section">Course</div>
@@ -328,7 +332,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.4</div>
+          <div style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.5</div>
         </div>
       </div>
     </div>
@@ -1562,6 +1566,34 @@ document.addEventListener('touchstart',function(e){
   if(!profileBtn.contains(e.target)&&!profileDrop.contains(e.target))closeDrop();
 },{passive:true});
 
+document.getElementById('pd-edit-name-btn').addEventListener('click', async function(e) {
+  e.stopPropagation();
+  if(!auth.currentUser) return;
+  const currentName = remoteData._displayName || auth.currentUser.displayName || '';
+  const newName = prompt('Enter your new name:', currentName);
+  if (newName !== null && newName.trim() !== '' && newName.trim() !== currentName) {
+    const trimmed = newName.trim();
+    try {
+      const btn = this;
+      btn.textContent = '⏳';
+      await updateProfile(auth.currentUser, { displayName: trimmed });
+      remoteData._displayName = trimmed;
+      
+      const initials = trimmed.slice(0, 2).toUpperCase();
+      $('profile-avatar').textContent = initials;
+      $('profile-name').textContent = trimmed;
+      $('pd-name').textContent = trimmed;
+      
+      updateLBData(); // sync to leaderboard
+      btn.textContent = '✏️';
+    } catch(err) {
+      console.error('Error updating name:', err);
+      alert('Failed to update name. Try again.');
+      this.textContent = '✏️';
+    }
+  }
+});
+
 document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
   btn.addEventListener('click',function(e){
     e.stopPropagation();setTheme(this.dataset.t);closeDrop();
@@ -1595,6 +1627,24 @@ $('forgot-link-btn').addEventListener('click',showForgot);
 $('reset-btn').addEventListener('click',doReset);
 $('auth-email').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 $('auth-pass').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+</script>
+<script>
+if('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            if(confirm('New version (1.2.5) available! Reload now?')) {
+              window.location.reload(true);
+            }
+          }
+        });
+      });
+    }).catch(err => console.error('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
