@@ -335,7 +335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.6</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.7</div>
         </div>
       </div>
     </div>
@@ -544,7 +544,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.3.6';
+const APP_VERSION = '1.3.7';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1278,7 +1278,6 @@ function onCheck(id, val) {
   updateAll();
   renderPending();
   renderRevisions();
-  updateLBData();
 }
 
 function getRevisionsDue(){
@@ -1603,9 +1602,6 @@ function initApp(user){
       remoteData={...remoteData,...snap.data()};
       applyData(remoteData);
     }
-    renderCourses(remoteData);
-    renderExamStrip();
-    updatePageTitle();
     
     // 2. Safe to run here now—the guard clause blocks it from thrashing
     startLBListener(); 
