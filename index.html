@@ -137,7 +137,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-pod.silver{border-color:rgba(180,180,200,.3);background:rgba(180,180,200,.04)}
 .lb-pod.bronze{border-color:rgba(200,120,60,.3);background:rgba(200,120,60,.04)}
 .lb-pod-medal{font-size:1.6rem;margin-bottom:4px}
-.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);word-break:break-word;line-height:1.25;margin-bottom:3px}
+.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+.lb-pod-you{font-size:.55rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 4px;margin:0 auto 4px;width:fit-content}
 .lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
 .lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
 .lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
@@ -148,8 +149,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
 .lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
 .lb-rank{font-size:.78rem;font-weight:800;color:var(--dim);font-family:var(--mono);width:28px;flex-shrink:0;text-align:center}
-.lb-name{flex:1;font-size:.86rem;font-weight:600;color:var(--text);word-break:break-word;line-height:1.25;padding-right:6px}
-.lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;margin-left:6px;flex-shrink:0}
+.lb-name-wrap{flex:1;display:flex;align-items:center;min-width:0;gap:6px}
+.lb-name{font-size:.86rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;flex-shrink:0}
 .lb-pct{font-size:.86rem;font-weight:800;color:var(--text);letter-spacing:-.01em;flex-shrink:0}
 .lb-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:4px}
 .lb-status{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:6px}
@@ -325,11 +327,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-lb-item" role="menuitem">🏆 Leaderboard</button>
           <div class="pd-sep"></div>
-          <div class="pd-section">Appearance</div>
-          <button class="pd-item" data-t="system" role="menuitem">System Default</button>
-          <button class="pd-item" data-t="amoled" role="menuitem">Dark Mode</button>
-          <button class="pd-item" data-t="light" role="menuitem">Light Mode</button>
-          <div class="pd-sep"></div>
+
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
@@ -392,6 +390,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
     <div class="lb-body" style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px">
       <div>
+        <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Appearance</label>
+        <div style="display:flex;gap:4px;background:var(--s2);padding:3px;border-radius:8px">
+          <button class="auth-tab settings-theme-btn" data-t="system" style="flex:1">System</button>
+          <button class="auth-tab settings-theme-btn" data-t="amoled" style="flex:1">Dark</button>
+          <button class="auth-tab settings-theme-btn" data-t="light" style="flex:1">Light</button>
+        </div>
+      </div>
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Change Name</label>
         <div style="display:flex;gap:8px">
           <input type="text" id="settings-name-input" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
@@ -410,9 +416,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           Loading activity...
         </div>
       </div>
-      <div style="margin-top:4px;padding-top:16px;border-top:1px solid rgba(224,80,80,.2)">
-        <label style="display:block;font-size:.72rem;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Danger Zone</label>
-        <button id="settings-delete-btn" class="auth-btn" style="background:rgba(224,80,80,.1);color:var(--red);border:1px solid rgba(224,80,80,.3)">Delete Account Permanently</button>
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <button id="settings-delete-btn" class="auth-btn" style="background:transparent;color:var(--red);border:1px solid rgba(224,80,80,.4)">Delete Account</button>
       </div>
     </div>
   </div>
@@ -535,6 +540,7 @@ async function doReset(){
   }
 };
 
+const APP_VERSION = '1.2.6';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -883,9 +889,10 @@ function getTodayStr(){
 const ts=getTodayStr; // ts() now function call everywhere
 
 function dLeft(s){
-  const[y,m,d]=s.split('-').map(Number);
-  const diff=Math.ceil((new Date(y,m-1,d)-now)/86400000);
-  return diff<0?diff+'d ago':diff===0?'🎯 TODAY':diff+' days left';
+  const [ty, tm, td] = ts().split('-').map(Number);
+  const [sy, sm, sd] = s.split('-').map(Number);
+  const diff = Math.round((Date.UTC(sy, sm-1, sd) - Date.UTC(ty, tm-1, td)) / 86400000);
+  return diff<0?Math.abs(diff)+'d ago':diff===0?'🎯 TODAY':diff+' days left';
 }
 
 function syncState(s){
@@ -898,10 +905,14 @@ function syncState(s){
 window.addEventListener('online',()=>syncState('synced'));
 window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
 // back-to-top FAB — mobile only
+let bttVisible = false;
 window.addEventListener('scroll',()=>{
   const btt=$('btt');if(!btt)return;
   const show=window.scrollY>300;
-  btt.style.display=show?'flex':'none';
+  if(show !== bttVisible) {
+    btt.style.display=show?'flex':'none';
+    bttVisible = show;
+  }
 },{passive:true});
 
 function saveToFirestore(){
@@ -1006,9 +1017,8 @@ function makeCard(){
   const dc=$('daycard'),sched=sch[ts()];
   const todayObj=new Date(); // fresh — not stale global now
   if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
-    const today=new Date();today.setHours(0,0,0,0);
-    const examDate=new Date(2026,8,10);
-    const daysToExam=Math.ceil((examDate-today)/86400000);
+    const [ty, tm, td] = ts().split('-').map(Number);
+    const daysToExam=Math.round((Date.UTC(2026, 8, 10) - Date.UTC(ty, tm-1, td)) / 86400000);
     const studyDays=Math.max(1,daysToExam-5);
     const isVeryLate=daysToExam<12;
     const isTight=daysToExam<30;
@@ -1167,11 +1177,12 @@ function updatePageTitle(){
 function renderExamStrip(){
   const es=$('exam-strip');if(!es)return;
   const active=remoteData.activeCourse||DEFAULT_COURSE;
-  // ACCA course — show single TBD pill
+  const [ty, tm, td] = ts().split('-').map(Number);
+  const todayUTC = Date.UTC(ty, tm-1, td);
+  
   if(active==='ACCA26'){
-    const today=new Date();today.setHours(0,0,0,0);
-    const examDate=new Date(2026,8,10);
-    const diff=Math.ceil((examDate-today)/86400000);
+    const examDate = Date.UTC(2026,8,10);
+    const diff=Math.round((examDate-todayUTC)/86400000);
     const status=diff<0?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
     const statusColor=diff<0?'var(--green)':diff===0?'var(--accent)':'var(--green)';
     es.innerHTML=`<div class="epill ${diff<0?'done-exam':'next-exam'}">
@@ -1181,13 +1192,15 @@ function renderExamStrip(){
       <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div></div>`;
     return;
   }
-  const today=new Date();today.setHours(0,0,0,0);
-  const parseLocal=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
-  const upcoming=EXAMS.filter(e=>parseLocal(e.date)>=today).sort((a,b)=>parseLocal(a.date)-parseLocal(b.date));
+  
+  const parseUTC=s=>{const[y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d);};
+  const upcoming=EXAMS.filter(e=>parseUTC(e.date)>=todayUTC).sort((a,b)=>parseUTC(a.date)-parseUTC(b.date));
   const nextDate=upcoming.length?upcoming[0].date:null;
-  es.innerHTML=EXAMS.slice().sort((a,b)=>parseLocal(a.date)-parseLocal(b.date)).map(e=>{
-    const ed=parseLocal(e.date);
-    const diff=Math.ceil((ed-today)/86400000);
+  es.innerHTML=EXAMS.slice().sort((a,b)=>parseUTC(a.date)-parseUTC(b.date)).map(e=>{
+    const edUTC=parseUTC(e.date);
+    const [y,m,d]=e.date.split('-');
+    const mStr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1];
+    const diff=Math.round((edUTC-todayUTC)/86400000);
     const isDone=diff<0;const isNext=e.date===nextDate;
     const cls=isDone?'done-exam':isNext?'next-exam':'';
     const status=isDone?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
@@ -1195,7 +1208,7 @@ function renderExamStrip(){
     const label=isDone?'Completed':(e.target?'Target':'Upcoming');
     return `<div class="epill ${cls}">
       <div class="en">${e.cat} · ${label}</div>
-      <div class="ed">${ed.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="ed">${parseInt(d)} ${mStr} ${y}</div>
       <div class="en2">${e.name}${e.sub?'<br><span style="opacity:.7">'+e.sub+'</span>':''}</div>
       <div class="edd" style="margin-top:4px;color:${statusColor}">${status}</div>
     </div>`;
@@ -1332,13 +1345,16 @@ function renderLeaderboard(users){
     <div class="lb-stat"><div class="lb-stat-val">${total}</div><div class="lb-stat-lbl">Total Users</div></div>
   </div>`:'';
 
+  const safeName = (n) => (n||'').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  
   // podium top 3
   const medals=['🥇','🥈','🥉'];
   const podClasses=['gold','silver','bronze'];
   const podiumHtml=`<div class="lb-podium">${sorted.slice(0,3).map((u,i)=>`
     <div class="lb-pod ${podClasses[i]}">
       <div class="lb-pod-medal">${medals[i]}</div>
-      <div class="lb-pod-name">${u.name}${u.uid===currentUid?' 👈':''}</div>
+      <div class="lb-pod-name">${safeName(u.name)}</div>
+      ${u.uid===currentUid?'<div class="lb-pod-you">YOU</div>':''}
       <div class="lb-pod-pct">${u.pct}%</div>
       <div class="lb-pod-topics">${u.topics} topics</div>
     </div>`).join('')}</div>`;
@@ -1350,7 +1366,10 @@ function renderLeaderboard(users){
     const status=lbStatus(rank,total);
     return `<div class="lb-row${isMe?' lb-me':''}">
       <div class="lb-rank">#${rank}</div>
-      <div class="lb-name">${u.name}${isMe?'<span class="lb-you">YOU</span>':''}</div>
+      <div class="lb-name-wrap">
+        <div class="lb-name">${safeName(u.name)}</div>
+        ${isMe?'<div class="lb-you">YOU</div>':''}
+      </div>
       <div class="lb-status">${status}</div>
       <div class="lb-topics">${u.topics}t</div>
       <div class="lb-pct">${u.pct}%</div>
@@ -1560,7 +1579,7 @@ function detectSystemTheme(){
 function applyTheme(t){
   const actual=t==='system'?detectSystemTheme():t;
   document.body.dataset.theme=actual;
-  document.querySelectorAll('.pd-item[data-t]').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
+  document.querySelectorAll('.settings-theme-btn').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
 function setTheme(t){
   applyTheme(t);
@@ -1686,7 +1705,7 @@ $('settings-update-btn').addEventListener('click', function() {
     navigator.serviceWorker.getRegistration().then(reg => {
       if (reg) {
         reg.update().then(() => {
-          btn.textContent = '✓ Checked (v1.2.5)';
+          btn.textContent = `✓ Checked (v${APP_VERSION})`;
           setTimeout(()=>btn.textContent='Check for App Update', 3000);
         });
       } else {
@@ -1702,7 +1721,7 @@ $('settings-update-btn').addEventListener('click', function() {
 
 $('settings-delete-btn').addEventListener('click', async function() {
   if(!auth.currentUser) return;
-  if(confirm('Are you absolutely sure? This will permanently delete all your data and progress. This CANNOT be undone!')) {
+  if(confirm('Do you want to delete the account?')) {
     const btn = this;
     btn.textContent = 'Deleting...';
     btn.disabled = true;
@@ -1720,9 +1739,9 @@ $('settings-delete-btn').addEventListener('click', async function() {
   }
 });
 
-document.querySelectorAll('.pd-item[data-t]').forEach(btn=>{
+document.querySelectorAll('.settings-theme-btn').forEach(btn=>{
   btn.addEventListener('click',function(e){
-    e.stopPropagation();setTheme(this.dataset.t);closeDrop();
+    setTheme(this.dataset.t);
   });
 });
 const lbItem=document.getElementById('pd-lb-item');
@@ -1762,7 +1781,8 @@ if('serviceWorker' in navigator) {
         const newWorker = reg.installing;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            if(confirm('New version (1.2.5) available! Reload now?')) {
+            if(confirm(`New version (${APP_VERSION}) available! Reload now?`)) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
               window.location.reload();
             }
           }
