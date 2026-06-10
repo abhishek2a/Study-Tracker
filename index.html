@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -335,7 +335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.3.9</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.4.0</div>
         </div>
       </div>
     </div>
@@ -492,9 +492,7 @@ function authErrMsg(code){
   return m[code]||'Error: '+code;
 }
 
-// course codes map — add new courses here
 // course codes — add new courses here
-
 
 async function submitAuth(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
@@ -544,7 +542,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.3.9';
+const APP_VERSION = '1.4.0';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -906,7 +904,7 @@ function dLeft(s){
 
 function syncState(s){
   const el=$('pd-sync');if(!el)return;
-  if(s==='syncing'){el.textContent='✓ Saved locally';el.style.color='var(--green)';}
+  if(s==='syncing'){el.textContent='⬆ Syncing…';el.style.color='var(--accent)';}
   else if(s==='synced'){el.textContent='☁ Synced';el.style.color='var(--blue)';}
   else{el.textContent='● Offline';el.style.color='var(--dim)';}
 }
@@ -1293,13 +1291,24 @@ function getRevisionsDue(){
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
 
-function markRevised(id){
+async function markRevised(id){
   if(!remoteData._sr||!remoteData._sr[id])return;
   const s=remoteData._sr[id];
   s.count++;
-  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts(),s.count); // null = mastered
-  if(!s.next)delete remoteData._sr[id]; // mastered — remove
-  saveToFirestore();
+  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts(),s.count);
+  if(!s.next){
+    // Topic mastered — delete locally and explicitly on server (avoid Firestore merge zombie)
+    delete remoteData._sr[id];
+    if(currentUid){
+      setDoc(doc(db,'users',currentUid),{[`_sr.${id}`]:deleteField()},{merge:true})
+        .catch(e=>console.error('[SR] Failed to delete mastered topic:',e));
+    }
+  } else {
+    if(currentUid){
+      setDoc(doc(db,'users',currentUid),{[`_sr.${id}`]:s},{merge:true})
+        .catch(e=>console.error('[SR] Failed to save revision progress:',e));
+    }
+  }
   renderRevisions();updateAll();
 }
 
@@ -1789,7 +1798,8 @@ $('settings-delete-btn').addEventListener('click', async function() {
       try { await deleteDoc(doc(db, 'leaderboard', uid)); } catch(e){}
       
       await deleteUser(auth.currentUser);
-      $('settings-modal').classList.remove('open');
+      $('settings-overlay').style.opacity='0';
+      setTimeout(()=>$('settings-overlay').style.visibility='hidden',200);
     } catch(e) {
       if (e.code === 'auth/requires-recent-login') {
         alert('Security Required: Please sign out and sign back in to delete your account.');
