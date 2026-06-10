@@ -1,4 +1,4 @@
-const CACHE_NAME = 'study-tracker-v1.3.9';
+﻿const CACHE_NAME = 'study-tracker-v1.1.40';
 
 const ASSETS = [
   './',
@@ -47,3 +47,5 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(event.request))
   );
 });
+
+
