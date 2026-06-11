@@ -336,7 +336,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.40</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.42</div>
         </div>
       </div>
     </div>
@@ -543,7 +543,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.40';
+const APP_VERSION = '1.1.42';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -833,12 +833,6 @@ function getCourseData() {
   const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
   return COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
 }
-  
-  return {
-    ...baseConfig,
-    sch: buildFRSch(remoteData.acca26_start)
-  };
-}
 
 const now=new Date(); // keep for initApp display only
 function getTodayStr(){
@@ -1006,10 +1000,10 @@ function makeCard(){
       <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='catchup'){
-    inner=`<div class="day-sub">`</div><ul class="cl">
-      <li><label><input type="checkbox" id="cu1_`" `><span>Revise pending topics</span></label></li>
-      <li><label><input type="checkbox" id="cu2_`" `><span>Clarify doubts with mentor</span></label></li>
-      <li><label><input type="checkbox" id="cu3_`" `><span>Practice past questions</span></label></li></ul>`;
+    inner=`${tag}<div class="day-sub">${sched.l}</div><ul class="cl">
+      <li><label><input type="checkbox" id="cu1_${ts()}" ${remoteData['cu1_'+ts()]?'checked':''}><span>Revise pending topics</span></label></li>
+      <li><label><input type="checkbox" id="cu2_${ts()}" ${remoteData['cu2_'+ts()]?'checked':''}><span>Clarify doubts with mentor</span></label></li>
+      <li><label><input type="checkbox" id="cu3_${ts()}" ${remoteData['cu3_'+ts()]?'checked':''}><span>Practice past questions</span></label></li></ul>`;
   } else if(sched.p==='eve'){
     inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
       <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
@@ -1033,6 +1027,10 @@ function makeCard(){
     const b=document.getElementById(id);
     if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore();});
   });
+  ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b)b.addEventListener('change',e=>{remoteData[id]=e.target.checked;saveToFirestore();});
+  });
 }
 
 function renderSyllabus(){
@@ -1046,7 +1044,6 @@ function renderSyllabus(){
       <ul class="cl main-sl" data-s="${k}">${items}</ul></div>`;
   }).join('');
 }
-
 let syllabusBoxes=[];
 function bindSyllabus(){
   renderSyllabus();
@@ -1794,6 +1791,10 @@ if('serviceWorker' in navigator) {
 </div>
 </body>
 </html>
+
+
+
+
 
 
 
