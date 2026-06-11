@@ -120,10 +120,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .day-card.transactions{border-color:rgba(130,179,102,.2);background:rgba(130,179,102,.035)}.day-card.transactions::before{background:var(--transactions)}
 .day-card.analysis{border-color:rgba(214,165,0,.2);background:rgba(214,165,0,.035)}.day-card.analysis::before{background:var(--analysis)}
 .day-card.preparation{border-color:rgba(155,89,182,.2);background:rgba(155,89,182,.035)}.day-card.preparation::before{background:var(--preparation)}
-.day-card.mock{border-color:rgba(224,149,0,.25);background:rgba(224,149,0,.045)}.day-card.mock::before{background:var(--accent)}
+.day-card.exam{border-color:rgba(224,149,0,.25);background:rgba(224,149,0,.045)}.day-card.exam::before{background:var(--accent)}
 .day-card.eve{border-color:rgba(77,150,240,.3);background:rgba(77,150,240,.05)}.day-card.eve::before{background:linear-gradient(90deg,var(--accent),var(--blue))}
 .day-card.done{border-color:rgba(43,189,136,.28);background:rgba(43,189,136,.045)}.day-card.done::before{background:var(--green)}
 .day-card.pending-card{border-color:rgba(224,80,80,.22);background:rgba(224,80,80,.035)}.day-card.pending-card::before{background:var(--red)}
+.day-card.catchup{border-color:rgba(77,150,240,.3);background:rgba(77,150,240,.05)}.day-card.catchup::before{background:var(--blue)}
 .day-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
 .day-top h2{font-size:1.05rem;font-weight:700;flex:1}
 .day-badge{font-family:var(--mono);font-size:.65rem;color:var(--dim);padding:3px 9px;background:var(--s2);border:1px solid var(--border);border-radius:99px;white-space:nowrap;flex-shrink:0}
@@ -739,145 +740,99 @@ COURSE_DATA['CAT09']={sch:SCH_CAT09,labels:LABELS,subjs:SUBJS_CAT09};
 
 // ── ACCA FR: Financial Reporting (Sep 2026 - Jun 2027) ──
 const LABELS_FR={
- fra1:"Conceptual Framework — Need, Purpose & Alternative Systems",
- fra2:"Qualitative Characteristics: Relevance, Faithful Representation, Enhancing Qualities",
- fra3:"Understandability, Verifiability, Comparability & Timeliness",
- fra4:"Recognition Criteria — Assets, Liabilities, Income & Expenses",
- fra5:"Measurement Bases: Historical Cost, Current Cost, Fair Value, Value in Use",
- fra6:"Regulatory Framework — IFRS vs National, Principles vs Rules-Based",
- fra7:"IASB Standard-Setting Process & Role of ISSB",
- fra8:"Group Concepts: Subsidiary Definition, Control, Consolidated FS Requirements",
- fra9:"Associates & Equity Method; Intra-group Eliminations",
-
- frb1:"Tangible Non-Current Assets: Initial Measurement, Capitalisation, Borrowing Costs",
- frb2:"Revaluation Model, Disposal Gains/Losses, Depreciation & Investment Properties",
- frb3:"Intangible Assets: Internally Generated, Purchased, Goodwill, R&D",
- frb4:"Impairment: Indicators, Impairment Loss, CGU, Goodwill Impairment",
- frb5:"Inventories & Agriculture (IAS 2, IAS 41)",
- frb6:"Financial Instruments: Categories, Measurement, Amortised Cost, FVTPL, FVOCI",
- frb7:"Financial Instruments: Debt vs Equity, Redeemable Preference Shares, Convertible Debt",
- frb8:"Leasing: Right-of-Use Assets, Lease Liabilities, Sale & Leaseback (IFRS 16)",
- frb9:"Provisions: Legal vs Constructive, Recognition, Measurement, Contingencies",
- frb10:"Provisions: Warranties, Onerous Contracts, Restructuring, Decommissioning",
- frb11:"Events After Reporting Period: Adjusting & Non-Adjusting (IAS 10)",
- frb12:"Taxation: Current Tax, Deferred Tax, Temporary Differences (IAS 12)",
- frb13:"Reporting Performance: Discontinued Ops, Held-for-Sale, Prior Period Errors (IFRS 5)",
- frb14:"EPS: Basic & Diluted; Bonus Issues, Rights Issues, Convertible Debt, Warrants",
- frb15:"Revenue Recognition: 5-Step Model, Over Time vs Point in Time (IFRS 15)",
- frb16:"Revenue: Principal/Agent, Repurchase, Bill-and-Hold, Contract Costs",
- frb17:"Government Grants (IAS 20) & Foreign Currency Transactions (IAS 21)",
-
- frc1:"Limitations of Financial Statements: Historical Data, Manipulation, Seasonality",
- frc2:"Ratio Analysis: Profitability, Liquidity, Efficiency, Gearing — Calculation & Interpretation",
- frc3:"Interpreting Groups & Multi-Period Comparisons; Non-Financial Information",
- frc4:"Limitations of Ratio Analysis; Cash Flow vs Profit; EPS as Performance Measure",
- frc5:"Not-for-Profit & Public Sector Entity Interpretation",
-
- frd1:"Single Entity FS: Statement of Financial Position & P&L / OCI",
- frd2:"Statement of Changes in Equity & Statement of Cash Flows (Indirect Method)",
- frd3:"Consolidated SFP: Pre/Post Acquisition Profits, NCI, Goodwill",
- frd4:"Consolidated P&L & OCI: Acquisitions, Disposals, NCI",
- frd5:"Consolidation: Fair Value Adjustments, Intra-group Transfers & Dividends",
- frd6:"Goodwill: Measurement, Impairment, Bargain Purchase, Disposal of Subsidiary",
+  fr1:"CONCEPTUAL FRAMEWORK",
+  fr2:"IFRS 18, IFRS 13",
+  fr3:"IAS 16",
+  fr4:"IAS 23, IAS 40",
+  fr5:"IAS 38, IFRS 5",
+  fr6:"IAS 36",
+  fr7:"IAS 37",
+  fr8:"IFRS 16",
+  fr9:"IFRS 9",
+  fr10:"IFRS 9, IAS 8",
+  fr11:"IAS 12",
+  fr12:"IFRS 15",
+  fr13:"FS PREPARATION",
+  fr14:"IAS 33",
+  fr15:"CONSOLIDATION",
+  fr16:"CASHFLOW STATEMENT",
+  fr17:"IAS 20, IAS 21",
+  fr18:"INTERPRETATION",
+  fr19:"EXTRA QUESTION PRACTICE",
+  fr20:"WEEKLY EXAM"
 };
 
 const SUBJS_FR={
- framework:{ids:["fra1","fra2","fra3","fra4","fra5","fra6","fra7","fra8","fra9"],c:"#6c8ebf",n:"Conceptual & Regulatory Framework",m:"Section A"},
- transactions:{ids:["frb1","frb2","frb3","frb4","frb5","frb6","frb7","frb8","frb9","frb10","frb11","frb12","frb13","frb14","frb15","frb16","frb17"],c:"#82b366",n:"Accounting for Transactions",m:"Section B"},
- analysis:{ids:["frc1","frc2","frc3","frc4","frc5"],c:"#d6a500",n:"Analysing & Interpreting FS",m:"Section C"},
- preparation:{ids:["frd1","frd2","frd3","frd4","frd5","frd6"],c:"#9b59b6",n:"Preparation of FS",m:"Section D"},
+  framework:{ids:["fr1","fr2","fr3","fr4","fr5","fr6","fr7","fr8","fr9","fr10","fr11","fr12","fr14","fr17"],c:"#6c8ebf",n:"Accounting Standards",m:"Section A"},
+  preparation:{ids:["fr13","fr15","fr16"],c:"#9b59b6",n:"Preparation of FS",m:"Section D"},
+  analysis:{ids:["fr18"],c:"#d6a500",n:"Analysing & Interpreting FS",m:"Section C"},
+  exam:{ids:["fr19","fr20"],c:"#82b366",n:"Practice & Revision",m:"Exams"}
 };
 
-// Schedule starts Sep 2026 — daily 1-2 topics, round-robin
-const FR_PLAN=[
-  {p:"framework",   l:"Framework · Day 1/5",           ids:["fra1","fra2"]},
-  {p:"transactions",l:"Transactions · Day 1/9",         ids:["frb1","frb2"]},
-  {p:"framework",   l:"Framework · Day 2/5",            ids:["fra3","fra4"]},
-  {p:"transactions",l:"Transactions · Day 2/9",         ids:["frb3","frb4"]},
-  {p:"framework",   l:"Framework · Day 3/5",            ids:["fra5","fra6"]},
-  {p:"transactions",l:"Transactions · Day 3/9",         ids:["frb5","frb6"]},
-  {p:"framework",   l:"Framework · Day 4/5",            ids:["fra7","fra8"]},
-  {p:"transactions",l:"Transactions · Day 4/9",         ids:["frb7","frb8"]},
-  {p:"framework",   l:"Framework · Day 5/5",            ids:["fra9"]},
-  {p:"transactions",l:"Transactions · Day 5/9",         ids:["frb9","frb10"]},
-  {p:"analysis",    l:"Analysis · Day 1/3",             ids:["frc1","frc2"]},
-  {p:"transactions",l:"Transactions · Day 6/9",         ids:["frb11","frb12"]},
-  {p:"analysis",    l:"Analysis · Day 2/3",             ids:["frc3","frc4"]},
-  {p:"transactions",l:"Transactions · Day 7/9",         ids:["frb13","frb14"]},
-  {p:"analysis",    l:"Analysis · Day 3/3 🎉",          ids:["frc5"]},
-  {p:"transactions",l:"Transactions · Day 8/9",         ids:["frb15","frb16"]},
-  {p:"preparation", l:"Preparation · Day 1/3",          ids:["frd1","frd2"]},
-  {p:"transactions",l:"Transactions · Day 9/9 🎉",      ids:["frb17"]},
-  {p:"preparation", l:"Preparation · Day 2/3",          ids:["frd3","frd4"]},
-  {p:"preparation", l:"Preparation · Day 3/3 🎉",       ids:["frd5","frd6"]},
-  {p:"mock",        l:"Full Revision & Mock",           ids:[]},
-];
+const ACCA_SCH={
+  "2026-06-12":{p:"framework",l:"Topic",ids:["fr1"]},
+  "2026-06-13":{p:"framework",l:"Topic",ids:["fr2"]},
+  "2026-06-14":{p:"framework",l:"Topic",ids:["fr3"]},
+  "2026-06-15":{p:"framework",l:"Topic",ids:["fr3"]},
+  "2026-06-16":{p:"framework",l:"Topic",ids:["fr4"]},
+  "2026-06-17":{p:"framework",l:"Topic",ids:["fr5"]},
+  "2026-06-18":{p:"framework",l:"Topic",ids:["fr6"]},
+  "2026-06-19":{p:"framework",l:"Topic",ids:["fr7"]},
+  "2026-06-20":{p:"framework",l:"Topic",ids:["fr7"]},
+  "2026-06-21":{p:"exam",l:"Exam",ids:["fr20"]},
+  "2026-06-22":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-23":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-24":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-25":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-26":{p:"framework",l:"Topic",ids:["fr8"]},
+  "2026-06-27":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-28":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-29":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-06-30":{p:"framework",l:"Topic",ids:["fr8"]},
+  "2026-07-01":{p:"framework",l:"Topic",ids:["fr9"]},
+  "2026-07-02":{p:"framework",l:"Topic",ids:["fr10"]},
+  "2026-07-03":{p:"framework",l:"Topic",ids:["fr11"]},
+  "2026-07-04":{p:"framework",l:"Topic",ids:["fr11"]},
+  "2026-07-05":{p:"framework",l:"Topic",ids:["fr12"]},
+  "2026-07-06":{p:"exam",l:"Exam",ids:["fr20"]},
+  "2026-07-07":{p:"catchup",l:"Catchup Day"},
+  "2026-07-08":{p:"framework",l:"Topic",ids:["fr12"]},
+  "2026-07-09":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-10":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-11":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-12":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-13":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-14":{p:"preparation",l:"Topic",ids:["fr13"]},
+  "2026-07-15":{p:"preparation",l:"Topic",ids:["fr13"]},
+  "2026-07-16":{p:"framework",l:"Topic",ids:["fr14"]},
+  "2026-07-17":{p:"preparation",l:"Topic",ids:["fr15"]},
+  "2026-07-18":{p:"preparation",l:"Topic",ids:["fr15"]},
+  "2026-07-19":{p:"preparation",l:"Topic",ids:["fr15"]},
+  "2026-07-20":{p:"exam",l:"Exam",ids:["fr20"]},
+  "2026-07-21":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-22":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-23":{p:"preparation",l:"Topic",ids:["fr15"]},
+  "2026-07-24":{p:"exam",l:"Exam",ids:["fr20"]},
+  "2026-07-25":{p:"preparation",l:"Topic",ids:["fr16"]},
+  "2026-07-26":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-27":{p:"catchup",l:"Catchup Day / Mentorship"},
+  "2026-07-28":{p:"preparation",l:"Topic",ids:["fr16"]},
+  "2026-07-29":{p:"framework",l:"Topic",ids:["fr17"]},
+  "2026-07-30":{p:"analysis",l:"Topic",ids:["fr18"]},
+  "2026-07-31":{p:"analysis",l:"Topic",ids:["fr18"]},
+  "2026-08-01":{p:"analysis",l:"Topic",ids:["fr18"]},
+  "2026-08-02":{p:"analysis",l:"Topic",ids:["fr18"]},
+  "2026-08-03":{p:"exam",l:"Practice",ids:["fr19"]},
+  "2026-08-04":{p:"exam",l:"Practice",ids:["fr19"]},
+  "2026-08-05":{p:"exam",l:"Practice",ids:["fr19"]}
+};
 
-function buildFRSch(startDateStr){
-  const sch={};
-  const EXAM_DATE=new Date(2026,8,10);
-  const MOCK_BUFFER=5; // reserve 5 days before exam for mock/revision
-  const lastStudy=new Date(EXAM_DATE);lastStudy.setDate(lastStudy.getDate()-MOCK_BUFFER);
-  const [sy,sm,sd]=startDateStr.split('-').map(Number);
-  const start=new Date(sy,sm-1,sd); // local midnight — avoids UTC parse bug
-
-  // study items (non-empty ids only)
-  const studyItems=FR_PLAN.filter(s=>s.ids&&s.ids.length>0);
-  const n=studyItems.length; // 20
-
-  // total available days for study
-  const totalDays=Math.max(1,Math.ceil((lastStudy-start)/86400000)+1);
-
-  // build day list: assign study items spread across available days
-  const dayKeys=[];
-  let d=new Date(start);
-  while(d<=lastStudy){
-    dayKeys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-    d.setDate(d.getDate()+1);
-  }
-
-  if(totalDays>=n){
-    // spread: place items evenly, rest days between
-    const step=totalDays/n;
-    studyItems.forEach((s,i)=>{
-      const idx=Math.min(Math.round(i*step),dayKeys.length-1);
-      sch[dayKeys[idx]]=s;
-    });
-  } else {
-    // compress: stack multiple items per day
-    let dayIdx=0;
-    const itemsPerDay=Math.ceil(n/totalDays);
-    for(let i=0;i<n;i+=itemsPerDay){
-      if(dayIdx>=dayKeys.length)break;
-      const batch=studyItems.slice(i,i+itemsPerDay);
-      sch[dayKeys[dayIdx]]={
-        p:batch[0].p,
-        l:batch.map(b=>b.l).join(' + '),
-        ids:batch.flatMap(b=>b.ids)
-      };
-      dayIdx++;
-    }
-  }
-
-  // mock/revision days: Sep 5–9
-  for(let i=0;i<MOCK_BUFFER;i++){
-    const md=new Date(EXAM_DATE);md.setDate(md.getDate()-(MOCK_BUFFER-i));
-    const mk=`${md.getFullYear()}-${String(md.getMonth()+1).padStart(2,'0')}-${String(md.getDate()).padStart(2,'0')}`;
-    const labels=['Revision — Framework & Transactions','Revision — Analysis & Preparation','Full Mock Test (Timed)','Review Weak Areas','Exam Eve — Light Revision'];
-    sch[mk]={p:'mock',l:labels[i]||'Revision',ids:[]};
-  }
-  return sch;
-}
-
-COURSE_DATA['ACCA26']={sch:{},labels:LABELS_FR,subjs:SUBJS_FR,dynamic:true};
+COURSE_DATA['ACCA26']={sch:ACCA_SCH,labels:LABELS_FR,subjs:SUBJS_FR,dynamic:false};
 // get active course data, fallback CSEB11
 function getCourseData() {
   const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
-  const baseConfig = COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
-  
-  if (!baseConfig.dynamic || !remoteData.acca26_start) {
-    return baseConfig;
-  }
+  return COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
+}
   
   return {
     ...baseConfig,
@@ -1026,51 +981,6 @@ function makeCard(){
   // Use the synchronized string components to generate a uniform date object
   const [istYear, istMonth, istDay] = ts().split('-').map(Number);
   const todayObj = new Date(istYear, istMonth - 1, istDay);
-  
-  if((remoteData.activeCourse||DEFAULT_COURSE)==='ACCA26'&&!remoteData.acca26_start){
-    const [ty, tm, td] = ts().split('-').map(Number);
-    const daysToExam=Math.round((Date.UTC(2026, 8, 10) - Date.UTC(ty, tm-1, td)) / 86400000);
-    const studyDays=Math.max(1,daysToExam-5);
-    const isVeryLate=daysToExam<12;
-    const isTight=daysToExam<30;
-    const paceNote=isVeryLate
-      ?'<span style="color:var(--red)">⚠ Very tight — topics will be compressed</span>'
-      :isTight?'<span style="color:var(--accent)">⚡ Tight pace — ~1 topic/day</span>'
-      :'<span style="color:var(--green)">✓ Comfortable pace — topics spread with rest days</span>';
-    dc.innerHTML=`<div class="day-card framework">
-      <div class="day-top"><h2>📚 ACCA FR</h2><span class="day-badge">Not Activated</span></div>
-      <div class="day-sub" style="margin-bottom:8px">Financial Reporting · Sep 10 2026 exam · 3hr CBE</div>
-      <div style="font-size:.72rem;font-family:var(--mono);margin:8px 0;padding:8px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);line-height:1.8">
-        📅 ${daysToExam} days to exam<br>
-        📖 ${studyDays} study days — 20 topics auto-distributed<br>
-        🎯 Last 5 days: mock &amp; revision<br>
-        ${paceNote}
-      </div>
-      <div id="acca-confirm-row" style="display:none;margin-bottom:12px;padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);font-size:.8rem;color:var(--text)">
-        Schedule starts <strong>tomorrow</strong>. 20 FR topics auto-spread across ${studyDays} study days. Ready?
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="acca-activate-btn" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-size:.84rem;font-weight:700;cursor:pointer;font-family:var(--font)">🚀 Activate Schedule</button>
-        <button id="acca-confirm-yes" style="display:none;padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:9px;font-size:.84rem;font-weight:700;cursor:pointer;font-family:var(--font)">✓ Yes, Activate</button>
-        <button id="acca-confirm-no" style="display:none;padding:10px 18px;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:9px;font-size:.84rem;cursor:pointer;font-family:var(--font)">Cancel</button>
-      </div>
-    </div>`;
-    document.getElementById('acca-activate-btn').addEventListener('click',()=>{
-      document.getElementById('acca-confirm-row').style.display='block';
-      document.getElementById('acca-activate-btn').style.display='none';
-      document.getElementById('acca-confirm-yes').style.display='inline-block';
-      document.getElementById('acca-confirm-no').style.display='inline-block';
-    });
-    document.getElementById('acca-confirm-no').addEventListener('click',()=>{makeCard();});
-    document.getElementById('acca-confirm-yes').addEventListener('click',async()=>{
-      const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
-      const startStr=`${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
-      remoteData.acca26_start=startStr;
-      await setDoc(doc(db,'users',currentUid),{acca26_start:startStr},{merge:true});
-      makeCard();updateAll();renderPending();
-    });
-    return;
-  }
   const activeCourse=remoteData.activeCourse||DEFAULT_COURSE;
   const examMeta={
     CSEB11:{text:'CSEB · Cat 11 · 11 Jul 2026',date:new Date(2026,6,11)},
@@ -1082,7 +992,7 @@ function makeCard(){
   const dateBadge=`<span class="day-badge">${todayObj.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
   if(!sched){
     const activeExam=EXAMS.find(e=>e.target)||EXAMS[0];
-    const examDateStr=activeExam?activeExam.date:'2026-07-11';
+    const examDateStr=activeCourse==='ACCA26'?'2026-09-10':(activeExam?activeExam.date:'2026-07-11');
     const done=ts()>examDateStr;
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
       <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
@@ -1095,6 +1005,11 @@ function makeCard(){
       <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
       <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
+  } else if(sched.p==='catchup'){
+    inner=`<div class="day-sub">`</div><ul class="cl">
+      <li><label><input type="checkbox" id="cu1_`" `><span>Revise pending topics</span></label></li>
+      <li><label><input type="checkbox" id="cu2_`" `><span>Clarify doubts with mentor</span></label></li>
+      <li><label><input type="checkbox" id="cu3_`" `><span>Practice past questions</span></label></li></ul>`;
   } else if(sched.p==='eve'){
     inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
       <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
@@ -1879,4 +1794,7 @@ if('serviceWorker' in navigator) {
 </div>
 </body>
 </html>
+
+
+
 
