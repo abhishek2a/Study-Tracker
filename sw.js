@@ -1,58 +1,38 @@
-﻿const CACHE_NAME = 'study-tracker-v1.1.47';
+const CACHE = 'study-tracker-v1.1.58';
+const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './logo.svg',
-  './logo.ico'
-];
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+  );
+});
 
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  // Always go network-first for Firebase, CDN assets
+  if (url.hostname.includes('firebase') || url.hostname.includes('googleapis') || url.hostname.includes('gstatic')) {
+    return;
   }
-});
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  e.respondWith(
+    fetch(e.request).then(res => {
+      if (res && res.status === 200 && res.type === 'basic') {
+        const resClone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, resClone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    )).then(() => self.clients.claim())
-  );
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  
-  // Network-First Strategy to bypass Safari's aggressive caching
-  // Falls back to cache if the device is actually offline
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Don't cache non-successful responses or cross-origin requests unless opaque
-        if(!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-        const resClone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
-  );
-});
-
-
-
-
-
-
-
-
-

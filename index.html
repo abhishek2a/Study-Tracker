@@ -203,7 +203,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
   --text:#0e1118;--dim:#626a82;--green:#178a5e;--accent:#a86200;--blue:#1f5cb8;
   --red:#b82e2e;--shadow:0 2px 12px rgba(0,0,0,.08);
   --banking:#1f5cb8;--accounting:#178a5e;--act:#a86200;
-  --principles:#0a8a84;--english:#6840c8;--reasoning:#b03878;--gk:#4e5a70;--audit:#b84e22
+  --principles:#0a8a84;--english:#6840c8;--reasoning:#b03878;--gk:#4e5a70;--audit:#b84e22;
+  --framework:#4a6fa5;--transactions:#5a8a3a;--analysis:#8a6a00;--preparation:#7a3896
 }
 .profile-wrap{position:relative;flex-shrink:0}
 .profile-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);transition:.15s;color:var(--text)}
@@ -273,6 +274,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
 .mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s;will-change:width}
 .pd-sync-row{font-size:0.65rem;margin-top:4px;font-family:var(--mono);color:var(--dim)}
+@keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 </style>
 </head>
 <body>
@@ -292,7 +294,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
     </div>
     <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
     <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
-    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="" aria-label="Your name" autocomplete="name"></div>
+    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="Your full name" aria-label="Your name" autocomplete="name"></div>
     <div class="auth-field" id="signup-code-field" style="display:none"><label for="auth-code">Course Code <span style="color:var(--dim);font-weight:400">(optional)</span></label><input type="text" id="auth-code" placeholder="" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase"></div>
     <button class="auth-btn" id="auth-submit-btn">Sign In</button>
     <div id="forgot-link" style="text-align:center;margin-top:10px"><button id="forgot-link-btn" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
@@ -343,7 +345,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.47</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.58</div>
         </div>
       </div>
     </div>
@@ -550,7 +552,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.47';
+const APP_VERSION = '1.1.58';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -819,7 +821,7 @@ function getCourseData() {
   return COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
 }
 
-const now=new Date(); // keep for initApp display only
+const now=null; // kept for API compat; use new Date() inline instead
 function getTodayStr(){
   // Force India Standard Time (UTC+5:30) for consistent chronological tracking
   const localDate = new Date();
@@ -829,19 +831,6 @@ function getTodayStr(){
 }
 const ts=getTodayStr; // ts() now function call everywhere
 
-let _cachedTodayStr = '';
-let _cachedTodayUTC = 0;
-function dLeft(s){
-  const tStr = ts();
-  if (_cachedTodayStr !== tStr) {
-    _cachedTodayStr = tStr;
-    const [ty, tm, td] = tStr.split('-').map(Number);
-    _cachedTodayUTC = Date.UTC(ty, tm-1, td);
-  }
-  const [sy, sm, sd] = s.split('-').map(Number);
-  const diff = Math.round((Date.UTC(sy, sm-1, sd) - _cachedTodayUTC) / 86400000);
-  return diff<0?Math.abs(diff)+'d ago':diff===0?'🎯 TODAY':diff+' days left';
-}
 
 function syncState(s){
   const el=$('pd-sync');if(!el)return;
@@ -854,11 +843,12 @@ window.addEventListener('online',()=>syncState('synced'));
 window.addEventListener('offline',()=>{const el=$('pd-sync');if(el){el.textContent='● Offline';el.style.color='var(--dim)';}});
 // back-to-top FAB — mobile only
 let bttVisible = false;
+const bttEl = $('btt');
 window.addEventListener('scroll',()=>{
-  const btt=$('btt');if(!btt)return;
+  if(!bttEl)return;
   const show=window.scrollY>300;
   if(show !== bttVisible) {
-    btt.style.display=show?'flex':'none';
+    bttEl.style.display=show?'flex':'none';
     bttVisible = show;
   }
 },{passive:true});
@@ -902,16 +892,10 @@ function applyData(data){
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
   backfillSR();
   updateAll();renderPending();renderRevisions();
+  if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26') makeCard();
   renderCourses(remoteData);renderExamStrip();updatePageTitle();
 }
 
-function getState(){
-  const state={...remoteData};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{state[b.id]=b.checked;});
-  const dm=$('daily_mock');if(dm)state['mock_'+ts()]=dm.checked;
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)state['misc_'+id]=b.checked;});
-  return state;
-}
 
 
 
@@ -965,7 +949,6 @@ function renderPending(){
 }
 
 function renderACCACard(dc, dateBadge) {
-  const { labels } = getCourseData();
   const meta = TOPIC_META_FR;
   
   let totalW = 0;
@@ -1004,149 +987,16 @@ function renderACCACard(dc, dateBadge) {
     statusMsg = `⚠ Behind ~${pointsBehind} pts`;
   }
   
-  const todayStr = ts();
-  // Bug fix: filter to ACCA topic IDs only AND guard against malformed entries
-  const accaIds = new Set(Object.keys(meta));
-  const coveredToday = Object.keys(srData).filter(id =>
-    accaIds.has(id) && srData[id] && typeof srData[id] === 'object' && srData[id].completed === todayStr
-  );
-
-  let coveredHtml = coveredToday.length ? coveredToday.map(id => {
-    const conf = srData[id].conf || 0;
-    return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:6px; background:#222; border-radius:6px">
-      <span style="font-size:0.85rem">${labels[id] || id} ${meta[id].tag||''}</span>
-      <select class="acca-conf" data-id="${id}" style="background:#111; color:var(--accent); border:1px solid #333; padding:4px; border-radius:4px; font-size:0.75rem; width:150px">
-        <option value="0" ${conf==0?'selected':''}>Select Confidence...</option>
-        <option value="5" ${conf==5?'selected':''}>5 - Can teach others</option>
-        <option value="4" ${conf==4?'selected':''}>4 - Can solve most</option>
-        <option value="3" ${conf==3?'selected':''}>3 - Need practice</option>
-        <option value="2" ${conf==2?'selected':''}>2 - Partially understood</option>
-        <option value="1" ${conf==1?'selected':''}>1 - Confused</option>
-      </select>
-    </div>`;
-  }).join('') : `<p style="font-size:0.8rem; color:var(--dim)">No topics logged today.</p>`;
-  
-  let mockData = remoteData[`mock_${todayStr}`] || [];
-  if (!Array.isArray(mockData)) mockData = [];
-  const coveredTopicsAll = Object.keys(remoteData).filter(k => k.startsWith('fr') && remoteData[k]);
-  
-  let mockHtml = coveredTopicsAll.length ? coveredTopicsAll.map(id => {
-    const isTested = mockData.includes(id);
-    return `<li><label><input type="checkbox" class="acca-mock" data-id="${id}" ${isTested?'checked':''}><span>${labels[id] || id}</span></label></li>`;
-  }).join('') : `<li style="font-size:0.8rem; color:var(--dim)">Log a topic first to unlock mocks.</li>`;
-  
-  const untaughtTopics = Object.keys(meta).filter(id => !remoteData[id]);
-  const untaughtHtml = untaughtTopics.map(id => {
-    return `<label class="acca-search-item" style="display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.83rem">
-      <input type="checkbox" class="acca-log" data-id="${id}">
-      <span>${labels[id]} ${meta[id].tag||''}</span>
-    </label>`;
-  }).join('');
-  
-  // History: only show past ACCA sessions, strictly no today, no non-ACCA IDs
-  const historyMap = {};
-  Object.keys(srData).forEach(id => {
-    if (!accaIds.has(id)) return; // ignore non-ACCA topics
-    const d = srData[id] && srData[id].completed;
-    if (!d || d >= todayStr) return; // exclude today and future
-    if (!historyMap[d]) historyMap[d] = [];
-    historyMap[d].push(id);
-  });
-  const historyDates = Object.keys(historyMap).sort((a,b) => b.localeCompare(a));
-  const historyHtml = historyDates.length ? historyDates.map(d => {
-    const items = historyMap[d].map(id => `<li style="padding:2px 0">${labels[id] || id}</li>`).join('');
-    const dayLabel = new Date(d+'T00:00:00').toLocaleDateString('en-IN', {weekday:'short', month:'short', day:'numeric'});
-    return `<div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)"><strong style="font-size:0.78rem;color:var(--text)">${dayLabel}</strong><ul style="margin:4px 0 0 14px;color:var(--dim);list-style:disc">${items}</ul></div>`;
-  }).join('') : '';
-
   dc.innerHTML = `
-    <div class="day-card framework" style="border-left-color:#6c8ebf">
-      <div class="day-top"><h2>📚 ACCA Tracker</h2>${dateBadge}</div>
-
+    <div class="day-card framework">
+      <div class="day-top"><h2>📊 ACCA Tracker</h2>${dateBadge}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;background:var(--s2);padding:8px 12px;border-radius:8px;margin-top:10px;font-size:0.78rem;gap:6px;flex-wrap:wrap">
         <span>Coverage <strong style="color:var(--accent)">${covPct}%</strong></span>
         <span>Revision <strong style="color:var(--blue)">${revPct}%</strong></span>
-        <span style="color:${covPct >= tgtPct ? 'var(--accent)' : '#ff6b6b'};font-weight:600">${statusMsg} · target ${tgtPct}%</span>
+        <span style="color:${covPct >= tgtPct ? 'var(--green)' : 'var(--red)'};font-weight:600">${statusMsg} · target ${tgtPct}%</span>
       </div>
-
-      <details open style="margin-top:14px">
-        <summary style="font-size:0.85rem;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          📝 Log Today's Topics
-          ${coveredToday.length ? `<span style="background:var(--accent);color:#000;font-size:0.6rem;padding:1px 7px;border-radius:99px;font-weight:800;flex-shrink:0">${coveredToday.length} logged</span>` : ''}
-        </summary>
-        <div style="margin-top:8px">
-          <input type="text" id="acca-search" placeholder="Search topic…" style="width:100%;padding:7px 10px;background:var(--s2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin-bottom:6px">
-          <div id="acca-topic-list">${untaughtHtml || '<p style="font-size:0.8rem;color:var(--dim);padding:4px 0">All topics covered! ✓</p>'}</div>
-        </div>
-        ${coveredToday.length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-          <p style="font-size:0.7rem;color:var(--dim);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Logged Today</p>
-          ${coveredHtml}</div>` : ''}
-      </details>
-
-      <details style="margin-top:10px">
-        <summary style="font-size:0.85rem;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          ✏️ Daily Quiz
-          ${mockData.length ? `<span style="background:var(--green);color:#000;font-size:0.6rem;padding:1px 7px;border-radius:99px;font-weight:800;flex-shrink:0">${mockData.length} tested</span>` : ''}
-        </summary>
-        <div style="margin-top:8px"><ul class="cl" style="margin:0;padding:0">${mockHtml}</ul></div>
-      </details>
-
-      ${historyDates.length ? `<details style="margin-top:10px">
-        <summary style="font-size:0.85rem;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          📜 Session History
-        </summary>
-        <div style="margin-top:8px;font-size:0.8rem">${historyHtml}</div>
-      </details>` : ''}
     </div>
   `;
-  const searchInput = document.getElementById('acca-search');
-  if (searchInput) {
-    // Debounce search to avoid layout thrash on every keystroke
-    let _searchTimer = null;
-    searchInput.addEventListener('input', (e) => {
-      clearTimeout(_searchTimer);
-      _searchTimer = setTimeout(() => {
-        const query = e.target.value.toLowerCase().trim();
-        document.querySelectorAll('.acca-search-item').forEach(el => {
-          // textContent is ~10x faster than innerText (no layout calc needed)
-          el.style.display = !query || el.textContent.toLowerCase().includes(query) ? '' : 'none';
-        });
-      }, 120);
-    });
-  }
-  
-  dc.querySelectorAll('.acca-log').forEach(cb => {
-    cb.addEventListener('change', e => {
-      if (e.target.checked) {
-        onCheck(e.target.getAttribute('data-id'), true);
-        renderACCACard(dc, dateBadge);
-      }
-    });
-  });
-  
-  dc.querySelectorAll('.acca-conf').forEach(sel => {
-    sel.addEventListener('change', e => {
-      const sid = e.target.getAttribute('data-id');
-      const val = parseInt(e.target.value);
-      if (remoteData._sr && remoteData._sr[sid]) {
-        remoteData._sr[sid].conf = val;
-        saveToFirestore();
-      }
-    });
-  });
-  
-  dc.querySelectorAll('.acca-mock').forEach(cb => {
-    cb.addEventListener('change', e => {
-      const sid = e.target.getAttribute('data-id');
-      const checked = e.target.checked;
-      let mocks = remoteData[`mock_${todayStr}`] || [];
-      if (!Array.isArray(mocks)) mocks = [];
-      if (checked && !mocks.includes(sid)) mocks.push(sid);
-      else if (!checked && mocks.includes(sid)) mocks = mocks.filter(id => id !== sid);
-      remoteData[`mock_${todayStr}`] = mocks;
-      saveToFirestore();
-    });
-  });
 }
 
 function makeCard(){
@@ -1160,9 +1010,20 @@ function makeCard(){
   
   const dateBadge=`<span class="day-badge">${todayObj.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</span>`;
   
+  const todaySec = $('today-sec');
+  const pendingSec = $('pending-sec');
+  const pendingCard = $('pendingcard');
+  
   if (activeCourse === 'ACCA26') {
+    if(todaySec) todaySec.style.display = 'none';
+    if(pendingSec) pendingSec.style.display = 'none';
+    if(pendingCard) pendingCard.style.display = 'none';
     renderACCACard(dc, dateBadge);
     return;
+  } else {
+    if(todaySec) todaySec.style.display = '';
+    if(pendingSec) pendingSec.style.display = '';
+    if(pendingCard) pendingCard.style.display = '';
   }
   
   const sched=sch[ts()];
@@ -1264,12 +1125,12 @@ function updateAll(){
     if(domGfill)domGfill.style.width=pct+'%';
     if(domPct)domPct.textContent=pct+'%';
     if(domSpills){
-      domSpills.innerHTML='';
-      for(const[k,v] of Object.entries(subjs)){
-        const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
-        const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-        domSpills.innerHTML+=`<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
-      }
+        const spillsHtml = Object.entries(subjs).map(([k,v])=>{
+          const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
+          const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+          return `<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
+        }).join('');
+        domSpills.innerHTML=spillsHtml;
     }
     const _t=new Date();_t.setHours(0,0,0,0);
     const _ac=remoteData.activeCourse||DEFAULT_COURSE;
@@ -1366,17 +1227,18 @@ function onCheck(id, val) {
   }
 
   if (currentUid) {
-    // Bug fix: for ACCA, mock data is an array — never overwrite it with a boolean
-    const existingMock = remoteData[`mock_${todayStr}`];
-    const mockPayload = Array.isArray(existingMock) ? existingMock : !!existingMock;
-    const atomicUpdatePayload = {
-      [id]: val,
-      [`mock_${todayStr}`]: mockPayload
-    };
-    if (srSubUpdate) atomicUpdatePayload._sr = srSubUpdate;
-
-    setDoc(doc(db, 'users', currentUid), atomicUpdatePayload, { merge: true })
-      .catch(err => console.error('[Sync] Direct payload sync write aborted:', err));
+    const payload = { [id]: val };
+    if (srSubUpdate) {
+      // Use individual dot-notation style keys to avoid overwriting unrelated SR entries
+      Object.entries(srSubUpdate).forEach(([srId, srVal]) => {
+        payload[`_sr.${srId}`] = srVal;
+      });
+      setDoc(doc(db,'users',currentUid), payload, {merge:true})
+        .catch(err => console.error('[Sync] SR write failed:', err));
+    } else {
+      setDoc(doc(db,'users',currentUid), payload, {merge:true})
+        .catch(err => console.error('[Sync] Write failed:', err));
+    }
   }
 
   const mainBox = document.getElementById(id); if (mainBox) mainBox.checked = val;
@@ -1386,6 +1248,7 @@ function onCheck(id, val) {
   updateAll();
   renderPending();
   renderRevisions();
+  if ((remoteData.activeCourse || 'CSEB11') === 'ACCA26') makeCard();
 }
 
 function getRevisionsDue(){
@@ -1396,7 +1259,7 @@ function getRevisionsDue(){
   const activeLabels = cd.labels;
   
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==deleteField()&&activeLabels[id])
+    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==null&&activeLabels[id])
     .map(([id,s])=>({id,label:activeLabels[id],count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
@@ -1420,6 +1283,7 @@ async function markRevised(id){
     }
   }
   renderRevisions();updateAll();
+  if ((remoteData.activeCourse || 'CSEB11') === 'ACCA26') makeCard();
 }
 
 function renderRevisions(){
@@ -1493,7 +1357,7 @@ function renderLeaderboard(users){
     <div class="lb-stat"><div class="lb-stat-val">${myRank-1}</div><div class="lb-stat-lbl">Ahead of You</div></div>
     <div class="lb-stat"><div class="lb-stat-val">${total-myRank}</div><div class="lb-stat-lbl">Behind You</div></div>
     <div class="lb-stat"><div class="lb-stat-val">${total}</div><div class="lb-stat-lbl">Total Users</div></div>
-  </div>`:'';
+  </div>`:''
 
   const safeName = (n) => (n||'').replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
@@ -1537,7 +1401,7 @@ function updateLBData(){
   const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
   const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
   const pct=total?Math.round(done/total*100):0;
-  console.log(`[Leaderboard] Auto-backfilling/updating leaderboard doc for user: ${currentUid}`);
+  // silently update leaderboard
   setDoc(doc(db,'leaderboard',currentUid),{
     displayName:remoteData._displayName||'',
     progressPercent:pct,
@@ -1566,7 +1430,6 @@ function startLBListener() {
   }
 
   // Safe simple query: Filtered with an absolute safety limit of the top 100 entries
-  // No complex indexes required, sorting safely remains downstream in your render layer
   const q = query(
     collection(db, 'leaderboard'),
     where('activeCourse', '==', 'CSEB11'),
@@ -1605,11 +1468,6 @@ function calcStreak(){
   }
   return s;
 }
-
-
-
-
-
 
 function renderCourses(data){
   const pc=$('pd-courses');if(!pc)return;
@@ -1688,6 +1546,40 @@ setTimeout(()=>{
 
 
 
+function showWhatsNew() {
+  const lastVer = localStorage.getItem('app_version');
+  if (lastVer !== APP_VERSION) {
+    localStorage.setItem('app_version', APP_VERSION);
+    const wn = document.createElement('div');
+    wn.id = 'wn-overlay';
+    wn.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;';
+    const isACCA = (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26';
+    const accaHtml = isACCA ? `<li style="margin-bottom:8px"><strong style="color:var(--text)">ACCA Tracker Simplified:</strong> Removed daily quizzes and session history. The view now focuses purely on tracking taught topics and syllabus progress.</li>` : '';
+    wn.innerHTML = `
+      <div class="lb-box" style="max-width:420px; animation: modalPop 0.2s ease-out">
+        <div class="lb-hdr">
+          <h2>✨ Platform Update v${APP_VERSION}</h2>
+          <button class="lb-close" onclick="document.getElementById('wn-overlay').remove()">×</button>
+        </div>
+        <div class="lb-body" style="font-size:0.88rem;color:var(--dim)">
+          <p style="margin-bottom:12px;color:var(--text)">Here's what's new:</p>
+          <ul style="margin-left:18px;margin-bottom:20px;line-height:1.5">
+            ${accaHtml}
+            <li style="margin-bottom:8px"><strong style="color:var(--text)">Bug Fixes & Stability:</strong> Fixed ACCA syllabus cross-contamination, data not updating live, and splash screen freeze.</li>
+            <li style="margin-bottom:8px"><strong style="color:var(--text)">ACCA Tracker Cleaned:</strong> Removed Today's Plan and Pending sections for ACCA — now focused purely on syllabus & revision tracking.</li>
+            <li style="margin-bottom:8px"><strong style="color:var(--text)">Performance:</strong> Reduced redundant re-renders, removed dead code, and optimised Firestore sync.</li>
+          </ul>
+          <div style="display:flex; gap:10px; margin-top:8px">
+            <button class="auth-btn" style="background:var(--s2); color:var(--text)" onclick="document.getElementById('wn-overlay').remove()">Later</button>
+            <button class="auth-btn" style="background:var(--blue)" onclick="window.location.reload()">Update Now</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(wn);
+  }
+}
+
 function initApp(user){
   $('auth-overlay').classList.add('hidden');
   $('app').classList.add('visible');
@@ -1698,7 +1590,7 @@ function initApp(user){
   $('pd-name').textContent=user.displayName||name;
   $('pd-email').textContent=user.email;
   remoteData._displayName=user.displayName||name; // cache for leaderboard
-  $('todaydisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $('todaydisp').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   try{
     renderExamStrip();
     domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
@@ -1706,31 +1598,31 @@ function initApp(user){
     makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderCourses(remoteData);
   }catch(err){
     console.error('initApp render error:',err);
-    // show error in UI temporarily
     const wrap=document.querySelector('.wrap');
     if(wrap){const d=document.createElement('div');d.style.cssText='color:var(--red);font-family:var(--mono);font-size:.7rem;padding:12px;background:rgba(224,80,80,.08);border-radius:8px;margin-bottom:12px;white-space:pre-wrap';d.textContent='Debug: '+err.message;wrap.prepend(d);}
   }
   hideSplash();
   if(unsubSnap)unsubSnap();
   
-  // 1. Kick off the Leaderboard collection listener ONCE at boot
   startLBListener();
   
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
     if(snap.exists()){
+      const oldCourse = remoteData.activeCourse;
       remoteData={...remoteData,...snap.data()};
+      if (oldCourse !== remoteData.activeCourse) {
+        makeCard();
+        bindSyllabus();
+      }
       applyData(remoteData);
     }
     
-    // 2. Safe to run here now—the guard clause blocks it from thrashing
-    startLBListener(); 
-    
-    // 3. Shield: Only push leaderboard updates when local state matches the server
     if (!snap.metadata.hasPendingWrites) {
+      startLBListener();
       updateLBData();
-    } 
-    
+      showWhatsNew();
+    }
     syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
@@ -1778,7 +1670,7 @@ const profileBtn=document.getElementById('profile-btn');
 const profileDrop=$('profile-drop');
 let dropOpen=false,_dropTouch=false;
 
-function closeDrop(){dropOpen=false;if(profileDrop){dropOpen=false;profileDrop.dataset.open='';}}
+function closeDrop(){dropOpen=false;if(profileDrop){profileDrop.dataset.open='';}}
 function toggleDrop(){dropOpen=!dropOpen;profileDrop.dataset.open=dropOpen?'1':'';}
 
 // touchend handles tap; preventDefault stops synthetic click from also firing
@@ -1989,24 +1881,3 @@ if('serviceWorker' in navigator) {
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
