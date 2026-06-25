@@ -1030,7 +1030,9 @@ function makeCard(){
   const todaySec = $('today-sec');
   const pendingSec = $('pending-sec');
   const pendingCard = $('pendingcard');
-  
+  // Compute once — used in the pause bypass check and exam-tag below
+  const lateStart = getLateStartDate();
+
   if (activeCourse === 'ACCA26') {
     if(todaySec) todaySec.style.display = 'none';
     if(pendingSec) pendingSec.style.display = 'none';
@@ -1039,14 +1041,13 @@ function makeCard(){
     return;
   } else if (activeCourse === 'CSEB11') {
     // Late starters bypass the pause — they get the normal daily plan
-    const lateStart = getLateStartDate();
     if (!lateStart) {
       if(todaySec) todaySec.style.display = 'none';
-      if(pendingSec) pendingSec.style.display = 'none';
-      if(pendingCard) pendingCard.style.display = 'none';
+      if(pendingSec) pendingSec.style.display = '';
+      if(pendingCard) pendingCard.style.display = '';
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
-        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise topics from the Full Syllabus below.</p></div>`;
+        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise your pending topics and the Full Syllabus below.</p></div>`;
       return;
     }
     // Late starter — fall through to normal plan rendering below
@@ -1060,7 +1061,6 @@ function makeCard(){
   }
   
   const sched=sch[ts()];
-  const lateStart = getLateStartDate();
   const examMeta={
     CSEB11:{text: lateStart ? `CSEB · New Joinee · Started ${lateStart}` : 'CSEB · Cat 11 · Exam TBA', date:new Date(2026,6,11)},
     CAT09: {text:'Asst Secretary · Cat 09 · 16 Aug 2026',date:new Date(2026,7,16)}
@@ -1069,7 +1069,16 @@ function makeCard(){
   const tag=`<span class="exam-tag">${meta.text}</span>`;
   
   if(!sched){
-    const activeExam=EXAMS.find(e=>e.target)||EXAMS[0];
+    // No plan entry for today (e.g. gap day or beyond schedule)
+    // If exams are all postponed, don't show misleading "Exam Done" / "Rest & Prepare"
+    const allPostponed = EXAMS.filter(e=>e.target||!e.cat.includes('09')).every(e=>e.postponed);
+    if (allPostponed) {
+      dc.innerHTML=`<div class="day-card catchup">
+        <div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
+        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.</p></div>`;
+      return;
+    }
+    const activeExam=EXAMS.find(e=>e.target&&!e.postponed)||EXAMS.find(e=>!e.postponed)||EXAMS[0];
     const examDateStr=activeExam?activeExam.date:'2026-07-11';
     const done=ts()>examDateStr;
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
