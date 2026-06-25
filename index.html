@@ -561,6 +561,22 @@ const EXAMS=[
   {cat:'Cat 09/2026',name:'Assistant Secretary',sub:'',date:'2026-08-16',omr:false,postponed:true},
 ];
 
+// ── LATE STARTERS ──
+// Users who begin the plan after the CSEB pause.
+// Add: 'email@example.com' (lowercase) : 'YYYY-MM-DD' start date.
+// When the exam date is announced, remove the CSEB11 pause in makeCard()
+// and both groups merge naturally — late starters show pending from their
+// start date; original users show pending from May 27.
+const LATE_STARTERS = {
+  'priyasree849@gmail.com': '2026-06-25',
+};
+
+// Returns the late-start date for the logged-in user, or null if not a late starter.
+function getLateStartDate() {
+  const email = (auth && auth.currentUser && auth.currentUser.email || '').toLowerCase().trim();
+  return LATE_STARTERS[email] || null;
+}
+
 const SCH={
  "2026-05-27":{p:"banking",   l:"Banking · Day 1/8",     ids:["bnk1","bnk2"]},
  "2026-05-28":{p:"accounting",l:"Accounting · Day 1/7",  ids:["acc1","acc2"]},
@@ -899,8 +915,11 @@ function applyData(data){
 
 function getPending(){
   const {sch}=getCourseData(),now=Date.now(),r=[];
+  // Late starters only see pending items on/after their start date (not all the previous plan)
+  const lateStart = getLateStartDate();
   for(const[date,s] of Object.entries(sch)){
     if(date>=ts()||!s.ids||!s.ids.length)continue;
+    if(lateStart && date < lateStart) continue; // skip dates before late-start
     if(deferred[date]&&deferred[date]>now)continue;
     const u=s.ids.filter(id=>!remoteData[id]);
     if(u.length)r.push({date,s,unchecked:u});
@@ -1019,13 +1038,21 @@ function makeCard(){
     renderACCACard(dc, dateBadge);
     return;
   } else if (activeCourse === 'CSEB11') {
-    if(todaySec) todaySec.style.display = 'none';
-    if(pendingSec) pendingSec.style.display = 'none';
-    if(pendingCard) pendingCard.style.display = 'none';
-    dc.innerHTML=`<div class="day-card catchup">
-      <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
-      <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise topics from the Full Syllabus below.</p></div>`;
-    return;
+    // Late starters bypass the pause — they get the normal daily plan
+    const lateStart = getLateStartDate();
+    if (!lateStart) {
+      if(todaySec) todaySec.style.display = 'none';
+      if(pendingSec) pendingSec.style.display = 'none';
+      if(pendingCard) pendingCard.style.display = 'none';
+      dc.innerHTML=`<div class="day-card catchup">
+        <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
+        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise topics from the Full Syllabus below.</p></div>`;
+      return;
+    }
+    // Late starter — fall through to normal plan rendering below
+    if(todaySec) todaySec.style.display = '';
+    if(pendingSec) pendingSec.style.display = '';
+    if(pendingCard) pendingCard.style.display = '';
   } else {
     if(todaySec) todaySec.style.display = '';
     if(pendingSec) pendingSec.style.display = '';
@@ -1033,8 +1060,9 @@ function makeCard(){
   }
   
   const sched=sch[ts()];
+  const lateStart = getLateStartDate();
   const examMeta={
-    CSEB11:{text:'CSEB · Cat 11 · 11 Jul 2026',date:new Date(2026,6,11)},
+    CSEB11:{text: lateStart ? `CSEB · New Joinee · Started ${lateStart}` : 'CSEB · Cat 11 · Exam TBA', date:new Date(2026,6,11)},
     CAT09: {text:'Asst Secretary · Cat 09 · 16 Aug 2026',date:new Date(2026,7,16)}
   };
   const meta=examMeta[activeCourse]||examMeta.CSEB11;
