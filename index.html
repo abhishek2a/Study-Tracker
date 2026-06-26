@@ -572,7 +572,13 @@ const LATE_STARTERS = {
 // Returns the late-start date for the logged-in user, or null if not a late starter.
 function getLateStartDate() {
   const email = (auth && auth.currentUser && auth.currentUser.email || '').toLowerCase().trim();
-  return LATE_STARTERS[email] || null;
+  if (LATE_STARTERS[email]) return LATE_STARTERS[email];
+  
+  if (typeof remoteData !== 'undefined' && remoteData.signupDate && remoteData.signupDate >= '2026-06-25') {
+    return remoteData.signupDate;
+  }
+  
+  return null;
 }
 
 const SCH={
