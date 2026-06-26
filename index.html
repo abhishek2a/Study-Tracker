@@ -342,7 +342,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.60</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.61</div>
         </div>
       </div>
     </div>
@@ -418,9 +418,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
       <div>
         <button id="settings-reset-pw" class="auth-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Password Reset Email</button>
       </div>
-      <div>
-        <button id="settings-update-btn" class="auth-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Check for App Update</button>
-      </div>
+
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Account Info</label>
         <div id="settings-login-info" style="font-size:.75rem;color:var(--dim);font-family:var(--mono);line-height:1.5">
@@ -443,7 +441,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
+  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, updateDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -549,7 +547,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.60';
+const APP_VERSION = '1.1.61';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1302,7 +1300,7 @@ function onCheck(id, val) {
       Object.entries(srSubUpdate).forEach(([srId, srVal]) => {
         payload[`_sr.${srId}`] = srVal;
       });
-      setDoc(doc(db,'users',currentUid), payload, {merge:true})
+      updateDoc(doc(db,'users',currentUid), payload)
         .catch(err => console.error('[Sync] SR write failed:', err));
     } else {
       setDoc(doc(db,'users',currentUid), payload, {merge:true})
@@ -1346,13 +1344,13 @@ async function markRevised(id){
     // Topic mastered — delete locally; use dot-notation to avoid overwriting other SR entries
     delete remoteData._sr[id];
     if(currentUid){
-      setDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: deleteField()}, {merge:true})
+      updateDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: deleteField()})
         .catch(e=>console.error('[SR] Failed to delete mastered topic:',e));
     }
   } else {
     if(currentUid){
       // Use dot-notation to safely update only this entry without overwriting others
-      setDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: s}, {merge:true})
+      updateDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: s})
         .catch(e=>console.error('[SR] Failed to save revision progress:',e));
     }
   }
@@ -1636,15 +1634,13 @@ function showWhatsNew() {
         <div class="lb-body" style="font-size:0.88rem;color:var(--dim)">
           <p style="margin-bottom:14px;color:var(--text);font-size:.92rem">Here's what changed in this update:</p>
           <ul style="margin-left:18px;margin-bottom:20px;line-height:1.7">
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">CSEB Plan Paused ⏸️</strong><br>The CSEB exam has been postponed. The daily study plan is paused. You can still track and revise topics from the Full Syllabus.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">Revision Button Fixed ✅</strong><br>Fixed a database bug where tapping "Revised" in the revision section wouldn't register the progress properly. Spaced repetition dates now sync flawlessly.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">Pending Topics Available</strong><br>For users on the paused CSEB plan, the Pending section has been re-enabled. You can now catch up on missed topics during the pause.</li>
             <li style="margin-bottom:10px"><strong style="color:var(--text)">All 3 CSEB Exams Postponed</strong><br>Cat 11, Cat 10, and Cat 09 exams now show <em>Postponed — Date TBA</em> in the exam strip. New dates will be updated when announced.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">Bug Fixes &amp; Stability</strong><br>Fixed a critical issue where marking revisions could silently overwrite other revision entries. Spaced repetition data is now safe.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">Performance Improvements</strong><br>Checkbox updates are now debounced, syllabus uses event delegation (faster), and the exam countdown reads live from the exams list.</li>
-            <li style="margin-bottom:0"><strong style="color:var(--text)">Escape Key Support</strong><br>Press Escape to close any open modal (Leaderboard, Settings, or this dialog).</li>
+            <li style="margin-bottom:0"><strong style="color:var(--text)">Escape Key Support</strong><br>Press Escape to easily close any open modal (Leaderboard, Settings, or this dialog).</li>
           </ul>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="auth-btn" style="background:var(--s2);color:var(--text)" onclick="document.getElementById('wn-overlay').remove()">Later</button>
-            <button class="auth-btn" style="background:var(--blue)" onclick="window.location.reload()">Update Now</button>
+          <div style="margin-top:20px">
+            <button class="auth-btn" style="background:var(--blue);width:100%" onclick="document.getElementById('wn-overlay').remove()">Got it!</button>
           </div>
         </div>
       </div>
@@ -1840,26 +1836,6 @@ $('settings-reset-pw').addEventListener('click', async function() {
   }, 4000);
 });
 
-$('settings-update-btn').addEventListener('click', function() {
-  const btn = this;
-  btn.textContent = 'Checking...';
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistration().then(reg => {
-      if (reg) {
-        reg.update().then(() => {
-          btn.textContent = `✓ Checked (v${APP_VERSION})`;
-          setTimeout(()=>btn.textContent='Check for App Update', 3000);
-        });
-      } else {
-        btn.textContent = 'No SW found';
-        setTimeout(()=>btn.textContent='Check for App Update', 3000);
-      }
-    });
-  } else {
-    btn.textContent = 'Not Supported';
-    setTimeout(()=>btn.textContent='Check for App Update', 3000);
-  }
-});
 
 $('settings-delete-btn').addEventListener('click', async function() {
   if(!auth.currentUser) return;
@@ -1940,6 +1916,13 @@ $('auth-email').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();}
 $('auth-pass').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 
 if('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(reg => {
       reg.addEventListener('updatefound', () => {
@@ -1953,7 +1936,6 @@ if('serviceWorker' in navigator) {
               toast.style.transform = 'translateX(-50%) translateY(0)';
               document.getElementById('update-btn').onclick = () => {
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
-                window.location.reload();
               };
             }
           }
