@@ -980,7 +980,7 @@ function renderACCACard(dc, dateBadge) {
   const srData = remoteData._sr || {};
   
   Object.keys(meta).forEach(id => {
-    const w = meta[id].w || 1;
+    const w = 1; // ignoring meta[id].w to match global syllabus count
     totalW += w;
     if (remoteData[id]) {
       covW += w;
