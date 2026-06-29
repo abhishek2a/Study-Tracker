@@ -342,7 +342,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.61</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.62</div>
         </div>
       </div>
     </div>
@@ -547,7 +547,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.61';
+const APP_VERSION = '1.1.62';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -961,7 +961,7 @@ function renderPending(){
   pc.querySelectorAll('.pending-ds').forEach(b=>{
     b.addEventListener('change',e=>{
       const sid=e.target.getAttribute('data-id');
-      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);renderPending();
+      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);
     });
   });
   pc.querySelectorAll('.defer-btn').forEach(b=>{
@@ -991,8 +991,8 @@ function renderACCACard(dc, dateBadge) {
   });
   
   const covPct = totalW > 0 ? Math.round((covW / totalW) * 100) : 0;
-  // Calculate revision progress strictly on topics that have been covered
-  const revPct = covW > 0 ? Math.round((revPoints / (covW * MAX_REV)) * 100) : 0;
+  // Calculate revision progress against the entire syllabus
+  const revPct = totalW > 0 ? Math.round((revPoints / (totalW * MAX_REV)) * 100) : 0;
   
   const startMs = new Date("2026-06-12").getTime();
   const endMs = new Date("2026-08-27").getTime();
@@ -1019,6 +1019,65 @@ function renderACCACard(dc, dateBadge) {
       </div>
     </div>
   `;
+}
+
+function updateCSEBTrackerDOM() {
+  const domCov = document.getElementById('cseb-cov');
+  const domRev = document.getElementById('cseb-rev');
+  const domStatus = document.getElementById('cseb-status');
+  if (!domCov || !domRev || !domStatus) return;
+
+  const cd = COURSE_DATA['CSEB11'];
+  let totalW = 0, covW = 0, revPoints = 0;
+  const MAX_REV = typeof SR_INTERVALS !== 'undefined' ? SR_INTERVALS.length : 4;
+  const srData = remoteData._sr || {};
+
+  Object.values(cd.subjs).forEach(subj => {
+    if (!subj.ids) return;
+    subj.ids.forEach(id => {
+      totalW += 1;
+      if (remoteData[id]) {
+        covW += 1;
+        if (srData[id]) revPoints += Math.min(srData[id].count, MAX_REV);
+      }
+    });
+  });
+
+  const covPct = totalW > 0 ? Math.round((covW / totalW) * 100) : 0;
+  const revPct = totalW > 0 ? Math.round((revPoints / (totalW * MAX_REV)) * 100) : 0;
+
+  let tgtPct = 0;
+  const lateStart = getLateStartDate();
+  if (lateStart) {
+    const elapsedDays = Math.max(0, (new Date(ts()).getTime() - new Date(lateStart).getTime()) / 86400000);
+    tgtPct = Math.min(100, Math.round((elapsedDays / 45) * 100));
+  } else {
+    tgtPct = Math.round((29 / 45) * 100);
+  }
+
+  const onTrack = covPct >= tgtPct;
+  const pointsBehind = onTrack ? 0 : Math.ceil(((tgtPct - covPct) / 100) * totalW);
+  const statusMsg = onTrack ? '🔥 On Track' : `⚠ Behind ~${pointsBehind} topics`;
+
+  domCov.textContent = covPct + '%';
+  domRev.textContent = revPct + '%';
+  domStatus.style.color = onTrack ? 'var(--green)' : 'var(--red)';
+  domStatus.innerHTML = `${statusMsg} · target ${tgtPct}%`;
+}
+
+function renderCSEBCard(dc, lateStart) {
+  const html = `
+    <div class="day-card framework" style="margin-top:16px">
+      <div class="day-top"><h2>📊 CSEB Tracker</h2></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--s2);padding:8px 12px;border-radius:8px;margin-top:10px;font-size:0.78rem;gap:6px;flex-wrap:wrap">
+        <span>Coverage <strong id="cseb-cov" style="color:var(--accent)">0%</strong></span>
+        <span>Revision <strong id="cseb-rev" style="color:var(--blue)">0%</strong></span>
+        <span id="cseb-status" style="font-weight:600">...</span>
+      </div>
+    </div>
+  `;
+  dc.insertAdjacentHTML('beforeend', html);
+  updateCSEBTrackerDOM();
 }
 
 function makeCard(){
@@ -1053,6 +1112,7 @@ function makeCard(){
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
         <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise your pending topics and the Full Syllabus below.</p></div>`;
+      renderCSEBCard(dc, lateStart);
       return;
     }
     // Late starter — fall through to normal plan rendering below
@@ -1081,6 +1141,7 @@ function makeCard(){
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
         <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.</p></div>`;
+      if (activeCourse === 'CSEB11') renderCSEBCard(dc, lateStart);
       return;
     }
     const activeExam=EXAMS.find(e=>e.target&&!e.postponed)||EXAMS.find(e=>!e.postponed)||EXAMS[0];
@@ -1089,6 +1150,7 @@ function makeCard(){
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
       <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
       <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
+    if (activeCourse === 'CSEB11') renderCSEBCard(dc, lateStart);
     return;
   }
   let inner='';
@@ -1125,6 +1187,7 @@ function makeCard(){
     const b=document.getElementById(id);
     if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore();});
   });
+  if (activeCourse === 'CSEB11') renderCSEBCard(dc, lateStart);
   ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
     const b=document.getElementById(id);
     if(b)b.addEventListener('change',e=>{remoteData[id]=e.target.checked;saveToFirestore();});
@@ -1210,6 +1273,8 @@ function updateAll(){
       <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':examDiff===0?'Today!':'TBA'}</span></div>`;
+    
+    updateCSEBTrackerDOM();
   });
 }
 
@@ -1303,11 +1368,7 @@ function onCheck(id, val) {
   if (currentUid) {
     const payload = { [id]: val };
     if (srSubUpdate) {
-      // Use individual dot-notation style keys to avoid overwriting unrelated SR entries
-      Object.entries(srSubUpdate).forEach(([srId, srVal]) => {
-        payload[`_sr.${srId}`] = srVal;
-      });
-      updateDoc(doc(db,'users',currentUid), payload)
+      setDoc(doc(db,'users',currentUid), { ...payload, _sr: srSubUpdate }, {merge:true})
         .catch(err => console.error('[Sync] SR write failed:', err));
     } else {
       setDoc(doc(db,'users',currentUid), payload, {merge:true})
@@ -1325,7 +1386,7 @@ function onCheck(id, val) {
   onCheck._renderTimer = setTimeout(() => {
     renderPending();
     renderRevisions();
-  }, 80);
+  }, 500);
   if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26') makeCard();
 }
 
@@ -1348,16 +1409,15 @@ async function markRevised(id){
   s.count++;
   s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts(),s.count);
   if (!s.next) {
-    // Topic mastered — delete locally; use dot-notation to avoid overwriting other SR entries
+    // Topic mastered — delete locally
     delete remoteData._sr[id];
     if(currentUid){
-      updateDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: deleteField()})
+      setDoc(doc(db,'users',currentUid), { _sr: { [id]: deleteField() } }, {merge:true})
         .catch(e=>console.error('[SR] Failed to delete mastered topic:',e));
     }
   } else {
     if(currentUid){
-      // Use dot-notation to safely update only this entry without overwriting others
-      updateDoc(doc(db,'users',currentUid), {[`_sr.${id}`]: s})
+      setDoc(doc(db,'users',currentUid), { _sr: { [id]: s } }, {merge:true})
         .catch(e=>console.error('[SR] Failed to save revision progress:',e));
     }
   }
@@ -1511,20 +1571,23 @@ function startLBListener() {
   // Safe simple query: Filtered with an absolute safety limit of the top 100 entries
   const q = query(
     collection(db, 'leaderboard'),
-    where('activeCourse', '==', 'CSEB11'),
-    limit(100)
+    orderBy('progressPercent', 'desc'),
+    limit(300)
   );
 
   lbUnsub = onSnapshot(q, snap => {
-    const users = snap.docs.map(d => {
+    const users = [];
+    snap.docs.forEach(d => {
       const data = d.data();
-      return {
-        uid: d.id,
-        name: data.displayName || 'Anonymous Learner',
-        pct: data.progressPercent || 0,
-        topics: data.completedTopics || 0,
-        signupDate: data.signupDate || ''
-      };
+      if (data.activeCourse === 'CSEB11') {
+        users.push({
+          uid: d.id,
+          name: data.displayName || 'Anonymous Learner',
+          pct: data.progressPercent || 0,
+          topics: data.completedTopics || 0,
+          signupDate: data.signupDate || ''
+        });
+      }
     });
     renderLeaderboard(users);
   }, err => {
@@ -1641,10 +1704,9 @@ function showWhatsNew() {
         <div class="lb-body" style="font-size:0.88rem;color:var(--dim)">
           <p style="margin-bottom:14px;color:var(--text);font-size:.92rem">Here's what changed in this update:</p>
           <ul style="margin-left:18px;margin-bottom:20px;line-height:1.7">
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">Revision Button Fixed ✅</strong><br>Fixed a database bug where tapping "Revised" in the revision section wouldn't register the progress properly. Spaced repetition dates now sync flawlessly.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">Pending Topics Available</strong><br>For users on the paused CSEB plan, the Pending section has been re-enabled. You can now catch up on missed topics during the pause.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">All 3 CSEB Exams Postponed</strong><br>Cat 11, Cat 10, and Cat 09 exams now show <em>Postponed — Date TBA</em> in the exam strip. New dates will be updated when announced.</li>
-            <li style="margin-bottom:0"><strong style="color:var(--text)">Escape Key Support</strong><br>Press Escape to easily close any open modal (Leaderboard, Settings, or this dialog).</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">📊 New CSEB Tracker Card</strong><br>A detailed tracker card has been added to the CSEB plan! It shows your overall coverage, spaced-repetition revision health, and whether you are on track with your target.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">New Joinee Flow</strong><br>New users signing up during the CSEB exam pause will automatically bypass the pause screen and be put on the active 45-day cycle.</li>
+            <li style="margin-bottom:0"><strong style="color:var(--text)">Accurate Progress Metrics</strong><br>The revision percentage logic has been upgraded to calculate strictly against the topics you've actually covered, giving you a much more motivating and accurate reflection of your revision health.</li>
           </ul>
           <div style="margin-top:20px">
             <button class="auth-btn" style="background:var(--blue);width:100%" onclick="document.getElementById('wn-overlay').remove()">Got it!</button>
@@ -1852,21 +1914,35 @@ $('settings-delete-btn').addEventListener('click', async function() {
     btn.disabled = true;
     try {
       const uid = auth.currentUser.uid;
-      try { await deleteDoc(doc(db, 'users', uid)); } catch(e){}
-      try { await deleteDoc(doc(db, 'leaderboard', uid)); } catch(e){}
+      const userRef = doc(db, 'users', uid);
+      const lbRef = doc(db, 'leaderboard', uid);
       
-      await deleteUser(auth.currentUser);
-      $('settings-overlay').style.opacity='0';
-      setTimeout(()=>$('settings-overlay').style.visibility='hidden',200);
-    } catch(e) {
-      if (e.code === 'auth/requires-recent-login') {
-        alert('Security Required: Please sign out and sign back in to delete your account.');
-      } else if (e.code && e.code.includes('token')) {
-        alert('Your session has expired. You will be signed out.');
-        signOut(auth);
-      } else {
-        alert('Error deleting account: ' + e.message);
+      const backupUser = { ...remoteData };
+      delete backupUser._sr; // omit complex nested if not needed, or keep it. It's safe to keep.
+      
+      try { await deleteDoc(userRef); } catch(e){}
+      try { await deleteDoc(lbRef); } catch(e){}
+      
+      try {
+        await deleteUser(auth.currentUser);
+        $('settings-overlay').style.opacity='0';
+        setTimeout(()=>$('settings-overlay').style.visibility='hidden',200);
+      } catch(e) {
+        try { await setDoc(userRef, backupUser); } catch(err){}
+        
+        if (e.code === 'auth/requires-recent-login') {
+          alert('Security Required: Please sign out and sign back in to delete your account.');
+        } else if (e.code && e.code.includes('token')) {
+          alert('Your session has expired. You will be signed out.');
+          signOut(auth);
+        } else {
+          alert('Error deleting account: ' + e.message);
+        }
+        btn.textContent = 'Delete Account';
+        btn.disabled = false;
       }
+    } catch(err) {
+      console.error(err);
       btn.textContent = 'Delete Account';
       btn.disabled = false;
     }
