@@ -991,7 +991,8 @@ function renderACCACard(dc, dateBadge) {
   });
   
   const covPct = totalW > 0 ? Math.round((covW / totalW) * 100) : 0;
-  const revPct = totalW > 0 ? Math.round((revPoints / (totalW * MAX_REV)) * 100) : 0;
+  // Calculate revision progress strictly on topics that have been covered
+  const revPct = covW > 0 ? Math.round((revPoints / (covW * MAX_REV)) * 100) : 0;
   
   const startMs = new Date("2026-06-12").getTime();
   const endMs = new Date("2026-08-27").getTime();
@@ -1005,7 +1006,7 @@ function renderACCACard(dc, dateBadge) {
   if (covPct >= tgtPct) statusMsg = '🔥 On Track';
   else {
     const pointsBehind = Math.ceil(((tgtPct - covPct) / 100) * totalW);
-    statusMsg = `⚠ Behind ~${pointsBehind} pts`;
+    statusMsg = `⚠ Behind ~${pointsBehind} topics`;
   }
   
   dc.innerHTML = `
