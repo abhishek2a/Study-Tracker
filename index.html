@@ -16,22 +16,22 @@
 <title>Study Tracker</title>
 <style>
 :root {
-  --bg:#020305; --s1:#080a0f; --s2:#0c0e14; --s3:#121520;
-  --text:#e2e6f0; --dim:#4a5470; --border:#181c28;
-  --green:#26c485; --accent:#f0a020; --blue:#4d96f0;
-  --banking:#4d96f0; --accounting:#26c485; --act:#f0a020;
+  --bg:#020305; --s1:#090b12; --s2:#0d0f17; --s3:#141723;
+  --text:#e6e9f0; --dim:#525b73; --border:#1a1e2d;
+  --green:#28d48e; --accent:#fcae28; --blue:#54a2ff;
+  --banking:#54a2ff; --accounting:#28d48e; --act:#fcae28;
   --principles:#1fbfb8; --english:#9b76f5; --reasoning:#e8629a; --gk:#6e7e96; --audit:#f07850;
   --framework:#6c8ebf; --transactions:#82b366; --analysis:#d6a500; --preparation:#9b59b6;
-  --red:#e05555;
+  --red:#f25c5c;
   --font:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
   --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
-  --radius:14px;
-  --shadow:0 2px 12px rgba(0,0,0,.4);
+  --radius:16px;
+  --shadow:0 8px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.15);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overscroll-behavior:none}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
 /* Prevent 300ms tap delay on all interactive elements for mobile/PWA */
 a,button,input,select,label,[role=button]{touch-action:manipulation}
 #auth-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
@@ -108,8 +108,9 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:11px}
 @keyframes cardHighlight{from{box-shadow:0 0 0 2px var(--blue)}to{box-shadow:0 0 0 0px transparent}}
-.day-card{border-radius:var(--radius);padding:22px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:var(--shadow);contain:layout style}
-.day-card+.day-card{margin-top:12px}
+.day-card{border-radius:var(--radius);padding:24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:var(--shadow);contain:layout style;transition:transform .2s ease, box-shadow .2s ease}
+.day-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.25)}
+.day-card+.day-card{margin-top:14px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:rgba(77,150,240,.035)}.day-card.banking::before{background:var(--banking)}
 .day-card.accounting{border-color:rgba(43,189,136,.2);background:rgba(43,189,136,.035)}.day-card.accounting::before{background:var(--accounting)}
@@ -169,8 +170,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .revise-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .revise-text{flex:1;font-size:.82rem;line-height:1.45;color:var(--text)}
 .revise-meta{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
-.revise-btn{flex-shrink:0;padding:6px 13px;border:1px solid var(--green);border-radius:8px;background:transparent;color:var(--green);font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
-@media(hover:hover){.revise-btn:hover{background:var(--green);color:#000}}.revise-btn:active{background:var(--green);color:#000;transform:scale(.94)}
+.revise-btn{flex-shrink:0;padding:7px 14px;border:1px solid var(--green);border-radius:8px;background:transparent;color:var(--green);font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s ease;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
+@media(hover:hover){.revise-btn:hover{background:var(--green);color:#000;box-shadow:0 4px 12px rgba(40,212,142,.3);transform:translateY(-1px)}}.revise-btn:active{background:var(--green);color:#000;transform:scale(.94)}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0}
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cl{list-style:none}
@@ -178,8 +179,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .cl li:last-child{border-bottom:none}
 .cl label{display:flex;align-items:flex-start;gap:13px;padding:11px 8px;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:.1s}
 .cl label:hover{opacity:.82}
-.cl input[type=checkbox]{appearance:none;flex-shrink:0;width:18px;height:18px;min-width:18px;border:1.5px solid var(--dim);border-radius:5px;background:transparent;cursor:pointer;margin-top:3px;display:grid;place-content:center;transition:.18s}
-.cl input[type=checkbox]::before{content:"";width:9px;height:9px;transform:scale(0);transition:.12s;clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:var(--bg)}
+.cl input[type=checkbox]{appearance:none;flex-shrink:0;width:20px;height:20px;min-width:20px;border:1.5px solid var(--dim);border-radius:6px;background:transparent;cursor:pointer;margin-top:2px;display:grid;place-content:center;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.cl input[type=checkbox]::before{content:"";width:10px;height:10px;transform:scale(0);transition:.25s cubic-bezier(0.34,1.56,0.64,1);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:var(--bg)}
 .cl input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
 .cl input[type=checkbox]:checked::before{transform:scale(1)}
 .cl input[type=checkbox]:checked+span{text-decoration:line-through;color:var(--dim)}
@@ -194,10 +195,10 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .hidden{display:none!important}
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
-[data-theme="amoled"]{--bg:#000000;--s1:#050505;--s2:#080808;--s3:#0d0d0d;--border:#111;--dim:#505868}
+[data-theme="amoled"]{--bg:#000000;--s1:#060606;--s2:#0a0a0a;--s3:#0f0f0f;--border:#141414;--dim:#586073}
 [data-theme="light"]{
-  --bg:#f0f2f5;--s1:#ffffff;--s2:#eaedf1;--s3:#e0e4ea;--border:#cbd0da;
-  --text:#0e1118;--dim:#626a82;--green:#178a5e;--accent:#a86200;--blue:#1f5cb8;
+  --bg:#f2f4f7;--s1:#ffffff;--s2:#ebedf2;--s3:#e2e5eb;--border:#cdd2dc;
+  --text:#11141c;--dim:#666e86;--green:#1a9a69;--accent:#b86c00;--blue:#2266cc;
   --red:#b82e2e;--shadow:0 2px 12px rgba(0,0,0,.08);
   --banking:#1f5cb8;--accounting:#178a5e;--act:#a86200;
   --principles:#0a8a84;--english:#6840c8;--reasoning:#b03878;--gk:#4e5a70;--audit:#b84e22;
@@ -342,7 +343,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.62</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.65</div>
         </div>
       </div>
     </div>
@@ -547,7 +548,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.62';
+const APP_VERSION = '1.1.65';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1704,9 +1705,9 @@ function showWhatsNew() {
         <div class="lb-body" style="font-size:0.88rem;color:var(--dim)">
           <p style="margin-bottom:14px;color:var(--text);font-size:.92rem">Here's what changed in this update:</p>
           <ul style="margin-left:18px;margin-bottom:20px;line-height:1.7">
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">📊 New CSEB Tracker Card</strong><br>A detailed tracker card has been added to the CSEB plan! It shows your overall coverage, spaced-repetition revision health, and whether you are on track with your target.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">New Joinee Flow</strong><br>New users signing up during the CSEB exam pause will automatically bypass the pause screen and be put on the active 45-day cycle.</li>
-            <li style="margin-bottom:0"><strong style="color:var(--text)">Accurate Progress Metrics</strong><br>The revision percentage logic has been upgraded to calculate strictly against the topics you've actually covered, giving you a much more motivating and accurate reflection of your revision health.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">🎨 Premium UI Refresh</strong><br>The app has received a visual overhaul with a cleaner design, deeper magnetic shadows, and sharper font rendering across the board.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">✨ Micro-animations</strong><br>Interacting with pending tasks and study cards is now much more satisfying with bouncy, responsive micro-animations on hover and click.</li>
+            <li style="margin-bottom:0"><strong style="color:var(--text)">🐛 Invisible Bug Fixes</strong><br>We crushed four silent background bugs, including a fix for leaderboard accuracy and a safeguard for account deletion.</li>
           </ul>
           <div style="margin-top:20px">
             <button class="auth-btn" style="background:var(--blue);width:100%" onclick="document.getElementById('wn-overlay').remove()">Got it!</button>
