@@ -14,6 +14,7 @@
 <link rel="icon" href="logo.svg?v=1.3.2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
 <title>Study Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
 :root {
   --bg:#020305; --s1:#090b12; --s2:#0d0f17; --s3:#141723;
@@ -25,7 +26,7 @@
   --red:#f25c5c;
   --font:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
   --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
-  --radius:16px;
+  --radius:18px;
   --shadow:0 8px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.15);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -47,8 +48,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .auth-field label{display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .auth-field input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;transition:.2s}
 .auth-field input:focus{border-color:var(--blue)}
-.auth-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:11px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:6px;letter-spacing:.01em}
-.auth-btn:hover{opacity:.88}
+.auth-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:11px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .3s cubic-bezier(.4,0,.2,1);margin-top:6px;letter-spacing:.01em}
+.auth-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 16px rgba(34,102,204,.3)}
 .auth-err{font-size:.75rem;color:var(--red);margin-top:10px;min-height:18px;font-family:var(--mono)}
 @media(max-width:480px){
   #auth-overlay{align-items:flex-start;padding:0}
@@ -108,8 +109,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:11px}
 @keyframes cardHighlight{from{box-shadow:0 0 0 2px var(--blue)}to{box-shadow:0 0 0 0px transparent}}
-.day-card{border-radius:var(--radius);padding:24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:var(--shadow);contain:layout style;transition:transform .2s ease, box-shadow .2s ease}
-.day-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.25)}
+.day-card{border-radius:var(--radius);padding:24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), var(--shadow);contain:layout style;transition:transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1)}
+.day-card:hover{transform:translateY(-3px);box-shadow:inset 0 1px 1px rgba(255,255,255,0.1), 0 12px 28px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.25)}
 .day-card+.day-card{margin-top:14px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:rgba(77,150,240,.035)}.day-card.banking::before{background:var(--banking)}
@@ -149,9 +150,9 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
 .lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
 .lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.lb-stat{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 16px;flex:1;min-width:90px;box-shadow:var(--shadow)}
-.lb-stat-val{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
-.lb-stat-lbl{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
+.lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:90px;box-shadow:0 8px 32px rgba(0,0,0,0.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lb-stat-val{font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:2px}
+.lb-stat-lbl{font-size:.65rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em}
 .lb-list{display:flex;flex-direction:column;gap:6px}
 .lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
 .lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
@@ -172,6 +173,9 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .revise-meta{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
 .revise-btn{flex-shrink:0;padding:7px 14px;border:1px solid var(--green);border-radius:8px;background:transparent;color:var(--green);font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s ease;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
 @media(hover:hover){.revise-btn:hover{background:var(--green);color:#000;box-shadow:0 4px 12px rgba(40,212,142,.3);transform:translateY(-1px)}}.revise-btn:active{background:var(--green);color:#000;transform:scale(.94)}
+.revise-btn-diff{flex:1;padding:6px 0;border:1px solid;border-radius:8px;background:transparent;font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:flex;justify-content:center;align-items:center;gap:4px}
+@media(hover:hover){.revise-btn-diff:hover{background:var(--s3);transform:translateY(-1px)}}
+.revise-btn-diff:active{transform:scale(.94)}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0}
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cl{list-style:none}
@@ -180,8 +184,9 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .cl label{display:flex;align-items:flex-start;gap:13px;padding:11px 8px;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:.1s}
 .cl label:hover{opacity:.82}
 .cl input[type=checkbox]{appearance:none;flex-shrink:0;width:20px;height:20px;min-width:20px;border:1.5px solid var(--dim);border-radius:6px;background:transparent;cursor:pointer;margin-top:2px;display:grid;place-content:center;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.cl input[type=checkbox]:hover{border-color:var(--blue);transform:scale(1.1)}
 .cl input[type=checkbox]::before{content:"";width:10px;height:10px;transform:scale(0);transition:.25s cubic-bezier(0.34,1.56,0.64,1);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:var(--bg)}
-.cl input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
+.cl input[type=checkbox]:checked{background:var(--green);border-color:var(--green);transform:scale(1)}
 .cl input[type=checkbox]:checked::before{transform:scale(1)}
 .cl input[type=checkbox]:checked+span{text-decoration:line-through;color:var(--dim)}
 #splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .3s,visibility .3s}
@@ -246,8 +251,10 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
 #lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden}
 #lb-overlay.open{opacity:1;visibility:visible}
-.lb-box{width:100%;max-width:540px;max-height:90vh;background:var(--bg);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden}
-.lb-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s1);flex-shrink:0}
+.lb-box{width:100%;max-width:540px;max-height:90vh;background:rgba(8,10,15,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,.6);overflow:hidden}
+[data-theme="light"] .lb-box{background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.1);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5), 0 24px 80px rgba(0,0,0,.2)}
+.lb-hdr{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:transparent;flex-shrink:0}
+[data-theme="light"] .lb-hdr{border-bottom:1px solid rgba(0,0,0,0.05)}
 .lb-hdr h2{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0}
 .lb-hdr p{font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)}
 .lb-close{background:transparent;border:none;color:var(--dim);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:0.15s;line-height:1;width:32px;height:32px}
@@ -265,7 +272,8 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
 .mock-mini .cl input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 @media(max-width:820px){.subj-grid{grid-template-columns:1fr}}
-.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:border-color .2s;contain:content}
+.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:inset 0 1px 1px rgba(255,255,255,0.02), var(--shadow);transition:all .3s cubic-bezier(.4,0,.2,1);contain:content}
+.subj-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.2);box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,.4)}
 .subj-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .subj-hdr h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em}
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
@@ -305,6 +313,38 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
   </div>
 </div>
 
+<div id="stats-overlay" style="display:none;position:fixed;inset:0;z-index:990;background:rgba(2,3,5,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow-y:auto;padding-bottom:40px;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px)">
+  <div class="topbar" style="position:sticky;top:0;background:transparent;border-bottom:none">
+    <div class="logo">Study <span>Statistics</span></div>
+    <div class="topright">
+      <button class="tnav" onclick="closeStats()" style="display:flex;background:rgba(255,255,255,0.05);color:var(--text);border:1px solid rgba(255,255,255,0.1);border-radius:12px">✕ Close</button>
+    </div>
+  </div>
+  <div class="wrap" style="max-width:800px;margin-top:10px">
+    
+    <div class="lb-stats" style="margin-bottom:30px">
+      <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-total">0</div><div class="lb-stat-lbl">Total Topics</div></div>
+      <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-comp" style="color:var(--green)">0</div><div class="lb-stat-lbl">Completed</div></div>
+      <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-pend" style="color:var(--red)">0</div><div class="lb-stat-lbl">Pending</div></div>
+      <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-rev" style="color:var(--accent)">0</div><div class="lb-stat-lbl">Revision Due</div></div>
+    </div>
+    
+    <div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)">
+      <h2 style="color:var(--blue)">Analytics</h2>
+    </div>
+    <div class="lb-stats">
+      <div class="lb-stat"><div class="lb-stat-val" id="st-streak">0 🔥</div><div class="lb-stat-lbl">Current Streak</div></div>
+      <div class="lb-stat"><div class="lb-stat-val" id="st-avg">0.0</div><div class="lb-stat-lbl">Avg / Active Day</div></div>
+      <div class="lb-stat"><div class="lb-stat-val" id="st-hours">0h</div><div class="lb-stat-lbl">Estimated Hours</div></div>
+    </div>
+    <div class="lb-stats" style="margin-top:10px">
+      <div class="lb-stat"><div class="lb-stat-val" id="st-speed">0.0%</div><div class="lb-stat-lbl">Completion Speed</div></div>
+      <div class="lb-stat"><div class="lb-stat-val" id="st-finish">-</div><div class="lb-stat-lbl">Projected Finish</div></div>
+    </div>
+    
+  </div>
+</div>
+
 <div id="app">
 <button id="btt" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <div class="topbar">
@@ -339,11 +379,13 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-lb-item" role="menuitem">🏆 Leaderboard</button>
           <div class="pd-sep"></div>
+          <button class="pd-item" id="pd-stats-item" role="menuitem">📊 Statistics</button>
+          <div class="pd-sep"></div>
 
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.1.65</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.80</div>
         </div>
       </div>
     </div>
@@ -548,7 +590,7 @@ async function doReset(){
   }
 };
 
-const APP_VERSION = '1.1.65';
+const APP_VERSION = '1.2.80';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -944,8 +986,9 @@ let _lastPendingHtml='';
 function renderPending(){
   const {labels}=getCourseData(),pc=$('pendingcard'),pending=getPending();
   if(!pending.length){
-    const html='<div class="no-pending">✓ All caught up!</div>';
+    const html='<div class="no-pending">🎉 All caught up!</div>';
     if(_lastPendingHtml===html)return;
+    if(_lastPendingHtml !== '' && window.initialLoadComplete) triggerConfetti();
     _lastPendingHtml=html;pc.innerHTML=html;return;
   }
   const html=pending.map(({date,s,unchecked})=>{
@@ -976,7 +1019,7 @@ function renderACCACard(dc, dateBadge) {
   let totalW = 0;
   let covW = 0;
   let revPoints = 0;
-  const MAX_REV = typeof SR_INTERVALS !== 'undefined' ? SR_INTERVALS.length : 4;
+  const MAX_REV = 6;
   
   const srData = remoteData._sr || {};
   
@@ -1030,7 +1073,7 @@ function updateCSEBTrackerDOM() {
 
   const cd = COURSE_DATA['CSEB11'];
   let totalW = 0, covW = 0, revPoints = 0;
-  const MAX_REV = typeof SR_INTERVALS !== 'undefined' ? SR_INTERVALS.length : 4;
+  const MAX_REV = 6;
   const srData = remoteData._sr || {};
 
   Object.values(cd.subjs).forEach(subj => {
@@ -1334,28 +1377,34 @@ function renderExamStrip(){
   }).join('');
 }
 
-// ── SPACED REPETITION ──
-// Intervals in days: review 1d, 3d, 7d, 14d, 30d, 60d after completion
-const SR_INTERVALS=[1,3,7,14,30,60];
-
-function srNextDate(completedDateStr,count){
-  const d=new Date(completedDateStr);
-  const days=SR_INTERVALS[Math.min(count,SR_INTERVALS.length-1)];
+function addDaysStr(dateStr, days){
+  const d=new Date(dateStr);
   d.setDate(d.getDate()+days);
   return d.toISOString().split('T')[0];
+}
+
+function getMemoryRetention(id) {
+  const s = remoteData._sr[id];
+  if(!s || !s.completed) return 0;
+  const lastDateStr = s.lastRev || s.completed;
+  const elapsedDays = Math.max(0, (new Date(ts()) - new Date(lastDateStr)) / (1000 * 60 * 60 * 24));
+  const strength = s.interval || 1;
+  const retention = Math.exp(-elapsedDays / strength);
+  return Math.max(0, Math.min(100, Math.round(retention * 100)));
 }
 
 function onCheck(id, val) {
   const todayStr = ts();
   remoteData[id] = val;
 
-  // Build Firestore payload using nested objects (NOT dot-notation) to avoid ghost fields
   let srSubUpdate = null;
+  let actData = null;
 
   if (val) {
+    actData = logActivity();
     if (!remoteData._sr) remoteData._sr = {};
     if (!remoteData._sr[id] || typeof remoteData._sr[id] !== 'object' || !remoteData._sr[id].next) {
-      const entry = { completed: todayStr, count: 0, next: srNextDate(todayStr, 0) };
+      const entry = { completed: todayStr, lastRev: todayStr, count: 0, next: addDaysStr(todayStr, 1), ease: 2.5, interval: 1 };
       remoteData._sr[id] = entry;
       srSubUpdate = { [id]: entry };
     }
@@ -1368,13 +1417,11 @@ function onCheck(id, val) {
 
   if (currentUid) {
     const payload = { [id]: val };
-    if (srSubUpdate) {
-      setDoc(doc(db,'users',currentUid), { ...payload, _sr: srSubUpdate }, {merge:true})
-        .catch(err => console.error('[Sync] SR write failed:', err));
-    } else {
-      setDoc(doc(db,'users',currentUid), payload, {merge:true})
-        .catch(err => console.error('[Sync] Write failed:', err));
-    }
+    if (srSubUpdate) payload._sr = srSubUpdate;
+    if (actData) payload._activity = actData;
+    
+    setDoc(doc(db,'users',currentUid), payload, {merge:true})
+      .catch(err => console.error('[Sync] Write failed:', err));
   }
 
   const mainBox = document.getElementById(id); if (mainBox) mainBox.checked = val;
@@ -1404,60 +1451,123 @@ function getRevisionsDue(){
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
 
-async function markRevised(id){
+async function markRevised(id, difficulty){
   if(!remoteData._sr||!remoteData._sr[id])return;
   const s=remoteData._sr[id];
-  s.count++;
-  s.next=s.count>=SR_INTERVALS.length?null:srNextDate(ts(),s.count);
-  if (!s.next) {
-    // Topic mastered — delete locally
-    delete remoteData._sr[id];
-    if(currentUid){
-      setDoc(doc(db,'users',currentUid), { _sr: { [id]: deleteField() } }, {merge:true})
-        .catch(e=>console.error('[SR] Failed to delete mastered topic:',e));
-    }
-  } else {
-    if(currentUid){
-      setDoc(doc(db,'users',currentUid), { _sr: { [id]: s } }, {merge:true})
-        .catch(e=>console.error('[SR] Failed to save revision progress:',e));
-    }
+  
+  if (s.ease === undefined) s.ease = 2.5;
+  if (s.interval === undefined) s.interval = 1;
+  
+  if (difficulty === 'easy') {
+    s.ease += 0.15;
+    s.interval = s.count === 0 ? 3 : s.interval * s.ease * 1.3;
+  } else if (difficulty === 'medium') {
+    s.interval = s.count === 0 ? 2 : s.interval * s.ease;
+  } else if (difficulty === 'hard') {
+    s.ease = Math.max(1.3, s.ease - 0.2);
+    s.interval = Math.max(1, s.interval * 0.5); 
   }
+  
+  s.count++;
+  s.interval = Math.round(s.interval);
+  s.lastRev = ts();
+  s.next = addDaysStr(s.lastRev, s.interval);
+  
+  const actData = logActivity();
+  
+  if(currentUid){
+    setDoc(doc(db,'users',currentUid), { _sr: { [id]: s }, _activity: actData }, {merge:true})
+      .catch(e=>console.error('[SR] Failed to save revision progress:',e));
+  }
+  
   renderRevisions();updateAll();
   if ((remoteData.activeCourse || 'CSEB11') === 'ACCA26') makeCard();
 }
 
 function renderRevisions(){
   const rc=$('revisecard'),sec=$('revise-sec');if(!rc||!sec)return;
-  const due=getRevisionsDue();
+  
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const cd = COURSE_DATA[activeCourse];
+  if (!cd || !cd.labels) { sec.style.display='none'; return; }
+  const activeLabels = cd.labels;
+  
+  const allSr = Object.entries(remoteData._sr || {})
+    .filter(([id,s])=>s && typeof s==='object' && !!remoteData[id] && activeLabels[id])
+    .map(([id,s])=>{
+      const mem = getMemoryRetention(id);
+      return {id, label: activeLabels[id], ...s, mem};
+    });
+    
+  const due = allSr.filter(s => s.next <= ts()).sort((a,b)=>a.next.localeCompare(b.next));
+  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== ts()).sort((a,b)=>a.mem - b.mem);
+  const smart = allSr.filter(s => s.next > ts() && s.lastRev !== ts()).sort((a,b)=>a.mem - b.mem).slice(0, 4);
+  
+  const hasContent = due.length || weak.length || smart.length;
+  sec.style.display = hasContent ? 'flex' : 'none';
   const nav=$('revise-nav'),badge=$('revise-badge');
-  sec.style.display=due.length?'flex':'none';
-  if(nav){nav.style.display=due.length&&window.innerWidth>600?'inline-flex':'none';}
-  if(badge){badge.textContent=due.length||'';}
-  if(!due.length){rc.innerHTML='';return;}
-  const intervalLabels=['1st review','2nd review','3rd review','4th review','5th review','6th review'];
-  const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
-  rc.innerHTML=`<div class="revise-grid">${due.map(({id,label,count,next})=>{
-    const overdue=next<ts();
-    const c=colors[Math.min(count,colors.length-1)];
-    return `<div class="revise-item">
-      <div class="revise-dot" style="background:${c}"></div>
-      <div style="flex:1;min-width:0">
-        <div class="revise-text">${label}</div>
-        <div class="revise-meta">${intervalLabels[count]||'Review'} · ${overdue?'Overdue':'Due today'} · completed ${count} reviews</div>
+  if(nav) nav.style.display = due.length && window.innerWidth>600 ? 'inline-flex' : 'none';
+  if(badge) badge.textContent = due.length || '';
+  
+  if(!hasContent){rc.innerHTML='';return;}
+  
+  const renderItem = (item, isDue) => {
+    const overdue = item.next < ts();
+    const nextStr = item.next === addDaysStr(ts(), 1) ? 'Tomorrow' : item.next === ts() ? 'Today' : item.next;
+    const memColor = item.mem < 50 ? 'var(--red)' : item.mem < 80 ? 'var(--accent)' : 'var(--green)';
+    const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
+    const c = colors[Math.min(item.count || 0, colors.length-1)];
+    
+    return `<div class="revise-item" style="display:block">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="revise-dot" style="background:${c}"></div>
+        <div style="flex:1;min-width:0">
+          <div class="revise-text">${item.label}</div>
+          <div class="revise-meta">${isDue ? (overdue?'<span style="color:var(--red)">Overdue</span>':'Due today') : 'Memory: ' + item.mem + '%'} &bull; Next: ${nextStr}</div>
+        </div>
       </div>
-      <button class="revise-btn" data-rid="${id}">✓ Revised</button>
+      
+      <div style="width:100%;height:3px;background:var(--s2);border-radius:2px;margin-bottom:14px;overflow:hidden">
+        <div style="width:${item.mem}%;height:100%;background:${memColor};transition:width 0.3s ease"></div>
+      </div>
+      
+      <div style="display:flex;gap:6px">
+        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="hard" style="color:var(--red);border-color:rgba(242,92,92,0.3)">😵 Hard</button>
+        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="medium" style="color:var(--accent);border-color:rgba(252,174,40,0.3)">😐 Med</button>
+        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="easy" style="color:var(--green);border-color:rgba(40,212,142,0.3)">😊 Easy</button>
+      </div>
     </div>`;
-  }).join('')}</div>`;
+  };
+
+  let html = '';
+  if(due.length) {
+    html += `<div class="revise-grid" style="margin-bottom:20px">${due.map(d=>renderItem(d, true)).join('')}</div>`;
+  }
+  if(weak.length) {
+    html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
+               <h2 style="color:var(--red)"><span style="display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Weak Areas</h2>
+             </div>`;
+    html += `<div class="revise-grid" style="margin-bottom:20px">${weak.map(d=>renderItem(d, false)).join('')}</div>`;
+  }
+  if(smart.length) {
+    html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
+               <h2 style="color:var(--blue)"><span style="display:inline-block;width:6px;height:6px;background:var(--blue);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Today Recommended</h2>
+             </div>`;
+    html += `<div class="revise-grid">${smart.map(d=>renderItem(d, false)).join('')}</div>`;
+  }
+  
+  rc.innerHTML = html;
+  
   let _reviseTouch=false;
-  rc.querySelectorAll('.revise-btn').forEach(b=>{
+  rc.querySelectorAll('.revise-btn-diff').forEach(b => {
     b.addEventListener('touchend',function(e){
       e.preventDefault();_reviseTouch=true;
-      markRevised(b.getAttribute('data-rid'));
+      markRevised(b.getAttribute('data-rid'), b.getAttribute('data-diff'));
       setTimeout(()=>{_reviseTouch=false;},500);
     });
     b.addEventListener('click',function(){
       if(_reviseTouch)return;
-      markRevised(b.getAttribute('data-rid'));
+      markRevised(b.getAttribute('data-rid'), b.getAttribute('data-diff'));
     });
   });
 }
@@ -1703,11 +1813,12 @@ function showWhatsNew() {
           <button class="lb-close" onclick="document.getElementById('wn-overlay').remove()">✕</button>
         </div>
         <div class="lb-body" style="font-size:0.88rem;color:var(--dim)">
-          <p style="margin-bottom:14px;color:var(--text);font-size:.92rem">Here's what changed in this update:</p>
+          <p style="margin-bottom:14px;color:var(--text);font-size:.92rem">Here's what's new:</p>
           <ul style="margin-left:18px;margin-bottom:20px;line-height:1.7">
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">🎨 Premium UI Refresh</strong><br>The app has received a visual overhaul with a cleaner design, deeper magnetic shadows, and sharper font rendering across the board.</li>
-            <li style="margin-bottom:10px"><strong style="color:var(--text)">✨ Micro-animations</strong><br>Interacting with pending tasks and study cards is now much more satisfying with bouncy, responsive micro-animations on hover and click.</li>
-            <li style="margin-bottom:0"><strong style="color:var(--text)">🐛 Invisible Bug Fixes</strong><br>We crushed four silent background bugs, including a fix for leaderboard accuracy and a safeguard for account deletion.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">🚀 Smart Revision Algorithm</strong><br>Spaced repetition now identifies your "Weak Areas" and gives you top 4 "Today Recommended" topics to study, dynamically shifting based on how hard/easy you found them!</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">📊 Advanced Statistics Dashboard</strong><br>Added a polished glassmorphism dashboard tracking your total topics, completion speed, streak, and highly accurate projected finish date.</li>
+            <li style="margin-bottom:10px"><strong style="color:var(--text)">🎉 Gamification & Audio</strong><br>Satisfying clicks, achievement sounds, and confetti bursts celebrate your progress.</li>
+            <li style="margin-bottom:0"><strong style="color:var(--text)">✨ Premium UI Polish</strong><br>Significant visual upgrades, bug fixes (splash screen, date formatting), and overall optimization across the board.</li>
           </ul>
           <div style="margin-top:20px">
             <button class="auth-btn" style="background:var(--blue);width:100%" onclick="document.getElementById('wn-overlay').remove()">Got it!</button>
@@ -1718,6 +1829,185 @@ function showWhatsNew() {
     document.body.appendChild(wn);
   }
 }
+const AudioEngine = {
+  ctx: null,
+  init() {
+    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  playClick() {
+    try {
+      this.init();
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
+      gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.05);
+    } catch(e) {}
+  },
+  playAchievement() {
+    try {
+      this.init();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C arpeggio
+      notes.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const startTime = this.ctx.currentTime + (i * 0.1);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.5);
+      });
+    } catch(e) {}
+  }
+};
+
+let confettiFired = false;
+function triggerConfetti() {
+  if (confettiFired) return;
+  confettiFired = true;
+  if (typeof confetti !== 'undefined') {
+    AudioEngine.playAchievement();
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#28d48e', '#54a2ff', '#fcae28', '#f25c5c']
+    });
+  }
+}
+
+function logActivity() {
+  AudioEngine.playClick();
+  const todayStr = ts();
+  if (!remoteData._activity) remoteData._activity = {};
+  remoteData._activity[todayStr] = (remoteData._activity[todayStr] || 0) + 1;
+  return remoteData._activity;
+}
+
+function openStats() {
+  const overlay = $('stats-overlay');
+  if (!overlay) return;
+  
+  // Animate in
+  overlay.style.display = 'block';
+  // Force reflow
+  overlay.offsetHeight;
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'auto';
+  overlay.style.transform = 'translateY(0)';
+  document.body.style.overflow = 'hidden';
+  
+  // Calculate Stats
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const cd = COURSE_DATA[activeCourse];
+  if (!cd) return;
+  
+  let total = 0, comp = 0, pend = 0;
+  Object.values(cd.subjs).forEach(subj => {
+    if (!subj.ids) return;
+    subj.ids.forEach(id => {
+      total++;
+      if (remoteData[id]) comp++;
+    });
+  });
+  pend = total - comp;
+  
+  const srData = remoteData._sr || {};
+  const activeLabels = cd.labels || {};
+  let revDue = 0;
+  Object.entries(srData).forEach(([id, s]) => {
+    if (s && s.next && s.next <= ts() && !!remoteData[id] && activeLabels[id]) revDue++;
+  });
+  
+  // Hours Estimate
+  const hours = Math.round(comp * 1.25);
+  
+  // Activity metrics
+  const activity = remoteData._activity || {};
+  let streak = 0;
+  const dates = Object.keys(activity).sort().reverse();
+  
+  let checkDate = new Date();
+  let checkDateStr = checkDate.toISOString().split('T')[0];
+  
+  // Check if today is active
+  if (activity[checkDateStr]) {
+    streak++;
+    checkDate.setDate(checkDate.getDate() - 1);
+    checkDateStr = checkDate.toISOString().split('T')[0];
+  } else {
+    // If today is NOT active, see if yesterday was (they still have a streak alive)
+    checkDate.setDate(checkDate.getDate() - 1);
+    checkDateStr = checkDate.toISOString().split('T')[0];
+    if (activity[checkDateStr]) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+      checkDateStr = checkDate.toISOString().split('T')[0];
+    }
+  }
+  
+  // Continue counting backwards
+  while (activity[checkDateStr]) {
+    streak++;
+    checkDate.setDate(checkDate.getDate() - 1);
+    checkDateStr = checkDate.toISOString().split('T')[0];
+  }
+  
+  // Average per active day
+  let avg = 0;
+  if (activeDays > 0) {
+    const totalActivity = Object.values(activity).reduce((a,b)=>a+b, 0);
+    avg = (totalActivity / activeDays).toFixed(1);
+  }
+  
+  // Speed & Projected Finish
+  const pace = (comp / total) * 100;
+  let speed = 0, finishDate = '-';
+  if (comp > 0 && activeDays > 0) {
+    const totalActivity = Object.values(activity).reduce((a, b) => a + b, 0);
+    const trueAvg = totalActivity / activeDays; 
+    if (trueAvg > 0) {
+      const daysLeft = Math.ceil(pend / trueAvg);
+      const fd = new Date();
+      fd.setDate(fd.getDate() + daysLeft);
+      finishDate = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+  }
+
+  $('st-total').textContent = total;
+  $('st-comp').textContent = comp;
+  $('st-pend').textContent = pend;
+  $('st-rev').textContent = revDue;
+  $('st-hours').textContent = hours + 'h';
+  $('st-streak').textContent = streak + ' 🔥';
+  $('st-avg').textContent = avg;
+  $('st-speed').textContent = pace.toFixed(1) + '%';
+  $('st-finish').textContent = finishDate;
+}
+
+function closeStats() {
+  const overlay = $('stats-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.transform = 'translateY(20px)';
+    setTimeout(() => { if (overlay.style.opacity === '0') overlay.style.display = 'none'; }, 400);
+  }
+  document.body.style.overflow = '';
+}
+window.closeStats = closeStats;
 
 function initApp(user){
   $('auth-overlay').classList.add('hidden');
@@ -1761,6 +2051,7 @@ function initApp(user){
       startLBListener();
       updateLBData();
       showWhatsNew();
+      window.initialLoadComplete = true;
     }
     syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
@@ -1970,6 +2261,14 @@ if(lbClose) lbClose.addEventListener('click', function(e) {
 document.getElementById('lb-overlay').addEventListener('click', function(e) {
   if(e.target === this) this.classList.remove('open');
 });
+
+const statsBtn = document.getElementById('pd-stats-item');
+if(statsBtn) statsBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  closeDrop();
+  openStats();
+});
+
 document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
