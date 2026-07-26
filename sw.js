@@ -2,6 +2,7 @@ const CACHE = 'study-tracker-v1.2.80-test';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(PRECACHE))
   );
@@ -9,9 +10,9 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys().then(keys => Promise.all(
+      keys.map(k => { if (k !== CACHE) return caches.delete(k); })
+    )).then(() => self.clients.claim())
   );
 });
 
