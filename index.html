@@ -983,7 +983,13 @@ function deferDate(date,cardEl){
 }
 
 let _lastPendingHtml='';
+let _lastCourseForPending = '';
 function renderPending(){
+  const activeCourse = remoteData.activeCourse || 'CSEB11';
+  if (_lastCourseForPending !== activeCourse) {
+    _lastPendingHtml = '';
+    _lastCourseForPending = activeCourse;
+  }
   const {labels}=getCourseData(),pc=$('pendingcard'),pending=getPending();
   if(!pending.length){
     const html='<div class="no-pending">🎉 All caught up!</div>';
@@ -1966,24 +1972,43 @@ function openStats() {
     checkDateStr = checkDate.toISOString().split('T')[0];
   }
   
-  // Average per active day & Projected Finish
-  let recentComp = 0;
-  let recentDates = new Set();
+  // 14-Day Rolling Average & Projected Finish
+  const todayTS = ts();
+  const todayDate = new Date(todayTS);
+  const cutoffDate = new Date(todayTS);
+  cutoffDate.setDate(cutoffDate.getDate() - 14);
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+
+  let windowComp = 0;
+  let windowFirstDate = null;
+  let hasAnyModern = false;
+
   Object.values(srData).forEach(s => {
-    if (s && s.completed) {
-      recentComp++;
-      recentDates.add(s.completed);
+    if (s && s.completed && s.completed.startsWith('20')) {
+      hasAnyModern = true;
+      if (s.completed >= cutoffStr) {
+        windowComp++;
+        if (!windowFirstDate || s.completed < windowFirstDate) {
+          windowFirstDate = s.completed;
+        }
+      }
     }
   });
 
   let trueAvg = 0;
   let avg = "0.0";
-  if (recentDates.size > 0) {
-    trueAvg = recentComp / recentDates.size;
+  
+  if (windowFirstDate) {
+    const start = new Date(windowFirstDate);
+    const windowDays = Math.floor((todayDate - start) / (1000 * 60 * 60 * 24)) + 1;
+    trueAvg = windowComp / windowDays;
     avg = trueAvg.toFixed(1);
-  } else if (comp > 0) {
-    trueAvg = 2.5; // Fallback for legacy users
+  } else if (!hasAnyModern && comp > 0) {
+    trueAvg = 2.5; // Fallback for pure legacy users
     avg = "~2.5";
+  } else if (hasAnyModern) {
+    trueAvg = 0; // Slacking
+    avg = "0.0";
   }
 
   const pace = total > 0 ? (comp / total) * 100 : 0;
@@ -1994,7 +2019,9 @@ function openStats() {
     fd.setDate(fd.getDate() + daysLeft);
     finishDate = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   } else if (pend === 0) {
-    finishDate = 'Finished!';
+    finishDate = 'Finished! 🎉';
+  } else if (trueAvg === 0 && comp > 0) {
+    finishDate = 'Slacking! 🐌';
   }
 
   $('st-total').textContent = total;
