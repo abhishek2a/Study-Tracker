@@ -1801,7 +1801,7 @@ setTimeout(()=>{
 
 function showWhatsNew() {
   const lastVer = localStorage.getItem('app_version');
-  if (true || lastVer !== APP_VERSION) {
+  if (lastVer !== APP_VERSION) {
     localStorage.setItem('app_version', APP_VERSION);
     const wn = document.createElement('div');
     wn.id = 'wn-overlay';
