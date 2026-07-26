@@ -1938,6 +1938,7 @@ function openStats() {
   const activity = remoteData._activity || {};
   let streak = 0;
   const dates = Object.keys(activity).sort().reverse();
+  const activeDays = dates.length;
   
   let checkDate = new Date();
   let checkDateStr = checkDate.toISOString().split('T')[0];
@@ -1965,25 +1966,35 @@ function openStats() {
     checkDateStr = checkDate.toISOString().split('T')[0];
   }
   
-  // Average per active day
-  let avg = 0;
-  if (activeDays > 0) {
-    const totalActivity = Object.values(activity).reduce((a,b)=>a+b, 0);
-    avg = (totalActivity / activeDays).toFixed(1);
-  }
-  
-  // Speed & Projected Finish
-  const pace = (comp / total) * 100;
-  let speed = 0, finishDate = '-';
-  if (comp > 0 && activeDays > 0) {
-    const totalActivity = Object.values(activity).reduce((a, b) => a + b, 0);
-    const trueAvg = totalActivity / activeDays; 
-    if (trueAvg > 0) {
-      const daysLeft = Math.ceil(pend / trueAvg);
-      const fd = new Date();
-      fd.setDate(fd.getDate() + daysLeft);
-      finishDate = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  // Average per active day & Projected Finish
+  let recentComp = 0;
+  let recentDates = new Set();
+  Object.values(srData).forEach(s => {
+    if (s && s.completed) {
+      recentComp++;
+      recentDates.add(s.completed);
     }
+  });
+
+  let trueAvg = 0;
+  let avg = "0.0";
+  if (recentDates.size > 0) {
+    trueAvg = recentComp / recentDates.size;
+    avg = trueAvg.toFixed(1);
+  } else if (comp > 0) {
+    trueAvg = 2.5; // Fallback for legacy users
+    avg = "~2.5";
+  }
+
+  const pace = total > 0 ? (comp / total) * 100 : 0;
+  let finishDate = '-';
+  if (comp > 0 && trueAvg > 0 && pend > 0) {
+    const daysLeft = Math.ceil(pend / trueAvg);
+    const fd = new Date();
+    fd.setDate(fd.getDate() + daysLeft);
+    finishDate = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } else if (pend === 0) {
+    finishDate = 'Finished!';
   }
 
   $('st-total').textContent = total;
