@@ -996,6 +996,8 @@ function renderPending(){
     if(_lastPendingHtml===html)return;
     if(_lastPendingHtml !== '' && window.initialLoadComplete) triggerConfetti();
     _lastPendingHtml=html;pc.innerHTML=html;return;
+  } else {
+    confettiFired = false;
   }
   const html=pending.map(({date,s,unchecked})=>{
     const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
@@ -1267,15 +1269,16 @@ function bindSyllabus(){
   // Use event delegation — one listener on parent instead of N listeners on each checkbox
   const sg = document.getElementById('dynamic-syllabus');
   if (sg) {
-    // Remove previous delegated listener by cloning (safe, clean reset)
-    const newSg = sg.cloneNode(true);
-    sg.parentNode.replaceChild(newSg, sg);
-    syllabusBoxes=[...newSg.querySelectorAll('.main-sl input[type=checkbox]')];
+    if (window._syllabusAbortController) window._syllabusAbortController.abort();
+    window._syllabusAbortController = new AbortController();
+    
+    syllabusBoxes=[...sg.querySelectorAll('.main-sl input[type=checkbox]')];
     syllabusBoxes.forEach(b=>{ b.checked=!!remoteData[b.id]; });
-    newSg.addEventListener('change', e=>{
+    
+    sg.addEventListener('change', e=>{
       const b = e.target;
       if(b.matches('.main-sl input[type=checkbox]')) onCheck(b.id, b.checked);
-    });
+    }, { signal: window._syllabusAbortController.signal });
   } else {
     syllabusBoxes=[...document.querySelectorAll('.main-sl input[type=checkbox]')];
     syllabusBoxes.forEach(b=>{ b.checked=!!remoteData[b.id]; });
@@ -1363,8 +1366,9 @@ function renderExamStrip(){
     const [y,m,d]=e.date.split('-');
     const mStr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1];
     const diff=Math.round((edUTC-todayUTC)/86400000);
-    const isDone=diff<0;const isNext=e.date===nextDate;
-    const cls=isDone?'done-exam':isNext?'next-exam':'';
+    const isDone = diff < 0 && !e.postponed;
+    const isNext = e.date === nextDate;
+    const cls = isDone ? 'done-exam' : (isNext ? 'next-exam' : '');
     let status=isDone?'✓ Completed':diff===0?'🎯 TODAY':diff+' days left';
     let statusColor=isDone?'var(--green)':diff===0?'var(--accent)':'var(--green)';
     let label=isDone?'Completed':(e.target?'Target':'Upcoming');
@@ -1837,13 +1841,13 @@ function showWhatsNew() {
 }
 const AudioEngine = {
   ctx: null,
-  init() {
+  async init() {
     if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx.state === 'suspended') await this.ctx.resume();
   },
-  playClick() {
+  async playClick() {
     try {
-      this.init();
+      await this.init();
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
@@ -1857,9 +1861,9 @@ const AudioEngine = {
       osc.stop(this.ctx.currentTime + 0.05);
     } catch(e) {}
   },
-  playAchievement() {
+  async playAchievement() {
     try {
-      this.init();
+      await this.init();
       const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C arpeggio
       notes.forEach((freq, i) => {
         const osc = this.ctx.createOscillator();
@@ -1946,30 +1950,30 @@ function openStats() {
   const dates = Object.keys(activity).sort().reverse();
   const activeDays = dates.length;
   
-  let checkDate = new Date();
-  let checkDateStr = checkDate.toISOString().split('T')[0];
+  let daysBack = 0;
+  let checkDateStr = ts();
   
   // Check if today is active
   if (activity[checkDateStr]) {
     streak++;
-    checkDate.setDate(checkDate.getDate() - 1);
-    checkDateStr = checkDate.toISOString().split('T')[0];
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
   } else {
     // If today is NOT active, see if yesterday was (they still have a streak alive)
-    checkDate.setDate(checkDate.getDate() - 1);
-    checkDateStr = checkDate.toISOString().split('T')[0];
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
     if (activity[checkDateStr]) {
       streak++;
-      checkDate.setDate(checkDate.getDate() - 1);
-      checkDateStr = checkDate.toISOString().split('T')[0];
+      daysBack--;
+      checkDateStr = addDaysStr(ts(), daysBack);
     }
   }
   
   // Continue counting backwards
   while (activity[checkDateStr]) {
     streak++;
-    checkDate.setDate(checkDate.getDate() - 1);
-    checkDateStr = checkDate.toISOString().split('T')[0];
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
   }
   
   // 14-Day Rolling Average & Projected Finish
@@ -2013,15 +2017,39 @@ function openStats() {
 
   const pace = total > 0 ? (comp / total) * 100 : 0;
   let finishDate = '-';
+  $('st-finish').style.color = ''; // Reset color
+  
   if (comp > 0 && trueAvg > 0 && pend > 0) {
     const daysLeft = Math.ceil(pend / trueAvg);
     const fd = new Date();
     fd.setDate(fd.getDate() + daysLeft);
     finishDate = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    // Exam Date Check
+    let examDate = null;
+    const activeCourse = remoteData.activeCourse || 'CSEB11';
+    if (activeCourse === 'ACCA26') {
+      examDate = new Date(Date.UTC(2026, 8, 10)); // Sep 10, 2026
+    } else {
+      const upcoming = EXAMS.filter(e => !e.postponed).sort((a,b) => new Date(a.date) - new Date(b.date));
+      if (upcoming.length > 0) examDate = new Date(upcoming[0].date);
+    }
+    
+    if (examDate) {
+      if (fd > examDate) {
+        finishDate += ' ⚠️';
+        $('st-finish').style.color = 'var(--red)';
+      } else {
+        finishDate += ' ✅';
+        $('st-finish').style.color = 'var(--green)';
+      }
+    }
   } else if (pend === 0) {
     finishDate = 'Finished! 🎉';
+    $('st-finish').style.color = 'var(--green)';
   } else if (trueAvg === 0 && comp > 0) {
     finishDate = 'Slacking! 🐌';
+    $('st-finish').style.color = 'var(--red)';
   }
 
   $('st-total').textContent = total;

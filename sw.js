@@ -1,5 +1,5 @@
-const CACHE = 'study-tracker-v1.2.80-rolling-fix';
-const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
+const CACHE = 'study-tracker-v1.2.80-major-bugfixes';
+const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg', './logo.ico'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -30,7 +30,7 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(e.request, resClone));
       }
       return res;
-    }).catch(() => caches.match(e.request))
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });
 
