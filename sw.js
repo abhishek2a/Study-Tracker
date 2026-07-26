@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.80';
+const CACHE = 'study-tracker-v1.2.80-test';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {

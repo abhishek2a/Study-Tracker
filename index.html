@@ -1801,13 +1801,13 @@ setTimeout(()=>{
 
 function showWhatsNew() {
   const lastVer = localStorage.getItem('app_version');
-  if (lastVer !== APP_VERSION) {
+  if (true || lastVer !== APP_VERSION) {
     localStorage.setItem('app_version', APP_VERSION);
     const wn = document.createElement('div');
     wn.id = 'wn-overlay';
     wn.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;';
     wn.innerHTML = `
-      <div class="lb-box" style="max-width:420px;animation:modalPop 0.2s ease-out">
+      <div class="lb-box" style="max-width:420px;max-height:85svh;border-radius:20px;margin-bottom:20px;animation:modalPop 0.2s ease-out">
         <div class="lb-hdr">
           <h2>🚀 Update v${APP_VERSION}</h2>
           <button class="lb-close" onclick="document.getElementById('wn-overlay').remove()">✕</button>
@@ -1820,7 +1820,7 @@ function showWhatsNew() {
             <li style="margin-bottom:10px"><strong style="color:var(--text)">🎉 Gamification & Audio</strong><br>Satisfying clicks, achievement sounds, and confetti bursts celebrate your progress.</li>
             <li style="margin-bottom:0"><strong style="color:var(--text)">✨ Premium UI Polish</strong><br>Significant visual upgrades, bug fixes (splash screen, date formatting), and overall optimization across the board.</li>
           </ul>
-          <div style="margin-top:20px">
+          <div style="margin-top:20px;padding-bottom:12px">
             <button class="auth-btn" style="background:var(--blue);width:100%" onclick="document.getElementById('wn-overlay').remove()">Got it!</button>
           </div>
         </div>
