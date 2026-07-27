@@ -14,8 +14,9 @@
 <link rel="icon" href="logo.svg?v=1.3.2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
 <title>Study Tracker</title>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
+html { background: #020305; }
 :root {
   --bg:#020305; --s1:#090b12; --s2:#0d0f17; --s3:#141723;
   --text:#e6e9f0; --dim:#525b73; --border:#1a1e2d;
@@ -334,7 +335,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
     </div>
     <div class="lb-stats">
       <div class="lb-stat"><div class="lb-stat-val" id="st-streak">0 🔥</div><div class="lb-stat-lbl">Current Streak</div></div>
-      <div class="lb-stat"><div class="lb-stat-val" id="st-avg">0.0</div><div class="lb-stat-lbl">Avg / Active Day</div></div>
+      <div class="lb-stat"><div class="lb-stat-val" id="st-avg">0.0</div><div class="lb-stat-lbl">Daily Pace</div></div>
       <div class="lb-stat"><div class="lb-stat-val" id="st-hours">0h</div><div class="lb-stat-lbl">Estimated Hours</div></div>
     </div>
     <div class="lb-stats" style="margin-top:10px">
@@ -385,7 +386,7 @@ a,button,input,select,label,[role=button]{touch-action:manipulation}
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--dim);opacity:.5;text-align:center">v1.2.80</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.80</div>
         </div>
       </div>
     </div>
@@ -1717,19 +1718,31 @@ function startLBListener() {
 }
 
 function calcStreak(){
-  const {sch}=getCourseData();
-  const today=ts();
-  const scheduledDates=Object.keys(sch)
-    .filter(k=>sch[k].ids&&sch[k].ids.length>0&&k<=today)
-    .sort().reverse();
-  let s=0;
-  for(const k of scheduledDates){
-    const ids=sch[k].ids;
-    if(ids.some(id=>!!remoteData[id]))s++; // any activity = streak day
-    else if(k===today)continue;            // today not started yet — don't break
-    else break;                            // past day with zero activity — break
+  const activity = remoteData._activity || {};
+  let streak = 0;
+  let daysBack = 0;
+  let checkDateStr = ts();
+  
+  if (activity[checkDateStr]) {
+    streak++;
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
+  } else {
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
+    if (activity[checkDateStr]) {
+      streak++;
+      daysBack--;
+      checkDateStr = addDaysStr(ts(), daysBack);
+    }
   }
-  return s;
+  
+  while (activity[checkDateStr]) {
+    streak++;
+    daysBack--;
+    checkDateStr = addDaysStr(ts(), daysBack);
+  }
+  return streak;
 }
 
 function renderCourses(data){
@@ -2000,19 +2013,24 @@ function openStats() {
   });
 
   let trueAvg = 0;
-  let avg = "0.0";
+  let avg = "0.0/d";
   
   if (windowFirstDate) {
     const start = new Date(windowFirstDate);
     const windowDays = Math.floor((todayDate - start) / (1000 * 60 * 60 * 24)) + 1;
     trueAvg = windowComp / windowDays;
-    avg = trueAvg.toFixed(1);
+    
+    if (trueAvg > 0 && trueAvg <= 0.7) {
+      avg = `1 in ${Math.round(1 / trueAvg)}d`;
+    } else {
+      avg = trueAvg.toFixed(1) + '/d';
+    }
   } else if (!hasAnyModern && comp > 0) {
     trueAvg = 2.5; // Fallback for pure legacy users
-    avg = "~2.5";
+    avg = "~2.5/d";
   } else if (hasAnyModern) {
     trueAvg = 0; // Slacking
-    avg = "0.0";
+    avg = "0.0/d";
   }
 
   const pace = total > 0 ? (comp / total) * 100 : 0;

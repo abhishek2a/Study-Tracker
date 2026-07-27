@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.80-major-bugfixes';
+const CACHE = 'study-tracker-v1.2.80-version-color-fix';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg', './logo.ico'];
 
 self.addEventListener('install', e => {
