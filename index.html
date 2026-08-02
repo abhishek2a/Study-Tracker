@@ -13,6 +13,8 @@
       t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'amoled' : 'light';
     }
     document.documentElement.setAttribute('data-theme', t);
+    const bg = t === 'amoled' ? '#000000' : (t === 'light' ? '#f2f4f7' : '#020305');
+    document.documentElement.style.backgroundColor = bg;
   } catch(e){}
 })();
 </script>
@@ -31,7 +33,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-html { background: #020305; }
+html { background: var(--bg); }
 :root {
   --bg:#020305; --s1:#090b12; --s2:#0d0f17; --s3:#141723;
   --text:#e6e9f0; --dim:#525b73; --border:#1a1e2d;
@@ -88,8 +90,9 @@ body {
 }
 #app{display:none}
 #app.visible{display:block;padding-top:0}
-.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, 0px)) 40px 12px;display:flex;align-items:center;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, 0px)) 40px 12px;display:flex;align-items:center;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);transition:background-color .3s}
 [data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
+[data-theme="amoled"] .topbar{background:rgba(0,0,0,.88)}
 @media(max-width:700px){
   .topbar{padding:max(42px, env(safe-area-inset-top, 42px)) 16px 12px!important;min-height:calc(50px + max(42px, env(safe-area-inset-top, 42px)))!important;position:sticky;top:0;width:100%}
 }
@@ -104,7 +107,8 @@ body {
 .tnav{font-size:.73rem;font-weight:600;padding:5px 11px;border-radius:7px;color:var(--dim);cursor:pointer;border:none;background:transparent;font-family:var(--font);transition:.15s;white-space:nowrap}
 .tnav:hover{background:var(--s3);color:var(--text)}
 @media(max-width:600px){.tnav{display:none}}
-#btt{display:none;position:fixed;bottom:28px;right:20px;z-index:300;width:46px;height:46px;border-radius:50%;background:var(--s1);color:var(--text);border:1px solid var(--border);font-size:1rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);align-items:center;justify-content:center;transition:opacity .2s,transform .2s,box-shadow .2s;will-change:transform;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-weight:600;letter-spacing:0}
+#btt{display:none;position:fixed;bottom:28px;right:20px;z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;will-change:transform;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-weight:700;letter-spacing:0}
+#btt:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.6),0 0 20px rgba(84,162,255,0.4)}
 #btt:active{transform:scale(.92);box-shadow:0 4px 12px rgba(0,0,0,.4)}
 @media(min-width:601px){#btt{display:none!important}}
 .user-chip{font-size:.68rem;color:var(--dim);font-family:var(--mono);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
@@ -118,7 +122,9 @@ body {
 .hdr-row h1{font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.04em}
 .hdr-row p{font-size:.78rem;font-family:var(--mono);color:var(--dim);margin-top:3px}
 .exam-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:160px;transition:.2s;box-shadow:var(--shadow)}
+.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:160px;transition:all .25s cubic-bezier(0.2,0.8,0.2,1);box-shadow:var(--shadow);cursor:default}
+@media(hover:hover){.epill:hover{transform:translateY(-2px);border-color:rgba(252,174,40,0.35);box-shadow:0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(252,174,40,0.1)}}
+.epill:active{transform:scale(0.98);transition:transform 0.1s}
 .epill.next-exam{border-color:rgba(77,150,240,.4);background:linear-gradient(0deg,rgba(77,150,240,.08),rgba(77,150,240,.08)),var(--s1)}
 .epill.done-exam{border-color:rgba(43,189,136,.3);background:linear-gradient(0deg,rgba(43,189,136,.06),rgba(43,189,136,.06)),var(--s1);opacity:.85}
 .epill .en{font-size:.6rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
@@ -310,8 +316,9 @@ body {
 .mock-mini .cl input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 @media(max-width:820px){.subj-grid{grid-template-columns:1fr}}
-.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:inset 0 1px 1px rgba(255,255,255,0.02), var(--shadow);transition:border-color .2s ease;contain:content;content-visibility:auto;contain-intrinsic-size:1px 220px}
-@media(hover:hover){.subj-card:hover{border-color:rgba(255,255,255,0.2)}}
+.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:inset 0 1px 1px rgba(255,255,255,0.02), var(--shadow);transition:all .25s cubic-bezier(0.2, 0.8, 0.2, 1);contain:content;content-visibility:auto;contain-intrinsic-size:1px 220px}
+@media(hover:hover){.subj-card:hover{border-color:rgba(84,162,255,0.35);transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,0.5), 0 0 18px rgba(84,162,255,0.1)}}
+.subj-card:active{transform:scale(0.985);transition:transform 0.1s ease}
 .subj-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .subj-hdr h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em}
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
@@ -381,6 +388,34 @@ body {
   <div class="splash-logo">Study <span>Tracker</span></div>
   <div class="splash-bar"><div class="splash-fill"></div></div>
 </div>
+<script>
+  setTimeout(function() {
+    var s = document.getElementById('splash');
+    if (s && !s.classList.contains('splash-done')) {
+      s.classList.add('splash-done');
+      var app = document.getElementById('app');
+      var auth = document.getElementById('auth-overlay');
+      if (app && !app.classList.contains('visible') && auth) {
+        auth.classList.remove('hidden');
+        if (window.location.protocol === 'file:') {
+          var err = document.getElementById('auth-err');
+          if (err) {
+            err.style.color = '#ff6b6b';
+            err.style.background = 'rgba(255,107,107,0.1)';
+            err.style.padding = '12px';
+            err.style.borderRadius = '8px';
+            err.style.marginTop = '12px';
+            err.style.textAlign = 'left';
+            err.style.lineHeight = '1.4';
+            err.innerHTML = '⚠️ <b>Local File Detection Notice</b><br>You opened this application directly from your file system (<code>file://</code>). Modern web browsers explicitly block ES Modules (<code>&lt;script type="module"&gt;</code>) and Firebase Authentication under direct file access due to strict CORS security standards.<br><br><b>To enable interactive login & synchronization:</b><br>Please serve this folder via a local web server (e.g., using <b>VS Code Live Server</b>, running <code>python -m http.server 8000</code> in your terminal, or hosting online) and navigate to <code>http://localhost:8000</code>.';
+          }
+          var btn = document.getElementById('auth-submit-btn');
+          if (btn) btn.onclick = function() { alert('Authentication fails under file:// protocol. Please run a local server (http://localhost) or use VS Code Live Server!'); };
+        }
+      }
+    }
+  }, 2200);
+</script>
 
 <div id="auth-overlay" class="hidden">
   <div class="auth-box">
@@ -395,8 +430,13 @@ body {
     <div class="auth-field" id="signup-pass2-field" style="display:none"><label for="auth-pass2">Confirm Password <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="password" id="auth-pass2" placeholder="••••••••" aria-label="Confirm Password" autocomplete="new-password"></div>
     <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="text" id="auth-name" placeholder="Your full name" aria-label="Your name" autocomplete="name"></div>
     <div class="auth-field" id="signup-code-field" style="display:none">
-      <label for="auth-code">Course Code <span style="color:var(--red);font-size:.7rem">*required</span></label>
-      <input type="text" id="auth-code" aria-label="Course code" autocomplete="off" style="letter-spacing:.06em;text-transform:uppercase">
+      <label for="auth-code">Select Course <span style="color:var(--red);font-size:.7rem">*required</span></label>
+      <select id="auth-code" aria-label="Course code" style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;width:100%">
+        <option value="CSEB11">CSEB (Kerala Cooperative Bank)</option>
+        <option value="CAT09">Assistant Secretary (Cat 09)</option>
+        <option value="ACCA26">ACCA Financial Reporting (FR)</option>
+        <option value="ACCA26_P2">ACCA Phase 2 (Dec Exam)</option>
+      </select>
     </div>
     <button class="auth-btn" id="auth-submit-btn">Sign In</button>
     <div id="forgot-link" style="text-align:center;margin-top:10px"><button id="forgot-link-btn" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
@@ -406,6 +446,11 @@ body {
       <div id="reset-msg" style="font-size:.72rem;margin-top:8px;min-height:16px;font-family:var(--mono)"></div>
     </div>
     <div class="auth-err" id="auth-err"></div>
+    <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <button onclick="if(navigator.serviceWorker){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()))};if(window.caches){caches.keys().then(k=>k.forEach(c=>caches.delete(c)))};localStorage.removeItem('cseb_deferred');window.location.reload(true);" style="background:none;border:none;color:var(--dim);font-size:0.7rem;cursor:pointer;font-family:var(--font);text-decoration:underline;">
+        🔄 Experiencing login or display issues? Reset Cache & Reload
+      </button>
+    </div>
   </div>
 </div>
 
@@ -420,6 +465,46 @@ body {
     <div class="wn-body" id="wn-body"></div>
     <div class="wn-footer">
       <button class="wn-btn" id="wn-close-btn">Got it · Let's Study 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log Study Session Modal -->
+<div id="log-session-overlay" role="dialog" aria-modal="true" aria-labelledby="ls-title" style="position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s">
+  <div class="lb-box" style="max-width:540px;width:100%;max-height:85vh;background:var(--s1);border:1px solid rgba(255,255,255,.12);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.8);overflow:hidden">
+    <div class="lb-hdr" style="padding:20px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s2);flex-shrink:0">
+      <div>
+        <h2 id="ls-title" style="font-size:1.15rem;font-weight:800;letter-spacing:-.02em;margin:0">📝 Log Study Session</h2>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:3px;font-family:var(--mono)">Record progress &amp; update cognitive stats</p>
+      </div>
+      <button class="lb-close" onclick="closeLogSession()" aria-label="Close study logger">✕</button>
+    </div>
+    <div style="padding:24px 26px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📅 Study Date</label>
+          <input type="date" id="ls-date" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⏰ Study Time / Window</label>
+          <input type="time" id="ls-time" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📚 Select Subject / Portion</label>
+        <select id="ls-subject" onchange="renderLogTopics()" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.92rem;font-weight:600;color:var(--text);font-family:var(--font);outline:none;cursor:pointer"></select>
+      </div>
+      <div style="display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label style="font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em">✅ Select Topics Studied (<span id="ls-selected-count" style="color:var(--blue);font-weight:800">0</span>)</label>
+          <button type="button" id="ls-select-all-btn" onclick="toggleSelectAllLogTopics()" style="background:transparent;border:none;color:var(--blue);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font);text-decoration:underline;transition:color 0.2s">Select All in Subject</button>
+        </div>
+        <div id="ls-topics-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-height:280px;overflow-y:auto;padding:4px;background:transparent;"></div>
+      </div>
+    </div>
+    <div style="padding:18px 26px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;gap:12px;flex-shrink:0">
+      <button onclick="closeLogSession()" style="padding:12px 18px;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font)">Cancel</button>
+      <button onclick="saveLogSession()" style="padding:12px 24px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(84,162,255,0.4);font-family:var(--font)">Save &amp; Log Session 🚀</button>
     </div>
   </div>
 </div>
@@ -488,12 +573,23 @@ body {
       <div class="lb-stats" id="productivity-buckets" style="gap:10px;margin:0;flex-wrap:wrap;"></div>
       <div id="productivity-insight-box" style="margin-top:16px;padding:14px 16px;border-radius:12px;font-size:0.84rem;line-height:1.5;background:var(--s2);border:1px solid var(--border);"></div>
     </div>
+
+    <div class="sec" style="margin:25px 0 15px;padding-bottom:6px;border-bottom:1px solid var(--border);justify-content:space-between;align-items:flex-end;">
+      <div>
+        <h2 style="color:var(--blue)">📝 Recently Logged Study Sessions</h2>
+        <p style="font-size:0.8rem;color:var(--dim);margin-top:2px;">Your manually recorded study history and session logs</p>
+      </div>
+      <button onclick="clearAllLoggedSessions()" id="clear-all-logs-btn" style="display:none;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:var(--font);font-weight:600;transition:0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Clear All</button>
+    </div>
+    <div id="stats-logged-sessions" style="display:flex;flex-direction:column;gap:12px;margin-bottom:30px;">
+      <div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged yet. Tap the '📝 Log Study Session' button on the dashboard to record your study time!</div>
+    </div>
     
   </div>
 </div>
 
 <div id="app">
-<button id="btt" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="btt" aria-label="Back to top" onclick="triggerHaptic('light');window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <div class="topbar">
     <div class="logo">Study <span>Tracker</span></div>
     <div class="topright">
@@ -539,7 +635,12 @@ body {
   </div>
 
   <div class="wrap">
-    <div class="hdr-row"><h1>Study Tracker</h1><p id="todaydisp"></p></div>
+    <div class="hdr-row" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div><h1 style="margin:0">Study Tracker</h1><p id="todaydisp"></p></div>
+      <button onclick="openLogSession()" style="background:linear-gradient(135deg, var(--blue), #3d88e6);color:#fff;border:none;padding:12px 20px;border-radius:14px;font-weight:700;font-size:0.9rem;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 20px rgba(84,162,255,0.35);transition:all 0.2s;font-family:var(--font);">
+        <span style="font-size:1.1rem;">📝</span> Log Study Session
+      </button>
+    </div>
 
     <div class="exam-strip" id="exam-strip"></div>
 
@@ -641,16 +742,15 @@ body {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, doc, onSnapshot, setDoc, updateDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+  getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
@@ -661,17 +761,11 @@ const app = initializeApp({
   appId:"1:388281368121:web:da2f142aaf7b4c1688d7e8",
   measurementId:"G-W0VWF51FSW"
 });
-getAnalytics(app);
-try{
-  initializeAppCheck(app,{
-    provider:new ReCaptchaV3Provider('6Lfc-v4sAAAAAGTUHKwwzNg5Wi3HUKXdQkPwWhOy'),
-    isTokenAutoRefreshEnabled:true
-  });
-}catch(e){console.warn('AppCheck failed:',e);}
+try{getAnalytics(app);}catch(e){console.warn('Analytics disabled/blocked:',e);}
 const auth = getAuth(app);
-const db=initializeFirestore(app,{localCache:persistentLocalCache()});
+const db = getFirestore(app);
 
-let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null;
+let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null,lbUnsub=null;
 // cached DOM refs
 let domGfill,domPct,domSpills;
 // deferred dates: {date -> deferUntilTimestamp}
@@ -696,14 +790,15 @@ $('auth-overlay').dataset.mode='login';
 
 function authErrMsg(code){
   const m={
-    'auth/invalid-email':'Invalid email.',
-    'auth/user-not-found':'No account with that email.',
+    'auth/invalid-email':'Invalid email address.',
+    'auth/user-not-found':'No account found with that email.',
     'auth/wrong-password':'Wrong password.',
-    'auth/email-already-in-use':'Email already registered — sign in instead.',
+    'auth/invalid-credential':'Invalid email or password. Please check your login details.',
+    'auth/email-already-in-use':'Email is already registered — please switch to Sign In instead.',
     'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/network-request-failed':'Network error. Check connection.'
+    'auth/network-request-failed':'Network connection error. Please check your internet.'
   };
-  return m[code]||'Error: '+code;
+  return m[code] || 'Error: ' + code;
 }
 
 // course codes — add new courses here
@@ -711,14 +806,12 @@ function authErrMsg(code){
 async function submitAuth(){
   const email=$('auth-email').value.trim(),pass=$('auth-pass').value,mode=$('auth-overlay').dataset.mode;
   $('auth-err').textContent='';
-  if(!email||!pass){$('auth-err').textContent='Fill in all fields.';return;}
+  if(!email||!pass){$('auth-err').textContent='Please fill in both email and password.';return;}
   if(mode==='signup'){
     const pass2=$('auth-pass2').value;
     const name=$('auth-name').value.trim();
-    const rawCode=($('auth-code').value||'').trim().toUpperCase();
-    if(!pass2||!name||!rawCode){$('auth-err').textContent='Fill in all required fields.';return;}
+    if(!pass2||!name){$('auth-err').textContent='Please fill in your name and confirm password.';return;}
     if(pass!==pass2){$('auth-err').textContent='Passwords do not match.';return;}
-    if(!COURSE_CODES[rawCode]){$('auth-err').textContent='Invalid enrollment code. Please check your course code and try again.';return;}
   }
   const btn=$('auth-submit-btn');
   btn.disabled=true;btn.textContent='Loading…';
@@ -728,13 +821,16 @@ async function submitAuth(){
       const code=COURSE_CODES[rawCode]?rawCode:DEFAULT_COURSE;
       const name=$('auth-name').value.trim();
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      await updateProfile(cred.user,{displayName:name});
-      await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true});
+      try{ await updateProfile(cred.user,{displayName:name}); } catch(err){}
+      try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){}
+      if(typeof initApp === 'function') try { initApp(cred.user); } catch(err){}
     } else {
-      await signInWithEmailAndPassword(auth,email,pass);
+      const cred=await signInWithEmailAndPassword(auth,email,pass);
+      if(typeof initApp === 'function') try { initApp(cred.user); } catch(err){}
     }
   } catch(e){
-    $('auth-err').textContent=authErrMsg(e.code);
+    console.error('Auth submit error:', e);
+    $('auth-err').textContent=e.message || authErrMsg(e.code) || 'Authentication error. Please try again.';
     btn.disabled=false;
     btn.textContent=mode==='login'?'Sign In':'Create Account';
   }
@@ -763,6 +859,17 @@ async function doReset(){
     msg.textContent=e.code==='auth/user-not-found'?'No account with that email.':'Error: '+e.code;
   }
 };
+
+// Immediately wire auth buttons so login is always responsive
+try {
+  const tl = $('tab-login'); if(tl) tl.addEventListener('click',()=>switchTab('login'));
+  const ts = $('tab-signup'); if(ts) ts.addEventListener('click',()=>switchTab('signup'));
+  const asb = $('auth-submit-btn'); if(asb) asb.addEventListener('click',submitAuth);
+  const flb = $('forgot-link-btn'); if(flb) flb.addEventListener('click',showForgot);
+  const rb = $('reset-btn'); if(rb) rb.addEventListener('click',doReset);
+  const ae = $('auth-email'); if(ae) ae.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+  const ap = $('auth-pass'); if(ap) ap.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+} catch(err) { console.warn('Auth button wire error:', err); }
 
 const APP_VERSION = '1.2.90';
 // Course data registry — add new courses here as COURSE_CODES[key]
@@ -1166,6 +1273,18 @@ function getTodayStr(){
 }
 const ts=getTodayStr; // ts() now function call everywhere
 
+function triggerHaptic(style = 'light') {
+  try {
+    if (!('vibrate' in navigator)) return;
+    if (style === 'light') navigator.vibrate(10);
+    else if (style === 'medium') navigator.vibrate(20);
+    else if (style === 'heavy') navigator.vibrate(35);
+    else if (style === 'success') navigator.vibrate([12, 50, 18]);
+    else if (style === 'warning') navigator.vibrate([30, 40, 30]);
+    else if (style === 'error') navigator.vibrate([40, 50, 40, 50, 40]);
+  } catch(e) {}
+}
+window.triggerHaptic = triggerHaptic;
 
 function syncState(s){
   const el=$('pd-sync');if(!el)return;
@@ -1875,15 +1994,6 @@ function getMemoryRetention(id) {
   return Math.max(0, Math.min(100, Math.round(retention * 100)));
 }
 
-function triggerHaptic(type = 'light') {
-  if ('vibrate' in navigator) {
-    try {
-      if (type === 'light') navigator.vibrate(12);
-      else if (type === 'success') navigator.vibrate([15, 30, 15]);
-    } catch(e) {}
-  }
-}
-window.triggerHaptic = triggerHaptic;
 
 function onCheck(id, val) {
   triggerHaptic(val ? 'success' : 'light');
@@ -2077,7 +2187,6 @@ function renderRevisions(){
 }
 
 // ── LEADERBOARD ──
-let lbUnsub=null;
 const TOTAL_CSEB_TOPICS=82; // total topics in CSEB11 syllabus
 
 function lbStatus(rank,total){
@@ -2171,43 +2280,39 @@ function updateLBData(){
 let currentLBTrack = null; // ✨ Tracking lock variable
 
 function startLBListener() {
-  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
-  
-  // Guard Clause: If we're already listening to this track, do nothing
-  if (currentLBTrack === activeCourse) return;
-  
-  if (lbUnsub) { lbUnsub(); lbUnsub = null; }
-  currentLBTrack = activeCourse; // Lock the current track context
-  if (activeCourse !== 'CSEB11') {
-    renderLeaderboard([]);
-    return;
-  }
-
-  // Safe simple query: Filtered with an absolute safety limit of the top 100 entries
-  const q = query(
-    collection(db, 'leaderboard'),
-    orderBy('progressPercent', 'desc'),
-    limit(300)
-  );
-
-  lbUnsub = onSnapshot(q, snap => {
-    const users = [];
-    snap.docs.forEach(d => {
-      const data = d.data();
-      if (data.activeCourse === 'CSEB11') {
-        users.push({
-          uid: d.id,
-          name: data.displayName || 'Anonymous Learner',
-          pct: data.progressPercent || 0,
-          topics: data.completedTopics || 0,
-          signupDate: data.signupDate || ''
-        });
-      }
+  try {
+    const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+    if (currentLBTrack === activeCourse) return;
+    if (lbUnsub) { lbUnsub(); lbUnsub = null; }
+    currentLBTrack = activeCourse;
+    if (activeCourse !== 'CSEB11') {
+      renderLeaderboard([]);
+      return;
+    }
+    const q = query(
+      collection(db, 'leaderboard'),
+      orderBy('progressPercent', 'desc'),
+      limit(300)
+    );
+    lbUnsub = onSnapshot(q, snap => {
+      const users = [];
+      snap.docs.forEach(d => {
+        const data = d.data();
+        if (data.activeCourse === 'CSEB11') {
+          users.push({
+            uid: d.id,
+            name: data.displayName || 'Anonymous Learner',
+            pct: data.progressPercent || 0,
+            topics: data.completedTopics || 0,
+            signupDate: data.signupDate || ''
+          });
+        }
+      });
+      renderLeaderboard(users);
+    }, err => {
+      console.warn('[Leaderboard] connection error:', err);
     });
-    renderLeaderboard(users);
-  }, err => {
-    console.error('[Leaderboard] Constrained connection pipeline error:', err);
-  });
+  } catch(e) { console.warn('startLBListener safely handled error:', e); }
 }
 
 function calcStreak(){
@@ -2298,22 +2403,32 @@ if (addBtn) {
 }
 
 function hideSplash(){
-  const isPWA=window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches;
-  const delay=isPWA?600:900;
-  setTimeout(()=>{
-    $('splash').classList.add('splash-done');
-    if(!$('app').classList.contains('visible')){
-      $('auth-overlay').classList.remove('hidden');
-    }
-  },delay);
+  try {
+    const isPWA=window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches;
+    const delay=isPWA?350:500;
+    setTimeout(()=>{
+      const sp = $('splash');
+      if (sp) sp.classList.add('splash-done');
+      const app = $('app');
+      const authOv = $('auth-overlay');
+      if (app && authOv && !app.classList.contains('visible')){
+        authOv.classList.remove('hidden');
+      }
+    }, delay);
+  } catch(e) {
+    const sp = $('splash'); if(sp) sp.classList.add('splash-done');
+  }
 }
 
 setTimeout(()=>{
-  if($('splash') && !$('splash').classList.contains('splash-done')){
-    $('splash').classList.add('splash-done');
-    if(!$('app').classList.contains('visible'))$('auth-overlay').classList.remove('hidden');
+  const sp = $('splash');
+  if(sp && !sp.classList.contains('splash-done')){
+    sp.classList.add('splash-done');
+    const app = $('app');
+    const authOv = $('auth-overlay');
+    if(app && authOv && !app.classList.contains('visible')) authOv.classList.remove('hidden');
   }
-},5000);
+}, 2500);
 
 
 
@@ -2398,6 +2513,7 @@ function triggerConfetti() {
 
 function logActivity() {
   AudioEngine.playClick();
+  triggerHaptic('medium');
   const todayStr = ts();
   if (!remoteData._activity) remoteData._activity = {};
   remoteData._activity[todayStr] = (remoteData._activity[todayStr] || 0) + 1;
@@ -2571,6 +2687,7 @@ function openStats() {
   try {
     renderSRForecastChart();
     renderProductivityCorrelator();
+    if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
   } catch (e) {
     console.error('SR Forecaster/Productivity rendering error:', e);
   }
@@ -2812,16 +2929,19 @@ window.renderProductivityCorrelator = renderProductivityCorrelator;
 
 
 function initApp(user){
-  $('auth-overlay').classList.add('hidden');
-  $('app').classList.add('visible');
-  const name=user.displayName||user.email.split('@')[0];
-  const initials=name.slice(0,2).toUpperCase();
-  $('profile-avatar').textContent=initials;
-  $('profile-name').textContent=name;
-  $('pd-name').textContent=user.displayName||name;
-  $('pd-email').textContent=user.email;
-  remoteData._displayName=user.displayName||name; // cache for leaderboard
-  $('todaydisp').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  hideSplash();
+  try {
+    $('auth-overlay').classList.add('hidden');
+    $('app').classList.add('visible');
+    const name=user.displayName||user.email.split('@')[0]||'Student';
+    const initials=name.slice(0,2).toUpperCase();
+    const av = $('profile-avatar'); if(av) av.textContent=initials;
+    const pn = $('profile-name'); if(pn) pn.textContent=name;
+    const pdn = $('pd-name'); if(pdn) pdn.textContent=user.displayName||name;
+    const pde = $('pd-email'); if(pde) pde.textContent=user.email||'';
+    remoteData._displayName=user.displayName||name; // cache for leaderboard
+    const td = $('todaydisp'); if(td) td.textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  } catch(e) { console.error('UI init error:', e); }
   try{
     renderExamStrip();
     domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
@@ -3028,18 +3148,26 @@ function renderNotifToggle(){
 }
 
 onAuthStateChanged(auth,user=>{
-  if(user){currentUid=user.uid;initApp(user);}
-  else{
-    currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
-    if(lbUnsub){lbUnsub();lbUnsub=null;}
-    currentLBTrack=null;
-    remoteData={};syllabusBoxes=[];
-    try{localStorage.removeItem('cseb_deferred');}catch(e){}
-    $('splash').classList.add('splash-done');
-    $('app').classList.remove('visible');
-    $('auth-overlay').classList.remove('hidden');
-    const ab=$('auth-submit-btn');
-    if(ab){ab.disabled=false;ab.textContent='Sign In';switchTab('login');}
+  try {
+    if(user){
+      currentUid=user.uid;
+      initApp(user);
+    } else {
+      currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
+      if(lbUnsub){lbUnsub();lbUnsub=null;}
+      currentLBTrack=null;
+      remoteData={};syllabusBoxes=[];
+      try{localStorage.removeItem('cseb_deferred');}catch(e){}
+      hideSplash();
+      const sp = $('splash'); if(sp) sp.classList.add('splash-done');
+      const appEl = $('app'); if(appEl) appEl.classList.remove('visible');
+      const authEl = $('auth-overlay'); if(authEl) authEl.classList.remove('hidden');
+      const ab=$('auth-submit-btn');
+      if(ab){ab.disabled=false;ab.textContent='Sign In';switchTab('login');}
+    }
+  } catch(err) {
+    console.error('Auth handler error:', err);
+    hideSplash();
   }
 });
 
@@ -3072,10 +3200,13 @@ function applyTheme(t){
   const actual=t==='system'?detectSystemTheme():t;
   document.documentElement.setAttribute('data-theme', actual);
   document.body.dataset.theme=actual;
+  const bg = actual === 'amoled' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
+  document.documentElement.style.backgroundColor = bg;
   updateThemeColorMeta(actual);
   document.querySelectorAll('.settings-theme-btn').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 }
 function setTheme(t){
+  triggerHaptic('medium');
   if(t==='system'){localStorage.removeItem('cseb_theme');localStorage.removeItem('cseb_theme_manual');}
   else{localStorage.setItem('cseb_theme',t);localStorage.setItem('cseb_theme_manual','1');}
   initTheme();
@@ -3087,6 +3218,8 @@ function initTheme(){
   if(manual&&saved) t=saved;
   if(t==='system') t=window.matchMedia('(prefers-color-scheme: dark)').matches ? 'amoled' : 'light';
   document.documentElement.setAttribute('data-theme', t);
+  const bg = t === 'amoled' ? '#000000' : (t === 'light' ? '#f2f4f7' : '#020305');
+  document.documentElement.style.backgroundColor = bg;
   updateThemeColorMeta(t);
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
@@ -3294,6 +3427,303 @@ document.getElementById('signout-item').addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
 
+// ──────────────────────────────────────────────
+// 📝 LOG STUDY SESSION ENGINE
+// ──────────────────────────────────────────────
+let _logSelectedTopics = new Set();
+
+function openLogSession() {
+  const overlay = $('log-session-overlay');
+  if (!overlay) return;
+
+  _logSelectedTopics.clear();
+  updateLogCountBadge();
+
+  const now = new Date();
+  const dateInput = $('ls-date');
+  const timeInput = $('ls-time');
+  if (dateInput) dateInput.value = now.toISOString().split('T')[0];
+  if (timeInput) timeInput.value = now.toTimeString().slice(0, 5);
+
+  const { subjs, labels } = getCourseData();
+  const select = $('ls-subject');
+  if (select) {
+    select.innerHTML = Object.entries(subjs)
+      .filter(([k, v]) => k !== 'exam' && k !== 'mocks' && v.ids && v.ids.length > 0)
+      .map(([k, v]) => `<option value="${k}" style="color:${v.c || '#e6e9f0'}">${v.n} (${v.ids.length} topics)</option>`)
+      .join('');
+  }
+
+  renderLogTopics();
+
+  overlay.style.visibility = 'visible';
+  overlay.style.opacity = '1';
+  document.body.style.overflow = 'hidden';
+  triggerHaptic('light');
+}
+
+function closeLogSession() {
+  const overlay = $('log-session-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.visibility = 'hidden'; }, 200);
+  }
+  document.body.style.overflow = '';
+}
+window.openLogSession = openLogSession;
+window.closeLogSession = closeLogSession;
+
+function renderLogTopics() {
+  const container = $('ls-topics-container');
+  const select = $('ls-subject');
+  const selectAllBtn = $('ls-select-all-btn');
+  if (!container || !select) return;
+
+  const subjKey = select.value;
+  const { subjs, labels } = getCourseData();
+  const subj = subjs[subjKey];
+  if (!subj || !subj.ids) {
+    container.innerHTML = '<div style="color:var(--dim);font-size:0.8rem;text-align:center;padding:20px;">No topics available in this section.</div>';
+    if (selectAllBtn) selectAllBtn.style.display = 'none';
+    return;
+  }
+
+  if (selectAllBtn) {
+    selectAllBtn.style.display = 'inline-block';
+    const allSelected = subj.ids.length > 0 && subj.ids.every(id => _logSelectedTopics.has(id));
+    selectAllBtn.textContent = allSelected ? 'Unselect All in Subject' : 'Select All in Subject';
+    selectAllBtn.style.color = allSelected ? 'var(--red)' : 'var(--blue)';
+  }
+
+  container.innerHTML = subj.ids.map(id => {
+    const isChecked = _logSelectedTopics.has(id);
+    return `
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${isChecked ? 'rgba(84,162,255,0.14)' : 'var(--s2)'};border:1.5px solid ${isChecked ? 'var(--blue)' : 'var(--border)'};border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:0.86rem;color:${isChecked ? 'var(--blue)' : 'var(--text)'};font-weight:${isChecked ? '700' : '600'};box-shadow:${isChecked ? '0 4px 12px rgba(84,162,255,0.2)' : 'none'};">
+        <input type="checkbox" value="${id}" onchange="toggleLogTopic('${id}', this.checked)" ${isChecked ? 'checked' : ''} style="width:18px;height:18px;min-width:18px;accent-color:var(--blue);cursor:pointer;margin:0;">
+        <span style="line-height:1.35;flex:1;word-break:break-word;">${labels[id] || id}</span>
+      </label>
+    `;
+  }).join('');
+}
+window.renderLogTopics = renderLogTopics;
+
+function toggleLogTopic(id, checked) {
+  if (checked) _logSelectedTopics.add(id);
+  else _logSelectedTopics.delete(id);
+  updateLogCountBadge();
+  renderLogTopics();
+  triggerHaptic(checked ? 'success' : 'light');
+}
+window.toggleLogTopic = toggleLogTopic;
+
+function toggleSelectAllLogTopics() {
+  const select = $('ls-subject');
+  if (!select) return;
+  const { subjs } = getCourseData();
+  const subj = subjs[select.value];
+  if (!subj || !subj.ids || !subj.ids.length) return;
+
+  const allSelected = subj.ids.every(id => _logSelectedTopics.has(id));
+  if (allSelected) {
+    subj.ids.forEach(id => _logSelectedTopics.delete(id));
+    if (typeof triggerHaptic === 'function') triggerHaptic('light');
+  } else {
+    subj.ids.forEach(id => _logSelectedTopics.add(id));
+    if (typeof triggerHaptic === 'function') triggerHaptic('success');
+  }
+  renderLogTopics();
+  updateLogCountBadge();
+}
+window.selectAllLogTopics = toggleSelectAllLogTopics;
+window.toggleSelectAllLogTopics = toggleSelectAllLogTopics;
+
+function updateLogCountBadge() {
+  const bd = $('ls-selected-count');
+  if (bd) bd.textContent = _logSelectedTopics.size;
+}
+
+function format12Hour(timeStr) {
+  if (!timeStr) return '';
+  if (timeStr.includes('AM') || timeStr.includes('PM') || timeStr.includes('am') || timeStr.includes('pm')) return timeStr;
+  const parts = timeStr.toString().split(':');
+  if (parts.length < 2) return timeStr;
+  let h = parseInt(parts[0], 10);
+  const m = parts[1];
+  if (isNaN(h)) return timeStr;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
+window.format12Hour = format12Hour;
+
+function renderStatsLoggedSessions() {
+  const container = $('stats-logged-sessions');
+  const clearBtn = $('clear-all-logs-btn');
+  if (!container) return;
+  const list = remoteData._loggedSessions || [];
+  if (clearBtn) clearBtn.style.display = list.length > 0 ? 'block' : 'none';
+  if (list.length === 0) {
+    container.innerHTML = '<div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged yet. Tap the \'📝 Log Study Session\' button on the dashboard to record your study time!</div>';
+    return;
+  }
+  const bucketIcons = { morning: '🌅', afternoon: '☀️', evening: '🌆', night: '🌙' };
+  container.innerHTML = list.slice(0, 8).map(s => {
+    const icon = bucketIcons[s.bucket] || '⏱️';
+    const topicsText = (s.topics || []).join(' · ');
+    const moreText = s.count > (s.topics?.length || 0) ? ` (+${s.count - (s.topics?.length || 0)} more)` : '';
+    const formattedTime = format12Hour(s.time);
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:0.2s;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+            <span style="font-size:0.9rem;font-weight:800;color:var(--text);">${s.subjName || 'Study Session'}</span>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--blue);background:rgba(84,162,255,0.12);padding:2px 8px;border-radius:99px;">${s.count} topic${s.count !== 1 ? 's' : ''} completed</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--dim);line-height:1.4;overflow:hidden;text-overflow:ellipsis;">
+            ${topicsText}${moreText}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+          <div style="text-align:right;font-family:var(--mono);">
+            <div style="font-size:0.82rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+              <span>${icon}</span> <span>${formattedTime || ''}</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--dim);margin-top:2px;">${s.date || ''}</div>
+          </div>
+          <button onclick="deleteLoggedSession('${s.id}')" aria-label="Remove log" title="Remove session log" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--dim);cursor:pointer;width:32px;height:32px;display:grid;place-content:center;font-size:0.85rem;border-radius:8px;transition:0.15s;flex-shrink:0;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='rgba(224,80,80,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='var(--dim)';this.style.background='transparent'">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+window.renderStatsLoggedSessions = renderStatsLoggedSessions;
+
+function deleteLoggedSession(id) {
+  if (!confirm('Are you sure you want to remove this study session log?')) return;
+  if (!remoteData._loggedSessions) return;
+  remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
+  if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
+    setDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions }, { merge: true })
+      .catch(err => console.error('[Log Delete] Failed:', err));
+  } else if (typeof saveToFirestore === 'function') {
+    saveToFirestore();
+  }
+  renderStatsLoggedSessions();
+  if (typeof triggerHaptic === 'function') triggerHaptic('light');
+}
+window.deleteLoggedSession = deleteLoggedSession;
+
+function clearAllLoggedSessions() {
+  if (!confirm('Are you sure you want to delete ALL your study session logs?')) return;
+  remoteData._loggedSessions = [];
+  if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
+    setDoc(doc(db, 'users', currentUid), { _loggedSessions: [] }, { merge: true })
+      .catch(err => console.error('[Log Clear] Failed:', err));
+  } else if (typeof saveToFirestore === 'function') {
+    saveToFirestore();
+  }
+  renderStatsLoggedSessions();
+  if (typeof triggerHaptic === 'function') triggerHaptic('medium');
+}
+window.clearAllLoggedSessions = clearAllLoggedSessions;
+
+async function saveLogSession() {
+  if (_logSelectedTopics.size === 0) {
+    alert("Please select at least one topic to log!");
+    return;
+  }
+  const dateVal = $('ls-date').value || ts();
+  const timeVal = $('ls-time').value || "14:00";
+  const hour = parseInt(timeVal.split(':')[0], 10);
+
+  let bucket = 'night';
+  if (hour >= 6 && hour < 12) bucket = 'morning';
+  else if (hour >= 12 && hour < 18) bucket = 'afternoon';
+  else if (hour >= 18 && hour < 22) bucket = 'evening';
+
+  if (!remoteData._timeAccuracy) {
+    remoteData._timeAccuracy = {
+      morning: { attempts: 0, correct: 0 },
+      afternoon: { attempts: 0, correct: 0 },
+      evening: { attempts: 0, correct: 0 },
+      night: { attempts: 0, correct: 0 }
+    };
+  }
+  const stat = remoteData._timeAccuracy[bucket] || { attempts: 0, correct: 0 };
+  if (!remoteData._sr) remoteData._sr = {};
+  if (!remoteData._activity) remoteData._activity = {};
+
+  const topicIds = Array.from(_logSelectedTopics);
+  topicIds.forEach(id => {
+    remoteData[id] = true;
+    const nextDate = typeof addDaysStr === 'function' ? addDaysStr(dateVal, 1) : dateVal;
+    const entry = { completed: dateVal, lastRev: dateVal, count: ((remoteData._sr[id]?.count) || 0) + 1, next: nextDate, ease: 2.5, interval: 1 };
+    remoteData._sr[id] = entry;
+    stat.attempts += 1;
+    stat.correct += 1;
+  });
+
+  remoteData._timeAccuracy[bucket] = stat;
+  remoteData._activity[dateVal] = (remoteData._activity[dateVal] || 0) + topicIds.length;
+
+  if (!remoteData._loggedSessions) remoteData._loggedSessions = [];
+  const select = $('ls-subject');
+  const sessionRecord = {
+    id: 'sec_' + Date.now(),
+    date: dateVal,
+    time: format12Hour(timeVal),
+    bucket: bucket,
+    count: topicIds.length,
+    subjName: select ? (select.options[select.selectedIndex]?.text.split(' (')[0] || 'Syllabus') : 'Syllabus',
+    topics: topicIds.map(id => (typeof getCourseData === 'function' ? getCourseData().labels[id] : id) || id).slice(0, 5)
+  };
+  remoteData._loggedSessions.unshift(sessionRecord);
+  if (remoteData._loggedSessions.length > 20) {
+    remoteData._loggedSessions = remoteData._loggedSessions.slice(0, 20);
+  }
+
+  if (currentUid && typeof doc === 'function') {
+    const payload = {};
+    topicIds.forEach(id => { payload[id] = true; });
+    payload._sr = remoteData._sr;
+    payload._activity = remoteData._activity;
+    payload._timeAccuracy = remoteData._timeAccuracy;
+    payload._loggedSessions = remoteData._loggedSessions;
+
+    setDoc(doc(db, 'users', currentUid), payload, { merge: true })
+      .catch(err => console.error('[Log Session] Save failed:', err));
+  } else {
+    saveToFirestore();
+  }
+
+  updateAll();
+  if (typeof renderPending === 'function') renderPending();
+  if (typeof renderRevisions === 'function') renderRevisions();
+  if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
+  if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
+
+  triggerHaptic('success');
+  if (typeof confetti === 'function') {
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#28d48e', '#54a2ff', '#fcae28', '#f25c5c'] });
+  }
+
+  closeLogSession();
+
+  const toast = document.getElementById('update-toast');
+  if (toast) {
+    toast.innerHTML = `✅ Logged ${topicIds.length} topic${topicIds.length > 1 ? 's' : ''} at ${format12Hour(timeVal)} (${dateVal})`;
+    toast.style.visibility = 'visible';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(100px)';
+      setTimeout(() => toast.style.visibility = 'hidden', 400);
+    }, 4000);
+  }
+}
+window.saveLogSession = saveLogSession;
+
 // Escape key closes any open modal
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -3307,47 +3737,44 @@ document.addEventListener('keydown', e => {
   }
   const wn = document.getElementById('whats-new-overlay');
   if (wn && wn.classList.contains('open')) { wn.classList.remove('open'); localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION); return; }
+  const ls = document.getElementById('log-session-overlay');
+  if (ls && ls.style.visibility === 'visible') { closeLogSession(); return; }
 });
 
-initTheme();
-// Wire auth buttons
-$('tab-login').addEventListener('click',()=>switchTab('login'));
-$('tab-signup').addEventListener('click',()=>switchTab('signup'));
-$('auth-submit-btn').addEventListener('click',submitAuth);
-$('forgot-link-btn').addEventListener('click',showForgot);
-$('reset-btn').addEventListener('click',doReset);
-$('auth-email').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
-$('auth-pass').addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+try { initTheme(); } catch(e) {}
 
-if('serviceWorker' in navigator) {
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) {
-      refreshing = true;
-      window.location.reload();
-    }
-  });
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION + '_' + new Date().getTime()).then(reg => {
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            const toast = document.getElementById('update-toast');
-            if (toast) {
-              toast.style.visibility = 'visible';
-              toast.style.opacity = '1';
-              toast.style.transform = 'translateX(-50%) translateY(0)';
-              document.getElementById('update-btn').onclick = () => {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-              };
-            }
+try {
+  if('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION + '_' + new Date().getTime()).then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if(newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                const toast = document.getElementById('update-toast');
+                if (toast) {
+                  toast.style.visibility = 'visible';
+                  toast.style.opacity = '1';
+                  toast.style.transform = 'translateX(-50%) translateY(0)';
+                  const ub = document.getElementById('update-btn');
+                  if(ub) ub.onclick = () => newWorker.postMessage({ type: 'SKIP_WAITING' });
+                }
+              }
+            });
           }
         });
-      });
-    }).catch(err => console.error('SW registration failed:', err));
-  });
-}
+      }).catch(err => console.error('SW registration failed:', err));
+    });
+  }
+} catch(e) { console.warn('SW setup error:', e); }
 </script>
 <div id="update-toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--blue);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,150,240,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:9999;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
   ✨ New update available!
