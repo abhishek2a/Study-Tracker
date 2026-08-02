@@ -5,12 +5,9 @@
 <script>
 (function(){
   try {
-    const saved = localStorage.getItem('cseb_theme');
-    const manual = localStorage.getItem('cseb_theme_manual') === '1';
-    let t = 'system';
-    if(manual && saved) t = saved;
+    let t = localStorage.getItem('cseb_theme') || 'system';
     if (t === 'system') {
-      t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'amoled' : 'light';
+      t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'amoled';
     }
     document.documentElement.setAttribute('data-theme', t);
     const bg = t === 'amoled' ? '#000000' : (t === 'light' ? '#f2f4f7' : '#020305');
@@ -480,13 +477,13 @@ body {
       <button class="lb-close" onclick="closeLogSession()" aria-label="Close study logger">✕</button>
     </div>
     <div style="padding:24px 26px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
         <div>
-          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;white-space:nowrap">📅 Study Date</label>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📅 Study Date</label>
           <input type="date" id="ls-date" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
         </div>
         <div>
-          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;white-space:nowrap">⏰ Time Window</label>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⏰ Time Window</label>
           <input type="time" id="ls-time" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
         </div>
       </div>
@@ -619,7 +616,7 @@ body {
             <button id="pd-course-add-btn" style="padding:7px 11px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap">Add</button>
           </div>
           <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
-          <div class="pd-sep"></div>
+          <div class="pd-sep" id="pd-lb-sep"></div>
           <button class="pd-item" id="pd-lb-item" role="menuitem">🏆 Leaderboard</button>
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-stats-item" role="menuitem">📊 Statistics</button>
@@ -1916,6 +1913,11 @@ function updatePageTitle(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
   const courseName=COURSE_CODES[active]||'';
   document.title=courseName?`Study Tracker · ${courseName}`:'Study Tracker';
+  const lbBtn = document.getElementById('pd-lb-item');
+  const lbSep = document.getElementById('pd-lb-sep');
+  const showLb = (active === 'CSEB11');
+  if (lbBtn) lbBtn.style.display = showLb ? 'flex' : 'none';
+  if (lbSep) lbSep.style.display = showLb ? 'block' : 'none';
 }
 
 function renderExamStrip(){
@@ -3194,36 +3196,37 @@ function updateThemeColorMeta(theme) {
 }
 
 function detectSystemTheme(){
-  return window.matchMedia('(prefers-color-scheme: dark)').matches?'amoled':'light';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'amoled';
 }
 function applyTheme(t){
-  const actual=t==='system'?detectSystemTheme():t;
+  const actual = t === 'system' ? detectSystemTheme() : t;
   document.documentElement.setAttribute('data-theme', actual);
-  document.body.dataset.theme=actual;
+  if (document.body) document.body.dataset.theme = actual;
   const bg = actual === 'amoled' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
   document.documentElement.style.backgroundColor = bg;
+  if (document.body) document.body.style.backgroundColor = bg;
   updateThemeColorMeta(actual);
-  document.querySelectorAll('.settings-theme-btn').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
+  document.querySelectorAll('.settings-theme-btn').forEach(el => el.classList.toggle('active', el.dataset.t === t));
 }
 function setTheme(t){
   triggerHaptic('medium');
-  if(t==='system'){localStorage.removeItem('cseb_theme');localStorage.removeItem('cseb_theme_manual');}
-  else{localStorage.setItem('cseb_theme',t);localStorage.setItem('cseb_theme_manual','1');}
-  initTheme();
+  localStorage.setItem('cseb_theme', t);
+  if(t !== 'system') localStorage.setItem('cseb_theme_manual', '1');
+  else localStorage.removeItem('cseb_theme_manual');
+  applyTheme(t);
 }
 function initTheme(){
-  const saved=localStorage.getItem('cseb_theme');
-  const manual=localStorage.getItem('cseb_theme_manual')==='1';
-  let t = 'system';
-  if(manual&&saved) t=saved;
-  if(t==='system') t=window.matchMedia('(prefers-color-scheme: dark)').matches ? 'amoled' : 'light';
-  document.documentElement.setAttribute('data-theme', t);
-  const bg = t === 'amoled' ? '#000000' : (t === 'light' ? '#f2f4f7' : '#020305');
-  document.documentElement.style.backgroundColor = bg;
-  updateThemeColorMeta(t);
+  let t = localStorage.getItem('cseb_theme') || 'system';
+  applyTheme(t);
 }
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
-  if(localStorage.getItem('cseb_theme_manual')!=='1')applyTheme('system');
+let _themeTimeout = null;
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+  if (document.hidden) return; // Ignore Android webview background/recent app wakeup transitions
+  const saved = localStorage.getItem('cseb_theme');
+  if (!saved || saved === 'system') {
+    clearTimeout(_themeTimeout);
+    _themeTimeout = setTimeout(() => { if (!document.hidden) applyTheme('system'); }, 300);
+  }
 });
 
 // ── PROFILE DROPDOWN ──
