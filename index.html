@@ -2781,27 +2781,29 @@ function renderProductivityCorrelator() {
   if (peak && lowest && lowest.acc < peak.acc) {
     const diff = peak.acc - lowest.acc;
     const activeCourse = remoteData.activeCourse || 'CSEB11';
-    let courseAdvice = "demanding mock exams, complex numerical problem solving, and intensive analytical theory";
+    let courseAdvice = "your hardest syllabus topics and challenging practice problems";
     if (activeCourse.startsWith('ACCA')) {
-      courseAdvice = "demanding IFRS interpretations, complex consolidation adjustments, and high-stakes accounting practice";
-    } else if (activeCourse === 'CSEB11' || activeCourse === 'CAT09') {
-      courseAdvice = "demanding KCS Act statutory rules, complex accounting calculations, and intensive banking reasoning practice";
+      courseAdvice = "your toughest IFRS standards, consolidations, and complex accounting calculations";
+    } else if (activeCourse === 'CAT09') {
+      courseAdvice = "heavy KCS Act statutory rules, legal sections, and challenging co-operative theory";
+    } else if (activeCourse === 'CSEB11') {
+      courseAdvice = "difficult banking reasoning, tricky accounting calculations, and core co-operation rules";
     }
     insightEl.innerHTML = `
-      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Neuro-Productivity &amp; Schedule Recommendation</strong>
+      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours &amp; Schedule Advice</strong>
       <span style="color:var(--text);opacity:0.92;display:block;margin-bottom:8px;">
-        Your cognitive efficiency exhibits clear diurnality: your topic mastery rate peaks during <strong>${peak.label}</strong> at <strong>${peak.acc}%</strong>, but drops sharply by <strong>${diff}%</strong> during <strong>${lowest.label}</strong> (down to <strong>${lowest.acc}%</strong>).
+        You study best during the <strong>${peak.label}</strong>, achieving a high <strong>${peak.acc}%</strong> topic completion rate! However, your focus drops by <strong>${diff}%</strong> during the <strong>${lowest.label}</strong> (down to <strong>${lowest.acc}%</strong>).
       </span>
       <div style="background:rgba(84,162,255,0.08);border-left:4px solid var(--blue);padding:10px 12px;border-radius:8px;">
-        <strong style="color:var(--accent);font-size:0.8rem;display:block;margin-bottom:2px;">🎯 ACTIONABLE STUDY ADVICE:</strong>
-        <span style="font-size:0.8rem;color:var(--text);opacity:0.9;">Schedule ${courseAdvice} during your <strong>${peak.label.split(' ')[0]}</strong> window. Reserve your lower-mastery hours strictly for passive reading, reviewing flashcards, or sleep!</span>
+        <strong style="color:var(--accent);font-size:0.8rem;display:block;margin-bottom:2px;">🎯 STUDY SMART ADVICE:</strong>
+        <span style="font-size:0.8rem;color:var(--text);opacity:0.9;">Tackle ${courseAdvice} during the <strong>${peak.label.split(' ')[0]}</strong> when your mind is freshest. Save light reading, quick revisions, or rest for your slower hours!</span>
       </div>
     `;
   } else {
     insightEl.innerHTML = `
-      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Neuro-Productivity Analysis</strong>
+      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours Analysis</strong>
       <span style="color:var(--text);opacity:0.92;">
-        Your topic mastery rate is currently steady across active time zones! Continue completing revision tasks and syllabus topics across Morning, Afternoon, Evening, and Night hours to construct a complete empirical cognitive profile.
+        Your study performance is currently balanced across different times of the day! Keep completing topics and revisions across morning, afternoon, evening, and night to discover your personal peak study hours.
       </span>
     `;
   }
