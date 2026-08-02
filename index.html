@@ -59,7 +59,6 @@ body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
-.topbar { padding-top: max(12px, env(safe-area-inset-top)); }
 /* Custom scrollbars for Windows & Mac desktop */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -89,11 +88,10 @@ body {
 }
 #app{display:none}
 #app.visible{display:block;padding-top:0}
-.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:max(10px, env(safe-area-inset-top, 0px)) 40px 10px;display:flex;align-items:center;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
 [data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
 @media(max-width:700px){
-  .topbar{padding:0 14px;height:48px;position:fixed;width:100%}
-  #app.visible .wrap{padding-top:64px}
+  .topbar{padding:max(26px, env(safe-area-inset-top, 26px)) 16px 12px;min-height:calc(50px + max(26px, env(safe-area-inset-top, 26px)));position:sticky;top:0;width:100%}
 }
 .logo{font-size:1rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--accent)}
