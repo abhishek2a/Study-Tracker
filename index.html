@@ -480,26 +480,26 @@ body {
       <button class="lb-close" onclick="closeLogSession()" aria-label="Close study logger">✕</button>
     </div>
     <div style="padding:24px 26px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end">
         <div>
-          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📅 Study Date</label>
-          <input type="date" id="ls-date" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;white-space:nowrap">📅 Study Date</label>
+          <input type="date" id="ls-date" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
         </div>
         <div>
-          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⏰ Study Time / Window</label>
-          <input type="time" id="ls-time" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;white-space:nowrap">⏰ Time Window</label>
+          <input type="time" id="ls-time" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none">
         </div>
       </div>
       <div>
-        <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📚 Select Subject / Portion</label>
+        <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📚 Select Subject</label>
         <select id="ls-subject" onchange="renderLogTopics()" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.92rem;font-weight:600;color:var(--text);font-family:var(--font);outline:none;cursor:pointer"></select>
       </div>
       <div style="display:flex;flex-direction:column;flex:1">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <label style="font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em">✅ Select Topics Studied (<span id="ls-selected-count" style="color:var(--blue);font-weight:800">0</span>)</label>
-          <button type="button" id="ls-select-all-btn" onclick="toggleSelectAllLogTopics()" style="background:transparent;border:none;color:var(--blue);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font);text-decoration:underline;transition:color 0.2s">Select All in Subject</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+          <label style="font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em">✅ Topics (<span id="ls-selected-count" style="color:var(--blue);font-weight:800">0</span>)</label>
+          <button type="button" id="ls-select-all-btn" onclick="toggleSelectAllLogTopics()" style="background:rgba(84,162,255,0.08);border:1px solid rgba(84,162,255,0.3);border-radius:20px;padding:4px 12px;color:var(--blue);font-size:0.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all 0.2s;white-space:nowrap">✔ Select All</button>
         </div>
-        <div id="ls-topics-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-height:280px;overflow-y:auto;padding:4px;background:transparent;"></div>
+        <div id="ls-topics-container" style="display:grid;grid-template-columns:1fr;gap:10px;padding:2px 0;background:transparent;"></div>
       </div>
     </div>
     <div style="padding:18px 26px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;gap:12px;flex-shrink:0">
@@ -557,16 +557,16 @@ body {
     </div>
     
     <div class="sec" style="margin:25px 0 15px;padding-bottom:6px;border-bottom:1px solid var(--border)">
-      <h2 style="color:var(--blue)">📈 Spaced Repetition Workload Forecaster</h2>
-      <p style="font-size:0.8rem;color:var(--dim)">Upcoming 14-day review schedule and avalanche warnings</p>
+      <h2 style="color:var(--blue)">📈 14-Day Revision Forecast</h2>
+      <p style="font-size:0.8rem;color:var(--dim)">See upcoming topic reviews so you can pace your study sessions without getting overwhelmed</p>
     </div>
     <div style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);">
       <canvas id="srForecastChart" style="max-height:300px;width:100%"></canvas>
     </div>
     
     <div class="sec" style="margin:25px 0 15px;padding-bottom:6px;border-bottom:1px solid var(--border)">
-      <h2 style="color:var(--blue)">⏱️ Peak Productivity &amp; Mastery Correlator</h2>
-      <p style="font-size:0.8rem;color:var(--dim)">Empirical breakdown of topic completion and mastery by time of day</p>
+      <h2 style="color:var(--blue)">⏱️ Best Time of Day to Study</h2>
+      <p style="font-size:0.8rem;color:var(--dim)">See whether you complete more topics in the Morning, Afternoon, Evening, or Night</p>
     </div>
     <div id="productivity-correlator-card" style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div id="productivity-summary-badge" style="margin-bottom:16px;"></div>
@@ -3009,23 +3009,23 @@ function buildWhatsNewHTML(courses){
   const isCAT09 = primary === 'CAT09' || (!isACCA && cList.includes('CAT09'));
   const isCSEB = primary === 'CSEB11' || (!isACCA && !isCAT09);
 
-  let srDesc = "An interactive bar chart in your Statistics dashboard that maps out upcoming revision volume for Co-operation, banking reasoning, and accounting topics across the next 2 weeks, warning you before review avalanches occur.";
-  let prodDesc = "Analyzes your topic completion and revision mastery across Morning, Afternoon, Evening, and Night hours to identify your peak cognitive efficiency window for high-speed accounting calculations and offer actionable study timing advice.";
+  let srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for Co-operation, banking reasoning, and accounting topics over the next 2 weeks, helping you pace your daily review tasks without getting overwhelmed.";
+  let prodDesc = "Tracks when you finish study topics across Morning, Afternoon, Evening, and Night hours to help you discover the daily study times that work best for you.";
   let remDesc = "Intelligent alerts trigger when you fall behind target Junior Clerk study pace by over 10%, have 3+ subject revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
   let examOptTitle = "Junior Clerk Exam Optimization";
   let examOptDesc = "Streamlined dashboard countdown pills and rolling pace forecasts specifically for Cat 10 &amp; Cat 11 Super and Special Grade Bank exams.";
   let examOptIcon = "🎯";
 
   if (isACCA) {
-    srDesc = "An interactive bar chart in your Statistics dashboard that maps out upcoming revision volume for IFRS interpretations, consolidation rules, and accounting standards across the next 2 weeks, warning you before review avalanches occur.";
-    prodDesc = "Analyzes your IFRS standard mastery and revision accuracy across Morning, Afternoon, Evening, and Night hours to identify your peak cognitive efficiency window for complex financial reporting practice and offer actionable study timing advice.";
+    srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for IFRS interpretations, consolidation rules, and accounting standards over the next 2 weeks, helping you pace your review tasks without getting overwhelmed.";
+    prodDesc = "Tracks when you master IFRS standards across Morning, Afternoon, Evening, and Night hours to help you discover your best focus times for financial reporting practice.";
     remDesc = "Intelligent alerts trigger when you fall behind target ACCA exam completion pace by over 10%, have 3+ standard revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
     examOptTitle = "Dual-Phase Exam Countdown";
     examOptDesc = "Optimized dashboard tracking to independently manage your September Phase 1 syllabus completion and December Phase 2 final exam countdowns.";
     examOptIcon = "🎓";
   } else if (isCAT09) {
-    srDesc = "An interactive bar chart in your Statistics dashboard that maps out upcoming revision volume for KCS Act statutory rules, banking administration, and leadership modules across the next 2 weeks, warning you before review avalanches occur.";
-    prodDesc = "Analyzes your topic completion and revision mastery across Morning, Afternoon, Evening, and Night hours to identify your peak cognitive efficiency window for intensive statutory reasoning and offer actionable study timing advice.";
+    srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for KCS Act statutory rules, banking administration, and leadership modules over the next 2 weeks, helping you pace your study schedule easily.";
+    prodDesc = "Tracks when you complete topics across Morning, Afternoon, Evening, and Night hours to help you find your most productive focus windows throughout the day.";
     remDesc = "Intelligent alerts trigger when you fall behind target Assistant Secretary study pace by over 10%, have 3+ legal or banking revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
     examOptTitle = "Dedicated Assistant Sec Countdown";
     examOptDesc = "Streamlined the dashboard exam countdowns and target pace calculation specifically for Cat 09/2026 Assistant Secretary, completely removing Junior Clerk schedules.";
@@ -3034,9 +3034,9 @@ function buildWhatsNewHTML(courses){
 
   return `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--blue);">📈 Advanced Study &amp; Cognitive Analytics</div>
-      <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">14-Day SR Workload Forecaster</div><div class="wn-item-desc">${srDesc}</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Peak Productivity &amp; Mastery Correlator</div><div class="wn-item-desc">${prodDesc}</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--blue);">📈 Smart Study Insights</div>
+      <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">14-Day Revision Forecast</div><div class="wn-item-desc">${srDesc}</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Best Time of Day to Study</div><div class="wn-item-desc">${prodDesc}</div></div></div>
     </div>
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--green);">🔔 Smart Reminders &amp; Offline Resilience</div>
@@ -3491,8 +3491,10 @@ function renderLogTopics() {
   if (selectAllBtn) {
     selectAllBtn.style.display = 'inline-block';
     const allSelected = subj.ids.length > 0 && subj.ids.every(id => _logSelectedTopics.has(id));
-    selectAllBtn.textContent = allSelected ? 'Unselect All in Subject' : 'Select All in Subject';
+    selectAllBtn.textContent = allSelected ? '✖ Unselect All' : '✔ Select All';
     selectAllBtn.style.color = allSelected ? 'var(--red)' : 'var(--blue)';
+    selectAllBtn.style.borderColor = allSelected ? 'rgba(224,80,80,0.3)' : 'rgba(84,162,255,0.3)';
+    selectAllBtn.style.background = allSelected ? 'rgba(224,80,80,0.08)' : 'rgba(84,162,255,0.08)';
   }
 
   container.innerHTML = subj.ids.map(id => {
