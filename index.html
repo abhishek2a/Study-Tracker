@@ -1935,7 +1935,7 @@ function updatePageTitle(){
   document.title=courseName?`Study Tracker · ${courseName}`:'Study Tracker';
   const lbBtn = document.getElementById('pd-lb-item');
   const lbSep = document.getElementById('pd-lb-sep');
-  const showLb = (active === 'CSEB11');
+  const showLb = (active === 'CSEB11' || active === 'ACCA26');
   if (lbBtn) lbBtn.style.display = showLb ? 'flex' : 'none';
   if (lbSep) lbSep.style.display = showLb ? 'block' : 'none';
 }
@@ -2221,8 +2221,13 @@ function lbStatus(rank,total){
 function renderLeaderboard(users){
   const wrap=$('lb-wrap');
   if(!wrap)return;
-  const isCSEB=(remoteData.activeCourse||DEFAULT_COURSE)==='CSEB11';
-  if(!isCSEB){wrap.innerHTML='<div class="lb-empty">Leaderboard is only for CSEB11 right now.</div>';return;}
+  const activeCourse = (remoteData.activeCourse || DEFAULT_COURSE);
+  const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26';
+  if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB11 and ACCA26 courses.</div>';return;}
+  const titleEl = $('lb-title');
+  if(titleEl) {
+    titleEl.textContent = activeCourse === 'ACCA26' ? '🏆 ACCA26 Leaderboard' : '🏆 CSEB11 Leaderboard';
+  }
   if(!users||!users.length){wrap.innerHTML='<div class="lb-empty">No rankings yet — be the first!</div>';return;}
 
   // sort: % desc → topics desc → signupDate asc
@@ -2281,7 +2286,8 @@ function renderLeaderboard(users){
 }
 
 function updateLBData(){
-  if(!currentUid||(remoteData.activeCourse||DEFAULT_COURSE)!=='CSEB11')return;
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  if(!currentUid||(activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26'))return;
   const {subjs}=getCourseData();
   const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
   const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
@@ -2291,7 +2297,7 @@ function updateLBData(){
     displayName:remoteData._displayName||'',
     progressPercent:pct,
     completedTopics:done,
-    activeCourse:remoteData.activeCourse||DEFAULT_COURSE,
+    activeCourse:activeCourse,
     signupDate:remoteData.signupDate||'',
     updatedAt:new Date().toISOString()
   },{merge:true}).catch(err => {
@@ -2307,7 +2313,7 @@ function startLBListener() {
     if (currentLBTrack === activeCourse) return;
     if (lbUnsub) { lbUnsub(); lbUnsub = null; }
     currentLBTrack = activeCourse;
-    if (activeCourse !== 'CSEB11') {
+    if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26') {
       renderLeaderboard([]);
       return;
     }
@@ -2320,7 +2326,7 @@ function startLBListener() {
       const users = [];
       snap.docs.forEach(d => {
         const data = d.data();
-        if (data.activeCourse === 'CSEB11') {
+        if (data.activeCourse === activeCourse) {
           users.push({
             uid: d.id,
             name: data.displayName || 'Anonymous Learner',
