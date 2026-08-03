@@ -766,7 +766,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, deleteDoc, deleteField, collection, query, where, orderBy, limit
+  getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp({
@@ -840,6 +840,7 @@ async function submitAuth(){
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       try{ await updateProfile(cred.user,{displayName:name}); } catch(err){}
       try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){}
+      try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){}
       if(typeof initApp === 'function') try { initApp(cred.user); } catch(err){}
     } else {
       const cred=await signInWithEmailAndPassword(auth,email,pass);
@@ -1331,6 +1332,7 @@ function saveToFirestore(){
   clearTimeout(_fsTimer);
   _fsTimer = setTimeout(() => {
     setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).catch(()=>{});
+    if(typeof updateLBData === 'function') updateLBData();
   }, 600);
 }
 
@@ -2307,12 +2309,59 @@ function updateLBData(){
 
 let currentLBTrack = null; // ✨ Tracking lock variable
 
+async function backfillOldUsersToLeaderboard() {
+  if(!currentUid) return;
+  try {
+    const userSnap = await getDocs(collection(db, 'users'));
+    let count = 0;
+    userSnap.forEach(docSnap => {
+      const uData = docSnap.data() || {};
+      const uid = docSnap.id;
+      let ac = String(uData.activeCourse || (uData.courses && uData.courses[0]) || DEFAULT_COURSE).trim();
+      if (ac.startsWith('ACCA')) ac = 'ACCA26';
+      if (ac.startsWith('CSEB')) ac = 'CSEB11';
+      
+      if (ac === 'CSEB11' || ac === 'ACCA26') {
+        const cd = COURSE_DATA[ac] || COURSE_DATA['CSEB11'];
+        let done = 0;
+        let total = 0;
+        if (cd && cd.subjs) {
+          Object.values(cd.subjs).forEach(v => {
+            if (v.ids) {
+              total += v.ids.length;
+              done += v.ids.filter(id => !!uData[id]).length;
+            }
+          });
+        }
+        const fallbackName = ac === 'ACCA26' ? `ACCA Candidate #${uid.slice(0, 4).toUpperCase()}` : `CSEB Candidate #${uid.slice(0, 4).toUpperCase()}`;
+        const name = uData.displayName || uData._displayName || uData.name || uData.fullName || uData.username || (uData.email ? uData.email.split('@')[0] : null) || fallbackName;
+        setDoc(doc(db, 'leaderboard', uid), {
+          displayName: name,
+          progressPercent: pct,
+          completedTopics: done,
+          activeCourse: ac,
+          signupDate: uData.signupDate || '',
+          updatedAt: new Date().toISOString()
+        }, { merge: true }).catch(()=>{});
+        count++;
+      }
+    });
+    console.log(`[Leaderboard] Successfully migrated ${count} legacy users into leaderboard!`);
+  } catch(err) {
+    console.warn('[Leaderboard] Could not read all users directly due to Firestore security rules:', err.message);
+  }
+}
+
 function startLBListener() {
   try {
     const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
     if (currentLBTrack === activeCourse) return;
     if (lbUnsub) { lbUnsub(); lbUnsub = null; }
     currentLBTrack = activeCourse;
+    if (!sessionStorage.getItem('lb_backfill_ran')) {
+      sessionStorage.setItem('lb_backfill_ran', 'true');
+      setTimeout(backfillOldUsersToLeaderboard, 1500);
+    }
     if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26') {
       renderLeaderboard([]);
       return;
@@ -2326,10 +2375,22 @@ function startLBListener() {
       const users = [];
       snap.docs.forEach(d => {
         const data = d.data();
-        if (data.activeCourse === activeCourse) {
+        let docCourse = String(data.activeCourse || 'CSEB11').trim();
+        if (docCourse.startsWith('ACCA')) docCourse = 'ACCA26';
+        if (docCourse.startsWith('CSEB')) docCourse = 'CSEB11';
+        
+        let targetCourse = String(activeCourse || 'CSEB11').trim();
+        if (targetCourse.startsWith('ACCA')) targetCourse = 'ACCA26';
+        if (targetCourse.startsWith('CSEB')) targetCourse = 'CSEB11';
+        if (docCourse === targetCourse) {
+          let dispName = data.displayName || data.name || data._displayName || '';
+          if (!dispName || dispName === 'Anonymous Learner') {
+            const prefix = targetCourse === 'ACCA26' ? 'ACCA Candidate' : 'CSEB Candidate';
+            dispName = `${prefix} #${d.id.slice(0, 4).toUpperCase()}`;
+          }
           users.push({
             uid: d.id,
-            name: data.displayName || 'Anonymous Learner',
+            name: dispName,
             pct: data.progressPercent || 0,
             topics: data.completedTopics || 0,
             signupDate: data.signupDate || ''
@@ -2999,9 +3060,9 @@ function initApp(user){
       applyData(remoteData);
     }
     
+    startLBListener();
+    updateLBData();
     if (!snap.metadata.hasPendingWrites) {
-      startLBListener();
-      updateLBData();
       showWhatsNew();
       renderNotifToggle();
       checkAndNotify();
@@ -3433,6 +3494,7 @@ const lbItem=document.getElementById('pd-lb-item');
 if(lbItem) lbItem.addEventListener('click',function(e){
   e.stopPropagation();
   closeDrop();
+  if (typeof backfillOldUsersToLeaderboard === 'function') backfillOldUsersToLeaderboard();
   const ov = document.getElementById('lb-overlay');
   if(ov) ov.classList.add('open');
 });
