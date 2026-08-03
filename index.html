@@ -91,7 +91,7 @@ body {
 [data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
 [data-theme="amoled"] .topbar{background:rgba(0,0,0,.88)}
 @media(max-width:700px){
-  .topbar{padding:max(42px, env(safe-area-inset-top, 42px)) 16px 12px!important;min-height:calc(50px + max(42px, env(safe-area-inset-top, 42px)))!important;position:sticky;top:0;width:100%}
+  .topbar{padding:max(12px, env(safe-area-inset-top, 12px)) 16px 12px!important;min-height:calc(50px + env(safe-area-inset-top, 0px))!important;position:sticky;top:0;width:100%}
 }
 @media (display-mode: standalone), (display-mode: fullscreen) {
   .topbar{padding-top:max(44px, env(safe-area-inset-top, 44px))!important;min-height:calc(50px + max(44px, env(safe-area-inset-top, 44px)))!important}
@@ -121,7 +121,6 @@ body {
 .exam-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:160px;transition:all .25s cubic-bezier(0.2,0.8,0.2,1);box-shadow:var(--shadow);cursor:default}
 @media(hover:hover){.epill:hover{transform:translateY(-2px);border-color:rgba(252,174,40,0.35);box-shadow:0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(252,174,40,0.1)}}
-.epill:active{transform:scale(0.98);transition:transform 0.1s}
 .epill.next-exam{border-color:rgba(77,150,240,.4);background:linear-gradient(0deg,rgba(77,150,240,.08),rgba(77,150,240,.08)),var(--s1)}
 .epill.done-exam{border-color:rgba(43,189,136,.3);background:linear-gradient(0deg,rgba(43,189,136,.06),rgba(43,189,136,.06)),var(--s1);opacity:.85}
 .epill .en{font-size:.6rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
