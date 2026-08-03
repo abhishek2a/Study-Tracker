@@ -66,24 +66,24 @@ body {
 /* Mobile touch momentum and desktop selection */
 .wrap, #stats-overlay, #whats-new-overlay, .profile-drop { -webkit-overflow-scrolling: touch; }
 ::selection { background: rgba(84,162,255,0.25); color: var(--text); }
-#auth-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#auth-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:20px}
 #auth-overlay.hidden{display:none}
-.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:40px 36px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
-.auth-logo{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 24px 80px rgba(0,0,0,.5);margin:auto;flex-shrink:0}
+.auth-logo{font-size:1.45rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
 .auth-logo span{color:var(--accent)}
-.auth-sub{font-size:.75rem;font-family:var(--mono);color:var(--dim);margin-bottom:28px}
-.auth-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--s2);border-radius:8px;padding:3px}
-.auth-tab{flex:1;padding:7px;font-size:.82rem;font-weight:600;border:none;background:transparent;color:var(--dim);border-radius:6px;cursor:pointer;font-family:var(--font)}
+.auth-sub{font-size:.74rem;font-family:var(--mono);color:var(--dim);margin-bottom:18px}
+.auth-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--s2);border-radius:8px;padding:3px;user-select:none;-webkit-user-select:none}
+.auth-tab{flex:1;padding:7px;font-size:.82rem;font-weight:600;border:none;background:transparent;color:var(--dim);border-radius:6px;cursor:pointer;font-family:var(--font);user-select:none;-webkit-user-select:none}
 .auth-tab.active{background:var(--s3);color:var(--text)}
-.auth-field{margin-bottom:14px}
-.auth-field label{display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.auth-field input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;transition:.2s}
+.auth-field{margin-bottom:11px}
+.auth-field label{display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;user-select:none;-webkit-user-select:none}
+.auth-field input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;transition:.2s;box-sizing:border-box}
 .auth-field input:focus{border-color:var(--blue)}
-.auth-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:11px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:6px;letter-spacing:.01em}
-.auth-err{font-size:.75rem;color:var(--red);margin-top:10px;min-height:18px;font-family:var(--mono)}
+.auth-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:11px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:6px;letter-spacing:.01em}
+.auth-err{font-size:.75rem;color:var(--red);margin-top:8px;min-height:16px;font-family:var(--mono)}
 @media(max-width:480px){
-  #auth-overlay{align-items:flex-start;padding:0}
-  .auth-box{border-radius:0;border-left:none;border-right:none;border-top:none;min-height:100svh;padding:40px 20px 32px}
+  #auth-overlay{padding:0}
+  .auth-box{border-radius:0;border:none;min-height:100svh;padding:34px 22px 40px;margin:0;box-shadow:none}
 }
 #app{display:none}
 #app.visible{display:block;padding-top:0}
@@ -452,18 +452,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <button class="auth-tab active" id="tab-login">Sign In</button>
       <button class="auth-tab" id="tab-signup">Create Account</button>
     </div>
-    <div class="auth-field"><label for="auth-email">Email <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
-    <div class="auth-field"><label for="auth-pass">Password <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
-    <div class="auth-field" id="signup-pass2-field" style="display:none"><label for="auth-pass2">Confirm Password <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="password" id="auth-pass2" placeholder="••••••••" aria-label="Confirm Password" autocomplete="new-password"></div>
-    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name <span style="color:var(--red);font-size:.7rem">*required</span></label><input type="text" id="auth-name" placeholder="Your full name" aria-label="Your name" autocomplete="name"></div>
+    <div class="auth-field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="you@email.com" aria-label="Email address" autocomplete="email"></div>
+    <div class="auth-field"><label for="auth-pass">Password</label><input type="password" id="auth-pass" placeholder="••••••••" aria-label="Password" autocomplete="current-password"></div>
+    <div class="auth-field" id="signup-pass2-field" style="display:none"><label for="auth-pass2">Confirm Password</label><input type="password" id="auth-pass2" placeholder="••••••••" aria-label="Confirm Password" autocomplete="new-password"></div>
+    <div class="auth-field" id="signup-name-field" style="display:none"><label for="auth-name">Your Name</label><input type="text" id="auth-name" placeholder="Your full name" aria-label="Your name" autocomplete="name"></div>
     <div class="auth-field" id="signup-code-field" style="display:none">
-      <label for="auth-code">Select Course <span style="color:var(--red);font-size:.7rem">*required</span></label>
-      <select id="auth-code" aria-label="Course code" style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;width:100%">
-        <option value="CSEB11">CSEB (Kerala Cooperative Bank)</option>
-        <option value="CAT09">Assistant Secretary (Cat 09)</option>
-        <option value="ACCA26">ACCA Financial Reporting (FR)</option>
-        <option value="ACCA26_P2">ACCA Phase 2 (Dec Exam)</option>
-      </select>
+      <label for="auth-code">Enter Course Code</label>
+      <input type="text" id="auth-code" placeholder="Course access code" aria-label="Course code" style="text-transform:uppercase;letter-spacing:.05em" autocomplete="off">
     </div>
     <button class="auth-btn" id="auth-submit-btn">Sign In</button>
     <div id="forgot-link" style="text-align:center;margin-top:10px"><button id="forgot-link-btn" style="background:none;border:none;color:var(--dim);font-size:.75rem;cursor:pointer;font-family:var(--font);text-decoration:underline">Forgot password?</button></div>
@@ -473,11 +468,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div id="reset-msg" style="font-size:.72rem;margin-top:8px;min-height:16px;font-family:var(--mono)"></div>
     </div>
     <div class="auth-err" id="auth-err"></div>
-    <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-      <button onclick="if(navigator.serviceWorker){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()))};if(window.caches){caches.keys().then(k=>k.forEach(c=>caches.delete(c)))};localStorage.removeItem('cseb_deferred');window.location.reload(true);" style="background:none;border:none;color:var(--dim);font-size:0.7rem;cursor:pointer;font-family:var(--font);text-decoration:underline;">
-        🔄 Experiencing login or display issues? Reset Cache & Reload
-      </button>
-    </div>
   </div>
 </div>
 
