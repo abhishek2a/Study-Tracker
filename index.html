@@ -1331,8 +1331,12 @@ function saveToFirestore(){
   // Debounce: batch rapid writes (e.g. confidence sliders or checkmarks) into one Firestore call
   clearTimeout(_fsTimer);
   _fsTimer = setTimeout(() => {
-    _lastAppliedJSON = JSON.stringify(remoteData);
-    setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).catch(()=>{});
+    // Create a clean copy without ephemeral client flag
+    const payload = { ...remoteData };
+    delete payload._loaded;
+    
+    _lastAppliedJSON = JSON.stringify(payload);
+    setDoc(doc(db,'users',currentUid), payload, {merge:true}).catch(()=>{});
     if(typeof updateLBData === 'function') updateLBData();
   }, 600);
 }
@@ -2323,11 +2327,6 @@ function updateLBData(){
 
 let currentLBTrack = null; // ✨ Tracking lock variable
 
-async function backfillOldUsersToLeaderboard() {
-  if (!currentUid) return;
-  updateLBData();
-}
-
 function startLBListener() {
   try {
     if (!remoteData || !remoteData._loaded) return;
@@ -2335,10 +2334,6 @@ function startLBListener() {
     if (currentLBTrack === activeCourse) return;
     if (lbUnsub) { lbUnsub(); lbUnsub = null; }
     currentLBTrack = activeCourse;
-    if (!sessionStorage.getItem('lb_backfill_ran_v4')) {
-      sessionStorage.setItem('lb_backfill_ran_v4', 'true');
-      setTimeout(backfillOldUsersToLeaderboard, 1000);
-    }
     if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26') {
       renderLeaderboard([]);
       return;
@@ -3427,7 +3422,7 @@ const lbItem=document.getElementById('pd-lb-item');
 if(lbItem) lbItem.addEventListener('click',function(e){
   e.stopPropagation();
   closeDrop();
-  if (typeof backfillOldUsersToLeaderboard === 'function') backfillOldUsersToLeaderboard();
+  if (typeof updateLBData === 'function') updateLBData();
   const ov = document.getElementById('lb-overlay');
   if(ov) ov.classList.add('open');
 });
@@ -3629,28 +3624,60 @@ function deleteLoggedSession(id) {
   if (!remoteData._loggedSessions) return;
   const targetSession = remoteData._loggedSessions.find(s => s.id === id);
   if (targetSession && targetSession._topicIds && targetSession._prevStates) {
+    const dbPayload = { _sr: { ...remoteData._sr } };
     targetSession._topicIds.forEach(tId => {
       const p = targetSession._prevStates[tId];
       if (p) {
-        if (!p.completed) delete remoteData[tId];
-        else remoteData[tId] = true;
+        if (!p.completed) {
+          delete remoteData[tId];
+          dbPayload[tId] = deleteField();
+        } else {
+          remoteData[tId] = true;
+          dbPayload[tId] = true;
+        }
         
-        if (!p.sr) delete remoteData._sr[tId];
-        else remoteData._sr[tId] = p.sr;
+        if (!p.sr) {
+          if (remoteData._sr) delete remoteData._sr[tId];
+          if (dbPayload._sr) dbPayload._sr[tId] = deleteField();
+        } else {
+          if (!remoteData._sr) remoteData._sr = {};
+          remoteData._sr[tId] = p.sr;
+          if (dbPayload._sr) dbPayload._sr[tId] = p.sr;
+        }
       }
     });
     if (targetSession.bucket && remoteData._timeAccuracy && remoteData._timeAccuracy[targetSession.bucket]) {
       const st = remoteData._timeAccuracy[targetSession.bucket];
       st.attempts = Math.max(0, (st.attempts || 0) - targetSession.count);
       st.correct = Math.max(0, (st.correct || 0) - targetSession.count);
+      dbPayload._timeAccuracy = { ...remoteData._timeAccuracy };
     }
     if (targetSession.date && remoteData._activity && typeof remoteData._activity[targetSession.date] === 'number') {
       remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - targetSession.count);
-      if (remoteData._activity[targetSession.date] === 0) delete remoteData._activity[targetSession.date];
+      if (!dbPayload._activity) dbPayload._activity = { ...remoteData._activity };
+      if (remoteData._activity[targetSession.date] === 0) {
+        delete remoteData._activity[targetSession.date];
+        dbPayload._activity[targetSession.date] = deleteField();
+      } else {
+        dbPayload._activity[targetSession.date] = remoteData._activity[targetSession.date];
+      }
     }
+    remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
+    dbPayload._loggedSessions = remoteData._loggedSessions;
+
+    if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
+      const cleanBackup = { ...remoteData };
+      delete cleanBackup._loaded;
+      _lastAppliedJSON = JSON.stringify(cleanBackup);
+      setDoc(doc(db, 'users', currentUid), dbPayload, { merge: true }).catch(err => console.error('[Log Undo] Failed:', err));
+      if (typeof updateLBData === 'function') updateLBData();
+    } else if (typeof saveToFirestore === 'function') {
+      saveToFirestore();
+    }
+  } else {
+    remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
+    if (typeof saveToFirestore === 'function') saveToFirestore();
   }
-  remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
-  if (typeof saveToFirestore === 'function') saveToFirestore();
   updateAll();
   if (typeof renderPending === 'function') renderPending();
   if (typeof renderRevisions === 'function') renderRevisions();
@@ -3703,9 +3730,17 @@ async function saveLogSession() {
   const prevStates = {};
   const topicIds = Array.from(_logSelectedTopics);
   topicIds.forEach(id => {
+    const existingSr = remoteData._sr[id];
     prevStates[id] = {
       completed: !!remoteData[id],
-      sr: remoteData._sr[id] ? JSON.parse(JSON.stringify(remoteData._sr[id])) : null
+      sr: existingSr ? {
+        completed: existingSr.completed || null,
+        lastRev: existingSr.lastRev || null,
+        next: existingSr.next || null,
+        count: existingSr.count || 0,
+        ease: existingSr.ease || 2.5,
+        interval: existingSr.interval || 1
+      } : null
     };
     remoteData[id] = true;
     const nextDate = typeof addDaysStr === 'function' ? addDaysStr(dateVal, 1) : dateVal;
