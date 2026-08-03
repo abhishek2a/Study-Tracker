@@ -1958,14 +1958,14 @@ function renderExamStrip(){
     const p2Color = p2Diff<0?'var(--green)':p2Diff===0?'var(--accent)':'var(--green)';
     
     es.innerHTML=`<div class="epill ${p1Diff<0?'done-exam':(p1Diff>=0?'next-exam':'')}">
-      <div class="en">Phase 1: Syllabus</div>
+      <div class="en">September FR Exam</div>
       <div class="ed">10 Sep 2026</div>
-      <div class="en2">Complete all topics<br><span style="opacity:.7">Primary Target</span></div>
+      <div class="en2">ACCA Financial Reporting<br><span style="opacity:.7">Sept Exam Session</span></div>
       <div class="edd" style="margin-top:4px;color:${p1Color}">${p1Status}</div></div>
       <div class="epill ${p1Diff<0 && p2Diff>=0 ?'next-exam':''}">
-      <div class="en">Phase 2: Final Exam</div>
+      <div class="en">December FR Exam</div>
       <div class="ed">10 Dec 2026</div>
-      <div class="en2">ACCA Financial Reporting<br><span style="opacity:.7">Applied Skills</span></div>
+      <div class="en2">ACCA Financial Reporting<br><span style="opacity:.7">Dec Exam Session</span></div>
       <div class="edd" style="margin-top:4px;color:${p2Color}">${p2Status}</div></div>`;
     return;
   }
@@ -3049,7 +3049,7 @@ function buildWhatsNewHTML(courses){
     prodDesc = "Tracks when you master IFRS standards across Morning, Afternoon, Evening, and Night hours to help you discover your best focus times for financial reporting practice.";
     remDesc = "Intelligent alerts trigger when you fall behind target ACCA exam completion pace by over 10%, have 3+ standard revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
     examOptTitle = "Dual-Phase Exam Countdown";
-    examOptDesc = "Optimized dashboard tracking to independently manage your September Phase 1 syllabus completion and December Phase 2 final exam countdowns.";
+    examOptDesc = "Updated dashboard exam tracking to seamlessly guide your preparation between the September and December ACCA FR exam sessions.";
     examOptIcon = "🎓";
   } else if (isCAT09) {
     srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for KCS Act statutory rules, banking administration, and leadership modules over the next 2 weeks, helping you pace your study schedule easily.";
