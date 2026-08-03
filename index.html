@@ -23,7 +23,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Study Tracker">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
+<script>if(window.location.protocol!=='file:'){var _m=document.createElement('link');_m.rel='manifest';_m.href='manifest.json';document.head.appendChild(_m);}</script>
 <link rel="icon" href="logo.svg?v=1.3.2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
 <title>Study Tracker</title>
@@ -66,7 +66,7 @@ body {
 /* Mobile touch momentum and desktop selection */
 .wrap, #stats-overlay, #whats-new-overlay, .profile-drop { -webkit-overflow-scrolling: touch; }
 ::selection { background: rgba(84,162,255,0.25); color: var(--text); }
-#auth-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:20px}
+#auth-overlay{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:20px;-webkit-overflow-scrolling:touch}
 #auth-overlay.hidden{display:none}
 .auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 24px 80px rgba(0,0,0,.5);margin:auto;flex-shrink:0}
 .auth-logo{font-size:1.45rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
@@ -83,7 +83,7 @@ body {
 .auth-err{font-size:.75rem;color:var(--red);margin-top:8px;min-height:16px;font-family:var(--mono)}
 @media(max-width:480px){
   #auth-overlay{padding:0}
-  .auth-box{border-radius:0;border:none;min-height:100svh;padding:34px 22px 40px;margin:0;box-shadow:none}
+  .auth-box{border-radius:0;border:none;min-height:100vh;min-height:100svh;padding:max(44px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));margin:0;box-shadow:none;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:100%}
 }
 #app{display:none}
 #app.visible{display:block;padding-top:0}
@@ -420,25 +420,26 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     var s = document.getElementById('splash');
     if (s && !s.classList.contains('splash-done')) {
       s.classList.add('splash-done');
-      var app = document.getElementById('app');
-      var auth = document.getElementById('auth-overlay');
-      if (app && !app.classList.contains('visible') && auth) {
-        auth.classList.remove('hidden');
-        if (window.location.protocol === 'file:') {
-          var err = document.getElementById('auth-err');
-          if (err) {
-            err.style.color = '#ff6b6b';
-            err.style.background = 'rgba(255,107,107,0.1)';
-            err.style.padding = '12px';
-            err.style.borderRadius = '8px';
-            err.style.marginTop = '12px';
-            err.style.textAlign = 'left';
-            err.style.lineHeight = '1.4';
-            err.innerHTML = '⚠️ <b>Local File Detection Notice</b><br>You opened this application directly from your file system (<code>file://</code>). Modern web browsers explicitly block ES Modules (<code>&lt;script type="module"&gt;</code>) and Firebase Authentication under direct file access due to strict CORS security standards.<br><br><b>To enable interactive login & synchronization:</b><br>Please serve this folder via a local web server (e.g., using <b>VS Code Live Server</b>, running <code>python -m http.server 8000</code> in your terminal, or hosting online) and navigate to <code>http://localhost:8000</code>.';
-          }
-          var btn = document.getElementById('auth-submit-btn');
-          if (btn) btn.onclick = function() { alert('Authentication fails under file:// protocol. Please run a local server (http://localhost) or use VS Code Live Server!'); };
+      setTimeout(function() { if (s && s.parentNode) s.style.display = 'none'; }, 450);
+    }
+    var app = document.getElementById('app');
+    var auth = document.getElementById('auth-overlay');
+    if (app && !app.classList.contains('visible') && auth) {
+      auth.classList.remove('hidden');
+      if (window.location.protocol === 'file:') {
+        var err = document.getElementById('auth-err');
+        if (err) {
+          err.style.color = '#ff6b6b';
+          err.style.background = 'rgba(255,107,107,0.1)';
+          err.style.padding = '12px';
+          err.style.borderRadius = '8px';
+          err.style.marginTop = '12px';
+          err.style.textAlign = 'left';
+          err.style.lineHeight = '1.4';
+          err.innerHTML = '⚠️ <b>Local File Detection Notice</b><br>You opened this application directly from your file system (<code>file://</code>). Modern web browsers explicitly block ES Modules (<code>&lt;script type="module"&gt;</code>) and Firebase Authentication under direct file access due to strict CORS security standards.<br><br><b>To enable interactive login & synchronization:</b><br>Please serve this folder via a local web server (e.g., using <b>VS Code Live Server</b>, running <code>python -m http.server 8000</code> in your terminal, or hosting online) and navigate to <code>http://localhost:8000</code>.';
         }
+        var btn = document.getElementById('auth-submit-btn');
+        if (btn) btn.onclick = function() { alert('Authentication fails under file:// protocol. Please run a local server (http://localhost) or use VS Code Live Server!'); };
       }
     }
   }, 2200);
@@ -2220,10 +2221,23 @@ function lbStatus(rank,total){
   return'📚 Consistent Learner';
 }
 
+function getLBActiveCourse() {
+  let raw = String((typeof remoteData !== 'undefined' && remoteData && remoteData.activeCourse) || '').trim();
+  if (!raw) {
+    const cList = (typeof remoteData !== 'undefined' && remoteData && Array.isArray(remoteData.courses)) ? remoteData.courses : [];
+    if (cList.length > 0) raw = String(cList[0]).trim();
+    else raw = DEFAULT_COURSE;
+  }
+  if (raw.startsWith('ACCA')) return 'ACCA26';
+  if (raw.startsWith('CSEB')) return 'CSEB11';
+  if (raw === 'CAT09') return 'CAT09';
+  return raw || 'CSEB11';
+}
+
 function renderLeaderboard(users){
   const wrap=$('lb-wrap');
   if(!wrap)return;
-  const activeCourse = (remoteData.activeCourse || DEFAULT_COURSE);
+  const activeCourse = getLBActiveCourse();
   const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26';
   if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB11 and ACCA26 courses.</div>';return;}
   const titleEl = $('lb-title');
@@ -2292,8 +2306,9 @@ function renderLeaderboard(users){
 }
 
 function updateLBData(){
-  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
-  if(!currentUid||(activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26'))return;
+  if(!currentUid || !remoteData || !remoteData._loaded) return;
+  const activeCourse = getLBActiveCourse();
+  if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26') return;
   const {subjs}=getCourseData();
   const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
   const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
@@ -2314,57 +2329,20 @@ function updateLBData(){
 let currentLBTrack = null; // ✨ Tracking lock variable
 
 async function backfillOldUsersToLeaderboard() {
-  if(!currentUid) return;
-  try {
-    const userSnap = await getDocs(collection(db, 'users'));
-    let count = 0;
-    userSnap.forEach(docSnap => {
-      const uData = docSnap.data() || {};
-      const uid = docSnap.id;
-      let ac = String(uData.activeCourse || (uData.courses && uData.courses[0]) || DEFAULT_COURSE).trim();
-      if (ac.startsWith('ACCA')) ac = 'ACCA26';
-      if (ac.startsWith('CSEB')) ac = 'CSEB11';
-      
-      if (ac === 'CSEB11' || ac === 'ACCA26') {
-        const cd = COURSE_DATA[ac] || COURSE_DATA['CSEB11'];
-        let done = 0;
-        let total = 0;
-        if (cd && cd.subjs) {
-          Object.values(cd.subjs).forEach(v => {
-            if (v.ids) {
-              total += v.ids.length;
-              done += v.ids.filter(id => !!uData[id]).length;
-            }
-          });
-        }
-        const fallbackName = ac === 'ACCA26' ? `ACCA Candidate #${uid.slice(0, 4).toUpperCase()}` : `CSEB Candidate #${uid.slice(0, 4).toUpperCase()}`;
-        const name = uData.displayName || uData._displayName || uData.name || uData.fullName || uData.username || (uData.email ? uData.email.split('@')[0] : null) || fallbackName;
-        setDoc(doc(db, 'leaderboard', uid), {
-          displayName: name,
-          progressPercent: pct,
-          completedTopics: done,
-          activeCourse: ac,
-          signupDate: uData.signupDate || '',
-          updatedAt: new Date().toISOString()
-        }, { merge: true }).catch(()=>{});
-        count++;
-      }
-    });
-    console.log(`[Leaderboard] Successfully migrated ${count} legacy users into leaderboard!`);
-  } catch(err) {
-    console.warn('[Leaderboard] Could not read all users directly due to Firestore security rules:', err.message);
-  }
+  if (!currentUid) return;
+  updateLBData();
 }
 
 function startLBListener() {
   try {
-    const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+    if (!remoteData || !remoteData._loaded) return;
+    const activeCourse = getLBActiveCourse();
     if (currentLBTrack === activeCourse) return;
     if (lbUnsub) { lbUnsub(); lbUnsub = null; }
     currentLBTrack = activeCourse;
-    if (!sessionStorage.getItem('lb_backfill_ran')) {
-      sessionStorage.setItem('lb_backfill_ran', 'true');
-      setTimeout(backfillOldUsersToLeaderboard, 1500);
+    if (!sessionStorage.getItem('lb_backfill_ran_v4')) {
+      sessionStorage.setItem('lb_backfill_ran_v4', 'true');
+      setTimeout(backfillOldUsersToLeaderboard, 1000);
     }
     if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26') {
       renderLeaderboard([]);
@@ -2492,6 +2470,8 @@ if (addBtn) {
     remoteData.courses=updated;remoteData.activeCourse=code;
     await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
     inp.value='';renderCourses(remoteData);
+    startLBListener();updateLBData();
+    makeCard();bindSyllabus();updateAll();renderPending();
   });
 }
 
@@ -2501,7 +2481,10 @@ function hideSplash(){
     const delay=isPWA?350:500;
     setTimeout(()=>{
       const sp = $('splash');
-      if (sp) sp.classList.add('splash-done');
+      if (sp) {
+        sp.classList.add('splash-done');
+        setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 450);
+      }
       const app = $('app');
       const authOv = $('auth-overlay');
       if (app && authOv && !app.classList.contains('visible')){
@@ -2509,7 +2492,7 @@ function hideSplash(){
       }
     }, delay);
   } catch(e) {
-    const sp = $('splash'); if(sp) sp.classList.add('splash-done');
+    const sp = $('splash'); if(sp) { sp.classList.add('splash-done'); sp.style.display='none'; }
   }
 }
 
@@ -2517,6 +2500,7 @@ setTimeout(()=>{
   const sp = $('splash');
   if(sp && !sp.classList.contains('splash-done')){
     sp.classList.add('splash-done');
+    setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 450);
     const app = $('app');
     const authOv = $('auth-overlay');
     if(app && authOv && !app.classList.contains('visible')) authOv.classList.remove('hidden');
@@ -3050,18 +3034,18 @@ function initApp(user){
   if(typeof lbUnsub !== 'undefined' && lbUnsub){lbUnsub();lbUnsub=null;}
   if(typeof currentLBTrack !== 'undefined'){currentLBTrack=null;}
   
-  startLBListener();
-  
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
     if(snap.exists()){
       const oldCourse = remoteData.activeCourse;
-      remoteData={...remoteData,...snap.data()};
+      remoteData={...remoteData,...snap.data(), _loaded: true};
       if (oldCourse !== remoteData.activeCourse) {
         makeCard();
         bindSyllabus();
       }
       applyData(remoteData);
+    } else {
+      remoteData._loaded = true;
     }
     
     startLBListener();
@@ -3251,7 +3235,7 @@ onAuthStateChanged(auth,user=>{
       remoteData={};syllabusBoxes=[];
       try{localStorage.removeItem('cseb_deferred');}catch(e){}
       hideSplash();
-      const sp = $('splash'); if(sp) sp.classList.add('splash-done');
+      const sp = $('splash'); if(sp) { sp.classList.add('splash-done'); setTimeout(() => { if(sp && sp.parentNode) sp.style.display='none'; }, 450); }
       const appEl = $('app'); if(appEl) appEl.classList.remove('visible');
       const authEl = $('auth-overlay'); if(authEl) authEl.classList.remove('hidden');
       const ab=$('auth-submit-btn');

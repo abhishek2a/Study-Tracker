@@ -1,5 +1,5 @@
-const CACHE = 'study-tracker-v1.2.91-ios-fix';
-const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg', './logo.ico'];
+const CACHE = 'study-tracker-v1.2.91-cseb-lb';
+const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
