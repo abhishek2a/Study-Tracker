@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.91-cseb-lb';
+const CACHE = 'study-tracker-v1.2.91-smooth-mobile';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {

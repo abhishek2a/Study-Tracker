@@ -47,9 +47,8 @@ html { background: var(--bg); }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overscroll-behavior:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal}
-/* Prevent 300ms tap delay on all interactive elements for mobile/PWA */
-a,button,input,select,label,[role=button]{touch-action:manipulation}
+/* Prevent 300ms tap delay and text-selection jank on all interactive elements for mobile/PWA */
+a,button,input,select,label,[role=button],.cl label,.cl li,.revise-btn-diff,.pd-item,.subj-hdr{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 /* Cross-Platform UI Polish (Android, iOS, Windows, macOS) */
 body {
   padding-left: env(safe-area-inset-left);
@@ -356,16 +355,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 @keyframes skeletonLoading{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 /* Question Practice sub-rows */
-.q-practice{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px;margin:0 0 8px 33px;padding:0}
+.q-practice{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin:0 0 10px 33px;padding:0}
 /* Override .cl label width:100% for q-practice labels only */
-.q-practice label{display:inline-flex!important;align-items:center;gap:5px;width:auto!important;padding:4px 10px!important;border-radius:20px!important;border:1px solid var(--border)!important;background:var(--s2);cursor:pointer;transition:all .15s;font-size:.75rem!important;color:var(--text)!important;font-weight:500;white-space:nowrap}
+.q-practice label{display:inline-flex!important;align-items:center;gap:6px;width:auto!important;padding:6px 14px!important;border-radius:20px!important;border:1.5px solid var(--border)!important;background:var(--s2);cursor:pointer;transition:all .15s;font-size:.82rem!important;color:var(--text)!important;font-weight:600;white-space:nowrap;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;min-height:36px}
 .q-practice label:hover{border-color:var(--blue)!important;background:rgba(84,162,255,.08)!important;color:var(--blue)!important}
-.q-practice input[type=checkbox]{width:12px!important;height:12px!important;min-width:12px!important;border-radius:3px!important;margin:0!important;flex-shrink:0;border:1.5px solid var(--dim)!important;background:transparent!important;appearance:none;display:grid;place-content:center;transition:all .15s}
-.q-practice input[type=checkbox]::before{content:"";width:6px;height:6px;transform:scale(0);transition:.2s;clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:#fff}
+.q-practice input[type=checkbox]{width:16px!important;height:16px!important;min-width:16px!important;border-radius:4px!important;margin:0!important;flex-shrink:0;border:1.5px solid var(--dim)!important;background:transparent!important;appearance:none;display:grid;place-content:center;transition:all .15s;cursor:pointer}
+.q-practice input[type=checkbox]::before{content:"";width:8px;height:8px;transform:scale(0);transition:.2s;clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);background:#fff}
 .q-practice input[type=checkbox]:checked{background:var(--blue)!important;border-color:var(--blue)!important}
 .q-practice input[type=checkbox]:checked::before{transform:scale(1)}
 .q-practice label:has(input:checked){border-color:rgba(84,162,255,.4)!important;background:rgba(84,162,255,.1)!important;color:var(--blue)!important}
-.q-practice-hdr{font-size:.6rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin:6px 0 4px 33px}
+.q-practice-hdr{font-size:.62rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin:8px 0 6px 33px}
 /* What's New modal */
 #whats-new-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 #whats-new-overlay.open{opacity:1;visibility:visible}
@@ -1327,11 +1326,13 @@ window.addEventListener('scroll',()=>{
 },{passive:true});
 
 let _fsTimer = null;
+let _lastAppliedJSON = '';
 function saveToFirestore(){
   if(!currentUid) return;
-  // Debounce: batch rapid writes (e.g. confidence sliders) into one Firestore call
+  // Debounce: batch rapid writes (e.g. confidence sliders or checkmarks) into one Firestore call
   clearTimeout(_fsTimer);
   _fsTimer = setTimeout(() => {
+    _lastAppliedJSON = JSON.stringify(remoteData);
     setDoc(doc(db,'users',currentUid),remoteData,{merge:true}).catch(()=>{});
     if(typeof updateLBData === 'function') updateLBData();
   }, 600);
@@ -1832,9 +1833,9 @@ function renderSyllabus(){
         subBoxes = `
         <div class="q-practice-hdr">Practice Questions</div>
         <div class="q-practice">
-          <label><input type="checkbox" id="${id}_kap"> Kaplan</label>
-          <label><input type="checkbox" id="${id}_bpp"> BPP</label>
-          <label><input type="checkbox" id="${id}_sh"> Study Hub</label>
+          <label for="${id}_kap"><input type="checkbox" id="${id}_kap"> Kaplan</label>
+          <label for="${id}_bpp"><input type="checkbox" id="${id}_bpp"> BPP</label>
+          <label for="${id}_sh"><input type="checkbox" id="${id}_sh"> Study Hub</label>
         </div>`;
       }
       return `<li><label><input type="checkbox" id="${id}"><span>${labels[id]||id}</span></label>${subBoxes}</li>`;
@@ -2055,6 +2056,7 @@ function onCheck(id, val) {
     if (actData) payload._activity = actData;
     if (remoteData._timeAccuracy) payload._timeAccuracy = remoteData._timeAccuracy;
     
+    _lastAppliedJSON = JSON.stringify(remoteData);
     setDoc(doc(db,'users',currentUid), payload, {merge:true})
       .catch(err => console.error('[Sync] Write failed:', err));
   }
@@ -2064,13 +2066,13 @@ function onCheck(id, val) {
   const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = val;
 
   updateAll();
-  // Debounce the heavier pending/revisions renders — no need to run synchronously on every keystroke
+  // Debounce heavier layout-changing card & list renders — prevent synchronous mobile layout jumping during taps
   clearTimeout(onCheck._renderTimer);
   onCheck._renderTimer = setTimeout(() => {
     renderPending();
     renderRevisions();
+    if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26' || (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26_P2') makeCard();
   }, 500);
-  if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26' || (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26_P2') makeCard();
 }
 
 function getRevisionsDue(){
@@ -2115,6 +2117,7 @@ async function markRevised(id, difficulty){
   if(currentUid){
     const updatePayload = { _sr: { [id]: s }, _activity: actData };
     if (remoteData._timeAccuracy) updatePayload._timeAccuracy = remoteData._timeAccuracy;
+    _lastAppliedJSON = JSON.stringify(remoteData);
     setDoc(doc(db,'users',currentUid), updatePayload, {merge:true})
       .catch(e=>console.error('[SR] Failed to save revision progress:',e));
   }
@@ -3036,14 +3039,21 @@ function initApp(user){
   
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
-    if(snap.exists()){
-      const oldCourse = remoteData.activeCourse;
-      remoteData={...remoteData,...snap.data(), _loaded: true};
-      if (oldCourse !== remoteData.activeCourse) {
-        makeCard();
-        bindSyllabus();
+    const snapData = snap.data() || {};
+    const incomingJSON = JSON.stringify(snapData);
+    if (incomingJSON !== _lastAppliedJSON) {
+      _lastAppliedJSON = incomingJSON;
+      if(snap.exists()){
+        const oldCourse = remoteData.activeCourse;
+        remoteData={...remoteData,...snapData, _loaded: true};
+        if (oldCourse !== remoteData.activeCourse) {
+          makeCard();
+          bindSyllabus();
+        }
+        applyData(remoteData);
+      } else {
+        remoteData._loaded = true;
       }
-      applyData(remoteData);
     } else {
       remoteData._loaded = true;
     }
