@@ -690,7 +690,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     <div class="lb-hdr">
       <div>
         <h2 id="lb-title" style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0">🏆 Leaderboard</h2>
-        <p style="font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)">CSEB · Live rankings</p>
+        <p id="lb-sub" style="font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)">Live rankings</p>
       </div>
       <button class="lb-close" id="lb-close" aria-label="Close leaderboard">✕</button>
     </div>
@@ -2227,8 +2227,12 @@ function renderLeaderboard(users){
   const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26';
   if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB11 and ACCA26 courses.</div>';return;}
   const titleEl = $('lb-title');
+  const subEl = $('lb-sub');
   if(titleEl) {
     titleEl.textContent = activeCourse === 'ACCA26' ? '🏆 ACCA26 Leaderboard' : '🏆 CSEB11 Leaderboard';
+  }
+  if(subEl) {
+    subEl.textContent = activeCourse === 'ACCA26' ? 'ACCA FR · Live rankings' : 'CSEB · Live rankings';
   }
   if(!users||!users.length){wrap.innerHTML='<div class="lb-empty">No rankings yet — be the first!</div>';return;}
 
