@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.91-ios-fix';
+const CACHE = 'study-tracker-v1.2.91-no-box-jump';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {

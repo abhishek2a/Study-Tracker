@@ -2066,13 +2066,6 @@ function onCheck(id, val) {
   const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = val;
 
   updateAll();
-  // Debounce heavier layout-changing card & list renders — prevent synchronous mobile layout jumping during taps
-  clearTimeout(onCheck._renderTimer);
-  onCheck._renderTimer = setTimeout(() => {
-    renderPending();
-    renderRevisions();
-    if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26' || (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26_P2') makeCard();
-  }, 500);
 }
 
 function getRevisionsDue(){
@@ -2123,7 +2116,6 @@ async function markRevised(id, difficulty){
   }
   
   renderRevisions();updateAll();
-  if ((remoteData.activeCourse || 'CSEB11') === 'ACCA26' || (remoteData.activeCourse || 'CSEB11') === 'ACCA26_P2') makeCard();
 }
 
 function renderRevisions(){
