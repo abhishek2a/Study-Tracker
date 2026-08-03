@@ -476,7 +476,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 1.2.90</div>
+      <div class="wn-title" id="wn-title">Version 1.2.91</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body"></div>
@@ -509,7 +509,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       </div>
       <div>
         <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📚 Select Subject</label>
-        <select id="ls-subject" onchange="renderLogTopics()" style="width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.9rem;font-weight:600;color:var(--text);font-family:var(--font);outline:none;cursor:pointer;box-sizing:border-box;text-overflow:ellipsis;overflow:hidden"></select>
+        <select id="ls-subject" onchange="renderLogTopics()" style="width:100%;max-width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.9rem;font-weight:600;color:var(--text);font-family:var(--font);outline:none;cursor:pointer;box-sizing:border-box;text-overflow:ellipsis;overflow:hidden"></select>
       </div>
       <div style="display:flex;flex-direction:column;flex:1">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
@@ -645,7 +645,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.90</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.91</div>
         </div>
       </div>
     </div>
@@ -731,7 +731,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>✨ View What's New in v1.2.90</span>
+          <span>✨ View What's New in v1.2.91</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -889,7 +889,7 @@ try {
   const ap = $('auth-pass'); if(ap) ap.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.90';
+const APP_VERSION = '1.2.91';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA Phase 2 (Dec)'};
 const DEFAULT_COURSE='CSEB11';
@@ -3093,66 +3093,65 @@ async function checkAutoPhaseTransition(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '1.2.90';
+const WHATS_NEW_VERSION = '1.2.91';
 
 function buildWhatsNewHTML(courses){
   const cList = Array.isArray(courses) ? courses : [courses];
   const primary = (typeof remoteData !== 'undefined' && remoteData.activeCourse) || cList[0] || 'CSEB11';
   const isACCA = primary.startsWith('ACCA') || cList.some(c => String(c).startsWith('ACCA'));
-  const isCAT09 = primary === 'CAT09' || (!isACCA && cList.includes('CAT09'));
-  const isCSEB = primary === 'CSEB11' || (!isACCA && !isCAT09);
-
-  let srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for Co-operation, banking reasoning, and accounting topics over the next 2 weeks, helping you pace your daily review tasks without getting overwhelmed.";
-  let prodDesc = "Tracks when you finish study topics across Morning, Afternoon, Evening, and Night hours to help you discover the daily study times that work best for you.";
-  let remDesc = "Intelligent alerts trigger when you fall behind target Junior Clerk study pace by over 10%, have 3+ subject revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
-  let examOptTitle = "Junior Clerk Exam Optimization";
-  let examOptDesc = "Streamlined dashboard countdown pills and rolling pace forecasts specifically for Cat 10 &amp; Cat 11 Super and Special Grade Bank exams.";
-  let examOptIcon = "🎯";
 
   if (isACCA) {
-    srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for IFRS interpretations, consolidation rules, and accounting standards over the next 2 weeks, helping you pace your review tasks without getting overwhelmed.";
-    prodDesc = "Tracks when you master IFRS standards across Morning, Afternoon, Evening, and Night hours to help you discover your best focus times for financial reporting practice.";
-    remDesc = "Intelligent alerts trigger when you fall behind target ACCA exam completion pace by over 10%, have 3+ standard revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
-    examOptTitle = "Dual-Phase Exam Countdown";
-    examOptDesc = "Updated dashboard exam tracking to seamlessly guide your preparation between the September and December ACCA FR exam sessions.";
-    examOptIcon = "🎓";
-  } else if (isCAT09) {
-    srDesc = "An interactive chart in your Statistics dashboard that shows upcoming revisions for KCS Act statutory rules, banking administration, and leadership modules over the next 2 weeks, helping you pace your study schedule easily.";
-    prodDesc = "Tracks when you complete topics across Morning, Afternoon, Evening, and Night hours to help you find your most productive focus windows throughout the day.";
-    remDesc = "Intelligent alerts trigger when you fall behind target Assistant Secretary study pace by over 10%, have 3+ legal or banking revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.";
-    examOptTitle = "Dedicated Assistant Sec Countdown";
-    examOptDesc = "Streamlined the dashboard exam countdowns and target pace calculation specifically for Cat 09/2026 Assistant Secretary, completely removing Junior Clerk schedules.";
-    examOptIcon = "🏛️";
+    return `
+      <div class="wn-section">
+        <div class="wn-section-lbl" style="color:var(--blue);">🏆 Dedicated ACCA Community &amp; Standings</div>
+        <div class="wn-item"><div class="wn-item-icon">🏆</div><div class="wn-item-text"><div class="wn-item-title">ACCA FR Live Leaderboard</div><div class="wn-item-desc">Introduced an exclusive, real-time community leaderboard specifically tailored for ACCA Financial Reporting candidates, featuring instantaneous topic completion score synchronization.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">Professional Candidate Badges</div><div class="wn-item-desc">Replaced general placeholder text with structured professional candidate tags (e.g., ACCA Candidate #7A3F) for student accounts awaiting display name synchronization.</div></div></div>
+      </div>
+      <div class="wn-section">
+        <div class="wn-section-lbl" style="color:var(--green);">🎓 Official Exam Session Milestones</div>
+        <div class="wn-item"><div class="wn-item-icon">🎓</div><div class="wn-item-text"><div class="wn-item-title">September &amp; December FR Exams</div><div class="wn-item-desc">Updated your dashboard countdown pills to reflect official examination milestones (September FR Exam and December FR Exam), ensuring precise session pacing.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Automated Target Transitions</div><div class="wn-item-desc">Your dashboard now automatically monitors session dates—once September 10th passes, your first exam pill checks off as completed and your primary target highlight immediately transitions to your December exam session!</div></div></div>
+      </div>
+      <div class="wn-section">
+        <div class="wn-section-lbl" style="color:var(--accent);">⚡ Study Tracker Polish &amp; Resilience</div>
+        <div class="wn-item"><div class="wn-item-icon">⏪</div><div class="wn-item-text"><div class="wn-item-title">Intelligent Log Deletion &amp; Undo</div><div class="wn-item-desc">Deleting a recorded study session from your history log now performs a clean algorithmic reversion: it automatically un-ticks completed syllabus topics, restores prior revision review schedules, and adjusts peak study-hour mastery statistics.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Mobile Layout Optimization</div><div class="wn-item-desc">Enhanced subject selection dropdowns and study log cards with strict responsive wrapping constraints to guarantee seamless alignment without horizontal scrolling on compact mobile viewports.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">✨</div><div class="wn-item-text"><div class="wn-item-title">Uncluttered Authentication</div><div class="wn-item-desc">Refined login and account creation screens by removing redundant reference boxes and cache reset banners for a crisp, distraction-free mobile greeting.</div></div></div>
+      </div>
+    `;
   }
 
   return `
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--blue);">📈 Smart Study Insights</div>
-      <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">14-Day Revision Forecast</div><div class="wn-item-desc">${srDesc}</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Best Time of Day to Study</div><div class="wn-item-desc">${prodDesc}</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">14-Day Revision Forecast</div><div class="wn-item-desc">An interactive chart in your Statistics dashboard that shows upcoming revisions over the next 2 weeks, helping you pace your daily review tasks without getting overwhelmed.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Best Time of Day to Study</div><div class="wn-item-desc">Tracks when you finish study topics across Morning, Afternoon, Evening, and Night hours to help you discover the daily study times that work best for you.</div></div></div>
     </div>
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--green);">🔔 Smart Reminders &amp; Offline Resilience</div>
-      <div class="wn-item"><div class="wn-item-icon">🔔</div><div class="wn-item-text"><div class="wn-item-title">In-App Study Reminders</div><div class="wn-item-desc">${remDesc}</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🔔</div><div class="wn-item-text"><div class="wn-item-title">In-App Study Reminders</div><div class="wn-item-desc">Intelligent alerts trigger when you fall behind target study pace by over 10%, have 3+ revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.</div></div></div>
       <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">Seamless Offline Study Resilience</div><div class="wn-item-desc">Your syllabus checks, revision tasks, and streak timelines now instantly persist to background local storage, guaranteeing zero data loss during offline study sessions and conflict-free cloud sync when reconnected.</div></div></div>
     </div>
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">⚡ Engine Optimizations &amp; Bug Fixes</div>
-      <div class="wn-item"><div class="wn-item-icon">${examOptIcon}</div><div class="wn-item-text"><div class="wn-item-title">${examOptTitle}</div><div class="wn-item-desc">${examOptDesc}</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">⏪</div><div class="wn-item-text"><div class="wn-item-title">Intelligent Log Deletion &amp; Undo</div><div class="wn-item-desc">Deleting a recorded study session from your history log now performs a clean algorithmic reversion: it automatically un-ticks completed topics and restores prior revision dates.</div></div></div>
       <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Smarter Pace Calculation</div><div class="wn-item-desc">Projected finish dates now compute using a 14-day rolling window rather than life-to-date averages for much higher accuracy.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">DOM Performance &amp; UI Polish</div><div class="wn-item-desc">Replaced individual syllabus checkbox listeners with delegated event listeners using AbortController for faster rendering, alongside native safe-area notch optimizations for mobile and desktop.</div></div></div>
     </div>
   `;
 }
 
 function showWhatsNew(force = false){
+  const courses = remoteData.courses || [remoteData.activeCourse || DEFAULT_COURSE];
+  const isACCA = (remoteData.activeCourse && String(remoteData.activeCourse).startsWith('ACCA')) || courses.some(c => String(c).startsWith('ACCA'));
+  
   const seen = localStorage.getItem('wn_seen_v');
   if(!force && seen === WHATS_NEW_VERSION) return; // already seen this version
+  if(!force && !isACCA && WHATS_NEW_VERSION === '1.2.91') return; // v1.2.91 is tailored for ACCA enrolled candidates
+
   const overlay = document.getElementById('whats-new-overlay');
   if(!overlay) return;
-  const courses = remoteData.courses || [remoteData.activeCourse || DEFAULT_COURSE];
   document.getElementById('wn-body').innerHTML = buildWhatsNewHTML(courses);
-  document.getElementById('wn-sub').textContent = `${courses.map(c=>COURSE_CODES[c]||c).join(' + ')} · Here's what changed`;
+  document.getElementById('wn-sub').textContent = `${courses.map(c=>COURSE_CODES[c]||c).join(' + ')} · Here's what changed in this update`;
   overlay.classList.add('open');
 }
 window.showWhatsNew = showWhatsNew;
@@ -3673,7 +3672,7 @@ function renderStatsLoggedSessions() {
       <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:0.2s;">
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-            <span style="font-size:0.9rem;font-weight:800;color:var(--text);">${s.subjName || 'Study Session'}</span>
+            <span style="font-size:0.9rem;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block;">${s.subjName || 'Study Session'}</span>
             <span style="font-size:0.7rem;font-weight:700;color:var(--blue);background:rgba(84,162,255,0.12);padding:2px 8px;border-radius:99px;">${s.count} topic${s.count !== 1 ? 's' : ''} completed</span>
           </div>
           <div style="font-size:0.78rem;color:var(--dim);line-height:1.4;overflow:hidden;text-overflow:ellipsis;">
@@ -3696,15 +3695,36 @@ function renderStatsLoggedSessions() {
 window.renderStatsLoggedSessions = renderStatsLoggedSessions;
 
 function deleteLoggedSession(id) {
-  if (!confirm('Are you sure you want to remove this study session log?')) return;
+  if (!confirm('Are you sure you want to remove this study session log and revert its recorded study progress?')) return;
   if (!remoteData._loggedSessions) return;
-  remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
-  if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
-    setDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions }, { merge: true })
-      .catch(err => console.error('[Log Delete] Failed:', err));
-  } else if (typeof saveToFirestore === 'function') {
-    saveToFirestore();
+  const targetSession = remoteData._loggedSessions.find(s => s.id === id);
+  if (targetSession && targetSession._topicIds && targetSession._prevStates) {
+    targetSession._topicIds.forEach(tId => {
+      const p = targetSession._prevStates[tId];
+      if (p) {
+        if (!p.completed) delete remoteData[tId];
+        else remoteData[tId] = true;
+        
+        if (!p.sr) delete remoteData._sr[tId];
+        else remoteData._sr[tId] = p.sr;
+      }
+    });
+    if (targetSession.bucket && remoteData._timeAccuracy && remoteData._timeAccuracy[targetSession.bucket]) {
+      const st = remoteData._timeAccuracy[targetSession.bucket];
+      st.attempts = Math.max(0, (st.attempts || 0) - targetSession.count);
+      st.correct = Math.max(0, (st.correct || 0) - targetSession.count);
+    }
+    if (targetSession.date && remoteData._activity && typeof remoteData._activity[targetSession.date] === 'number') {
+      remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - targetSession.count);
+      if (remoteData._activity[targetSession.date] === 0) delete remoteData._activity[targetSession.date];
+    }
   }
+  remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
+  if (typeof saveToFirestore === 'function') saveToFirestore();
+  updateAll();
+  if (typeof renderPending === 'function') renderPending();
+  if (typeof renderRevisions === 'function') renderRevisions();
+  if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   renderStatsLoggedSessions();
   if (typeof triggerHaptic === 'function') triggerHaptic('light');
 }
@@ -3750,8 +3770,13 @@ async function saveLogSession() {
   if (!remoteData._sr) remoteData._sr = {};
   if (!remoteData._activity) remoteData._activity = {};
 
+  const prevStates = {};
   const topicIds = Array.from(_logSelectedTopics);
   topicIds.forEach(id => {
+    prevStates[id] = {
+      completed: !!remoteData[id],
+      sr: remoteData._sr[id] ? JSON.parse(JSON.stringify(remoteData._sr[id])) : null
+    };
     remoteData[id] = true;
     const nextDate = typeof addDaysStr === 'function' ? addDaysStr(dateVal, 1) : dateVal;
     const entry = { completed: dateVal, lastRev: dateVal, count: ((remoteData._sr[id]?.count) || 0) + 1, next: nextDate, ease: 2.5, interval: 1 };
@@ -3772,7 +3797,9 @@ async function saveLogSession() {
     bucket: bucket,
     count: topicIds.length,
     subjName: select ? (select.options[select.selectedIndex]?.text.split(' (')[0] || 'Syllabus') : 'Syllabus',
-    topics: topicIds.map(id => (typeof getCourseData === 'function' ? getCourseData().labels[id] : id) || id).slice(0, 5)
+    topics: topicIds.map(id => (typeof getCourseData === 'function' ? getCourseData().labels[id] : id) || id).slice(0, 5),
+    _topicIds: topicIds,
+    _prevStates: prevStates
   };
   remoteData._loggedSessions.unshift(sessionRecord);
   if (remoteData._loggedSessions.length > 20) {
@@ -3800,10 +3827,7 @@ async function saveLogSession() {
   if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
 
   triggerHaptic('success');
-  if (typeof confetti === 'function') {
-    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#28d48e', '#54a2ff', '#fcae28', '#f25c5c'] });
-  }
-
+  if (typeof triggerConfetti === 'function') triggerConfetti();
   closeLogSession();
 
   const toast = document.getElementById('update-toast');
