@@ -475,7 +475,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 1.2.91</div>
+      <div class="wn-title" id="wn-title">Version 1.2.92</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body"></div>
@@ -644,7 +644,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.91</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.92</div>
         </div>
       </div>
     </div>
@@ -730,7 +730,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>✨ View What's New in v1.2.91</span>
+          <span>✨ View What's New in v1.2.92</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -765,7 +765,7 @@ import {
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
+  initializeFirestore, persistentLocalCache, getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp({
@@ -779,7 +779,12 @@ const app = initializeApp({
 });
 try{getAnalytics(app);}catch(e){console.warn('Analytics disabled/blocked:',e);}
 const auth = getAuth(app);
-const db = getFirestore(app);
+let db;
+try {
+  db = initializeFirestore(app, { localCache: persistentLocalCache() });
+} catch (e) {
+  db = getFirestore(app);
+}
 
 let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null,lbUnsub=null;
 // cached DOM refs
@@ -888,7 +893,7 @@ try {
   const ap = $('auth-pass'); if(ap) ap.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.91';
+const APP_VERSION = '1.2.92';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA Phase 2 (Dec)'};
 const DEFAULT_COURSE='CSEB11';
@@ -1328,9 +1333,11 @@ let _fsTimer = null;
 let _lastAppliedJSON = '';
 function saveToFirestore(){
   if(!currentUid) return;
+  window._localWritePending = Date.now();
   // Debounce: batch rapid writes (e.g. confidence sliders or checkmarks) into one Firestore call
   clearTimeout(_fsTimer);
   _fsTimer = setTimeout(() => {
+    _fsTimer = null;
     // Create a clean copy without ephemeral client flag
     const payload = { ...remoteData };
     delete payload._loaded;
@@ -1699,6 +1706,20 @@ function renderCSEBCard(dc, lateStart) {
   dc.insertAdjacentHTML('beforeend', html);
 }
 
+function syncMinorCheck(key, val) {
+  remoteData[key] = val;
+  window._localWritePending = Date.now();
+  if (currentUid && typeof db !== 'undefined' && db && typeof doc === 'function') {
+    const clean = { ...remoteData };
+    delete clean._loaded;
+    _lastAppliedJSON = JSON.stringify(clean);
+    setDoc(doc(db, 'users', currentUid), { [key]: val }, { merge: true })
+      .catch(err => console.error('[Minor Sync] Failed:', err));
+  } else if (typeof saveToFirestore === 'function') {
+    saveToFirestore();
+  }
+}
+
 function makeCard(){
   const {sch,labels}=getCourseData();
   const dc=$('daycard');
@@ -1808,16 +1829,16 @@ function makeCard(){
     b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
   });
   const dm=$('daily_mock');
-  if(dm)dm.addEventListener('change',e=>{remoteData['mock_'+ts()]=e.target.checked;saveToFirestore();});
+  if(dm)dm.addEventListener('change',e=>{syncMinorCheck('mock_'+ts(), e.target.checked);});
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{remoteData['misc_'+id]=e.target.checked;saveToFirestore();});
+    if(b)b.addEventListener('change',e=>{syncMinorCheck('misc_'+id, e.target.checked);});
   });
   if (activeCourse === 'CSEB11') renderCSEBCard(dc, lateStart);
   if (activeCourse === 'ACCA26_P2') renderACCACard(dc, dateBadge, true);
   ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
     const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{remoteData[id]=e.target.checked;saveToFirestore();});
+    if(b)b.addEventListener('change',e=>{syncMinorCheck(id, e.target.checked);});
   });
 }
 function renderSyllabus(){
@@ -1874,10 +1895,19 @@ function bindSyllabus(){
       if (b.matches('.main-sl input[type=checkbox]') && !b.id.endsWith('_kap') && !b.id.endsWith('_bpp') && !b.id.endsWith('_sh')) {
         onCheck(b.id, b.checked);
       } else if (b.closest('.q-practice')) {
-        // Save question practice checkbox directly
+        // Save question practice checkbox immediately with local-first sync lock
         triggerHaptic(b.checked ? 'success' : 'light');
         remoteData[b.id] = b.checked;
-        saveToFirestore();
+        window._localWritePending = Date.now();
+        if (currentUid && typeof db !== 'undefined' && db && typeof doc === 'function') {
+          const clean = { ...remoteData };
+          delete clean._loaded;
+          _lastAppliedJSON = JSON.stringify(clean);
+          setDoc(doc(db, 'users', currentUid), { [b.id]: b.checked }, { merge: true })
+            .catch(err => console.error('[Practice Sync] Failed:', err));
+        } else if (typeof saveToFirestore === 'function') {
+          saveToFirestore();
+        }
       }
     }, { signal });
   } else {
@@ -2054,13 +2084,16 @@ function onCheck(id, val) {
     srSubUpdate = isNonTopicId ? null : { [id]: deleteField() };
   }
 
+  window._localWritePending = Date.now();
   if (currentUid) {
     const payload = { [id]: val };
     if (srSubUpdate) payload._sr = srSubUpdate;
     if (actData) payload._activity = actData;
     if (remoteData._timeAccuracy) payload._timeAccuracy = remoteData._timeAccuracy;
     
-    _lastAppliedJSON = JSON.stringify(remoteData);
+    const clean = { ...remoteData };
+    delete clean._loaded;
+    _lastAppliedJSON = JSON.stringify(clean);
     setDoc(doc(db,'users',currentUid), payload, {merge:true})
       .catch(err => console.error('[Sync] Write failed:', err));
   }
@@ -2961,7 +2994,7 @@ function initApp(user){
   }catch(err){
     console.error('initApp render error:',err);
     const wrap=document.querySelector('.wrap');
-    if(wrap){const d=document.createElement('div');d.style.cssText='color:var(--red);font-family:var(--mono);font-size:.7rem;padding:12px;background:rgba(224,80,80,.08);border-radius:8px;margin-bottom:12px;white-space:pre-wrap';d.textContent='Debug: '+err.message;wrap.prepend(d);}
+    if(wrap){const d=document.createElement('div');d.className='day-card pending-card';d.style.marginBottom='20px';d.innerHTML=`<div class="day-top"><h2>⚠️ Display Notification</h2></div><p style="font-size:0.85rem;color:var(--text);margin-top:8px;line-height:1.5;font-family:var(--font);">We encountered a display interruption while preparing your dashboard (${err.message}). Your study progress remains safely backed up in cloud sync.</p>`;wrap.prepend(d);}
   }
   hideSplash();
   if(unsubSnap){unsubSnap();unsubSnap=null;}
@@ -2972,7 +3005,8 @@ function initApp(user){
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
     const snapData = snap.data() || {};
     const incomingJSON = JSON.stringify(snapData);
-    if (incomingJSON !== _lastAppliedJSON) {
+    const isLocalPending = snap.metadata.hasPendingWrites || (_fsTimer !== null) || (window._localWritePending && (Date.now() - window._localWritePending < 2500));
+    if (incomingJSON !== _lastAppliedJSON && !isLocalPending) {
       _lastAppliedJSON = incomingJSON;
       if(snap.exists()){
         const oldCourse = remoteData.activeCourse;
@@ -3018,49 +3052,24 @@ async function checkAutoPhaseTransition(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '1.2.91';
+const WHATS_NEW_VERSION = '1.2.92';
 
 function buildWhatsNewHTML(courses){
-  const cList = Array.isArray(courses) ? courses : [courses];
-  const primary = (typeof remoteData !== 'undefined' && remoteData.activeCourse) || cList[0] || 'CSEB11';
-  const isACCA = primary.startsWith('ACCA') || cList.some(c => String(c).startsWith('ACCA'));
-
-  if (isACCA) {
-    return `
-      <div class="wn-section">
-        <div class="wn-section-lbl" style="color:var(--blue);">🏆 Dedicated ACCA Community &amp; Standings</div>
-        <div class="wn-item"><div class="wn-item-icon">🏆</div><div class="wn-item-text"><div class="wn-item-title">ACCA FR Live Leaderboard</div><div class="wn-item-desc">Introduced an exclusive, real-time community leaderboard specifically tailored for ACCA Financial Reporting candidates, featuring instantaneous topic completion score synchronization.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">Professional Candidate Badges</div><div class="wn-item-desc">Replaced general placeholder text with structured professional candidate tags (e.g., ACCA Candidate #7A3F) for student accounts awaiting display name synchronization.</div></div></div>
-      </div>
-      <div class="wn-section">
-        <div class="wn-section-lbl" style="color:var(--green);">🎓 Official Exam Session Milestones</div>
-        <div class="wn-item"><div class="wn-item-icon">🎓</div><div class="wn-item-text"><div class="wn-item-title">September &amp; December FR Exams</div><div class="wn-item-desc">Updated your dashboard countdown pills to reflect official examination milestones (September FR Exam and December FR Exam), ensuring precise session pacing.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Automated Target Transitions</div><div class="wn-item-desc">Your dashboard now automatically monitors session dates—once September 10th passes, your first exam pill checks off as completed and your primary target highlight immediately transitions to your December exam session!</div></div></div>
-      </div>
-      <div class="wn-section">
-        <div class="wn-section-lbl" style="color:var(--accent);">⚡ Study Tracker Polish &amp; Resilience</div>
-        <div class="wn-item"><div class="wn-item-icon">⏪</div><div class="wn-item-text"><div class="wn-item-title">Intelligent Log Deletion &amp; Undo</div><div class="wn-item-desc">Deleting a recorded study session from your history log now performs a clean algorithmic reversion: it automatically un-ticks completed syllabus topics, restores prior revision review schedules, and adjusts peak study-hour mastery statistics.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Mobile Layout Optimization</div><div class="wn-item-desc">Enhanced subject selection dropdowns and study log cards with strict responsive wrapping constraints to guarantee seamless alignment without horizontal scrolling on compact mobile viewports.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">✨</div><div class="wn-item-text"><div class="wn-item-title">Uncluttered Authentication</div><div class="wn-item-desc">Refined login and account creation screens by removing redundant reference boxes and cache reset banners for a crisp, distraction-free mobile greeting.</div></div></div>
-      </div>
-    `;
-  }
-
   return `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--blue);">📈 Smart Study Insights</div>
-      <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">14-Day Revision Forecast</div><div class="wn-item-desc">An interactive chart in your Statistics dashboard that shows upcoming revisions over the next 2 weeks, helping you pace your daily review tasks without getting overwhelmed.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Best Time of Day to Study</div><div class="wn-item-desc">Tracks when you finish study topics across Morning, Afternoon, Evening, and Night hours to help you discover the daily study times that work best for you.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--green);">🛡️ Offline PWA &amp; Reliability</div>
+      <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">True Offline Resilience Restored</div><div class="wn-item-desc">Re-integrated Firebase persistent local cache with the v10.12.2 SDK. You can now close the app, open it fully offline, log your study sessions, and your progress will flawlessly queue and sync the moment you reconnect to the internet.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">⏪</div><div class="wn-item-text"><div class="wn-item-title">Perfected "Undo" Deletions</div><div class="wn-item-desc">Fixed a critical bug in the session log deletion engine. Reverting a logged study session now correctly dispatches strict field deletion instructions to Firestore—reverted topics and Spaced Repetition (SR) queues will no longer reappear on page reload.</div></div></div>
     </div>
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--green);">🔔 Smart Reminders &amp; Offline Resilience</div>
-      <div class="wn-item"><div class="wn-item-icon">🔔</div><div class="wn-item-text"><div class="wn-item-title">In-App Study Reminders</div><div class="wn-item-desc">Intelligent alerts trigger when you fall behind target study pace by over 10%, have 3+ revisions pending, or haven't logged study activity by evening. Toggle them on/off anytime in Settings.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">Seamless Offline Study Resilience</div><div class="wn-item-desc">Your syllabus checks, revision tasks, and streak timelines now instantly persist to background local storage, guaranteeing zero data loss during offline study sessions and conflict-free cloud sync when reconnected.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--blue);">⚡ Bandwidth &amp; Performance Optimizations</div>
+      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">Micro-Payload Cloud Sync</div><div class="wn-item-desc">Completely refactored the payload engine for logging and deleting study sessions. Instead of uploading entire data objects, the app now isolates and transmits only the exact topic ID and delta changes modified, saving massive bandwidth and boosting speed.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🧹</div><div class="wn-item-text"><div class="wn-item-title">Database Cleanliness</div><div class="wn-item-desc">The sync engine now actively strips ephemeral client-side UI flags before writing to Firestore, preventing permanent document bloating and keeping cloud records pristine.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🎯</div><div class="wn-item-text"><div class="wn-item-title">Targeted Practice Syncing</div><div class="wn-item-desc">Quick-toggling question practice checkboxes (Kaplan / BPP / Study Hub) now bypasses heavy global syncs and pushes lightweight, targeted updates directly to the database with interactive sync locks.</div></div></div>
     </div>
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">⚡ Engine Optimizations &amp; Bug Fixes</div>
-      <div class="wn-item"><div class="wn-item-icon">⏪</div><div class="wn-item-text"><div class="wn-item-title">Intelligent Log Deletion &amp; Undo</div><div class="wn-item-desc">Deleting a recorded study session from your history log now performs a clean algorithmic reversion: it automatically un-ticks completed topics and restores prior revision dates.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Smarter Pace Calculation</div><div class="wn-item-desc">Projected finish dates now compute using a 14-day rolling window rather than life-to-date averages for much higher accuracy.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--accent);">🔒 Security Upgrades</div>
+      <div class="wn-item"><div class="wn-item-icon">🔒</div><div class="wn-item-text"><div class="wn-item-title">Strict Client Guardrails</div><div class="wn-item-desc">Deprecated and removed legacy client-side global collection scans. This strictly enforces Firestore security rules and ensures complete privacy for user study data and accounts.</div></div></div>
     </div>
   `;
 }
@@ -3071,7 +3080,6 @@ function showWhatsNew(force = false){
   
   const seen = localStorage.getItem('wn_seen_v');
   if(!force && seen === WHATS_NEW_VERSION) return; // already seen this version
-  if(!force && !isACCA && WHATS_NEW_VERSION === '1.2.91') return; // v1.2.91 is tailored for ACCA enrolled candidates
 
   const overlay = document.getElementById('whats-new-overlay');
   if(!overlay) return;
@@ -3520,7 +3528,7 @@ function renderLogTopics() {
     const isChecked = _logSelectedTopics.has(id);
     return `
       <label style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${isChecked ? 'rgba(84,162,255,0.14)' : 'var(--s2)'};border:1.5px solid ${isChecked ? 'var(--blue)' : 'var(--border)'};border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:0.86rem;color:${isChecked ? 'var(--blue)' : 'var(--text)'};font-weight:${isChecked ? '700' : '600'};box-shadow:${isChecked ? '0 4px 12px rgba(84,162,255,0.2)' : 'none'};">
-        <input type="checkbox" value="${id}" onchange="toggleLogTopic('${id}', this.checked)" ${isChecked ? 'checked' : ''} style="width:18px;height:18px;min-width:18px;accent-color:var(--blue);cursor:pointer;margin:0;">
+        <input type="checkbox" value="${id}" onchange="toggleLogTopic('${id}', this.checked, this)" ${isChecked ? 'checked' : ''} style="width:18px;height:18px;min-width:18px;accent-color:var(--blue);cursor:pointer;margin:0;">
         <span style="line-height:1.35;flex:1;word-break:break-word;">${labels[id] || id}</span>
       </label>
     `;
@@ -3528,11 +3536,31 @@ function renderLogTopics() {
 }
 window.renderLogTopics = renderLogTopics;
 
-function toggleLogTopic(id, checked) {
+function toggleLogTopic(id, checked, checkboxElement) {
   if (checked) _logSelectedTopics.add(id);
   else _logSelectedTopics.delete(id);
   updateLogCountBadge();
-  renderLogTopics();
+
+  if (checkboxElement && typeof checkboxElement.closest === 'function') {
+    const label = checkboxElement.closest('label');
+    if (label) {
+      if (checked) {
+        label.style.background = 'rgba(84,162,255,0.14)';
+        label.style.borderColor = 'var(--blue)';
+        label.style.color = 'var(--blue)';
+        label.style.fontWeight = '700';
+        label.style.boxShadow = '0 4px 12px rgba(84,162,255,0.2)';
+      } else {
+        label.style.background = 'var(--s2)';
+        label.style.borderColor = 'var(--border)';
+        label.style.color = 'var(--text)';
+        label.style.fontWeight = '600';
+        label.style.boxShadow = 'none';
+      }
+    }
+  } else {
+    renderLogTopics();
+  }
   triggerHaptic(checked ? 'success' : 'light');
 }
 window.toggleLogTopic = toggleLogTopic;
@@ -3624,7 +3652,8 @@ function deleteLoggedSession(id) {
   if (!remoteData._loggedSessions) return;
   const targetSession = remoteData._loggedSessions.find(s => s.id === id);
   if (targetSession && targetSession._topicIds && targetSession._prevStates) {
-    const dbPayload = { _sr: { ...remoteData._sr } };
+    // Start with an EMPTY _sr object, sending only specific delta changes
+    const dbPayload = { _sr: {} };
     targetSession._topicIds.forEach(tId => {
       const p = targetSession._prevStates[tId];
       if (p) {
@@ -3654,7 +3683,7 @@ function deleteLoggedSession(id) {
     }
     if (targetSession.date && remoteData._activity && typeof remoteData._activity[targetSession.date] === 'number') {
       remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - targetSession.count);
-      if (!dbPayload._activity) dbPayload._activity = { ...remoteData._activity };
+      if (!dbPayload._activity) dbPayload._activity = {};
       if (remoteData._activity[targetSession.date] === 0) {
         delete remoteData._activity[targetSession.date];
         dbPayload._activity[targetSession.date] = deleteField();
@@ -3666,6 +3695,12 @@ function deleteLoggedSession(id) {
     dbPayload._loggedSessions = remoteData._loggedSessions;
 
     if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
+      if (dbPayload._sr && Object.keys(dbPayload._sr).length === 0) {
+        delete dbPayload._sr;
+      }
+      if (dbPayload._activity && Object.keys(dbPayload._activity).length === 0) {
+        delete dbPayload._activity;
+      }
       const cleanBackup = { ...remoteData };
       delete cleanBackup._loaded;
       _lastAppliedJSON = JSON.stringify(cleanBackup);
@@ -3772,10 +3807,16 @@ async function saveLogSession() {
   }
 
   if (currentUid && typeof doc === 'function') {
-    const payload = {};
-    topicIds.forEach(id => { payload[id] = true; });
-    payload._sr = remoteData._sr;
-    payload._activity = remoteData._activity;
+    const payload = { _sr: {} };
+    topicIds.forEach(id => { 
+      payload[id] = true; 
+      // ONLY send the updated SR topics
+      if (remoteData._sr && remoteData._sr[id]) payload._sr[id] = remoteData._sr[id];
+    });
+    
+    // ONLY send today's activity date update
+    payload._activity = { [dateVal]: remoteData._activity[dateVal] };
+    
     payload._timeAccuracy = remoteData._timeAccuracy;
     payload._loggedSessions = remoteData._loggedSessions;
 
