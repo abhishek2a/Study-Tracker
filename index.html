@@ -759,7 +759,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-performance.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
@@ -777,7 +778,28 @@ const app = initializeApp({
   appId:"1:388281368121:web:da2f142aaf7b4c1688d7e8",
   measurementId:"G-W0VWF51FSW"
 });
-try{getAnalytics(app);}catch(e){console.warn('Analytics disabled/blocked:',e);}
+let analytics, perf, appStartPerfTime = performance.now(), _firstScreenTrace = null;
+try {
+  analytics = getAnalytics(app);
+  perf = getPerformance(app);
+  _firstScreenTrace = trace(perf, 'time_to_first_screen');
+  _firstScreenTrace.start();
+} catch(e){ console.warn('Analytics/Performance disabled or blocked:', e); }
+
+function logAppEvent(eventName, params = {}) {
+  try { if (analytics && typeof logEvent === 'function') logEvent(analytics, eventName, params); }
+  catch(err) { console.warn('Telemetry event error:', err); }
+}
+window.logAppEvent = logAppEvent;
+
+// Track Average Session Duration when leaving or hiding app
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && appStartPerfTime) {
+    const durationSeconds = Math.round((performance.now() - appStartPerfTime) / 1000);
+    if (durationSeconds > 5) logAppEvent('session_duration', { duration_sec: durationSeconds, course: typeof remoteData !== 'undefined' ? (remoteData.activeCourse || DEFAULT_COURSE) : 'unknown' });
+  }
+});
+
 const auth = getAuth(app);
 let db;
 try {
@@ -845,13 +867,16 @@ async function submitAuth(){
       try{ await updateProfile(cred.user,{displayName:name}); } catch(err){}
       try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){}
       try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){}
+      logAppEvent('login_success', { method: 'email', type: 'signup', course: code });
       if(typeof initApp === 'function') try { initApp(cred.user); } catch(err){}
     } else {
       const cred=await signInWithEmailAndPassword(auth,email,pass);
+      logAppEvent('login_success', { method: 'email', type: 'login' });
       if(typeof initApp === 'function') try { initApp(cred.user); } catch(err){}
     }
   } catch(e){
     console.error('Auth submit error:', e);
+    logAppEvent('login_failure', { method: 'email', type: mode, error_code: e.code || 'unknown' });
     $('auth-err').textContent=e.message || authErrMsg(e.code) || 'Authentication error. Please try again.';
     btn.disabled=false;
     btn.textContent=mode==='login'?'Sign In':'Create Account';
@@ -1708,6 +1733,9 @@ function renderCSEBCard(dc, lateStart) {
 
 function syncMinorCheck(key, val) {
   remoteData[key] = val;
+  if (val === true && typeof logAppEvent === 'function') {
+    logAppEvent('mock_completed', { task_id: key, course: remoteData.activeCourse || DEFAULT_COURSE });
+  }
   window._localWritePending = Date.now();
   if (currentUid && typeof db !== 'undefined' && db && typeof doc === 'function') {
     const clean = { ...remoteData };
@@ -2997,6 +3025,14 @@ function initApp(user){
     if(wrap){const d=document.createElement('div');d.className='day-card pending-card';d.style.marginBottom='20px';d.innerHTML=`<div class="day-top"><h2>⚠️ Display Notification</h2></div><p style="font-size:0.85rem;color:var(--text);margin-top:8px;line-height:1.5;font-family:var(--font);">We encountered a display interruption while preparing your dashboard (${err.message}). Your study progress remains safely backed up in cloud sync.</p>`;wrap.prepend(d);}
   }
   hideSplash();
+  if (typeof _firstScreenTrace !== 'undefined' && _firstScreenTrace) {
+    try {
+      _firstScreenTrace.stop();
+      const loadTimeMs = Math.round(performance.now() - appStartPerfTime);
+      logAppEvent('time_to_first_screen', { load_time_ms: loadTimeMs, course: remoteData.activeCourse || 'unknown' });
+      _firstScreenTrace = null;
+    } catch(err) { console.warn('[Perf] Trace stop failed:', err); }
+  }
   if(unsubSnap){unsubSnap();unsubSnap=null;}
   if(typeof lbUnsub !== 'undefined' && lbUnsub){lbUnsub();lbUnsub=null;}
   if(typeof currentLBTrack !== 'undefined'){currentLBTrack=null;}
@@ -3832,6 +3868,7 @@ async function saveLogSession() {
   if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
 
+  if (typeof logAppEvent === 'function') logAppEvent('study_session_logged', { topics_count: topicIds.length, course: remoteData.activeCourse || DEFAULT_COURSE });
   triggerHaptic('success');
   if (typeof triggerConfetti === 'function') triggerConfetti();
   closeLogSession();
