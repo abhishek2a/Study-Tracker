@@ -423,21 +423,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     var auth = document.getElementById('auth-overlay');
     if (app && !app.classList.contains('visible') && auth) {
       auth.classList.remove('hidden');
-      if (window.location.protocol === 'file:') {
-        var err = document.getElementById('auth-err');
-        if (err) {
-          err.style.color = '#ff6b6b';
-          err.style.background = 'rgba(255,107,107,0.1)';
-          err.style.padding = '12px';
-          err.style.borderRadius = '8px';
-          err.style.marginTop = '12px';
-          err.style.textAlign = 'left';
-          err.style.lineHeight = '1.4';
-          err.innerHTML = '⚠️ <b>Local File Detection Notice</b><br>You opened this application directly from your file system (<code>file://</code>). Modern web browsers explicitly block ES Modules (<code>&lt;script type="module"&gt;</code>) and Firebase Authentication under direct file access due to strict CORS security standards.<br><br><b>To enable interactive login & synchronization:</b><br>Please serve this folder via a local web server (e.g., using <b>VS Code Live Server</b>, running <code>python -m http.server 8000</code> in your terminal, or hosting online) and navigate to <code>http://localhost:8000</code>.';
-        }
-        var btn = document.getElementById('auth-submit-btn');
-        if (btn) btn.onclick = function() { alert('Authentication fails under file:// protocol. Please run a local server (http://localhost) or use VS Code Live Server!'); };
-      }
     }
   }, 2200);
 </script>
@@ -1303,10 +1288,45 @@ const SCH_ACCA_P2 = (() => {
   return schedule;
 })();
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
+
+let _cachedShiftedSCH = null;
+let _cachedShiftedDate = null;
+function getShiftedCSEBSchedule(startStr) {
+  if (!startStr) return SCH;
+  const cleanStart = String(startStr).split('T')[0];
+  if (cleanStart === '2026-05-27') return SCH;
+  if (_cachedShiftedDate === cleanStart && _cachedShiftedSCH) return _cachedShiftedSCH;
+  
+  const [sy, sm, sd] = cleanStart.split('-').map(Number);
+  const userStart = new Date(sy, sm - 1, sd);
+  const baseStart = new Date(2026, 4, 27);
+  const diffDays = Math.round((userStart - baseStart) / 86400000);
+  if (isNaN(diffDays) || diffDays === 0) return SCH;
+
+  const shifted = {};
+  for (const [dStr, val] of Object.entries(SCH)) {
+    const [y, m, d] = dStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + diffDays);
+    const newStr = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    shifted[newStr] = val;
+  }
+  _cachedShiftedDate = cleanStart;
+  _cachedShiftedSCH = shifted;
+  return shifted;
+}
+
 // get active course data, fallback CSEB11
 function getCourseData() {
   const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
-  return COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
+  const data = COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
+  if ((activeCourseKey === 'CSEB11' || !COURSE_DATA[activeCourseKey]) && typeof getLateStartDate === 'function') {
+    const ls = getLateStartDate();
+    if (ls && data && data.sch === SCH) {
+      return { ...data, sch: getShiftedCSEBSchedule(ls) };
+    }
+  }
+  return data;
 }
 
 const now=null; // kept for API compat; use new Date() inline instead
@@ -1728,6 +1748,7 @@ function updateAll(){
       <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':examDiff===0?'Today!':'TBA'}</span></div>`;
+    if (typeof checkAndNotify === 'function') checkAndNotify();
   });
 }
 
@@ -2922,6 +2943,7 @@ function checkAndNotify() {
 
   // 2. Compute Target Pace & Days to Exam
   let examDate = new Date('2026-08-27');
+  let isPostponed = false;
   if (activeCourse.startsWith('ACCA26')) {
     const p1Date = new Date('2026-09-10');
     const p2Date = new Date('2026-12-10');
@@ -2929,7 +2951,12 @@ function checkAndNotify() {
   } else if (typeof EXAMS !== 'undefined') {
     const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
     const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => new Date(a.date) - new Date(b.date));
-    if (upcoming.length > 0) examDate = new Date(upcoming[0].date);
+    if (upcoming.length > 0) {
+      examDate = new Date(upcoming[0].date);
+    } else if (courseExams.every(e => e.postponed)) {
+      isPostponed = true;
+      examDate = new Date(Date.now() + (45 * 86400000));
+    }
   }
 
   const nowMs = Date.now();
@@ -3066,11 +3093,16 @@ function checkAndNotify() {
         ${dismissBtn}
       </div>
 
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:rgba(46,213,115,0.08);border:1px solid rgba(46,213,115,0.25);padding:10px 16px;border-radius:12px;">
+        <span style="font-size:1.1rem;">🟢</span>
+        <span style="font-size:0.86rem;color:var(--text);font-weight:600;">Today's Study Health: <span style="color:var(--green);font-weight:700;">Optimal Setup</span> — <span style="font-weight:400;color:var(--dim);">Your personalized dashboard and study schedule are active!</span></span>
+      </div>
+
       <div style="background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;">
         <div style="font-weight:800;color:var(--text);font-size:0.92rem;margin-bottom:12px;">Onboarding Checklist:</div>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:0.9rem;color:var(--text);font-family:var(--font);">
           <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-weight:900;font-family:var(--mono);">✓</span> Choose your exam target (<strong style="color:var(--blue);">${activeCourse}</strong>)</div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-weight:900;font-family:var(--mono);">✓</span> Set your exam date (<strong style="color:var(--text);">${examDate.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})}</strong>)</div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-weight:900;font-family:var(--mono);">✓</span> Set your exam date (<strong style="color:var(--text);">${isPostponed ? 'Postponed (Date TBA)' : examDate.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})}</strong>)</div>
           <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-weight:900;font-family:var(--mono);">✓</span> Explore your study syllabus below</div>
           <div style="display:flex;align-items:center;gap:10px;"><span style="color:${step4Done ? 'var(--green)' : 'var(--accent)'};font-weight:900;font-family:var(--mono);">${step4Done ? '✓' : '◯'}</span> ${step4Done ? 'First topic completed!' : 'Complete your first topic below'}</div>
         </div>
