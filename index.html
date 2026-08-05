@@ -3774,7 +3774,23 @@ function renderStatsLoggedSessions() {
   const container = $('stats-logged-sessions');
   const clearBtn = $('clear-all-logs-btn');
   if (!container) return;
-  const list = remoteData._loggedSessions || [];
+
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const { subjs } = getCourseData();
+  const validTopicIds = new Set();
+  Object.values(subjs || {}).forEach(s => {
+    if (s && s.ids) s.ids.forEach(id => validTopicIds.add(id));
+  });
+
+  const allLogs = remoteData._loggedSessions || [];
+  const list = allLogs.filter(s => {
+    if (s.course) return s.course === activeCourse;
+    if (s._topicIds && s._topicIds.length > 0) {
+      return s._topicIds.some(id => validTopicIds.has(id));
+    }
+    return false;
+  });
+
   if (clearBtn) clearBtn.style.display = list.length > 0 ? 'block' : 'none';
   if (list.length === 0) {
     container.innerHTML = '<div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged yet. Tap the \'📝 Log Study Session\' button on the dashboard to record your study time!</div>';
@@ -3888,10 +3904,25 @@ function deleteLoggedSession(id) {
 window.deleteLoggedSession = deleteLoggedSession;
 
 function clearAllLoggedSessions() {
-  if (!confirm('Are you sure you want to delete ALL your study session logs?')) return;
-  remoteData._loggedSessions = [];
+  if (!confirm('Are you sure you want to delete ALL study session logs for this course?')) return;
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const { subjs } = getCourseData();
+  const validTopicIds = new Set();
+  Object.values(subjs || {}).forEach(s => {
+    if (s && s.ids) s.ids.forEach(id => validTopicIds.add(id));
+  });
+
+  const remaining = (remoteData._loggedSessions || []).filter(s => {
+    if (s.course) return s.course !== activeCourse;
+    if (s._topicIds && s._topicIds.length > 0) {
+      return !s._topicIds.some(id => validTopicIds.has(id));
+    }
+    return false;
+  });
+
+  remoteData._loggedSessions = remaining;
   if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
-    setDoc(doc(db, 'users', currentUid), { _loggedSessions: [] }, { merge: true })
+    setDoc(doc(db, 'users', currentUid), { _loggedSessions: remaining }, { merge: true })
       .catch(err => console.error('[Log Clear] Failed:', err));
   } else if (typeof saveToFirestore === 'function') {
     saveToFirestore();
@@ -3957,6 +3988,7 @@ async function saveLogSession() {
   const select = $('ls-subject');
   const sessionRecord = {
     id: 'sec_' + Date.now(),
+    course: remoteData.activeCourse || DEFAULT_COURSE,
     date: dateVal,
     time: format12Hour(timeVal),
     bucket: bucket,
