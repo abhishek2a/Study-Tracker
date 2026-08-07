@@ -743,16 +743,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-performance.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-performance.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
@@ -1750,17 +1750,17 @@ function makeCard(){
     } else {
       let learnTime = '2–3 hrs';
       let mcqTime = '2 hrs';
-      let crTime = '1 hr';
+      let crTime = null;
       let formulaTime = '<div><strong style="color:var(--text);">20 min:</strong> Formula & IFRS revision</div>';
       
       const isTheory = ids.includes('fr1') || ids.includes('fr2a') || ids.includes('fr10b') || ids.includes('fr12');
       const isConsol = ids.includes('fr15');
       const isRatios = ids.includes('fr18');
+      const isSingleEntity = ids.includes('fr13');
       
       if (isTheory) {
         learnTime = '1.5–2 hrs';
-        mcqTime = '1.5 hrs';
-        crTime = '45 min';
+        mcqTime = '2 hrs';
         formulaTime = '<div><strong style="color:var(--text);">15 min:</strong> Conceptual definitions recall (No math formulas)</div>';
       } else if (isConsol) {
         learnTime = '2 hrs';
@@ -1768,16 +1768,21 @@ function makeCard(){
         crTime = '2.5 hrs';
         formulaTime = '<div><strong style="color:var(--text);">30 min:</strong> Standard workings & proformas review</div>';
       } else if (isRatios) {
+        crTime = '1.5 hrs';
         formulaTime = '<div><strong style="color:var(--text);">45 min:</strong> Formula memorization & interpretation points</div>';
+      } else if (isSingleEntity) {
+        crTime = '2 hrs';
       }
+      
       const isDayOne = title.includes('conceptual framework');
       const reviseHtml = isDayOne ? '' : `<div><strong style="color:var(--text);">45 min:</strong> Revise yesterday's notes</div>`;
+      const crHtml = crTime ? `<div><strong style="color:var(--text);">${crTime}:</strong> Constructed-response questions (Section C)</div>` : '';
       
       adaptiveItems = `
         ${reviseHtml}
         <div><strong style="color:var(--text);">${learnTime}:</strong> Learn today's concept</div>
         <div><strong style="color:var(--text);">${mcqTime}:</strong> Kaplan MCQs (Section A & B)</div>
-        <div><strong style="color:var(--text);">${crTime}:</strong> Constructed-response questions (Section C)</div>
+        ${crHtml}
         ${formulaTime}
         <div><strong style="color:var(--text);">10 min:</strong> Error notebook</div>
       `;
@@ -2422,11 +2427,11 @@ function renderCourses(data){
       e.stopPropagation();
       const code=btn.getAttribute('data-course');
       remoteData.activeCourse=code;
-      await setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true});
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
       startLBListener();updateLBData();
       makeCard();bindSyllabus();updateAll();renderPending();
       closeDrop();
+      setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true}).catch(e=>console.warn(e));
     });
   });
   pc.querySelectorAll('.pd-remove').forEach(btn=>{
@@ -2436,10 +2441,10 @@ function renderCourses(data){
       const updated=(remoteData.courses||[DEFAULT_COURSE]).filter(c=>c!==code);
       remoteData.courses=updated;
       if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=DEFAULT_COURSE;
-      await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:remoteData.activeCourse},{merge:true});
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
       startLBListener();updateLBData();
       makeCard();bindSyllabus();updateAll();renderPending();
+      setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:remoteData.activeCourse},{merge:true}).catch(e=>console.warn(e));
     });
   });
 }
@@ -2459,10 +2464,10 @@ if (addBtn) {
     if(existing.includes(code)){err.textContent='Already added.';return;}
     const updated=[...existing,code];
     remoteData.courses=updated;remoteData.activeCourse=code;
-    await setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true});
     inp.value='';renderCourses(remoteData);
     startLBListener();updateLBData();
     makeCard();bindSyllabus();updateAll();renderPending();
+    setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true}).catch(e=>console.warn(e));
   });
 }
 
