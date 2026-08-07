@@ -171,7 +171,7 @@ body {
 .day-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
 .day-top h2{font-size:1.05rem;font-weight:700;flex:1}
 .day-badge{font-family:var(--mono);font-size:.65rem;color:var(--dim);padding:3px 9px;background:var(--s2);border:1px solid var(--border);border-radius:99px;white-space:nowrap;flex-shrink:0}
-.day-sub{font-size:.74rem;color:var(--dim);font-family:var(--mono);margin-bottom:13px}
+.day-sub{font-size:.9rem;color:var(--text);font-family:var(--font);font-weight:600;margin-bottom:14px;letter-spacing:-0.01em}
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
 .revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
@@ -628,7 +628,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.93</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.94</div>
         </div>
       </div>
     </div>
@@ -714,7 +714,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>✨ View What's New in v1.2.93</span>
+          <span>View What's New in v1.2.94</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -838,7 +838,11 @@ async function submitAuth(){
     const pass2=$('auth-pass2').value;
     const name=$('auth-name').value.trim();
     const rawCode=($('auth-code').value||'').trim().toUpperCase();
-    if(!pass2||!name||!rawCode){$('auth-err').textContent='Please fill in your name, confirm password, and course code.';return;}
+    let m=[];
+    if(!name) m.push('name');
+    if(!pass2) m.push('confirm password');
+    if(!rawCode) m.push('course code');
+    if(m.length>0){$('auth-err').textContent='Please fill in your '+m.join(', ').replace(/, ([^,]*)$/, ' and $1')+'.';return;}
     if(pass!==pass2){$('auth-err').textContent='Passwords do not match.';return;}
     if(!COURSE_CODES[rawCode]){$('auth-err').textContent='Invalid Course Code entered. Please check your access code.';return;}
   }
@@ -900,8 +904,9 @@ try {
   const asb = $('auth-submit-btn'); if(asb) asb.addEventListener('click',submitAuth);
   const flb = $('forgot-link-btn'); if(flb) flb.addEventListener('click',showForgot);
   const rb = $('reset-btn'); if(rb) rb.addEventListener('click',doReset);
-  const ae = $('auth-email'); if(ae) ae.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
-  const ap = $('auth-pass'); if(ap) ap.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+  ['auth-email','auth-pass','auth-pass2','auth-name','auth-code'].forEach(id=>{
+    const el=$(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+  });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
 const APP_VERSION = '1.2.93';
@@ -1289,6 +1294,95 @@ const SCH_ACCA_P2 = (() => {
 })();
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
 
+const ACCA_30_DAYS = [
+  // Days 1-2
+  {ids: ['fr1', 'fr2a'], title: 'Conceptual Framework + IFRS 18 Presentation'}, // 1
+  {ids: ['fr1', 'fr2a'], title: 'Conceptual Framework + IFRS 18 Presentation'}, // 2
+
+  // Days 3-4
+  {ids: ['fr12'], title: 'IFRS 15 Revenue'}, // 3
+  {ids: ['fr12'], title: 'IFRS 15 Revenue'}, // 4
+
+  // Days 5-7
+  {ids: ['fr3', 'fr4a', 'fr4b', 'fr6'], title: 'IAS 16 PPE + IAS 23 Borrowing Costs + IAS 40 Investment Property + IAS 36 Impairment'}, // 5
+  {ids: ['fr3', 'fr4a', 'fr4b', 'fr6'], title: 'IAS 16 PPE + IAS 23 Borrowing Costs + IAS 40 Investment Property + IAS 36 Impairment'}, // 6
+  {ids: ['fr3', 'fr4a', 'fr4b', 'fr6'], title: 'IAS 16 PPE + IAS 23 Borrowing Costs + IAS 40 Investment Property + IAS 36 Impairment'}, // 7
+
+  // Day 8
+  {ids: ['fr5a', 'fr8'], title: 'IAS 38 Intangible Assets'}, // 8
+
+  // Day 9
+  {ids: ['fr17a'], title: 'IAS 2 Inventory + IAS 20 Government Grants'}, // 9
+
+  // Day 10
+  {ids: ['fr7'], title: 'IAS 37 Provisions + IAS 10 Events after Reporting Period'}, // 10
+
+  // Days 11-12
+  {ids: ['fr9'], title: 'IFRS 9 Financial Instruments (Assets, Liabilities, Expected Credit Loss, Compound Instruments)'}, // 11
+  {ids: ['fr9'], title: 'IFRS 9 Financial Instruments (Assets, Liabilities, Expected Credit Loss, Compound Instruments)'}, // 12
+
+  // Days 13-14
+  {ids: ['fr11', 'fr17b'], title: 'IAS 12 Income Taxes + IAS 21 Foreign Currency'}, // 13
+  {ids: ['fr11', 'fr17b'], title: 'IAS 12 Income Taxes + IAS 21 Foreign Currency'}, // 14
+
+  // Day 15
+  {ids: ['fr14'], title: 'IAS 33 EPS + Mid Revision + Weak Areas'}, // 15
+
+  // Day 16
+  {ids: ['fr13', 'fr16'], title: 'IAS 7 Cash Flow Statements (FS Preparation)'}, // 16
+
+  // Days 17-18
+  {ids: ['fr13', 'fr5b'], title: 'Single Entity Financial Statements (SOPL, OCI, SFP, Notes, Corrections)'}, // 17
+  {ids: ['fr13', 'fr5b'], title: 'Single Entity Financial Statements (SOPL, OCI, SFP, Notes, Corrections)'}, // 18
+
+  // Days 19-23
+  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 19
+  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 20
+  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 21
+  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 22
+  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 23
+
+  // Days 24-26
+  {ids: ['fr18'], title: 'Interpretation & Ratio Analysis'}, // 24
+  {ids: ['fr18'], title: 'Interpretation & Ratio Analysis'}, // 25
+  {ids: ['fr18'], title: 'Interpretation & Ratio Analysis'}, // 26
+
+  // Day 27
+  {ids: ['fr20'], title: 'Full Mock 1'}, // 27
+
+  // Day 28
+  {ids: ['fr19'], title: 'Review Mock + Weak Topics'}, // 28
+
+  // Day 29
+  {ids: ['fr20'], title: 'Full Mock 2'}, // 29
+
+  // Day 30
+  {ids: ['fr1', 'fr10b'], title: 'Formula Sheet + IFRS Review + Mistake Notebook'} // 30
+];
+
+let _cachedAccaSCH = null;
+let _cachedAccaDate = null;
+function getShiftedACCASchedule(startStr) {
+  if (!startStr) return {};
+  const cleanStart = String(startStr).split('T')[0];
+  if (_cachedAccaDate === cleanStart && _cachedAccaSCH) return _cachedAccaSCH;
+  
+  const [sy, sm, sd] = cleanStart.split('-').map(Number);
+  const userStart = new Date(sy, sm - 1, sd);
+  const shifted = {};
+  
+  for (let i = 0; i < ACCA_30_DAYS.length; i++) {
+    const dt = new Date(userStart.getTime());
+    dt.setDate(dt.getDate() + i);
+    const newStr = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    shifted[newStr] = ACCA_30_DAYS[i];
+  }
+  
+  _cachedAccaDate = cleanStart;
+  _cachedAccaSCH = shifted;
+  return shifted;
+}
+
 let _cachedShiftedSCH = null;
 let _cachedShiftedDate = null;
 function getShiftedCSEBSchedule(startStr) {
@@ -1320,6 +1414,22 @@ function getShiftedCSEBSchedule(startStr) {
 function getCourseData() {
   const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
   const data = COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
+  
+  if (activeCourseKey.startsWith('ACCA26')) {
+    const now = new Date();
+    const nov10 = new Date(Date.UTC(2026, 10, 10)); // Nov 10, 2026
+    
+    if (now >= nov10) {
+      return { ...data, sch: getShiftedACCASchedule('2026-11-10') };
+    }
+    
+    if (activeCourseKey === 'ACCA26') {
+      const ls = (typeof getLateStartDate === 'function') ? getLateStartDate() : null;
+      const startStr = ls || '2026-08-07';
+      return { ...data, sch: getShiftedACCASchedule(startStr) };
+    }
+  }
+
   if ((activeCourseKey === 'CSEB11' || !COURSE_DATA[activeCourseKey]) && typeof getLateStartDate === 'function') {
     const ls = getLateStartDate();
     if (ls && data && data.sch === SCH) {
@@ -1529,29 +1639,21 @@ function makeCard(){
   const lateStart = getLateStartDate();
   if (dc) dc.style.display = '';
 
-  if (activeCourse === 'ACCA26') {
-    if(todaySec) todaySec.style.display = 'none';
-    if(pendingSec) pendingSec.style.display = 'none';
-    if(pendingCard) pendingCard.style.display = 'none';
-    if (dc) {
-      dc.innerHTML = '';
-      dc.style.display = 'none';
-    }
-    return;
-  } else if (activeCourse === 'ACCA26_P2') {
-    // Phase 2: show daily schedule card
+  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2') {
+    // Phase 1 and 2: show daily schedule card
     if(todaySec) todaySec.style.display = '';
-    if(pendingSec) pendingSec.style.display = 'none';
-    if(pendingCard) pendingCard.style.display = 'none';
-  } else if (activeCourse === 'CSEB11') {
+    if(pendingSec) pendingSec.style.display = '';
+    if(pendingCard) pendingCard.style.display = '';
+  } else if (activeCourse === 'CSEB11' || activeCourse === 'CAT09') {
     // Late starters bypass the pause — they get the normal daily plan
     if (!lateStart) {
       if(todaySec) todaySec.style.display = 'none';
       if(pendingSec) pendingSec.style.display = '';
       if(pendingCard) pendingCard.style.display = '';
+      const courseName = activeCourse === 'CAT09' ? 'Asst Secretary' : 'CSEB';
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
-        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The CSEB exam has been postponed. The daily study plan is paused until a new date is published. You can still revise your pending topics and the Full Syllabus below.</p></div>`;
+        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The ${courseName} exam has been postponed. The daily study plan is paused until a new date is published. You can still revise your pending topics and the Full Syllabus below.</p></div>`;
       return;
     }
     // Late starter — fall through to normal plan rendering below
@@ -1567,10 +1669,12 @@ function makeCard(){
   const sched=sch[ts()];
   const examMeta={
     CSEB11:{text: lateStart ? `CSEB · New Joinee · Started ${lateStart}` : 'CSEB · Cat 11 · Exam TBA', date:new Date(2026,6,11)},
-    CAT09: {text:'Asst Secretary · Cat 09 · 16 Aug 2026',date:new Date(2026,7,16)}
+    CAT09: {text:'Asst Secretary · Cat 09 · Exam TBA',date:new Date(2026,7,16)},
+    ACCA26: {text: lateStart ? `Sep 10 FR Exam · Started ${lateStart}` : 'Sep 10 FR Exam', date:new Date(Date.UTC(2026, 8, 10))},
+    ACCA26_P2: {text: 'Dec 20 FR Exam', date:new Date(Date.UTC(2026, 11, 10))}
   };
   const meta=examMeta[activeCourse]||examMeta.CSEB11;
-  const tag=`<span class="exam-tag">${meta.text}</span>`;
+  const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
   
   if(!sched){
     // No plan entry for today (e.g. gap day or beyond schedule)
@@ -1591,13 +1695,14 @@ function makeCard(){
     return;
   }
   let inner='';
+  const titleStr = sched.l || sched.title || 'Daily Topics';
   if(sched.p==='mock'){
-    inner=`${tag}<div class="day-sub">${sched.l}</div><ul class="cl">
+    inner=`${tag}<div class="day-sub">${titleStr}</div><ul class="cl">
       <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
       <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='catchup'){
-    inner=`${tag}<div class="day-sub">${sched.l}</div><ul class="cl">
+    inner=`${tag}<div class="day-sub">${titleStr}</div><ul class="cl">
       <li><label><input type="checkbox" id="cu1_${ts()}" ${remoteData['cu1_'+ts()]?'checked':''}><span>Revise pending topics</span></label></li>
       <li><label><input type="checkbox" id="cu2_${ts()}" ${remoteData['cu2_'+ts()]?'checked':''}><span>Clarify doubts with mentor</span></label></li>
       <li><label><input type="checkbox" id="cu3_${ts()}" ${remoteData['cu3_'+ts()]?'checked':''}><span>Practice past questions</span></label></li></ul>`;
@@ -1608,13 +1713,88 @@ function makeCard(){
       <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
   } else {
     const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
-    inner=`${tag}<div class="day-sub">${sched.l} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
+    inner=`${tag}<div class="day-sub">${titleStr} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
     <div class="mock-mini"><div class="mock-mini-lbl">📝 Daily Practice Quiz</div><ul class="cl">
       <li><label><input type="checkbox" id="daily_mock" ${remoteData['mock_'+ts()]?'checked':''}><span>Attempt 10-question quiz on today's topics</span></label></li>
     </ul></div>`;
   }
+  
+  let routineHtml = '';
+  if (activeCourse.startsWith('ACCA26') && sched) {
+    const title = (sched.title || sched.l || '').toLowerCase();
+    const ids = sched.ids || [];
+    
+    let adaptiveItems = '';
+    if (title.includes('mock exam') || title.includes('full mock')) {
+      adaptiveItems = `
+        <div><strong style="color:var(--text);">15 min:</strong> Exam setup & mental prep</div>
+        <div><strong style="color:var(--text);">3 hrs 15 min:</strong> Full Mock Exam (Strictly Timed)</div>
+        <div><strong style="color:var(--text);">1.5 hrs:</strong> Review incorrect answers & analyze marking scheme</div>
+        <div><strong style="color:var(--text);">30 min:</strong> Update error notebook</div>
+      `;
+    } else if (title.includes('review') || title.includes('revision') || title.includes('formula')) {
+      adaptiveItems = `
+        <div><strong style="color:var(--text);">1 hr:</strong> Review Error Notebook & Weak Areas</div>
+        <div><strong style="color:var(--text);">2 hrs:</strong> Re-attempt failed questions from past weeks</div>
+        <div><strong style="color:var(--text);">1 hr:</strong> Formula & IFRS standard recall practice</div>
+        <div><strong style="color:var(--text);">1.5 hrs:</strong> Read examiner reports & technical articles</div>
+      `;
+    } else if (title.includes('practice')) {
+      adaptiveItems = `
+        <div><strong style="color:var(--text);">30 min:</strong> Quick review of yesterday's rules/formats</div>
+        <div><strong style="color:var(--text);">2.5 hrs:</strong> Kaplan / BPP MCQs (Section A & B)</div>
+        <div><strong style="color:var(--text);">2 hrs:</strong> Constructed-response questions (Section C)</div>
+        <div><strong style="color:var(--text);">30 min:</strong> Deep dive into mistakes & Error notebook</div>
+      `;
+    } else {
+      let learnTime = '2–3 hrs';
+      let mcqTime = '2 hrs';
+      let crTime = '1 hr';
+      let formulaTime = '<div><strong style="color:var(--text);">20 min:</strong> Formula & IFRS revision</div>';
+      
+      const isTheory = ids.includes('fr1') || ids.includes('fr2a') || ids.includes('fr10b') || ids.includes('fr12');
+      const isConsol = ids.includes('fr15');
+      const isRatios = ids.includes('fr18');
+      
+      if (isTheory) {
+        learnTime = '1.5–2 hrs';
+        mcqTime = '1.5 hrs';
+        crTime = '45 min';
+        formulaTime = '<div><strong style="color:var(--text);">15 min:</strong> Conceptual definitions recall (No math formulas)</div>';
+      } else if (isConsol) {
+        learnTime = '2 hrs';
+        mcqTime = '1 hr';
+        crTime = '2.5 hrs';
+        formulaTime = '<div><strong style="color:var(--text);">30 min:</strong> Standard workings & proformas review</div>';
+      } else if (isRatios) {
+        formulaTime = '<div><strong style="color:var(--text);">45 min:</strong> Formula memorization & interpretation points</div>';
+      }
+      const isDayOne = title.includes('conceptual framework');
+      const reviseHtml = isDayOne ? '' : `<div><strong style="color:var(--text);">45 min:</strong> Revise yesterday's notes</div>`;
+      
+      adaptiveItems = `
+        ${reviseHtml}
+        <div><strong style="color:var(--text);">${learnTime}:</strong> Learn today's concept</div>
+        <div><strong style="color:var(--text);">${mcqTime}:</strong> Kaplan MCQs (Section A & B)</div>
+        <div><strong style="color:var(--text);">${crTime}:</strong> Constructed-response questions (Section C)</div>
+        ${formulaTime}
+        <div><strong style="color:var(--text);">10 min:</strong> Error notebook</div>
+      `;
+    }
+
+    routineHtml = `
+      <div style="margin-top:16px;background:rgba(84,162,255,0.04);border:1px dashed rgba(84,162,255,0.3);padding:14px;border-radius:12px;">
+        <div style="font-size:0.85rem;font-weight:700;color:var(--blue);margin-bottom:8px;">💡 Adaptive Daily Routine</div>
+        <div style="font-size:0.75rem;color:var(--dim);line-height:1.6;display:grid;grid-template-columns:1fr;gap:4px;">
+          ${adaptiveItems}
+        </div>
+      </div>
+    `;
+  }
+  
+  const headerTitle = activeCourse.startsWith('ACCA26') ? "📌 30-Day Study Strategy" : "📌 Today's Topics";
   dc.innerHTML=`<div class="day-card ${sched.p}">
-    <div class="day-top"><h2>📌 Today's Topics</h2>${dateBadge}</div>${inner}</div>`;
+    <div class="day-top"><h2>${headerTitle}</h2>${dateBadge}</div>${inner}${routineHtml}</div>`;
   dc.querySelectorAll('.ds').forEach(b=>{
     b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
   });
@@ -2847,32 +3027,26 @@ async function checkAutoPhaseTransition(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '1.2.93';
+const WHATS_NEW_VERSION = '1.2.94';
 
-function buildWhatsNewHTML(courses){
-  const courseList = Array.isArray(courses) ? courses : [remoteData.activeCourse || DEFAULT_COURSE];
-  const hasACCA = courseList.some(c => String(c).startsWith('ACCA')) || String(remoteData.activeCourse || '').startsWith('ACCA');
-  const hasOther = courseList.some(c => !String(c).startsWith('ACCA')) || (remoteData.activeCourse && !String(remoteData.activeCourse).startsWith('ACCA')) || (!remoteData.activeCourse && !DEFAULT_COURSE.startsWith('ACCA'));
+function buildWhatsNewHTML(){
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const hasACCA = String(activeCourse).startsWith('ACCA');
+  const hasOther = !hasACCA;
 
   let html = `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">🧠 Adaptive Study Coach (v3)</div>
-      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">Situational Intelligence</div><div class="wn-item-desc">The dashboard now dynamically transforms based on your real-time academic situation (Behind Schedule, On Track, Exam is Near, or Habit Builder) rather than merely displaying static progress bars.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🎯</div><div class="wn-item-text"><div class="wn-item-title">Course-Scoped Weak Areas</div><div class="wn-item-desc">Weak topic identification is now strictly quarantined to your active syllabus, ensuring your coaching alerts only ever analyze and display topics from your precise study program.</div></div></div>
-    </div>
-    <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--blue);">✨ UI &amp; Typography Refinements</div>
-      <div class="wn-item"><div class="wn-item-icon">🧹</div><div class="wn-item-text"><div class="wn-item-title">Minimalist Textual Integration</div><div class="wn-item-desc">Removed heavy progress bar panels and visual boxes in favor of clean, subtle textual indicators (Syllabus Covered % and Revision Warning tags).</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">💎</div><div class="wn-item-text"><div class="wn-item-title">Polished Typography</div><div class="wn-item-desc">Refined font weights and line heights across all situational cards to eliminate harsh bold blocks, seamlessly matching the modern UI text design system.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--accent);">🚀 Performance & UX Upgrades</div>
+      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">System Optimizations</div><div class="wn-item-desc">Removed legacy code, fixed the local file detection blocker, and optimized the study tracker for smoother logging performance.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🕒</div><div class="wn-item-text"><div class="wn-item-title">12-Hour Clock Implementation</div><div class="wn-item-desc">All study session logs now strictly display in a 12-hour AM/PM format for better readability and scheduling alignment.</div></div></div>
     </div>
   `;
 
   if (hasOther) {
     html += `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--green);">🛡️ Platform &amp; Syllabus Reliability</div>
-      <div class="wn-item"><div class="wn-item-icon">🛡️</div><div class="wn-item-text"><div class="wn-item-title">Dedicated Syllabus Isolation</div><div class="wn-item-desc">Resolved an issue where weak topics and revision analytics from other programs could appear in your coaching alerts. Your study metrics are now strictly mapped to your enrolled syllabus.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🔐</div><div class="wn-item-text"><div class="wn-item-title">Enhanced Registration Security</div><div class="wn-item-desc">Enforced strict course code validation during account registration to ensure profiles are always routed directly to their intended study program.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--green);">🛡️ CSEB Syllabus Updates</div>
+      <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Enhanced Study Metrics</div><div class="wn-item-desc">Your daily syllabus progress and exam readiness are now tracked with deeper precision, directly linked to your active course selection.</div></div></div>
     </div>
     `;
   }
@@ -2880,8 +3054,9 @@ function buildWhatsNewHTML(courses){
   if (hasACCA) {
     html += `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--green);">📚 ACCA Syllabus Optimization</div>
-      <div class="wn-item"><div class="wn-item-icon">✨</div><div class="wn-item-text"><div class="wn-item-title">Financial Reporting Streamlined</div><div class="wn-item-desc">Streamlined the Financial Reporting syllabus by removing redundant hedging topics, keeping your revision focused tightly on core Financial Instruments.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--blue);">🎓 ACCA FR: 30-Day Strategy Engine</div>
+      <div class="wn-item"><div class="wn-item-icon">💡</div><div class="wn-item-text"><div class="wn-item-title">Adaptive Daily Routines</div><div class="wn-item-desc">Your daily plan now features an intelligent time-blocking routine that adapts to the specific topic you are studying (Theory vs Practice vs Mock Exams).</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">📅</div><div class="wn-item-text"><div class="wn-item-title">Precision Topic Grouping</div><div class="wn-item-desc">The 30-Day Strategy now groups interconnected syllabus topics intelligently across multi-day blocks, letting you check off milestones naturally as you progress.</div></div></div>
     </div>
     `;
   }
@@ -2890,16 +3065,15 @@ function buildWhatsNewHTML(courses){
 }
 
 function showWhatsNew(force = false){
-  const courses = remoteData.courses || [remoteData.activeCourse || DEFAULT_COURSE];
-  const isACCA = (remoteData.activeCourse && String(remoteData.activeCourse).startsWith('ACCA')) || courses.some(c => String(c).startsWith('ACCA'));
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
   
   const seen = localStorage.getItem('wn_seen_v');
   if(!force && seen === WHATS_NEW_VERSION) return; // already seen this version
 
   const overlay = document.getElementById('whats-new-overlay');
   if(!overlay) return;
-  document.getElementById('wn-body').innerHTML = buildWhatsNewHTML(courses);
-  document.getElementById('wn-sub').textContent = `${courses.map(c=>COURSE_CODES[c]||c).join(' + ')} · Here's what changed in this update`;
+  document.getElementById('wn-body').innerHTML = buildWhatsNewHTML();
+  document.getElementById('wn-sub').textContent = `${COURSE_CODES[activeCourse] || activeCourse} · Here's what changed in this update`;
   overlay.classList.add('open');
 }
 window.showWhatsNew = showWhatsNew;
@@ -2963,7 +3137,12 @@ function checkAndNotify() {
   const examMs = examDate.getTime();
   const daysToExam = Math.ceil((examMs - nowMs) / (1000 * 60 * 60 * 24));
 
-  const startMs = new Date(activeCourse === 'ACCA26_P2' ? '2026-09-11' : '2026-06-12').getTime();
+  const lsStr = typeof getLateStartDate === 'function' ? getLateStartDate() : null;
+  const acca1Start = lsStr || '2026-08-07';
+  const startMs = new Date(
+    activeCourse === 'ACCA26_P2' ? '2026-09-11' : 
+    (activeCourse === 'ACCA26' ? acca1Start : '2026-06-12')
+  ).getTime();
   let tgtPct = 0;
   if (nowMs >= examMs) tgtPct = 100;
   else if (nowMs > startMs) tgtPct = Math.round(((nowMs - startMs) / (examMs - startMs)) * 100);
@@ -3642,7 +3821,7 @@ function openLogSession() {
   if (select) {
     select.innerHTML = Object.entries(subjs)
       .filter(([k, v]) => k !== 'exam' && k !== 'mocks' && v.ids && v.ids.length > 0)
-      .map(([k, v]) => `<option value="${k}" style="color:${v.c || '#e6e9f0'}">${v.n} (${v.ids.length} topics)</option>`)
+      .map(([k, v]) => `<option value="${k}">${v.n} (${v.ids.length} topics)</option>`)
       .join('');
   }
 
