@@ -2416,7 +2416,7 @@ function renderCourses(data){
   const active=data.activeCourse||DEFAULT_COURSE;
   pc.innerHTML=courses.map(c=>{
     const isActive=c===active;
-    const canRemove=c!==DEFAULT_COURSE;
+    const canRemove=courses.length>1;
     return `<div style="display:flex;align-items:center;gap:2px">
       <button class="pd-item${isActive?' active':''}" data-course="${c}" style="font-size:.8rem;flex:1">${COURSE_CODES[c]||c}</button>
       ${canRemove?`<button class="pd-remove" data-remove="${c}" style="flex-shrink:0;width:26px;height:26px;border:none;background:transparent;color:var(--dim);cursor:pointer;border-radius:6px;font-size:.75rem">✕</button>`:''}
@@ -2440,7 +2440,7 @@ function renderCourses(data){
       const code=btn.getAttribute('data-remove');
       const updated=(remoteData.courses||[DEFAULT_COURSE]).filter(c=>c!==code);
       remoteData.courses=updated;
-      if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=DEFAULT_COURSE;
+      if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=updated.length?updated[0]:DEFAULT_COURSE;
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
       startLBListener();updateLBData();
       makeCard();bindSyllabus();updateAll();renderPending();
