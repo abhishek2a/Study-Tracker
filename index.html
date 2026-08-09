@@ -537,6 +537,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   </div>
   <div class="wrap" style="max-width:800px;margin-top:10px">
     
+    <div id="ai-study-insights" style="margin-bottom:24px;background:rgba(84,162,255,0.06);border:1px dashed rgba(84,162,255,0.3);padding:18px;border-radius:14px;display:none;">
+      <div style="font-size:0.9rem;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;gap:8px;">💡 AI Study Insights</div>
+      <div id="ai-insights-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+    
     <div class="lb-stats" style="margin-bottom:30px">
       <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-total">0</div><div class="lb-stat-lbl">Total Topics</div></div>
       <div class="lb-stat" style="text-align:center"><div class="lb-stat-val" id="st-comp" style="color:var(--green)">0</div><div class="lb-stat-lbl">Completed</div></div>
@@ -1429,9 +1434,7 @@ function getCourseData() {
     }
     
     if (activeCourseKey === 'ACCA26') {
-      const ls = (typeof getLateStartDate === 'function') ? getLateStartDate() : null;
-      const startStr = ls || '2026-08-07';
-      return { ...data, sch: getShiftedACCASchedule(startStr) };
+      return { ...data, sch: getShiftedACCASchedule('2026-08-07') };
     }
   }
 
@@ -1548,11 +1551,8 @@ function applyData(data){
 
 function getPending(){
   const {sch}=getCourseData(),now=Date.now(),r=[];
-  // Late starters only see pending items on/after their start date (not all the previous plan)
-  const lateStart = getLateStartDate();
   for(const[date,s] of Object.entries(sch)){
     if(date>=ts()||!s.ids||!s.ids.length)continue;
-    if(lateStart && date < lateStart) continue; // skip dates before late-start
     if(deferred[date]&&deferred[date]>now)continue;
     const u=s.ids.filter(id=>!remoteData[id]);
     if(u.length)r.push({date,s,unchecked:u});
@@ -2708,6 +2708,7 @@ function openStats() {
   try {
     renderSRForecastChart();
     renderProductivityCorrelator();
+    if (typeof generateStudyInsights === 'function') generateStudyInsights();
     if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
   } catch (e) {
     console.error('SR Forecaster/Productivity rendering error:', e);
@@ -4237,6 +4238,118 @@ async function saveLogSession() {
   }
 }
 window.saveLogSession = saveLogSession;
+
+// 💡 AI Study Insights Engine
+function generateStudyInsights() {
+  const container = $('ai-study-insights');
+  const list = $('ai-insights-list');
+  if (!container || !list) return;
+
+  const insights = [];
+  const activity = remoteData._activity || {};
+  const timeAcc = remoteData._timeAccuracy || {};
+  const logged = remoteData._loggedSessions || [];
+  const srData = remoteData._sr || {};
+
+  // 1. Optimal Timing Insight
+  let bestBucket = null;
+  let bestAcc = 0;
+  let worstBucket = null;
+  let worstAcc = 100;
+
+  for (const [bucket, stats] of Object.entries(timeAcc)) {
+    if (stats.attempts >= 5) {
+      const acc = Math.round((stats.correct / stats.attempts) * 100);
+      if (acc > bestAcc) { bestAcc = acc; bestBucket = bucket; }
+      if (acc < worstAcc) { worstAcc = acc; worstBucket = bucket; }
+    }
+  }
+
+  if (bestBucket && worstBucket && bestBucket !== worstBucket && (bestAcc - worstAcc >= 15)) {
+    const bucketNames = { 'morning': 'Morning', 'afternoon': 'Afternoon', 'evening': 'Evening', 'latenight': 'Late Night' };
+    const isACCA = (remoteData.activeCourse || '').startsWith('ACCA');
+    const exampleTopic = isACCA ? ' (like Consolidation)' : '';
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--green);">Optimal Timing:</strong> Your accuracy peaks at <strong>${bestAcc}%</strong> in the <strong>${bucketNames[bestBucket] || bestBucket}</strong>, but drops to <strong>${worstAcc}%</strong> during the <strong>${bucketNames[worstBucket] || worstBucket}</strong>. Try tackling complex topics${exampleTopic} earlier when you are sharpest!
+      </div>
+    `);
+  }
+
+  // 2. Topic Efficiency (High effort, still pending)
+  const topicEff = {};
+  logged.forEach(session => {
+    if (session._topicIds) {
+      session._topicIds.forEach(id => {
+        topicEff[id] = (topicEff[id] || 0) + 1;
+      });
+    }
+  });
+
+  let stuckTopic = null;
+  let stuckCount = 0;
+  for (const [id, count] of Object.entries(topicEff)) {
+    if (!remoteData[id] && count >= 3 && count > stuckCount) {
+      stuckCount = count;
+      stuckTopic = id;
+    }
+  }
+
+  if (stuckTopic) {
+    const cd = typeof getCourseData === 'function' ? getCourseData() : null;
+    const tName = cd && cd.labels ? (cd.labels[stuckTopic] || 'a heavy topic') : 'a heavy topic';
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--accent);">Study Efficiency:</strong> You've logged <strong>${stuckCount} sessions</strong> on <em>${tName}</em> but haven't marked it complete yet. You might be stuck in a 'passive reading' loop. Switch to active recall or practice questions today!
+      </div>
+    `);
+  }
+
+  // 3. Revision Warning (Stale topics)
+  let staleTopic = null;
+  let staleDays = 0;
+  const nowMs = Date.now();
+  for (const [id, s] of Object.entries(srData)) {
+    if (remoteData[id] && s.lastRev) {
+      const daysSince = Math.floor((nowMs - s.lastRev) / 86400000);
+      if (daysSince >= 14 && daysSince > staleDays) {
+        staleDays = daysSince;
+        staleTopic = id;
+      }
+    }
+  }
+
+  if (staleTopic && !stuckTopic) { // Don't overwhelm with too many warnings
+    const cd = typeof getCourseData === 'function' ? getCourseData() : null;
+    const tName = cd && cd.labels ? (cd.labels[staleTopic] || 'an older topic') : 'an older topic';
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--red);">Memory Decay Risk:</strong> It's been <strong>${staleDays} days</strong> since you last reviewed <em>${tName}</em>. It is at high risk of being forgotten. Add it to tomorrow's quick revision!
+      </div>
+    `);
+  }
+
+  // 4. Fallback positive insight
+  if (insights.length === 0) {
+    const activeDays = Object.keys(activity).length;
+    if (activeDays >= 3) {
+      insights.push(`
+        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+          <strong style="color:var(--green);">On Track:</strong> You've logged ${activeDays} active study days. Your stats are looking solid and balanced. Keep pushing forward!
+        </div>
+      `);
+    } else {
+      insights.push(`
+        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+          <strong style="color:var(--dim);">Not enough data yet:</strong> Log more study sessions (with accuracy data) to unlock personalized AI insights here!
+        </div>
+      `);
+    }
+  }
+
+  list.innerHTML = insights.join('<div style="height:1px;background:var(--border);margin:12px 0;"></div>');
+  container.style.display = 'block';
+}
 
 // Escape key closes any open modal
 document.addEventListener('keydown', e => {
