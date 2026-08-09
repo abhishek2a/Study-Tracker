@@ -1372,9 +1372,13 @@ function getShiftedACCASchedule(startStr) {
   const userStart = new Date(sy, sm - 1, sd);
   const shifted = {};
   
+  const isPhase2 = sy === 2026 && sm === 11;
+  const examCutoff = isPhase2 ? new Date(2026, 11, 10) : new Date(2026, 8, 10);
+  
   for (let i = 0; i < ACCA_30_DAYS.length; i++) {
     const dt = new Date(userStart.getTime());
     dt.setDate(dt.getDate() + i);
+    if (dt >= examCutoff) break;
     const newStr = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
     shifted[newStr] = ACCA_30_DAYS[i];
   }
