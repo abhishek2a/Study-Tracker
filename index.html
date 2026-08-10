@@ -744,6 +744,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         </div>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <button id="settings-reset-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);margin-bottom:8px;">Reset Course Progress</button>
         <button id="settings-delete-btn" class="auth-btn" style="background:transparent;color:var(--red);border:1px solid rgba(224,80,80,.4)">Delete Account</button>
       </div>
     </div>
@@ -3740,6 +3741,62 @@ $('settings-reset-pw').addEventListener('click', async function() {
   }, 4000);
 });
 
+
+$('settings-reset-btn').addEventListener('click', async function() {
+  if(!auth.currentUser) return;
+  if(confirm('Are you sure you want to reset your course progress? This will wipe all completed topics, spaced repetition memory, and logged sessions for your current course. This cannot be undone.')) {
+    const btn = this;
+    btn.textContent = 'Resetting...';
+    btn.disabled = true;
+    
+    try {
+      const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+      const cd = typeof getCourseData === 'function' ? getCourseData() : null;
+      
+      if (cd && cd.subjs) {
+        Object.values(cd.subjs).forEach(subj => {
+          if (!subj.ids) return;
+          subj.ids.forEach(id => {
+            delete remoteData[id];
+          });
+        });
+      }
+      
+      remoteData._sr = {};
+      remoteData._activity = {};
+      remoteData._loggedSessions = [];
+      remoteData._timeAccuracy = {};
+      
+      try { localStorage.removeItem('cseb_deferred'); deferred = {}; } catch(e) {}
+      
+      const now = new Date();
+      remoteData.signupDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}T${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:00`;
+      
+      const userRef = doc(db, 'users', currentUid);
+      const cleanBackup = { ...remoteData };
+      delete cleanBackup._loaded;
+      
+      await setDoc(userRef, cleanBackup, { merge: false });
+      
+      if (typeof updateLBData === 'function') updateLBData();
+      
+      btn.textContent = 'Progress Reset!';
+      updateAll();
+      setTimeout(() => {
+        btn.textContent = 'Reset Course Progress';
+        btn.disabled = false;
+        $('settings-overlay').style.opacity = '0';
+        setTimeout(() => $('settings-overlay').style.visibility = 'hidden', 200);
+      }, 1500);
+      
+    } catch(err) {
+      console.error(err);
+      alert('Error resetting progress: ' + err.message);
+      btn.textContent = 'Reset Course Progress';
+      btn.disabled = false;
+    }
+  }
+});
 
 $('settings-delete-btn').addEventListener('click', async function() {
   if(!auth.currentUser) return;
