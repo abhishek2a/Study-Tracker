@@ -15,6 +15,9 @@
   } catch(e){}
 })();
 </script>
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f4f7" media="(prefers-color-scheme: light)">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -879,7 +882,7 @@ async function submitAuth(){
   }
 };
 
-async function doSignOut(){await signOut(auth);};
+async function doSignOut(){ try { await signOut(auth); } catch (e) { console.error('Signout failed', e); } };
 
 function showForgot(){
   $('forgot-form').style.display='block';
@@ -1453,7 +1456,7 @@ function getTodayStr(){
   const localDate = new Date();
   const utc = localDate.getTime() + (localDate.getTimezoneOffset() * 60000);
   const ist = new Date(utc + (3600000 * 5.5));
-  return `${ist.getFullYear()}-${String(ist.getMonth()+1).padStart(2,'0')}-${String(ist.getDate()).padStart(2,'0')}`;
+  return `${ist.getUTCFullYear()}-${String(ist.getUTCMonth()+1).padStart(2,'0')}-${String(ist.getUTCDate()).padStart(2,'0')}`;
 }
 const ts=getTodayStr; // ts() now function call everywhere
 
@@ -1551,11 +1554,18 @@ function applyData(data){
 
 function getPending(){
   const {sch}=getCourseData(),now=Date.now(),r=[];
+  const seenTopics = new Set();
+  
   for(const[date,s] of Object.entries(sch)){
     if(date>=ts()||!s.ids||!s.ids.length)continue;
     if(deferred[date]&&deferred[date]>now)continue;
-    const u=s.ids.filter(id=>!remoteData[id]);
-    if(u.length)r.push({date,s,unchecked:u});
+    
+    const u=s.ids.filter(id => !remoteData[id] && !seenTopics.has(id));
+    
+    if(u.length){
+      u.forEach(id => seenTopics.add(id));
+      r.push({date,s,unchecked:u});
+    }
   }
   return r;
 }
@@ -1577,6 +1587,7 @@ function renderPending(){
     _lastCourseForPending = activeCourse;
   }
   const {labels}=getCourseData(),pc=$('pendingcard'),pending=getPending();
+  if(!pc) return;
   if(!pending.length){
     const html='<div class="no-pending">🎉 All caught up!</div>';
     if(_lastPendingHtml===html)return;
@@ -1589,7 +1600,7 @@ function renderPending(){
     const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
     const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     return `<div class="day-card pending-card" style="margin-bottom:10px">
-      <div class="day-top"><h2>⚠ ${s.l}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
+      <div class="day-top"><h2>⚠ ${s.l || s.title || 'Pending Topics'}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
       <div class="day-sub">Complete pending topics</div>
       <ul class="cl">${items}</ul></div>`;
   }).join('');
