@@ -919,7 +919,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.94';
+const APP_VERSION = '1.2.95';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA Phase 2 (Dec)'};
 const DEFAULT_COURSE='CSEB11';
@@ -3758,6 +3758,9 @@ $('settings-reset-btn').addEventListener('click', async function() {
           if (!subj.ids) return;
           subj.ids.forEach(id => {
             delete remoteData[id];
+            delete remoteData[`${id}_kap`];
+            delete remoteData[`${id}_bpp`];
+            delete remoteData[`${id}_sh`];
           });
         });
       }
