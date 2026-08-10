@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.97-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v1.2.98-offline-bandwidth-opt';
 const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
 
 self.addEventListener('install', e => {
