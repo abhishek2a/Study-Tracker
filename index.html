@@ -802,7 +802,7 @@ try {
   db = getFirestore(app);
 }
 
-let currentUid=null,unsubSnap=null,remoteData={},writeDebounce=null,lbUnsub=null;
+let currentUid=null,unsubSnap=null,remoteData={ activeCourse: localStorage.getItem('cached_ac') || null },writeDebounce=null,lbUnsub=null;
 // cached DOM refs
 let domGfill,domPct,domSpills;
 // deferred dates: {date -> deferUntilTimestamp}
@@ -919,7 +919,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.99';
+const APP_VERSION = '1.2.100';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA Phase 2 (Dec)'};
 const DEFAULT_COURSE='CSEB11';
@@ -3006,6 +3006,7 @@ function initApp(user){
       if(snap.exists()){
         const oldCourse = remoteData.activeCourse;
         remoteData={...remoteData,...snapData, _loaded: true};
+        if (remoteData.activeCourse) localStorage.setItem('cached_ac', remoteData.activeCourse);
         if (oldCourse !== remoteData.activeCourse) {
           makeCard();
           bindSyllabus();
