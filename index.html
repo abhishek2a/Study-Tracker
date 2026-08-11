@@ -919,7 +919,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.100';
+const APP_VERSION = '1.2.102';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA Phase 2 (Dec)'};
 const DEFAULT_COURSE='CSEB11';
@@ -947,7 +947,7 @@ function getLateStartDate() {
   if (LATE_STARTERS[email]) return LATE_STARTERS[email];
   
   if (typeof remoteData !== 'undefined' && remoteData.signupDate && remoteData.signupDate >= '2026-06-25') {
-    return remoteData.signupDate;
+    return remoteData.signupDate.split('T')[0];
   }
   
   return null;
@@ -3005,9 +3005,10 @@ function initApp(user){
       _lastAppliedJSON = incomingJSON;
       if(snap.exists()){
         const oldCourse = remoteData.activeCourse;
+        const wasLoaded = remoteData._loaded;
         remoteData={...remoteData,...snapData, _loaded: true};
         if (remoteData.activeCourse) localStorage.setItem('cached_ac', remoteData.activeCourse);
-        if (oldCourse !== remoteData.activeCourse) {
+        if (!wasLoaded || oldCourse !== remoteData.activeCourse) {
           makeCard();
           bindSyllabus();
         }
@@ -4505,12 +4506,16 @@ try {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    showA2HS();
   });
 
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-    showA2HS();
-  }
+  const a2hsTimer = setInterval(() => {
+    const appEl = document.getElementById('app');
+    if (appEl && appEl.classList.contains('visible')) {
+      clearInterval(a2hsTimer);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (deferredPrompt || isIOS) showA2HS();
+    }
+  }, 1000);
 
   if (a2hsBtn) {
     a2hsBtn.addEventListener('click', async () => {
