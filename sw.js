@@ -1,4 +1,4 @@
-const CACHE = 'study-tracker-v1.2.96o-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v1.2.96p-offline-bandwidth-opt';
 const PRECACHE = [
   '/', 
   './index.html', 
