@@ -83,6 +83,11 @@ body {
 .auth-field label{display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;user-select:none;-webkit-user-select:none}
 .auth-field input{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;transition:.2s;box-sizing:border-box}
 .auth-field input:focus{border-color:var(--blue);background:var(--s1)}
+.auth-field input:-webkit-autofill, .auth-field input:-webkit-autofill:hover, .auth-field input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--s1) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
 .auth-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:11px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:6px;letter-spacing:.01em}
 .auth-err{font-size:.75rem;color:var(--red);margin-top:8px;min-height:16px;font-family:var(--mono)}
 @media(max-width:480px){
