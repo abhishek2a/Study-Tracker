@@ -1,6 +1,6 @@
 # Study Tracker
 
-A beautiful, high-performance, responsive web application designed to help students track their daily study plans, spaced repetition revisions, and mock exams. Built using Vanilla JavaScript, HTML5, CSS3, and Firebase, this application delivers a native app-like experience right in the browser, completely offline-capable via Progressive Web App (PWA) technologies.
+A beautiful, high-performance, responsive web application designed to help students track their daily study plans, spaced repetition revisions, and mock exams. Built using Vanilla JavaScript, HTML5, CSS3, and Firebase, this application delivers a native app-like experience right in the browser, providing offline asset caching with Firestore local persistence.
 
 ## ✨ Features
 

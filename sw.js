@@ -1,5 +1,12 @@
-const CACHE = 'study-tracker-v1.2.102-offline-bandwidth-opt';
-const PRECACHE = ['/', './index.html', './manifest.json', './logo.svg'];
+const CACHE = 'study-tracker-v1.2.96o-offline-bandwidth-opt';
+const PRECACHE = [
+  '/', 
+  './index.html', 
+  './manifest.json', 
+  './logo.svg',
+  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js',
+  'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'
+];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -19,8 +26,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  // Always go network-first for Firebase, CDN assets
-  if (url.hostname.includes('firebase') || url.hostname.includes('googleapis') || url.hostname.includes('gstatic')) {
+  // Always bypass cache for live Firebase APIs, but allow caching for gstatic CDNs
+  if (url.hostname.includes('firebase') || url.hostname.includes('googleapis')) {
     return;
   }
   
