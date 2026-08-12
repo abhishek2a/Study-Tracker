@@ -21,7 +21,7 @@ messaging.onBackgroundMessage((payload) => {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-const CACHE = 'study-tracker-v1.2.96u-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v1.2.96v-offline-bandwidth-opt';
 const PRECACHE = [
   '/', 
   './index.html', 

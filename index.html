@@ -3738,7 +3738,7 @@ $('pd-settings-item').addEventListener('click', (e) => {
   $('settings-overlay').style.visibility = 'visible';
   $('settings-overlay').style.opacity = '1';
   
-  if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') {
     $('settings-push-btn').style.display = 'block';
   } else {
     $('settings-push-btn').style.display = 'none';
@@ -3816,6 +3816,10 @@ $('settings-reset-pw').addEventListener('click', async function() {
 });
 
 $('settings-push-btn').addEventListener('click', async function() {
+  if (typeof Notification === 'undefined') {
+    alert("To enable Push Notifications on iOS, you must first tap the Share icon at the bottom of Safari and select 'Add to Home Screen'.");
+    return;
+  }
   if (!messaging || !auth.currentUser) return;
   const btn = this;
   btn.textContent = 'Requesting...';
