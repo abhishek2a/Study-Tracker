@@ -72,7 +72,7 @@ body {
 ::selection { background: rgba(84,162,255,0.25); color: var(--text); }
 #auth-overlay{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:20px;-webkit-overflow-scrolling:touch}
 #auth-overlay.hidden{display:none}
-.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 24px 80px rgba(0,0,0,.5);margin:auto;flex-shrink:0}
+.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 12px 32px rgba(0,0,0,.5);margin:auto;flex-shrink:0}
 .auth-logo{font-size:1.45rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
 .auth-logo span{color:var(--accent)}
 .auth-sub{font-size:.74rem;font-family:var(--mono);color:var(--dim);margin-bottom:18px}
@@ -96,7 +96,7 @@ body {
 }
 #app{display:none}
 #app.visible{display:block;padding-top:0}
-.topbar{background:rgba(8,10,15,.85);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, 0px)) 40px 12px;display:flex;align-items:center;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);transition:background-color .3s}
+.topbar{background:rgba(8,10,15,.98);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, 0px)) 40px 12px;display:flex;align-items:center;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;transition:background-color .3s}
 [data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
 [data-theme="amoled"] .topbar{background:rgba(0,0,0,.88)}
 @media(max-width:700px){
@@ -113,7 +113,7 @@ body {
 .tnav{font-size:.73rem;font-weight:600;padding:5px 11px;border-radius:7px;color:var(--dim);cursor:pointer;border:none;background:transparent;font-family:var(--font);transition:.15s;white-space:nowrap}
 .tnav:hover{background:var(--s3);color:var(--text)}
 @media(max-width:600px){.tnav{display:none}}
-#btt{display:none;position:fixed;bottom:28px;right:20px;z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;will-change:transform;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-weight:700;letter-spacing:0}
+#btt{display:none;position:fixed;bottom:28px;right:20px;z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;will-change:transform;font-weight:700;letter-spacing:0}
 #btt:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.6),0 0 20px rgba(84,162,255,0.4)}
 #btt:active{transform:scale(.92);box-shadow:0 4px 12px rgba(0,0,0,.4)}
 @media(min-width:601px){#btt{display:none!important}}
@@ -197,7 +197,7 @@ body {
 .lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
 .lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
 .lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:90px;box-shadow:0 8px 32px rgba(0,0,0,0.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:90px;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
 [data-theme="light"] .lb-stat{background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
 .lb-stat-val{font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:2px}
 .lb-stat-lbl{font-size:.65rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em}
@@ -328,10 +328,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .pd-sep{height:1px;background:var(--border);margin:3px 0}
 .pd-item.danger{color:var(--dim)}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
-#lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden}
+#lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden}
 #lb-overlay.open{opacity:1;visibility:visible}
-.lb-box{width:100%;max-width:540px;max-height:calc(100% - 40px);background:rgba(8,10,15,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,.6);overflow:hidden}
-[data-theme="light"] .lb-box{background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.1);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5), 0 24px 80px rgba(0,0,0,.2)}
+.lb-box{width:100%;max-width:540px;max-height:calc(100% - 40px);background:rgba(8,10,15,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 12px 32px rgba(0,0,0,.6);overflow:hidden}
+[data-theme="light"] .lb-box{background:rgba(255,255,255,0.95);border:1px solid rgba(0,0,0,0.1);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5), 0 12px 32px rgba(0,0,0,.2)}
 .lb-hdr{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:transparent;flex-shrink:0}
 [data-theme="light"] .lb-hdr{border-bottom:1px solid rgba(0,0,0,0.05)}
 .lb-hdr h2{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0}
@@ -373,9 +373,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .q-practice label:has(input:checked){border-color:rgba(84,162,255,.4)!important;background:rgba(84,162,255,.12)!important;color:var(--blue)!important}
 .q-practice-hdr{font-size:.62rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin:8px 0 4px 32px}
 /* What's New modal */
-#whats-new-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+#whats-new-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 #whats-new-overlay.open{opacity:1;visibility:visible}
-.wn-box{width:100%;max-width:480px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,.1);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.7),0 8px 24px rgba(0,0,0,.4);overflow:hidden;animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
+.wn-box{width:100%;max-width:480px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,.1);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,.7),0 8px 24px rgba(0,0,0,.4);overflow:hidden;animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
 .wn-hdr{padding:24px 24px 16px;background:linear-gradient(135deg,rgba(84,162,255,.12),rgba(40,212,142,.08));border-bottom:1px solid rgba(255,255,255,.07)}
 .wn-badge{display:inline-flex;align-items:center;gap:6px;font-size:.62rem;font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:rgba(252,174,40,.12);border:1px solid rgba(252,174,40,.25);border-radius:99px;padding:3px 10px;margin-bottom:10px}
 .wn-title{font-size:1.15rem;font-weight:800;letter-spacing:-.025em;margin-bottom:4px}
@@ -484,8 +484,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 </div>
 
 <!-- Log Study Session Modal -->
-<div id="log-session-overlay" role="dialog" aria-modal="true" aria-labelledby="ls-title" style="position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s">
-  <div class="lb-box" style="background:var(--s1);border:1px solid rgba(255,255,255,.12);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.8);overflow:hidden">
+<div id="log-session-overlay" role="dialog" aria-modal="true" aria-labelledby="ls-title" style="position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s">
+  <div class="lb-box" style="background:var(--s1);border:1px solid rgba(255,255,255,.12);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,.8);overflow:hidden">
     <div class="lb-hdr" style="padding:20px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s2);flex-shrink:0">
       <div>
         <h2 id="ls-title" style="font-size:1.15rem;font-weight:800;letter-spacing:-.02em;margin:0">📝 Log Study Session</h2>
@@ -534,7 +534,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <button class="nb-dismiss" id="nb-dismiss-btn">Not now</button>
 </div>
 
-<div id="stats-overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title" style="display:none;position:fixed;inset:0;z-index:990;background:rgba(2,3,5,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow-y:auto;padding-bottom:40px;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px)">
+<div id="stats-overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title" style="display:none;position:fixed;inset:0;z-index:990;background:rgba(2,3,5,0.95);overflow-y:auto;padding-bottom:40px;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px)">
   <style>
     [data-theme="light"] #stats-overlay{background:rgba(242,244,247,0.97)!important}
     [data-theme="light"] #stats-overlay .logo span{color:var(--accent)}
@@ -708,8 +708,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   </div>
 </div>
 
-<div id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden">
-  <div class="lb-box" style="max-width:400px;width:100%;background:var(--s1);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden">
+<div id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden">
+  <div class="lb-box" style="max-width:400px;width:100%;background:var(--s1);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,.6);overflow:hidden">
     <div class="lb-hdr" style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s1);flex-shrink:0">
       <div>
         <h2 id="settings-title" style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0">⚙️ Settings</h2>
@@ -762,6 +762,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         </div>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <button id="settings-push-btn" class="auth-btn" style="background:var(--blue);color:#fff;border:none;margin-bottom:8px;display:none;">Enable Push Notifications</button>
         <button id="settings-reset-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);margin-bottom:8px;">Reset Course Progress</button>
         <button id="settings-delete-btn" class="auth-btn" style="background:transparent;color:var(--red);border:1px solid rgba(224,80,80,.4)">Delete Account</button>
       </div>
@@ -780,6 +781,9 @@ import {
 import {
   initializeFirestore, persistentLocalCache, getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  getMessaging, getToken, onMessage
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging.js";
 import {
   initializeAppCheck,
   ReCaptchaV3Provider
@@ -820,6 +824,19 @@ window.addEventListener('visibilitychange', () => {
     if (durationSeconds > 5) logAppEvent('session_duration', { duration_sec: durationSeconds, course: typeof remoteData !== 'undefined' ? (remoteData.activeCourse || DEFAULT_COURSE) : 'unknown' });
   }
 });
+
+let messaging = null;
+try {
+  messaging = getMessaging(app);
+  onMessage(messaging, (payload) => {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: '/logo.svg'
+      });
+    }
+  });
+} catch(e) { console.warn('FCM unavailable:', e); }
 
 const auth = getAuth(app);
 let db;
@@ -2864,6 +2881,7 @@ function renderSRForecastChart() {
       }]
     },
     options: {
+      animation: false,
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -3719,6 +3737,12 @@ $('pd-settings-item').addEventListener('click', (e) => {
   renderNotifToggle();
   $('settings-overlay').style.visibility = 'visible';
   $('settings-overlay').style.opacity = '1';
+  
+  if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+    $('settings-push-btn').style.display = 'block';
+  } else {
+    $('settings-push-btn').style.display = 'none';
+  }
   $('settings-name-input').value = remoteData._displayName || auth.currentUser?.displayName || '';
   
   if (auth.currentUser && auth.currentUser.metadata) {
@@ -3789,6 +3813,38 @@ $('settings-reset-pw').addEventListener('click', async function() {
     btn.style.color = 'var(--text)';
     btn.style.borderColor = 'var(--border)';
   }, 4000);
+});
+
+$('settings-push-btn').addEventListener('click', async function() {
+  if (!messaging || !auth.currentUser) return;
+  const btn = this;
+  btn.textContent = 'Requesting...';
+  btn.disabled = true;
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const swReg = await navigator.serviceWorker.ready;
+      const token = await getToken(messaging, { 
+        vapidKey: 'BOAtoLW5i1WyYKYE2fYp4Jr-C6w8L0G5WOeH7f6GxrQNekk25Vnc-rI1WrpT8aK1v0DfkfLWj3YYXG5Qns7jtlw',
+        serviceWorkerRegistration: swReg
+      });
+      if (token) {
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), { fcmToken: token });
+        btn.textContent = 'Notifications Enabled';
+        btn.style.background = 'var(--green)';
+        setTimeout(() => { btn.style.display = 'none'; }, 2000);
+      } else {
+        throw new Error('No registration token available');
+      }
+    } else {
+      btn.textContent = 'Permission Denied';
+      setTimeout(() => { btn.textContent = 'Enable Push Notifications'; btn.disabled = false; }, 3000);
+    }
+  } catch(e) {
+    console.error('FCM Error:', e);
+    btn.textContent = 'Error (See Console)';
+    setTimeout(() => { btn.textContent = 'Enable Push Notifications'; btn.disabled = false; }, 3000);
+  }
 });
 
 $('settings-reset-btn').addEventListener('click', async function() {

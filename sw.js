@@ -1,4 +1,27 @@
-const CACHE = 'study-tracker-v1.2.96q-offline-bandwidth-opt';
+importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
+  authDomain:"study-tracker-4ba08.firebaseapp.com",
+  projectId:"study-tracker-4ba08",
+  storageBucket:"study-tracker-4ba08.firebasestorage.app",
+  messagingSenderId:"388281368121",
+  appId:"1:388281368121:web:da2f142aaf7b4c1688d7e8"
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const notificationTitle = payload?.notification?.title || 'Study Tracker';
+  const notificationOptions = {
+    body: payload?.notification?.body || '',
+    icon: '/logo.svg'
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+const CACHE = 'study-tracker-v1.2.96u-offline-bandwidth-opt';
 const PRECACHE = [
   '/', 
   './index.html', 
@@ -52,4 +75,21 @@ self.addEventListener('fetch', e => {
 
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
 });
