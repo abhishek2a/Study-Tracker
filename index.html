@@ -877,7 +877,7 @@ async function submitAuth(){
   if(mode==='signup'){
     const pass2=$('auth-pass2').value;
     const name=$('auth-name').value.trim();
-    const rawCode=($('auth-code').value||'').trim().toUpperCase();
+    const rawCode=($('auth-code').value||'').replace(/\s+/g, '').toUpperCase();
     let m=[];
     if(!name) m.push('name');
     if(!pass2) m.push('confirm password');
@@ -890,7 +890,7 @@ async function submitAuth(){
   btn.disabled=true;btn.textContent='Loading…';
   try{
     if(mode==='signup'){
-      const rawCode=($('auth-code').value||'').trim().toUpperCase();
+      const rawCode=($('auth-code').value||'').replace(/\s+/g, '').toUpperCase();
       let code=rawCode;
       if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
       const name=$('auth-name').value.trim();
