@@ -1273,70 +1273,99 @@ for (let i = 1; i <= 15; i++) {
 }
 // Weekly mocks are tracked inside the ACCA Tracker card (per-week), not as a flat list
 
-const SCH_ACCA_P2 = (() => {
-  const topics = [
-    "fr1_p2", "fr2a_p2", "fr2b_p2", "fr3_p2", "fr4a_p2", "fr4b_p2", "fr5a_p2", "fr5b_p2", 
-    "fr6_p2", "fr7_p2", "fr8_p2", "fr9_p2", "fr10b_p2", "fr11_p2", "fr12_p2", 
-    "fr13_p2", "fr14_p2", "fr15_p2", "fr16_p2", "fr17a_p2", "fr17b_p2", "fr18_p2", "fr19_p2"
-  ];
-  let schedule = {};
-  const startDate = new Date(Date.UTC(2026, 8, 11)); // Sep 11
-  const endDate = new Date(Date.UTC(2026, 11, 10)); // Dec 10
-
-  let diffTime = Math.abs(endDate - startDate);
-  let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-  let mockIndex = 1;
-  let topicIndex = 0;
-
-  let nonSundayDays = [];
-  for (let i = 0; i < diffDays; i++) {
-    const d = new Date(startDate);
-    d.setUTCDate(d.getUTCDate() + i);
-    if (d.getUTCDay() !== 0 && d.getTime() !== endDate.getTime()) {
-      nonSundayDays.push(new Date(d));
-    }
-  }
-
-  const daysPerTopic = nonSundayDays.length / topics.length;
-  let topicDistribution = {};
-  for (let i = 0; i < nonSundayDays.length; i++) {
-    const d = nonSundayDays[i];
-    const dateStr = d.toISOString().split('T')[0];
-    
-    const expectedTopics = Math.floor((i + 1) / daysPerTopic);
-    const todaysTopics = [];
-    while (topicIndex < expectedTopics && topicIndex < topics.length) {
-      todaysTopics.push(topics[topicIndex]);
-      topicIndex++;
-    }
-    
-    if (todaysTopics.length > 0) {
-      topicDistribution[dateStr] = todaysTopics;
-    }
-  }
-
-  if (topicIndex < topics.length) {
-    const lastDate = nonSundayDays[nonSundayDays.length - 1].toISOString().split('T')[0];
-    if (!topicDistribution[lastDate]) topicDistribution[lastDate] = [];
-    topicDistribution[lastDate].push(...topics.slice(topicIndex));
-  }
-
-  for (let i = 0; i < diffDays; i++) {
-    const d = new Date(startDate);
-    d.setUTCDate(d.getUTCDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
-    
-    if (d.getTime() === endDate.getTime()) {
-       schedule[dateStr] = {ids: ["fr20_p2"], title: "Final Exam Day!"};
-    } else {
-       if (topicDistribution[dateStr]) {
-         schedule[dateStr] = {ids: topicDistribution[dateStr], title: "Phase 2 Topic Assignment"};
-       }
-    }
-  }
-  return schedule;
-})();
+const SCH_ACCA_P2 = {
+  "2026-09-11": { "ids": ["fr1_p2", "fr2a_p2"], "title": "Conceptual Framework & IFRS 18 (Presentation) Theory + Practice" },
+  "2026-09-12": { "ids": ["fr2b_p2"], "title": "IFRS 13 (Fair Value) Theory + Practice" },
+  "2026-09-13": { "ids": ["fr10b_p2"], "title": "IAS 8 (Accounting Policies, Estimates & Errors) Theory + Practice" },
+  "2026-09-14": { "ids": ["fr20_p2"], "title": "Review/Test: Days 1-3 Mixed Practice" },
+  "2026-09-15": { "ids": ["fr3_p2"], "title": "IAS 16 (PPE) Theory" },
+  "2026-09-16": { "ids": ["fr3_p2"], "title": "IAS 16 (PPE) Practice Questions" },
+  "2026-09-17": { "ids": ["fr4a_p2"], "title": "IAS 23 (Borrowing Costs) Theory + Practice" },
+  "2026-09-18": { "ids": ["fr4b_p2"], "title": "IAS 40 (Investment Property) Theory + Practice" },
+  "2026-09-19": { "ids": [], "title": "Buffer / Catch-up Flexible" },
+  "2026-09-20": { "ids": ["fr5a_p2"], "title": "IAS 38 (Intangible Assets) Theory + Practice" },
+  "2026-09-21": { "ids": ["fr5b_p2"], "title": "IFRS 5 (Non-current Assets Held for Sale) Theory + Practice" },
+  "2026-09-22": { "ids": ["fr6_p2"], "title": "IAS 36 (Impairment) Theory" },
+  "2026-09-23": { "ids": ["fr6_p2"], "title": "IAS 36 (Impairment) Practice Questions" },
+  "2026-09-24": { "ids": ["fr20_p2"], "title": "Weekly Mixed Review/Test (Conceptual Framework - IAS 36) Mixed Practice" },
+  "2026-09-25": { "ids": ["fr7_p2"], "title": "IAS 37 (Provisions) Theory" },
+  "2026-09-26": { "ids": ["fr7_p2"], "title": "IAS 37 (Provisions) Practice Questions" },
+  "2026-09-27": { "ids": ["fr17a_p2"], "title": "IAS 20 (Government Grants) Theory + Practice" },
+  "2026-09-28": { "ids": ["fr8_p2"], "title": "IFRS 16 (Leases) Theory" },
+  "2026-09-29": { "ids": ["fr8_p2"], "title": "IFRS 16 (Leases) Practice Questions" },
+  "2026-09-30": { "ids": [], "title": "Buffer / Catch-up Flexible" },
+  "2026-10-01": { "ids": ["fr9_p2"], "title": "IFRS 9 (Financial Instruments) Theory" },
+  "2026-10-02": { "ids": ["fr9_p2"], "title": "IFRS 9 (Financial Instruments) Practice Questions" },
+  "2026-10-03": { "ids": ["fr11_p2"], "title": "IAS 12 (Deferred Tax) Theory" },
+  "2026-10-04": { "ids": ["fr11_p2"], "title": "IAS 12 (Deferred Tax) Practice Questions" },
+  "2026-10-05": { "ids": ["fr20_p2"], "title": "Weekly Mixed Review/Test (IAS 37 - IAS 12) Mixed Practice" },
+  "2026-10-06": { "ids": ["fr12_p2"], "title": "IFRS 15 (Revenue) Theory" },
+  "2026-10-07": { "ids": ["fr12_p2"], "title": "IFRS 15 (Revenue) Practice Questions" },
+  "2026-10-08": { "ids": ["fr17b_p2"], "title": "IAS 21 (Foreign Exchange) Theory + Practice" },
+  "2026-10-09": { "ids": ["fr19_p2", "fr20_p2"], "title": "Full Phase 1 Mixed Practice (Section A & B style, all standards) Mixed Practice" },
+  "2026-10-10": { "ids": [], "title": "Buffer / Rest + Self-Assessment - list weak standards Review" },
+  "2026-10-11": { "ids": ["fr14_p2"], "title": "IAS 33 (Earnings Per Share) Theory" },
+  "2026-10-12": { "ids": ["fr14_p2"], "title": "IAS 33 (Earnings Per Share) Practice Questions" },
+  "2026-10-13": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 1 Theory" },
+  "2026-10-14": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 1 Practice Questions" },
+  "2026-10-15": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 2 Theory" },
+  "2026-10-16": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 2 Practice Questions" },
+  "2026-10-17": { "ids": ["fr20_p2"], "title": "Weekly Review/Test (EPS + FS Prep) Mixed Practice" },
+  "2026-10-18": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 1 Theory" },
+  "2026-10-19": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 1 Practice Questions" },
+  "2026-10-20": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 2 Theory" },
+  "2026-10-21": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 2 Practice Questions" },
+  "2026-10-22": { "ids": [], "title": "Buffer / Catch-up Flexible" },
+  "2026-10-23": { "ids": ["fr15_p2"], "title": "Consolidation - Basics & Goodwill Theory" },
+  "2026-10-24": { "ids": ["fr15_p2"], "title": "Consolidation - Basics & Goodwill Practice Questions" },
+  "2026-10-25": { "ids": ["fr15_p2"], "title": "Consolidation - Basics & Goodwill Full Exam-Style Question" },
+  "2026-10-26": { "ids": ["fr20_p2"], "title": "Weekly Review/Test (Cashflow + Consolidation Basics) Mixed Practice" },
+  "2026-10-27": { "ids": ["fr15_p2"], "title": "Consolidation - NCI & Retained Earnings Theory" },
+  "2026-10-28": { "ids": ["fr15_p2"], "title": "Consolidation - NCI & Retained Earnings Practice Questions" },
+  "2026-10-29": { "ids": ["fr15_p2"], "title": "Consolidation - NCI & Retained Earnings Full Exam-Style Question" },
+  "2026-10-30": { "ids": ["fr15_p2"], "title": "Consolidation - Intra-group Trading & PURP Theory" },
+  "2026-10-31": { "ids": ["fr15_p2"], "title": "Consolidation - Intra-group Trading & PURP Practice Questions" },
+  "2026-11-01": { "ids": ["fr15_p2"], "title": "Consolidation - Intra-group Trading & PURP Full Exam-Style Question" },
+  "2026-11-02": { "ids": [], "title": "Buffer / Rest Flexible" },
+  "2026-11-03": { "ids": ["fr15_p2"], "title": "Consolidated SOPL Theory" },
+  "2026-11-04": { "ids": ["fr15_p2"], "title": "Consolidated SOPL Practice Questions" },
+  "2026-11-05": { "ids": ["fr15_p2"], "title": "Consolidated SOPL Full Exam-Style Question" },
+  "2026-11-06": { "ids": ["fr18_p2"], "title": "Interpretation - Ratios Theory + Practice" },
+  "2026-11-07": { "ids": ["fr18_p2"], "title": "Interpretation - Written Analysis & Exam Technique Theory + Practice" },
+  "2026-11-08": { "ids": ["mock1"], "title": "Full Section C Mock (Consolidation + Cashflow, timed) Mock" },
+  "2026-11-09": { "ids": ["mock1"], "title": "Review Mock + Rest - finalize weak-area list for final sprint Review" },
+  "2026-11-10": { "ids": ["fr1_p2", "fr2a_p2"], "title": "Conceptual Framework & IFRS 18 (Presentation)" },
+  "2026-11-11": { "ids": ["fr2b_p2", "fr10b_p2"], "title": "IFRS 13 (Fair Value) & IAS 8 (Accounting Policies)" },
+  "2026-11-12": { "ids": ["fr3_p2"], "title": "IAS 16 (Property, Plant & Equipment)" },
+  "2026-11-13": { "ids": ["fr4a_p2", "fr4b_p2"], "title": "IAS 23 (Borrowing Costs) & IAS 40 (Investment Property)" },
+  "2026-11-14": { "ids": ["fr5a_p2", "fr5b_p2"], "title": "IAS 38 (Intangibles) & IFRS 5 (Non-current Assets)" },
+  "2026-11-15": { "ids": ["fr6_p2"], "title": "IAS 36 (Impairment)" },
+  "2026-11-16": { "ids": ["fr19_p2", "fr20_p2"], "title": "Weekly Exam / Extra Question Practice (Review Days 1-6)" },
+  "2026-11-17": { "ids": ["fr7_p2", "fr17a_p2"], "title": "IAS 37 (Provisions) & IAS 20 (Government Grants)" },
+  "2026-11-18": { "ids": ["fr8_p2"], "title": "IFRS 16 (Leases)" },
+  "2026-11-19": { "ids": ["fr9_p2"], "title": "IFRS 9 (Financial Instruments)" },
+  "2026-11-20": { "ids": ["fr11_p2"], "title": "IAS 12 (Deferred Tax)" },
+  "2026-11-21": { "ids": ["fr12_p2", "fr17b_p2"], "title": "IFRS 15 (Revenue) & IAS 21 (Foreign Exchange)" },
+  "2026-11-22": { "ids": ["fr14_p2"], "title": "IAS 33 (Earnings Per Share)" },
+  "2026-11-23": { "ids": ["fr19_p2", "fr20_p2"], "title": "Weekly Exam / Extra Question Practice (Review Days 8-13)" },
+  "2026-11-24": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 1" },
+  "2026-11-25": { "ids": ["fr13_p2"], "title": "FS Preparation (Single Entity) - Part 2" },
+  "2026-11-26": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 1" },
+  "2026-11-27": { "ids": ["fr16_p2"], "title": "Cashflow Statement (IAS 7) - Part 2" },
+  "2026-11-28": { "ids": ["fr15_p2"], "title": "Consolidation - Basics & Goodwill" },
+  "2026-11-29": { "ids": ["fr15_p2"], "title": "Consolidation - NCI & Retained Earnings" },
+  "2026-11-30": { "ids": ["fr15_p2"], "title": "Consolidation - Intra-group Trading & PURP" },
+  "2026-12-01": { "ids": ["fr15_p2"], "title": "Consolidation - Consolidated SOPL" },
+  "2026-12-02": { "ids": ["fr18_p2"], "title": "Interpretation (Analysing & Interpreting FS) - Ratios" },
+  "2026-12-03": { "ids": ["fr18_p2"], "title": "Interpretation - Written Analysis & Exam Technique" },
+  "2026-12-04": { "ids": ["fr15_p2", "fr16_p2"], "title": "Consolidation & Cashflows (Mixed Section C Practice)" },
+  "2026-12-05": { "ids": ["fr19_p2"], "title": "Accounting Standards (Mixed Section A & B Practice)" },
+  "2026-12-06": { "ids": ["mock1"], "title": "Full Mock Exam 1 (Under strict exam conditions)" },
+  "2026-12-07": { "ids": ["mock1"], "title": "Review Mock Exam 1 + Targeted Weakness Revision" },
+  "2026-12-08": { "ids": ["mock2"], "title": "Full Mock Exam 2 (Under strict exam conditions)" },
+  "2026-12-09": { "ids": ["mock2"], "title": "Review Mock Exam 2 + Final Rule/Format Review (Rest in the evening!)" },
+  "2026-12-10": { "ids": ["fr20_p2"], "title": "Exam Day" }
+};
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
 
 const ACCA_30_DAYS = [
@@ -2191,6 +2220,16 @@ async function markRevised(id, difficulty){
   s.count++;
   s.interval = Math.round(s.interval);
   s.lastRev = ts();
+  
+  if (activeCourseKey === 'ACCA26_P2') {
+    const examDate = new Date('2026-12-10T00:00:00Z');
+    const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
+    const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
+    if (s.interval > daysToExam) {
+      s.interval = daysToExam;
+    }
+  }
+
   s.next = addDaysStr(s.lastRev, s.interval);
   
   const actData = logActivity();
