@@ -18,7 +18,7 @@
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f2f4f7" media="(prefers-color-scheme: light)">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -615,7 +615,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         <p style="font-size:0.8rem;color:var(--dim);margin-top:2px;">Your manually recorded study history and session logs</p>
       </div>
       <div style="display:flex; gap: 8px; align-items:center;">
-        <input type="text" id="log-search-input" onkeyup="debounceSearch()" placeholder="Search past sessions..." style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:var(--font);padding:6px 12px;border-radius:8px;font-size:0.75rem;width:200px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        <input type="text" id="log-search-input" onkeyup="debounceSearch()" placeholder="Search past sessions..." style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:var(--font);padding:6px 12px;border-radius:8px;font-size:16px;width:100%;max-width:200px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
         <button onclick="clearAllLoggedSessions()" id="clear-all-logs-btn" style="display:none;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:6px 10px;border-radius:8px;cursor:pointer;font-family:var(--font);font-weight:600;transition:0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Clear History</button>
       </div>
     </div>
