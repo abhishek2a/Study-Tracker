@@ -521,6 +521,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         </div>
         <div id="ls-topics-container" style="display:grid;grid-template-columns:1fr;gap:10px;padding:2px 0;background:transparent;"></div>
       </div>
+      <div style="margin-top:4px;">
+        <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📝 Notes (Optional)</label>
+        <input type="text" id="ls-notes" placeholder="e.g. Interpretation Runner Co..." style="width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:16px;color:var(--text);font-family:var(--font);outline:none;box-sizing:border-box">
+      </div>
     </div>
     <div style="padding:16px 24px;border-top:1px solid var(--border);background:var(--s2);display:flex;flex-direction:column;gap:16px;flex-shrink:0">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
@@ -4091,6 +4095,7 @@ function openLogSession() {
 
   _logSelectedTopics.clear();
   updateLogCountBadge();
+  if ($('ls-notes')) $('ls-notes').value = '';
 
   const now = new Date();
   const dateInput = $('ls-date');
@@ -4333,6 +4338,7 @@ function renderStatsLoggedSessions() {
           <div style="font-size:0.78rem;color:var(--dim);line-height:1.4;overflow:hidden;text-overflow:ellipsis;">
             ${topicsText}${moreText}
           </div>
+          ${s.notes ? `<div style="font-size:0.8rem;color:var(--text);margin-top:8px;padding:8px 12px;background:var(--s2);border-left:3px solid var(--blue);border-radius:6px;font-style:italic;">"${s.notes}"</div>` : ''}
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
           <div style="text-align:right;font-family:var(--mono);">
@@ -4553,6 +4559,7 @@ async function saveLogSession() {
     count: topicIds.length,
     subjName: select ? (select.options[select.selectedIndex]?.text.split(' (')[0] || 'Syllabus') : 'Syllabus',
     topics: topicIds.map(id => (typeof getCourseData === 'function' ? getCourseData().labels[id] : id) || id).slice(0, 5),
+    notes: $('ls-notes') ? $('ls-notes').value.trim() : '',
     _topicIds: topicIds,
     _prevStates: prevStates
   };
