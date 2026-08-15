@@ -31,8 +31,6 @@
 <link rel="icon" href="logo.svg?v=1.3.2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
 <title>Study Tracker</title>
-<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 html { background: var(--bg); }
 :root {
@@ -280,6 +278,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 [data-theme="amoled"]{--bg:#000000;--s1:#060606;--s2:#0a0a0a;--s3:#0f0f0f;--border:#141414;--dim:#586073}
+[data-theme="ios-black"]{--bg:#000000;--s1:#1c1c1e;--s2:#2c2c2e;--s3:#3a3a3c;--border:#38383a;--dim:#8e8e93;--text:#ffffff;}
 [data-theme="light"]{
   color-scheme: light;
   --bg:#f2f4f7;--s1:#ffffff;--s2:#ebedf2;--s3:#e2e5eb;--border:#cdd2dc;
@@ -557,7 +556,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     [data-theme="light"] #stats-overlay .sec{border-color:var(--border)}
     [data-theme="light"] #stats-overlay h2{color:var(--blue)}
   </style>
-  <div class="topbar" style="position:sticky;top:0;background:transparent;border-bottom:none">
+  <div class="topbar" style="position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:100;padding-bottom:12px;padding-top:12px;margin-top:-12px;">
     <div class="logo" id="stats-title">Study <span>Statistics</span></div>
     <div class="topright">
       <button class="tnav" onclick="closeStats()" style="display:flex;background:rgba(255,255,255,0.05);color:var(--text);border:1px solid rgba(255,255,255,0.1);border-radius:12px">✕ Close</button>
@@ -613,7 +612,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         <h2 style="color:var(--blue)">📝 Recently Logged Study Sessions</h2>
         <p style="font-size:0.8rem;color:var(--dim);margin-top:2px;">Your manually recorded study history and session logs</p>
       </div>
-      <button onclick="clearAllLoggedSessions()" id="clear-all-logs-btn" style="display:none;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:var(--font);font-weight:600;transition:0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Clear Session History</button>
+      <div style="display:flex; gap: 8px; align-items:center;">
+        <input type="text" id="log-search-input" onkeyup="renderStatsLoggedSessions()" placeholder="Search past sessions..." style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:var(--font);padding:6px 12px;border-radius:8px;font-size:0.75rem;width:200px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        <button onclick="clearAllLoggedSessions()" id="clear-all-logs-btn" style="display:none;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:6px 10px;border-radius:8px;cursor:pointer;font-family:var(--font);font-weight:600;transition:0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Clear History</button>
+      </div>
     </div>
     <div id="stats-logged-sessions" style="display:flex;flex-direction:column;gap:12px;margin-bottom:30px;">
       <div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged yet. Tap the '📝 Log Study Session' button on the dashboard to record your study time!</div>
@@ -737,6 +739,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Appearance</label>
         <div style="display:flex;gap:4px;background:var(--s2);padding:3px;border-radius:8px">
           <button class="auth-tab settings-theme-btn" data-t="system" style="flex:1">System</button>
+          <button class="auth-tab settings-theme-btn" data-t="ios-black" style="flex:1">OLED</button>
           <button class="auth-tab settings-theme-btn" data-t="amoled" style="flex:1">Dark</button>
           <button class="auth-tab settings-theme-btn" data-t="light" style="flex:1">Light</button>
         </div>
@@ -785,6 +788,34 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 </div>
 
 <script type="module">
+window._loadingChart = null;
+window.lazyLoadChartJS = async function() {
+  if (typeof Chart !== 'undefined') return;
+  if (window._loadingChart) return window._loadingChart;
+  window._loadingChart = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return window._loadingChart;
+};
+
+window._loadingConfetti = null;
+window.lazyLoadConfetti = async function() {
+  if (typeof confetti !== 'undefined') return;
+  if (window._loadingConfetti) return window._loadingConfetti;
+  window._loadingConfetti = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return window._loadingConfetti;
+};
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
 import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-performance.js";
@@ -1456,7 +1487,8 @@ let _cachedAccaDate = null;
 function getShiftedACCASchedule(startStr) {
   if (!startStr) return {};
   const cleanStart = String(startStr).split('T')[0];
-  if (_cachedAccaDate === cleanStart && _cachedAccaSCH) return _cachedAccaSCH;
+  const cacheKey = (remoteData.activeCourse || 'ACCA26') + '_' + cleanStart;
+  if (_cachedAccaDate === cacheKey && _cachedAccaSCH) return _cachedAccaSCH;
   
   const [sy, sm, sd] = cleanStart.split('-').map(Number);
   const userStart = new Date(sy, sm - 1, sd);
@@ -1473,7 +1505,7 @@ function getShiftedACCASchedule(startStr) {
     shifted[newStr] = ACCA_30_DAYS[i];
   }
   
-  _cachedAccaDate = cleanStart;
+  _cachedAccaDate = cacheKey;
   _cachedAccaSCH = shifted;
   return shifted;
 }
@@ -1925,7 +1957,9 @@ function renderSyllabus(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
   const isACCA = activeCourse.startsWith('ACCA26');
 
-  sg.innerHTML=Object.entries(subjs).map(([k,v])=>{
+  const frag = document.createDocumentFragment();
+
+  Object.entries(subjs).forEach(([k,v])=>{
     const items=v.ids.map(id=>{
       let subBoxes = '';
       if (isACCA && k !== 'exam' && k !== 'mocks') {
@@ -1941,11 +1975,18 @@ function renderSyllabus(){
     }).join('');
     const done=v.ids.filter(id=>!!remoteData[id]).length;
     const pct=v.ids.length?Math.round(done/v.ids.length*100):0;
-    return `<div class="subj-card">
+    
+    const card = document.createElement('div');
+    card.className = 'subj-card';
+    card.innerHTML = `
       <div class="subj-hdr"><h3 style="color:${v.c}">${v.n}</h3><span class="mbadge" style="background:${v.c}1a;color:${v.c};border:1px solid ${v.c}33">${v.m||''}</span></div>
       <div class="mini-track"><div class="mini-fill" id="mf-${k}" style="background:${v.c};width:${pct}%"></div></div>
-      <ul class="cl main-sl" data-s="${k}">${items}</ul></div>`;
-  }).join('');
+      <ul class="cl main-sl" data-s="${k}">${items}</ul>`;
+    frag.appendChild(card);
+  });
+
+  sg.innerHTML = '';
+  sg.appendChild(frag);
 }
 let syllabusBoxes=[];
 function bindSyllabus(){
@@ -2337,18 +2378,26 @@ function renderRevisions(){
   window._lastReviseHtml = html;
   rc.innerHTML = html;
   
-  let _reviseTouch=false;
-  rc.querySelectorAll('.revise-log-btn').forEach(b => {
-    b.addEventListener('touchend',function(e){
-      e.preventDefault();_reviseTouch=true;
-      if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
-      setTimeout(()=>{_reviseTouch=false;},500);
+  if (!window._revisecardListenerAttached) {
+    window._revisecardListenerAttached = true;
+    let _reviseTouch = false;
+    rc.addEventListener('touchend', function(e) {
+      const b = e.target.closest('.revise-log-btn');
+      if (b) {
+        e.preventDefault();
+        _reviseTouch = true;
+        if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
+        setTimeout(() => { _reviseTouch = false; }, 500);
+      }
     });
-    b.addEventListener('click',function(){
-      if(_reviseTouch)return;
-      if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
+    rc.addEventListener('click', function(e) {
+      const b = e.target.closest('.revise-log-btn');
+      if (b) {
+        if (_reviseTouch) return;
+        if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
+      }
     });
-  });
+  }
 }
 
 // ── LEADERBOARD ──
@@ -2639,9 +2688,10 @@ const AudioEngine = {
 };
 
 let confettiFired = false;
-function triggerConfetti() {
+async function triggerConfetti() {
   if (confettiFired) return;
   confettiFired = true;
+  await window.lazyLoadConfetti();
   if (typeof confetti !== 'undefined') {
     AudioEngine.playAchievement();
     confetti({
@@ -2662,7 +2712,7 @@ function logActivity() {
   return remoteData._activity;
 }
 
-function openStats() {
+async function openStats() {
   const overlay = $('stats-overlay');
   if (!overlay) return;
   
@@ -2827,6 +2877,7 @@ function openStats() {
   $('st-finish').textContent = finishDate;
 
   try {
+    await window.lazyLoadChartJS();
     renderSRForecastChart();
     renderProductivityCorrelator();
     if (typeof generateStudyInsights === 'function') generateStudyInsights();
@@ -3689,7 +3740,7 @@ function updateThemeColorMeta(theme) {
   // Inject the single authoritative tag
   let meta = document.createElement('meta');
   meta.name = 'theme-color';
-  const colorMap = { 'amoled': '#000000', 'dark': '#020305', 'light': '#f2f4f7' };
+  const colorMap = { 'amoled': '#000000', 'ios-black': '#000000', 'dark': '#020305', 'light': '#f2f4f7' };
   meta.content = colorMap[theme] || '#020305';
   document.head.appendChild(meta);
 }
@@ -3701,7 +3752,7 @@ function applyTheme(t){
   const actual = t === 'system' ? detectSystemTheme() : t;
   document.documentElement.setAttribute('data-theme', actual);
   if (document.body) document.body.dataset.theme = actual;
-  const bg = actual === 'amoled' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
+  const bg = actual === 'amoled' || actual === 'ios-black' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
   document.documentElement.style.backgroundColor = bg;
   if (document.body) document.body.style.backgroundColor = bg;
   updateThemeColorMeta(actual);
@@ -4218,21 +4269,40 @@ function renderStatsLoggedSessions() {
   });
 
   const allLogs = remoteData._loggedSessions || [];
+  
+  const searchInput = $('log-search-input');
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const today = ts();
+
   const list = allLogs.filter(s => {
-    if (s.course) return s.course === activeCourse;
-    if (s._topicIds && s._topicIds.length > 0) {
-      return s._topicIds.some(id => validTopicIds.has(id));
+    let belongsToCourse = false;
+    if (s.course) belongsToCourse = (s.course === activeCourse);
+    else if (s._topicIds && s._topicIds.length > 0) {
+      belongsToCourse = s._topicIds.some(id => validTopicIds.has(id));
     }
-    return false;
+    if (!belongsToCourse) return false;
+    
+    if (query) {
+       const searchStr = `${s.subjName || ''} ${(s.topics||[]).join(' ')} ${s.date||''} ${s.bucket||''}`.toLowerCase();
+       return searchStr.includes(query);
+    } else {
+       return s.date === today;
+    }
   });
 
-  if (clearBtn) clearBtn.style.display = list.length > 0 ? 'block' : 'none';
-  if (list.length === 0) {
-    container.innerHTML = '<div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged yet. Tap the \'📝 Log Study Session\' button on the dashboard to record your study time!</div>';
+  if (clearBtn) clearBtn.style.display = allLogs.length > 0 ? 'block' : 'none';
+  
+  if (list.length === 0 && !query) {
+    container.innerHTML = '<div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No study sessions logged today. Tap the \'📝 Log Study Session\' button on the dashboard to record your study time!<br><br><span style="font-size:0.75rem;opacity:0.7">Tip: Use the search bar above to view past sessions.</span></div>';
+    return;
+  } else if (list.length === 0) {
+    container.innerHTML = '<div style="color:var(--dim);font-size:0.85rem;padding:20px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;">No sessions found matching your search.</div>';
     return;
   }
+  
   const bucketIcons = { morning: '🌅', afternoon: '☀️', evening: '🌆', night: '🌙' };
-  container.innerHTML = list.slice(0, 8).map(s => {
+  const displayLimit = query ? 50 : 20;
+  container.innerHTML = list.slice(0, displayLimit).map(s => {
     const icon = bucketIcons[s.bucket] || '⏱️';
     const topicsText = (s.topics || []).join(' · ');
     const moreText = s.count > (s.topics?.length || 0) ? ` (+${s.count - (s.topics?.length || 0)} more)` : '';
