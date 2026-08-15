@@ -278,7 +278,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 *:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 .cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 [data-theme="amoled"]{--bg:#000000;--s1:#060606;--s2:#0a0a0a;--s3:#0f0f0f;--border:#141414;--dim:#586073}
-[data-theme="ios-black"]{--bg:#000000;--s1:#1c1c1e;--s2:#2c2c2e;--s3:#3a3a3c;--border:#38383a;--dim:#8e8e93;--text:#ffffff;}
 [data-theme="light"]{
   color-scheme: light;
   --bg:#f2f4f7;--s1:#ffffff;--s2:#ebedf2;--s3:#e2e5eb;--border:#cdd2dc;
@@ -607,13 +606,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div id="productivity-insight-box" style="margin-top:16px;padding:14px 16px;border-radius:12px;font-size:0.84rem;line-height:1.5;background:var(--s2);border:1px solid var(--border);"></div>
     </div>
 
-    <div class="sec" style="margin:25px 0 15px;padding-bottom:6px;border-bottom:1px solid var(--border);justify-content:space-between;align-items:flex-end;">
+    <div class="sec" style="display:flex;flex-wrap:wrap;gap:12px;margin:25px 0 15px;padding-bottom:12px;border-bottom:1px solid var(--border);justify-content:space-between;align-items:center;">
       <div>
         <h2 style="color:var(--blue)">📝 Recently Logged Study Sessions</h2>
         <p style="font-size:0.8rem;color:var(--dim);margin-top:2px;">Your manually recorded study history and session logs</p>
       </div>
       <div style="display:flex; gap: 8px; align-items:center;">
-        <input type="text" id="log-search-input" onkeyup="renderStatsLoggedSessions()" placeholder="Search past sessions..." style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:var(--font);padding:6px 12px;border-radius:8px;font-size:0.75rem;width:200px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        <input type="text" id="log-search-input" onkeyup="debounceSearch()" placeholder="Search past sessions..." style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:var(--font);padding:6px 12px;border-radius:8px;font-size:0.75rem;width:200px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
         <button onclick="clearAllLoggedSessions()" id="clear-all-logs-btn" style="display:none;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:6px 10px;border-radius:8px;cursor:pointer;font-family:var(--font);font-weight:600;transition:0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Clear History</button>
       </div>
     </div>
@@ -739,7 +738,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Appearance</label>
         <div style="display:flex;gap:4px;background:var(--s2);padding:3px;border-radius:8px">
           <button class="auth-tab settings-theme-btn" data-t="system" style="flex:1">System</button>
-          <button class="auth-tab settings-theme-btn" data-t="ios-black" style="flex:1">OLED</button>
           <button class="auth-tab settings-theme-btn" data-t="amoled" style="flex:1">Dark</button>
           <button class="auth-tab settings-theme-btn" data-t="light" style="flex:1">Light</button>
         </div>
@@ -841,10 +839,13 @@ const app = initializeApp({
   measurementId:"G-W0VWF51FSW"
 });
 
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6Lc-QYItAAAAAMtjgzf-qwtheV8xYEP85ZsTW5ZF"),
-  isTokenAutoRefreshEnabled: true
-});
+let appCheck;
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider("6Lc-QYItAAAAAMtjgzf-qwtheV8xYEP85ZsTW5ZF"),
+    isTokenAutoRefreshEnabled: true
+  });
+}
 let analytics, perf, appStartPerfTime = performance.now(), _firstScreenTrace = null;
 try {
   analytics = getAnalytics(app);
@@ -3740,7 +3741,7 @@ function updateThemeColorMeta(theme) {
   // Inject the single authoritative tag
   let meta = document.createElement('meta');
   meta.name = 'theme-color';
-  const colorMap = { 'amoled': '#000000', 'ios-black': '#000000', 'dark': '#020305', 'light': '#f2f4f7' };
+  const colorMap = { 'amoled': '#000000', 'dark': '#020305', 'light': '#f2f4f7' };
   meta.content = colorMap[theme] || '#020305';
   document.head.appendChild(meta);
 }
@@ -3752,7 +3753,7 @@ function applyTheme(t){
   const actual = t === 'system' ? detectSystemTheme() : t;
   document.documentElement.setAttribute('data-theme', actual);
   if (document.body) document.body.dataset.theme = actual;
-  const bg = actual === 'amoled' || actual === 'ios-black' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
+  const bg = actual === 'amoled' ? '#000000' : (actual === 'light' ? '#f2f4f7' : '#020305');
   document.documentElement.style.backgroundColor = bg;
   if (document.body) document.body.style.backgroundColor = bg;
   updateThemeColorMeta(actual);
@@ -4256,6 +4257,14 @@ function format12Hour(timeStr) {
 }
 window.format12Hour = format12Hour;
 
+let _searchDebounce = null;
+window.debounceSearch = function() {
+  clearTimeout(_searchDebounce);
+  _searchDebounce = setTimeout(() => {
+    if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
+  }, 300);
+};
+
 function renderStatsLoggedSessions() {
   const container = $('stats-logged-sessions');
   const clearBtn = $('clear-all-logs-btn');
@@ -4302,13 +4311,17 @@ function renderStatsLoggedSessions() {
   
   const bucketIcons = { morning: '🌅', afternoon: '☀️', evening: '🌆', night: '🌙' };
   const displayLimit = query ? 50 : 20;
-  container.innerHTML = list.slice(0, displayLimit).map(s => {
+  const frag = document.createDocumentFragment();
+  list.slice(0, displayLimit).forEach(s => {
     const icon = bucketIcons[s.bucket] || '⏱️';
     const topicsText = (s.topics || []).join(' · ');
     const moreText = s.count > (s.topics?.length || 0) ? ` (+${s.count - (s.topics?.length || 0)} more)` : '';
     const formattedTime = format12Hour(s.time);
-    return `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:0.2s;">
+    
+    const card = document.createElement('div');
+    card.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:0.2s;';
+    
+    card.innerHTML = `
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
             <span style="font-size:0.9rem;font-weight:800;color:var(--text);display:inline-block;word-break:break-word;margin-right:4px;">${s.subjName || 'Study Session'}</span>
@@ -4327,9 +4340,12 @@ function renderStatsLoggedSessions() {
           </div>
           <button onclick="deleteLoggedSession('${s.id}')" aria-label="Remove log" title="Remove session log" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--dim);cursor:pointer;width:32px;height:32px;display:grid;place-content:center;font-size:0.85rem;border-radius:8px;transition:0.15s;flex-shrink:0;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='rgba(224,80,80,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='var(--dim)';this.style.background='transparent'">✕</button>
         </div>
-      </div>
     `;
-  }).join('');
+    frag.appendChild(card);
+  });
+  
+  container.innerHTML = '';
+  container.appendChild(frag);
 }
 window.renderStatsLoggedSessions = renderStatsLoggedSessions;
 
