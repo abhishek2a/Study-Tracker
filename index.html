@@ -521,9 +521,19 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         <div id="ls-topics-container" style="display:grid;grid-template-columns:1fr;gap:10px;padding:2px 0;background:transparent;"></div>
       </div>
     </div>
-    <div style="padding:16px 24px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-shrink:0">
-      <button onclick="closeLogSession()" style="padding:12px 18px;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font);white-space:nowrap">Cancel</button>
-      <button onclick="saveLogSession()" style="padding:12px 22px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(84,162,255,0.4);font-family:var(--font);white-space:nowrap">Save Session 🚀</button>
+    <div style="padding:16px 24px;border-top:1px solid var(--border);background:var(--s2);display:flex;flex-direction:column;gap:16px;flex-shrink:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+         <label style="font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em">How was this session?</label>
+         <div style="display:flex;gap:12px;font-size:0.85rem;font-weight:600;color:var(--text);">
+           <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="ls-diff" value="easy" style="accent-color:var(--green);width:16px;height:16px;cursor:pointer;"> 😊 Easy</label>
+           <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="ls-diff" value="medium" checked style="accent-color:var(--blue);width:16px;height:16px;cursor:pointer;"> 😐 Medium</label>
+           <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="ls-diff" value="hard" style="accent-color:var(--red);width:16px;height:16px;cursor:pointer;"> 😵 Hard</label>
+         </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:12px;">
+        <button onclick="closeLogSession()" style="padding:12px 18px;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font);white-space:nowrap">Cancel</button>
+        <button onclick="saveLogSession()" style="padding:12px 22px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(84,162,255,0.4);font-family:var(--font);white-space:nowrap">Save Session 🚀</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1199,13 +1209,16 @@ const LABELS_FR={
   fr17a:"IAS 20 (Gov Grants)",
   fr17b:"IAS 21 (Foreign Exchange)",
   fr18:"INTERPRETATION",
+  fr_ias2: "IAS 2 (Inventories)",
+  fr_ias41: "IAS 41 (Agriculture)",
+  fr_ias27: "IAS 27 (Investment in Associates)",
   fr19:"EXTRA QUESTION PRACTICE",
   fr20:"WEEKLY EXAM"
 };
 
 const SUBJS_FR={
   framework:{
-    ids:["fr1","fr2a","fr2b","fr3","fr4a","fr4b","fr5a","fr5b","fr6","fr7","fr8","fr9","fr10b","fr11","fr12","fr14","fr17a","fr17b"],
+    ids:["fr1","fr2a","fr2b","fr3","fr4a","fr4b","fr5a","fr5b","fr6","fr7","fr8","fr9","fr10b","fr11","fr12","fr14","fr17a","fr17b","fr_ias2","fr_ias41","fr_ias27"],
     c:"#6c8ebf",n:"Accounting Standards",m:"Section A"
   },
   preparation:{ids:["fr13","fr15","fr16"],c:"#9b59b6",n:"Preparation of FS",m:"Section D"},
@@ -1236,6 +1249,9 @@ const TOPIC_META_FR={
   fr17a:{ w: 1 },
   fr17b:{ w: 2 },
   fr18: { w: 4 },
+  fr_ias2: { w: 2 },
+  fr_ias41: { w: 1 },
+  fr_ias27: { w: 2 },
   fr19: { w: 1 },
   fr20: { w: 1 }
 };
@@ -1251,11 +1267,12 @@ const LABELS_FR_P2={
   fr10b_p2:"IAS 8 (Accounting Policies)", fr11_p2:"IAS 12 (Deferred Tax)",
   fr12_p2:"IFRS 15 (Revenue)", fr13_p2:"FS PREPARATION", fr14_p2:"IAS 33 (EPS)",
   fr15_p2:"CONSOLIDATION", fr16_p2:"CASHFLOW STATEMENT", fr17a_p2:"IAS 20 (Gov Grants)",
-  fr17b_p2:"IAS 21 (Foreign Exchange)", fr18_p2:"INTERPRETATION", fr19_p2:"EXTRA QUESTION PRACTICE",
-  fr20_p2:"WEEKLY EXAM"
+  fr17b_p2:"IAS 21 (Foreign Exchange)", fr18_p2:"INTERPRETATION", 
+  fr_ias2_p2: "IAS 2 (Inventories)", fr_ias41_p2: "IAS 41 (Agriculture)", fr_ias27_p2: "IAS 27 (Investment in Associates)",
+  fr19_p2:"EXTRA QUESTION PRACTICE", fr20_p2:"WEEKLY EXAM"
 };
 const SUBJS_FR_P2={
-  framework:{ids:["fr1_p2","fr2a_p2","fr2b_p2","fr3_p2","fr4a_p2","fr4b_p2","fr5a_p2","fr5b_p2","fr6_p2","fr7_p2","fr8_p2","fr9_p2","fr10b_p2","fr11_p2","fr12_p2","fr14_p2","fr17a_p2","fr17b_p2"],c:"#6c8ebf",n:"Accounting Standards (P2)",m:"Section A"},
+  framework:{ids:["fr1_p2","fr2a_p2","fr2b_p2","fr3_p2","fr4a_p2","fr4b_p2","fr5a_p2","fr5b_p2","fr6_p2","fr7_p2","fr8_p2","fr9_p2","fr10b_p2","fr11_p2","fr12_p2","fr14_p2","fr17a_p2","fr17b_p2","fr_ias2_p2","fr_ias41_p2","fr_ias27_p2"],c:"#6c8ebf",n:"Accounting Standards (P2)",m:"Section A"},
   preparation:{ids:["fr13_p2","fr15_p2","fr16_p2"],c:"#9b59b6",n:"Preparation of FS (P2)",m:"Section D"},
   analysis:  {ids:["fr18_p2"],c:"#d6a500",n:"Analysing & Interpreting FS (P2)",m:"Section C"}
   // exam section removed — shown as recommended items in the tracker card
@@ -1264,7 +1281,7 @@ const TOPIC_META_FR_P2={
   fr1_p2:{w:1}, fr2a_p2:{w:2}, fr2b_p2:{w:2}, fr3_p2:{w:3}, fr4a_p2:{w:1}, fr4b_p2:{w:1}, fr5a_p2:{w:2},
   fr5b_p2:{w:1}, fr6_p2:{w:2}, fr7_p2:{w:2}, fr8_p2:{w:3}, fr9_p2:{w:3}, fr10b_p2:{w:1},
   fr11_p2:{w:2}, fr12_p2:{w:3}, fr13_p2:{w:3}, fr14_p2:{w:2}, fr15_p2:{w:5}, fr16_p2:{w:4}, fr17a_p2:{w:1},
-  fr17b_p2:{w:1}, fr18_p2:{w:3}, fr19_p2:{w:2}, fr20_p2:{w:1}
+  fr17b_p2:{w:1}, fr18_p2:{w:3}, fr_ias2_p2:{w:2}, fr_ias41_p2:{w:1}, fr_ias27_p2:{w:2}, fr19_p2:{w:2}, fr20_p2:{w:1}
 };
 
 // Inject Weekly Mocks
@@ -1386,10 +1403,10 @@ const ACCA_30_DAYS = [
   {ids: ['fr5a', 'fr8'], title: 'IAS 38 Intangible Assets'}, // 8
 
   // Day 9
-  {ids: ['fr17a'], title: 'IAS 2 Inventory + IAS 20 Government Grants'}, // 9
+  {ids: ['fr_ias2', 'fr17a'], title: 'IAS 2 Inventory + IAS 20 Government Grants'}, // 9
 
   // Day 10
-  {ids: ['fr7'], title: 'IAS 37 Provisions + IAS 10 Events after Reporting Period'}, // 10
+  {ids: ['fr7', 'fr_ias41'], title: 'IAS 37 Provisions + IAS 10 Events + IAS 41 Agriculture'}, // 10
 
   // Days 11-12
   {ids: ['fr9'], title: 'IFRS 9 Financial Instruments (Assets, Liabilities, Expected Credit Loss, Compound Instruments)'}, // 11
@@ -1410,11 +1427,11 @@ const ACCA_30_DAYS = [
   {ids: ['fr13', 'fr5b'], title: 'Single Entity Financial Statements (SOPL, OCI, SFP, Notes, Corrections)'}, // 18
 
   // Days 19-23
-  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 19
-  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 20
-  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 21
-  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 22
-  {ids: ['fr15'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28)'}, // 23
+  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 19
+  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 20
+  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 21
+  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 22
+  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 23
 
   // Days 24-26
   {ids: ['fr18'], title: 'Interpretation & Ratio Analysis'}, // 24
@@ -2294,9 +2311,7 @@ function renderRevisions(){
       </div>
       
       <div style="display:flex;gap:6px">
-        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="hard" style="color:var(--red);border-color:rgba(242,92,92,0.3)">😵 Hard</button>
-        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="medium" style="color:var(--accent);border-color:rgba(252,174,40,0.3)">😐 Med</button>
-        <button class="revise-btn-diff" data-rid="${item.id}" data-diff="easy" style="color:var(--green);border-color:rgba(40,212,142,0.3)">😊 Easy</button>
+        <button class="revise-log-btn" data-rid="${item.id}" style="color:var(--blue);border:1px solid rgba(84,162,255,0.3);flex:1;padding:8px 0;border-radius:8px;background:transparent;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .2s ease;display:flex;justify-content:center;align-items:center;gap:6px">📝 Log Revision Session</button>
       </div>
     </div>`;
   };
@@ -2323,15 +2338,15 @@ function renderRevisions(){
   rc.innerHTML = html;
   
   let _reviseTouch=false;
-  rc.querySelectorAll('.revise-btn-diff').forEach(b => {
+  rc.querySelectorAll('.revise-log-btn').forEach(b => {
     b.addEventListener('touchend',function(e){
       e.preventDefault();_reviseTouch=true;
-      markRevised(b.getAttribute('data-rid'), b.getAttribute('data-diff'));
+      if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
       setTimeout(()=>{_reviseTouch=false;},500);
     });
     b.addEventListener('click',function(){
       if(_reviseTouch)return;
-      markRevised(b.getAttribute('data-rid'), b.getAttribute('data-diff'));
+      if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
     });
   });
 }
@@ -4058,6 +4073,33 @@ function closeLogSession() {
 window.openLogSession = openLogSession;
 window.closeLogSession = closeLogSession;
 
+window.openReviseLogSession = function(id) {
+  openLogSession();
+  const { subjs } = typeof getCourseData === 'function' ? getCourseData() : {subjs:{}};
+  let foundSubj = null;
+  for (const [subjKey, subjVal] of Object.entries(subjs)) {
+    if (subjVal.ids && subjVal.ids.includes(id)) {
+      foundSubj = subjKey;
+      break;
+    }
+  }
+  if (foundSubj) {
+    const select = document.getElementById('ls-subject');
+    if (select) {
+      select.value = foundSubj;
+      renderLogTopics();
+    }
+    const cb = document.querySelector(`#ls-topics-container input[type="checkbox"][value="${id}"]`);
+    if (cb) {
+      cb.checked = true;
+      if (typeof toggleLogTopic === 'function') toggleLogTopic(id, true, cb);
+    } else {
+      _logSelectedTopics.add(id);
+      if (typeof updateLogCountBadge === 'function') updateLogCountBadge();
+    }
+  }
+};
+
 function renderLogTopics() {
   const container = $('ls-topics-container');
   const select = $('ls-subject');
@@ -4199,8 +4241,8 @@ function renderStatsLoggedSessions() {
       <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);transition:0.2s;">
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-            <span style="font-size:0.9rem;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block;">${s.subjName || 'Study Session'}</span>
-            <span style="font-size:0.7rem;font-weight:700;color:var(--blue);background:rgba(84,162,255,0.12);padding:2px 8px;border-radius:99px;">${s.count} topic${s.count !== 1 ? 's' : ''} completed</span>
+            <span style="font-size:0.9rem;font-weight:800;color:var(--text);display:inline-block;word-break:break-word;margin-right:4px;">${s.subjName || 'Study Session'}</span>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--blue);background:rgba(84,162,255,0.12);padding:2px 8px;border-radius:99px;white-space:nowrap;">${s.count} topic${s.count !== 1 ? 's' : ''} completed</span>
           </div>
           <div style="font-size:0.78rem;color:var(--dim);line-height:1.4;overflow:hidden;text-overflow:ellipsis;">
             ${topicsText}${moreText}
@@ -4361,10 +4403,52 @@ async function saveLogSession() {
         interval: existingSr.interval || 1
       } : null
     };
-    remoteData[id] = true;
-    const nextDate = typeof addDaysStr === 'function' ? addDaysStr(dateVal, 1) : dateVal;
-    const entry = { completed: dateVal, lastRev: dateVal, count: ((remoteData._sr[id]?.count) || 0) + 1, next: nextDate, ease: 2.5, interval: 1 };
-    remoteData._sr[id] = entry;
+    
+    // Spaced Repetition Logic integration
+    const diffEls = document.getElementsByName('ls-diff');
+    let selectedDiff = 'medium';
+    for (let i = 0; i < diffEls.length; i++) { if (diffEls[i].checked) selectedDiff = diffEls[i].value; }
+    
+    const isNonTopicId = id.startsWith('mock') || id === 'fr19' || id === 'fr20' || id === 'fr19_p2' || id === 'fr20_p2';
+    
+    if (!isNonTopicId) {
+      let s = remoteData._sr[id];
+      if (!s || !s.next) {
+         s = { completed: dateVal, lastRev: dateVal, count: 0, next: dateVal, ease: 2.5, interval: 1 };
+      }
+      
+      if (selectedDiff === 'easy') {
+        s.ease += 0.15;
+        s.interval = s.count === 0 ? 3 : s.interval * s.ease * 1.3;
+      } else if (selectedDiff === 'medium') {
+        s.interval = s.count === 0 ? 2 : s.interval * s.ease;
+      } else if (selectedDiff === 'hard') {
+        s.ease = Math.max(1.3, s.ease - 0.2);
+        s.interval = Math.max(1, s.interval * 0.5); 
+      }
+      
+      s.count++;
+      s.interval = Math.round(s.interval);
+      s.lastRev = dateVal;
+      
+      const activeCourseKey = remoteData.activeCourse || '';
+      if (activeCourseKey === 'ACCA26_P2') {
+        const examDate = new Date('2026-12-10T00:00:00Z');
+        const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
+        const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
+        if (s.interval > daysToExam) s.interval = daysToExam;
+      }
+      
+      s.next = typeof addDaysStr === 'function' ? addDaysStr(s.lastRev, s.interval) : addDaysStr(dateVal, s.interval);
+      remoteData._sr[id] = s;
+      
+      // Syllabus Auto-Sync: Only auto-complete if they didn't struggle heavily
+      if (selectedDiff !== 'hard' && !remoteData[id]) {
+        remoteData[id] = true;
+      }
+    } else {
+      remoteData[id] = true; // Non-SR topics just auto-complete
+    }
   });
 
   remoteData._activity[dateVal] = (remoteData._activity[dateVal] || 0) + topicIds.length;
@@ -4441,31 +4525,17 @@ function generateStudyInsights() {
 
   const insights = [];
   const activity = remoteData._activity || {};
-  const timeAcc = remoteData._timeAccuracy || {};
   const logged = remoteData._loggedSessions || [];
   const srData = remoteData._sr || {};
 
-  // 1. Optimal Timing Insight
-  let bestBucket = null;
-  let bestAcc = 0;
-  let worstBucket = null;
-  let worstAcc = 100;
-
-  for (const [bucket, stats] of Object.entries(timeAcc)) {
-    if (stats.attempts >= 5) {
-      const acc = Math.round((stats.correct / stats.attempts) * 100);
-      if (acc > bestAcc) { bestAcc = acc; bestBucket = bucket; }
-      if (acc < worstAcc) { worstAcc = acc; worstBucket = bucket; }
-    }
-  }
-
-  if (bestBucket && worstBucket && bestBucket !== worstBucket && (bestAcc - worstAcc >= 15)) {
-    const bucketNames = { 'morning': 'Morning', 'afternoon': 'Afternoon', 'evening': 'Evening', 'latenight': 'Late Night' };
-    const isACCA = (remoteData.activeCourse || '').startsWith('ACCA');
-    const exampleTopic = isACCA ? ' (like Consolidation)' : '';
+  // 1. Burnout / Overstudy Detection
+  const todayDate = ts();
+  let todaysSessions = 0;
+  logged.forEach(s => { if (s.date && s.date.startsWith(todayDate)) todaysSessions++; });
+  if (todaysSessions >= 6) {
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--green);">Optimal Timing:</strong> Your accuracy peaks at <strong>${bestAcc}%</strong> in the <strong>${bucketNames[bestBucket] || bestBucket}</strong>, but drops to <strong>${worstAcc}%</strong> during the <strong>${bucketNames[worstBucket] || worstBucket}</strong>. Try tackling complex topics${exampleTopic} earlier when you are sharpest!
+        <strong style="color:var(--accent);">⚠️ Overstudy Warning:</strong> You have logged <strong>${todaysSessions} sessions</strong> today. Make sure you are taking adequate breaks to avoid burnout and allow your brain to encode information.
       </div>
     `);
   }
@@ -4535,7 +4605,7 @@ function generateStudyInsights() {
     } else {
       insights.push(`
         <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-          <strong style="color:var(--dim);">Not enough data yet:</strong> Log more study sessions (with accuracy data) to unlock personalized AI insights here!
+          <strong style="color:var(--dim);">Not enough data yet:</strong> Log more study sessions to unlock personalized, data-driven AI insights here!
         </div>
       `);
     }
