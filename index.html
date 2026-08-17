@@ -1002,7 +1002,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.98p';
+const APP_VERSION = '1.2.98r';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -2555,7 +2555,7 @@ function startLBListener() {
         if (targetCourse.startsWith('CSEB')) targetCourse = 'CSEB11';
         if (docCourse === targetCourse) {
           let dispName = data.displayName || data.name || data._displayName || '';
-          if (!dispName || dispName === 'Anonymous Learner') {
+          if (!dispName || dispName === 'Anonymous Learner' || dispName.includes('@')) {
             const prefix = targetCourse.startsWith('ACCA') ? 'ACCA Candidate' : 'CSEB Candidate';
             dispName = `${prefix} #${d.id.slice(0, 4).toUpperCase()}`;
           }
@@ -3142,7 +3142,7 @@ function initApp(user){
     const pn = $('profile-name'); if(pn) pn.textContent=name;
     const pdn = $('pd-name'); if(pdn) pdn.textContent=user.displayName||name;
     const pde = $('pd-email'); if(pde) pde.textContent=user.email||'';
-    remoteData._displayName=user.displayName||name; // cache for leaderboard
+    remoteData._displayName=user.displayName||''; // cache for leaderboard (prevent email prefix leak)
     const td = $('todaydisp'); if(td) td.textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   } catch(e) { console.error('UI init error:', e); }
   try{
