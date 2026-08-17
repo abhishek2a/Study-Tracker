@@ -1008,7 +1008,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.98s';
+const APP_VERSION = '1.2.98v';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -3142,6 +3142,17 @@ function initApp(user){
   try {
     $('auth-overlay').classList.add('hidden');
     $('app').classList.add('visible');
+    
+    if (user.email && user.displayName) {
+      const emailPrefix = user.email.split('@')[0];
+      if (user.displayName.toLowerCase() === emailPrefix.toLowerCase()) {
+        try {
+          updateProfile(user, { displayName: '' });
+          user.displayName = null;
+          setDoc(doc(db, 'leaderboard', user.uid), { displayName: '' }, { merge: true });
+        } catch(e) {}
+      }
+    }
     const name=user.displayName||user.email.split('@')[0]||'Student';
     const initials=name.slice(0,2).toUpperCase();
     const av = $('profile-avatar'); if(av) av.textContent=initials;
@@ -4754,20 +4765,27 @@ try {
           if(newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                const toast = document.getElementById('update-toast');
-                if (toast) {
-                  toast.style.visibility = 'visible';
-                  toast.style.opacity = '1';
-                  toast.style.transform = 'translateX(-50%) translateY(0)';
-                  const ub = document.getElementById('update-btn');
-                  if(ub) ub.onclick = () => newWorker.postMessage({ type: 'SKIP_WAITING' });
+                if (document.visibilityState === 'hidden') {
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
+                } else {
+                  document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'hidden') {
+                      newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                  }, { once: true });
                 }
               }
             });
           }
         });
       }).catch(err => console.error('SW registration failed:', err));
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(reg => {
+          if (reg && reg.update) reg.update();
+        });
+      }
     });
   }
 } catch(e) { console.warn('SW setup error:', e); }
