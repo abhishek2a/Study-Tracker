@@ -949,7 +949,13 @@ async function submitAuth(){
       if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
       const name=$('auth-name').value.trim();
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      try{ await updateProfile(cred.user,{displayName:name}); } catch(err){}
+      try{ 
+        await updateProfile(cred.user,{displayName:name});
+        remoteData._displayName = name;
+        if($('profile-name')) $('profile-name').textContent = name;
+        if($('pd-name')) $('pd-name').textContent = name;
+        if($('profile-avatar')) $('profile-avatar').textContent = name.slice(0,2).toUpperCase();
+      } catch(err){}
       try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){}
       try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){}
       logAppEvent('login_success', { method: 'email', type: 'signup', course: code });
@@ -1002,7 +1008,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.98r';
+const APP_VERSION = '1.2.98s';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
