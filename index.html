@@ -44,16 +44,14 @@ html { background: var(--bg); }
   --font:"SF Pro Display","SF Pro Text","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:"SF Mono","Fira Code","JetBrains Mono",monospace;
   --radius:18px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 12px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow:0 8px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent!important}
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;letter-spacing:-0.015em;min-height:100vh;overscroll-behavior:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overscroll-behavior:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal}
 /* Prevent 300ms tap delay and text-selection jank on all interactive elements for mobile/PWA */
 a,button,input,select,label,[role=button],.cl label,.cl li,.revise-btn-diff,.pd-item,.subj-hdr{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent!important}
-button { transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s, opacity 0.15s; }
-button:active { transform: scale(0.96); }
 /* Cross-Platform UI Polish (Android, iOS, Windows, macOS) */
 body {
   padding-left: env(safe-area-inset-left);
@@ -72,7 +70,7 @@ body {
 ::selection { background: rgba(84,162,255,0.25); color: var(--text); }
 #auth-overlay{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:20px;-webkit-overflow-scrolling:touch}
 #auth-overlay.hidden{display:none}
-.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 12px 32px rgba(0,0,0,.5);margin:auto;flex-shrink:0;animation:modalPop .5s cubic-bezier(.34,1.56,.64,1)}
+.auth-box{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px 30px;box-shadow:0 12px 32px rgba(0,0,0,.5);margin:auto;flex-shrink:0}
 .auth-logo{font-size:1.45rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
 .auth-logo span{color:var(--accent)}
 .auth-sub{font-size:.74rem;font-family:var(--mono);color:var(--dim);margin-bottom:18px}
@@ -287,7 +285,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   color-scheme: light;
   --bg:#f2f4f7;--s1:#ffffff;--s2:#ebedf2;--s3:#e2e5eb;--border:#cdd2dc;
   --text:#11141c;--dim:#666e86;--green:#1a9a69;--accent:#b86c00;--blue:#2266cc;
-  --red:#b82e2e;--shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+  --red:#b82e2e;--shadow:0 2px 12px rgba(0,0,0,.08);
   --banking:#1f5cb8;--accounting:#178a5e;--act:#a86200;
   --principles:#0a8a84;--english:#6840c8;--reasoning:#b03878;--gk:#4e5a70;--audit:#b84e22;
   --framework:#4a6fa5;--transactions:#5a8a3a;--analysis:#8a6a00;--preparation:#7a3896
@@ -957,9 +955,9 @@ async function submitAuth(){
         if($('profile-name')) $('profile-name').textContent = name;
         if($('pd-name')) $('pd-name').textContent = name;
         if($('profile-avatar')) $('profile-avatar').textContent = name.slice(0,2).toUpperCase();
-      } catch(err){}
-      try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){}
-      try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){}
+      } catch(err){ console.error('[Signup] Profile update failed:', err); }
+      try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){ console.error('[Signup] User doc creation failed:', err); }
+      try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){ console.error('[Signup] Leaderboard doc creation failed:', err); }
       logAppEvent('login_success', { method: 'email', type: 'signup', course: code });
     } else {
       const cred=await signInWithEmailAndPassword(auth,email,pass);
@@ -1010,7 +1008,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.2.99n';
+const APP_VERSION = '1.3.1';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR'};
 const DEFAULT_COURSE='CSEB11';
@@ -1724,7 +1722,7 @@ function saveToFirestore(){
     delete payload._loaded;
     
     _lastAppliedJSON = JSON.stringify(payload);
-    setDoc(doc(db,'users',currentUid), payload, {merge:true}).catch(()=>{});
+    setDoc(doc(db,'users',currentUid), payload, {merge:true}).catch(err => console.error('[Firestore Save] Failed:', err));
     if(typeof updateLBData === 'function') updateLBData();
   }, 600);
 }
@@ -1841,16 +1839,7 @@ function syncMinorCheck(key, val) {
   if (val === true && typeof logAppEvent === 'function') {
     logAppEvent('mock_completed', { task_id: key, course: remoteData.activeCourse || DEFAULT_COURSE });
   }
-  window._localWritePending = Date.now();
-  if (currentUid && typeof db !== 'undefined' && db && typeof doc === 'function') {
-    const clean = { ...remoteData };
-    delete clean._loaded;
-    _lastAppliedJSON = JSON.stringify(clean);
-    setDoc(doc(db, 'users', currentUid), { [key]: val }, { merge: true })
-      .catch(err => console.error('[Minor Sync] Failed:', err));
-  } else if (typeof saveToFirestore === 'function') {
-    saveToFirestore();
-  }
+  saveToFirestore();
 }
 
 function makeCard(){
@@ -2109,19 +2098,10 @@ function bindSyllabus(){
       if (b.matches('.main-sl input[type=checkbox]') && !b.id.endsWith('_kap') && !b.id.endsWith('_bpp') && !b.id.endsWith('_sh')) {
         onCheck(b.id, b.checked);
       } else if (b.closest('.q-practice')) {
-        // Save question practice checkbox immediately with local-first sync lock
+        // Save question practice checkbox via debounced batch write
         triggerHaptic(b.checked ? 'success' : 'light');
         remoteData[b.id] = b.checked;
-        window._localWritePending = Date.now();
-        if (currentUid && typeof db !== 'undefined' && db && typeof doc === 'function') {
-          const clean = { ...remoteData };
-          delete clean._loaded;
-          _lastAppliedJSON = JSON.stringify(clean);
-          setDoc(doc(db, 'users', currentUid), { [b.id]: b.checked }, { merge: true })
-            .catch(err => console.error('[Practice Sync] Failed:', err));
-        } else if (typeof saveToFirestore === 'function') {
-          saveToFirestore();
-        }
+        saveToFirestore();
       }
     }, { signal });
   } else {
@@ -2145,12 +2125,24 @@ function updateAll(){
     if(domGfill)domGfill.style.width=pct+'%';
     if(domPct)domPct.textContent=pct+'%';
     if(domSpills){
-        const spillsHtml = Object.entries(subjs).map(([k,v])=>{
-          const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
-          const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
-          return `<span class="spill" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span style="font-weight:700">${d}/${t}</span></span>`;
-        }).join('');
-        domSpills.innerHTML=spillsHtml;
+        const spillEntries = Object.entries(subjs);
+        // Only rebuild innerHTML if children count doesn't match (first render or course switch)
+        if (domSpills.children.length !== spillEntries.length) {
+          const spillsHtml = spillEntries.map(([k,v])=>{
+            const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
+            const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+            return `<span class="spill" data-subj="${k}" style="color:${v.c};border-color:${v.c}22;background:${v.c}0d"><span>${v.n}</span><span class="spill-ct" style="font-weight:700">${d}/${t}</span></span>`;
+          }).join('');
+          domSpills.innerHTML=spillsHtml;
+        } else {
+          // Fast path: only update counts in-place
+          spillEntries.forEach(([k,v])=>{
+            const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
+            const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
+            const el = domSpills.querySelector(`[data-subj="${k}"] .spill-ct`);
+            if(el) el.textContent=d+'/'+t;
+          });
+        }
     }
     // Use EXAMS array as source of truth for countdown; skip postponed exams
     const _t=new Date();_t.setHours(0,0,0,0);
@@ -2662,7 +2654,7 @@ function startLBListener() {
       });
       renderLeaderboard(users);
     }, err => {
-      const lb = document.getElementById('lb-list');
+      const lb = document.getElementById('lb-wrap');
       if (lb) lb.innerHTML = '<div style="padding:20px;text-align:center;color:var(--red);font-size:0.85rem">Could not load leaderboard. Check connection or permissions.</div>';
       console.warn('[Leaderboard] connection error:', err);
     });
@@ -2819,13 +2811,13 @@ async function openStats() {
   const overlay = $('stats-overlay');
   if (!overlay) return;
   
-  // Animate in
+  // Animate in (avoid layout thrashing — use rAF instead of offsetHeight)
   overlay.style.display = 'block';
-  // Force reflow
-  overlay.offsetHeight;
-  overlay.style.opacity = '1';
-  overlay.style.pointerEvents = 'auto';
-  overlay.style.transform = 'translateY(0)';
+  requestAnimationFrame(() => {
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.transform = 'translateY(0)';
+  });
   document.body.style.overflow = 'hidden';
   
   // Calculate Stats
@@ -3239,9 +3231,9 @@ function initApp(user){
       const emailPrefix = user.email.split('@')[0];
       if (user.displayName.toLowerCase() === emailPrefix.toLowerCase()) {
         try {
-          updateProfile(user, { displayName: '' });
+          updateProfile(user, { displayName: '' }).catch(e => console.warn('[Profile] displayName clear failed:', e));
           user.displayName = null;
-          setDoc(doc(db, 'leaderboard', user.uid), { displayName: '' }, { merge: true });
+          setDoc(doc(db, 'leaderboard', user.uid), { displayName: '' }, { merge: true }).catch(e => console.warn('[LB] displayName clear failed:', e));
         } catch(e) {}
       }
     }
@@ -3281,7 +3273,7 @@ function initApp(user){
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
     const snapData = snap.data() || {};
     const incomingJSON = JSON.stringify(snapData);
-    const isLocalPending = snap.metadata.hasPendingWrites || (_fsTimer !== null) || (window._localWritePending && (Date.now() - window._localWritePending < 2500));
+    const isLocalPending = snap.metadata.hasPendingWrites || (_fsTimer !== null) || (window._localWritePending && (Date.now() - window._localWritePending < 800));
     if (incomingJSON !== _lastAppliedJSON && !isLocalPending) {
       _lastAppliedJSON = incomingJSON;
       if(snap.exists()){
@@ -4592,6 +4584,13 @@ async function saveLogSession() {
   if (!remoteData._sr) remoteData._sr = {};
   if (!remoteData._activity) remoteData._activity = {};
 
+  // Determine difficulty ONCE before iterating topics
+  const diffEls = document.getElementsByName('ls-diff');
+  let selectedDiff = 'medium';
+  for (let i = 0; i < diffEls.length; i++) { if (diffEls[i].checked) { selectedDiff = diffEls[i].value; break; } }
+
+  const activeCourseKey = remoteData.activeCourse || '';
+
   const prevStates = {};
   const topicIds = Array.from(_logSelectedTopics);
   topicIds.forEach(id => {
@@ -4607,11 +4606,6 @@ async function saveLogSession() {
         interval: existingSr.interval || 1
       } : null
     };
-    
-    // Spaced Repetition Logic integration
-    const diffEls = document.getElementsByName('ls-diff');
-    let selectedDiff = 'medium';
-    for (let i = 0; i < diffEls.length; i++) { if (diffEls[i].checked) selectedDiff = diffEls[i].value; }
     
     const isNonTopicId = id.startsWith('mock') || id === 'fr19' || id === 'fr20' || id === 'fr19_p2' || id === 'fr20_p2';
     
@@ -4639,7 +4633,7 @@ async function saveLogSession() {
       s.interval = Math.round(s.interval);
       s.lastRev = dateVal;
       
-      const activeCourseKey = remoteData.activeCourse || '';
+      
       if (activeCourseKey === 'ACCA26_P2') {
         const examDate = new Date('2026-12-10T00:00:00Z');
         const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
@@ -4918,7 +4912,10 @@ try {
     deferredPrompt = e;
   });
 
+  let a2hsChecks = 0;
   const a2hsTimer = setInterval(() => {
+    a2hsChecks++;
+    if (a2hsChecks > 30) { clearInterval(a2hsTimer); return; } // Safety: stop after 30s
     const appEl = document.getElementById('app');
     if (appEl && appEl.classList.contains('visible')) {
       clearInterval(a2hsTimer);
