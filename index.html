@@ -666,11 +666,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-stats-item" role="menuitem">📊 Statistics</button>
           <div class="pd-sep"></div>
-
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.2.96</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.4.8</div>
         </div>
       </div>
     </div>
@@ -3153,6 +3152,12 @@ async function openStats() {
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
   const cd = COURSE_DATA[activeCourse];
   if (!cd) return;
+  
+  const statsTitle = $('stats-title');
+  if (statsTitle) {
+    let tName = activeCourse.startsWith('ACCA') ? 'ACCA FR' : activeCourse === 'CLERK26' ? 'Clerk' : activeCourse === 'CAT09' ? 'Asst Sec' : 'CSEB';
+    statsTitle.innerHTML = `${tName} <span>Statistics</span>`;
+  }
   
   let total = 0, comp = 0, pend = 0, avg = 0;
   const validTopicIds = new Set();
