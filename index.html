@@ -947,6 +947,7 @@ async function submitAuth(){
       const rawCode=($('auth-code').value||'').replace(/\s+/g, '').toUpperCase();
       let code=rawCode;
       if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
+      if (code === 'CSEB11' && ts() >= '2026-09-11') code = 'CLERK26';
       const name=$('auth-name').value.trim();
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
       try{ 
@@ -1008,9 +1009,9 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.3.1';
+const APP_VERSION = '1.4.2';
 // Course data registry — add new courses here as COURSE_CODES[key]
-const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR'};
+const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk'};
 const DEFAULT_COURSE='CSEB11';
 const COURSE_DATA={};
 
@@ -1512,6 +1513,287 @@ const SCH_ACCA_P2 = {
 };
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
 
+// CSEB Junior Clerk (Sep 12, 2026 onward)
+const SCH_CLERK={
+  "2026-09-12": { "ids": ["clk_d1"], "title": "09/12 (Day 1) - Numbers & Basic Operations, Fractions, Decimals, Percentage" },
+  "2026-09-13": { "ids": ["clk_d2"], "title": "09/13 (Day 2) - Profit & Loss, Simple & Compound Interest, Ratio & Proportion" },
+  "2026-09-14": { "ids": ["clk_d3"], "title": "09/14 (Day 3) - Time & Distance, Time & Work, Average" },
+  "2026-09-15": { "ids": ["clk_d4"], "title": "09/15 (Day 4) - Series, Maths Sign Problems, Position Determination Test" },
+  "2026-09-16": { "ids": ["clk_d5"], "title": "09/16 (Day 5) - Analogy, Odd Man Out, Number Review System" },
+  "2026-09-17": { "ids": ["clk_d6"], "title": "09/17 (Day 6) - Coding-Decoding, Family Relations, Sense of Direction" },
+  "2026-09-18": { "ids": ["clk_d7"], "title": "09/18 (Day 7) - Time & Angles, Clock Reflection, Calendar, Clerical Ability" },
+  "2026-09-19": { "ids": ["clk_d8"], "title": "09/19 (Day 8) - Buffer / Catch-up" },
+  "2026-09-20": { "ids": ["clk_d9"], "title": "09/20 (Day 9) - Weekly Mixed Review - Reasoning Full" },
+  "2026-09-21": { "ids": ["clk_d10"], "title": "09/21 (Day 10) - ICA Principles, Values, Co-op vs Joint Stock/Capitalism/Socialism" },
+  "2026-09-22": { "ids": ["clk_d11"], "title": "09/22 (Day 11) - Co-op Abroad: England, Germany (Raiffeisen/Schulze), Denmark" },
+  "2026-09-23": { "ids": ["clk_d12"], "title": "09/23 (Day 12) - Committees: AIRCS, VL Mehta, CRAFICARD, NCDC/NDDB/NHB/NABARD" },
+  "2026-09-24": { "ids": ["clk_d13"], "title": "09/24 (Day 13) - Co-op Education: ICA, NCUI, VAMNICOM, ICM, ACSTI, KICMA" },
+  "2026-09-25": { "ids": ["clk_d14"], "title": "09/25 (Day 14) - PACS, KSCB, KCC, NAFSCOB, COBI" },
+  "2026-09-26": { "ids": ["clk_d15"], "title": "09/26 (Day 15) - Buffer / Catch-up" },
+  "2026-09-27": { "ids": ["clk_d16"], "title": "09/27 (Day 16) - Weekly Mixed Review - Co-op Part 1" },
+  "2026-09-28": { "ids": ["clk_d17"], "title": "09/28 (Day 17) - PCARDB/KSCARB, Long-term Loan Procedure, NFARDB" },
+  "2026-09-29": { "ids": ["clk_d18"], "title": "09/29 (Day 18) - Non-agri Credit, Urban Co-op Banks, Housing Co-op, NFUCB" },
+  "2026-09-30": { "ids": ["clk_d19"], "title": "09/30 (Day 19) - Marketing Societies: Kerafed, Rubco, RAIDCO, CAMPCO" },
+  "2026-10-01": { "ids": ["clk_d20"], "title": "10/01 (Day 20) - Consumer Co-op: Consumerfed, Neethi Stores, NCCF" },
+  "2026-10-02": { "ids": ["clk_d21"], "title": "10/02 (Day 21) - APCOS, Dairy Co-op Unions, KCMMF" },
+  "2026-10-03": { "ids": ["clk_d22"], "title": "10/03 (Day 22) - Buffer / Catch-up" },
+  "2026-10-04": { "ids": ["clk_d23"], "title": "10/04 (Day 23) - Weekly Mixed Review - Co-op Part 2" },
+  "2026-10-05": { "ids": ["clk_d24"], "title": "10/05 (Day 24) - Industrial Co-op (Hantex, Coirfed, Dinesh Beedi) + SC/ST Fed, Matsyafed" },
+  "2026-10-06": { "ids": ["clk_d25"], "title": "10/06 (Day 25) - Risk Fund, Deposit Guarantee, Ombudsman, Welfare Schemes" },
+  "2026-10-07": { "ids": ["clk_d26"], "title": "10/07 (Day 26) - Functional Mgmt: HR, Motivation, Leadership, Decision-making" },
+  "2026-10-08": { "ids": ["clk_d27"], "title": "10/08 (Day 27) - Financial Mgmt, Time/Stress Mgmt, Communication, Co-op Dept Kerala" },
+  "2026-10-09": { "ids": ["clk_d28"], "title": "10/09 (Day 28) - Weekly Mixed Review - Co-op Full" },
+  "2026-10-10": { "ids": ["clk_d29"], "title": "10/10 (Day 29) - Kerala Co-op Societies Act 1969 - Part 1" },
+  "2026-10-11": { "ids": ["clk_d30"], "title": "10/11 (Day 30) - Kerala Co-op Societies Act 1969 - Part 2" },
+  "2026-10-12": { "ids": ["clk_d31"], "title": "10/12 (Day 31) - Kerala Co-op Societies Rules 1969 - Part 1" },
+  "2026-10-13": { "ids": ["clk_d32"], "title": "10/13 (Day 32) - Kerala Co-op Societies Rules 1969 - Part 2" },
+  "2026-10-14": { "ids": ["clk_d33"], "title": "10/14 (Day 33) - Buffer / Catch-up" },
+  "2026-10-15": { "ids": ["clk_d34"], "title": "10/15 (Day 34) - Weekly Mixed Review - Act & Rules" },
+  "2026-10-16": { "ids": ["clk_d35"], "title": "10/16 (Day 35) - English Grammar: Sentence Types, PoS, Agreement, Tenses, Voice, Speech" },
+  "2026-10-17": { "ids": ["clk_d36"], "title": "10/17 (Day 36) - English Vocabulary: Synonyms, Antonyms, One-word Subs, Phrasal Verbs, Idioms" },
+  "2026-10-18": { "ids": ["clk_d37"], "title": "10/18 (Day 37) - GK: UN, Freedom Struggle, Travancore History, Social Reform" },
+  "2026-10-19": { "ids": ["clk_d38"], "title": "10/19 (Day 38) - GK: Constitution, Five-Year Plans, Reorganization, Governance" },
+  "2026-10-20": { "ids": ["clk_d39"], "title": "10/20 (Day 39) - GK: Geography, Crops/Minerals, Art/Sports/Culture, Current Affairs" },
+  "2026-10-21": { "ids": ["clk_d40"], "title": "10/21 (Day 40) - Buffer / Catch-up" },
+  "2026-10-22": { "ids": ["clk_d41"], "title": "10/22 (Day 41) - Weekly Mixed Review - English + GK" },
+  "2026-10-23": { "ids": ["clk_d42"], "title": "10/23 (Day 42) - Banking System in India, CRR/SLR/Repo, NABARD" },
+  "2026-10-24": { "ids": ["clk_d43"], "title": "10/24 (Day 43) - Banker-Customer Relationship, Special Customer Types" },
+  "2026-10-25": { "ids": ["clk_d44"], "title": "10/25 (Day 44) - KYC/AML Guidelines, RBI Regulatory Functions" },
+  "2026-10-26": { "ids": ["clk_d45"], "title": "10/26 (Day 45) - Negotiable Instruments Act: Instruments, Crossing Types" },
+  "2026-10-27": { "ids": ["clk_d46"], "title": "10/27 (Day 46) - Endorsement: Types, Parties, Effects" },
+  "2026-10-28": { "ids": ["clk_d47"], "title": "10/28 (Day 47) - Buffer / Catch-up" },
+  "2026-10-29": { "ids": ["clk_d48"], "title": "10/29 (Day 48) - Weekly Mixed Review - Banking Part 1" },
+  "2026-10-30": { "ids": ["clk_d49"], "title": "10/30 (Day 49) - Payment Systems: RTGS/NEFT/UPI/CBS/Cards" },
+  "2026-10-31": { "ids": ["clk_d50"], "title": "10/31 (Day 50) - Grievance Mechanisms: Ombudsman 2021, COPRA 2019" },
+  "2026-11-01": { "ids": ["clk_d51"], "title": "11/01 (Day 51) - Deposits, SB A/c Types, PMJDY, FD, RD" },
+  "2026-11-02": { "ids": ["clk_d52"], "title": "11/02 (Day 52) - DD, Lockers, Nomination, Lien, Pledge, Hypothecation, Mortgage" },
+  "2026-11-03": { "ids": ["clk_d53"], "title": "11/03 (Day 53) - Priority Sector, KCC, MSME Loans" },
+  "2026-11-04": { "ids": ["clk_d54"], "title": "11/04 (Day 54) - Loan Types, NPA Norms, SMA + Weekly Review Banking Full" },
+  "2026-11-05": { "ids": ["clk_d55"], "title": "11/05 (Day 55) - Definitions, Objects, Branches, Principles, Concepts, Conventions" },
+  "2026-11-06": { "ids": ["clk_d56"], "title": "11/06 (Day 56) - Journal, Ledger, Subsidiary Books, Trial Balance, Errors & Rectification" },
+  "2026-11-07": { "ids": ["clk_d57"], "title": "11/07 (Day 57) - Final Accounts + Adjustments" },
+  "2026-11-08": { "ids": ["clk_d58"], "title": "11/08 (Day 58) - Depreciation, Bills of Exchange, Consignment, Non-trading A/c" },
+  "2026-11-09": { "ids": ["clk_d59"], "title": "11/09 (Day 59) - Co-op Accounting: Day Book, General Ledger, R&D Statement, BRS" },
+  "2026-11-10": { "ids": ["clk_d60"], "title": "11/10 (Day 60) - Buffer / Catch-up" },
+  "2026-11-11": { "ids": ["clk_d61"], "title": "11/11 (Day 61) - Weekly Mixed Review - Accounting Part 1" },
+  "2026-11-12": { "ids": ["clk_d62"], "title": "11/12 (Day 62) - Full-syllabus Mixed Review (All Subjects)" },
+  "2026-11-13": { "ids": ["clk_d63"], "title": "11/13 (Day 63) - Full-syllabus Mixed Review Continued" },
+  "2026-11-14": { "ids": ["clk_d64"], "title": "11/14 (Day 64) - Weak-topic Cleanup Before Light Phase" },
+  "2026-11-15": { "ids": ["clk_d65"], "title": "11/15 (Day 65) - Light Phase: Notes Flip + 10 MCQs (Reasoning)" },
+  "2026-11-16": { "ids": ["clk_d66"], "title": "11/16 (Day 66) - Light Phase: Notes Flip + 10 MCQs (Principles)" },
+  "2026-11-17": { "ids": ["clk_d67"], "title": "11/17 (Day 67) - Light Phase: Notes Flip + 10 MCQs (Act & Rules)" },
+  "2026-11-18": { "ids": ["clk_d68"], "title": "11/18 (Day 68) - Light Phase: Notes Flip + 10 MCQs (Banking)" },
+  "2026-11-19": { "ids": ["clk_d69"], "title": "11/19 (Day 69) - Light Phase: Notes Flip + 10 MCQs (Accounting)" },
+  "2026-11-20": { "ids": ["clk_d70"], "title": "11/20 (Day 70) - Light Phase: Notes Flip + 10 MCQs (Reasoning)" },
+  "2026-11-21": { "ids": ["clk_d71"], "title": "11/21 (Day 71) - Light Phase: Notes Flip + 10 MCQs (Principles)" },
+  "2026-11-22": { "ids": ["clk_d72"], "title": "11/22 (Day 72) - Light Phase: Notes Flip + 10 MCQs (Act & Rules)" },
+  "2026-11-23": { "ids": ["clk_d73"], "title": "11/23 (Day 73) - Light Phase: Notes Flip + 10 MCQs (Banking)" },
+  "2026-11-24": { "ids": ["clk_d74"], "title": "11/24 (Day 74) - Light Phase: Notes Flip + 10 MCQs (Accounting)" },
+  "2026-11-25": { "ids": ["clk_d75"], "title": "11/25 (Day 75) - Light Phase: Notes Flip + 10 MCQs (Reasoning)" },
+  "2026-11-26": { "ids": ["clk_d76"], "title": "11/26 (Day 76) - Light Phase: Notes Flip + 10 MCQs (Principles)" },
+  "2026-11-27": { "ids": ["clk_d77"], "title": "11/27 (Day 77) - Light Phase: Notes Flip + 10 MCQs (Act & Rules)" },
+  "2026-11-28": { "ids": ["clk_d78"], "title": "11/28 (Day 78) - Light Phase: Notes Flip + 10 MCQs (Banking)" },
+  "2026-11-29": { "ids": ["clk_d79"], "title": "11/29 (Day 79) - Light Phase: Notes Flip + 10 MCQs (Accounting)" },
+  "2026-11-30": { "ids": ["clk_d80"], "title": "11/30 (Day 80) - Light Phase: Notes Flip + 10 MCQs (Reasoning)" },
+  "2026-12-01": { "ids": ["clk_d81"], "title": "12/01 (Day 81) - Light Phase: Notes Flip + 10 MCQs (Principles)" },
+  "2026-12-02": { "ids": ["clk_d82"], "title": "12/02 (Day 82) - Light Phase: Notes Flip + 10 MCQs (Act & Rules)" },
+  "2026-12-03": { "ids": ["clk_d83"], "title": "12/03 (Day 83) - Light Phase: Notes Flip + 10 MCQs (Banking)" },
+  "2026-12-04": { "ids": ["clk_d84"], "title": "12/04 (Day 84) - Light Phase: Notes Flip + 10 MCQs (Accounting)" },
+  "2026-12-05": { "ids": ["clk_d85"], "title": "12/05 (Day 85) - Light Phase: Notes Flip + 10 MCQs (Reasoning)" },
+  "2026-12-06": { "ids": ["clk_d86"], "title": "12/06 (Day 86) - Light Phase: Notes Flip + 10 MCQs (Principles)" },
+  "2026-12-07": { "ids": ["clk_d87"], "title": "12/07 (Day 87) - Light Phase: Notes Flip + 10 MCQs (Act & Rules)" },
+  "2026-12-08": { "ids": ["clk_d88"], "title": "12/08 (Day 88) - Light Phase: Notes Flip + 10 MCQs (Banking)" },
+  "2026-12-09": { "ids": ["clk_d89"], "title": "12/09 (Day 89) - Light Phase: Notes Flip + 10 MCQs (Accounting)" },
+  "2026-12-10": { "ids": ["clk_d90"], "title": "12/10 (Day 90) - Light Phase: Notes Flip + 10 MCQs (Mixed)" },
+  "2026-12-11": { "ids": ["clk_d91"], "title": "12/11 (Day 91) - Cost Accounting: Objectives, Advantages, Limitations, Types" },
+  "2026-12-12": { "ids": ["clk_d92"], "title": "12/12 (Day 92) - Elements of Cost, Overheads, Opportunity/Sunk/Differential Cost, MIS" },
+  "2026-12-13": { "ids": ["clk_d93"], "title": "12/13 (Day 93) - Material Control: Bin Card, Stores Ledger, EOQ, Issue Valuation" },
+  "2026-12-14": { "ids": ["clk_d94"], "title": "12/14 (Day 94) - Labour Cost, Wage Payment Systems" },
+  "2026-12-15": { "ids": ["clk_d95"], "title": "12/15 (Day 95) - Buffer / Catch-up" },
+  "2026-12-16": { "ids": ["clk_d96"], "title": "12/16 (Day 96) - Weekly Mixed Review - Cost Accounting" },
+  "2026-12-17": { "ids": ["clk_d97"], "title": "12/17 (Day 97) - Financial Planning: Forecasting, SWOT, Profit Planning, Budgeting" },
+  "2026-12-18": { "ids": ["clk_d98"], "title": "12/18 (Day 98) - Analysis of FS: Trial Balance/R&D, Trading & P&L, Balance Sheet" },
+  "2026-12-19": { "ids": ["clk_d99"], "title": "12/19 (Day 99) - Ratio Analysis, Working Capital, CVP Analysis, Break-even" },
+  "2026-12-20": { "ids": ["clk_d100"], "title": "12/20 (Day 100) - Comparative/Trend/Common-size Statements, Cash & Fund Flow" },
+  "2026-12-21": { "ids": ["clk_d101"], "title": "12/21 (Day 101) - Fraud - Causes, Fraud Triangle, Prevention; Statutory Audit" },
+  "2026-12-22": { "ids": ["clk_d102"], "title": "12/22 (Day 102) - Buffer / Catch-up" },
+  "2026-12-23": { "ids": ["clk_d103"], "title": "12/23 (Day 103) - Weekly Mixed Review - Accounting Full" },
+  "2026-12-24": { "ids": ["clk_d104"], "title": "12/24 (Day 104) - Full Mock 1 (100-mark)" },
+  "2026-12-25": { "ids": ["clk_d105"], "title": "12/25 (Day 105) - Deep Mock Review 1" },
+  "2026-12-26": { "ids": ["clk_d106"], "title": "12/26 (Day 106) - Weak-Area Focus from Mock 1" },
+  "2026-12-27": { "ids": ["clk_d107"], "title": "12/27 (Day 107) - Mixed Practice - K/S/M/T Rotation" },
+  "2026-12-28": { "ids": ["clk_d108"], "title": "12/28 (Day 108) - Full Mock 2 (100-mark)" },
+  "2026-12-29": { "ids": ["clk_d109"], "title": "12/29 (Day 109) - Deep Mock Review 2" },
+  "2026-12-30": { "ids": ["clk_d110"], "title": "12/30 (Day 110) - Weak-Area Focus from Mock 2" },
+  "2026-12-31": { "ids": ["clk_d111"], "title": "12/31 (Day 111) - Mixed Practice - K/S/M/T Rotation" },
+  "2027-01-01": { "ids": ["clk_d112"], "title": "01/01 (Day 112) - Full Mock 3 (100-mark)" },
+  "2027-01-02": { "ids": ["clk_d113"], "title": "01/02 (Day 113) - Deep Mock Review 3" },
+  "2027-01-03": { "ids": ["clk_d114"], "title": "01/03 (Day 114) - Weak-Area Focus from Mock 3" },
+  "2027-01-04": { "ids": ["clk_d115"], "title": "01/04 (Day 115) - Mixed Practice - K/S/M/T Rotation" },
+  "2027-01-05": { "ids": ["clk_d116"], "title": "01/05 (Day 116) - Full Mock 4 (100-mark)" },
+  "2027-01-06": { "ids": ["clk_d117"], "title": "01/06 (Day 117) - Deep Mock Review 4" },
+  "2027-01-07": { "ids": ["clk_d118"], "title": "01/07 (Day 118) - Weak-Area Focus from Mock 4" },
+  "2027-01-08": { "ids": ["clk_d119"], "title": "01/08 (Day 119) - Mixed Practice - K/S/M/T Rotation" },
+  "2027-01-09": { "ids": ["clk_d120"], "title": "01/09 (Day 120) - Full Mock 5 (100-mark)" },
+  "2027-01-10": { "ids": ["clk_d121"], "title": "01/10 (Day 121) - Deep Mock Review 5 + Final Sprint Begins" },
+};
+
+const LABELS_CLERK={
+  clk_d1: "Numbers & Basic Operations, Fractions, Decimals, Percentage",
+  clk_d2: "Profit & Loss, Simple & Compound Interest, Ratio & Proportion",
+  clk_d3: "Time & Distance, Time & Work, Average",
+  clk_d4: "Series, Maths Sign Problems, Position Determination Test",
+  clk_d5: "Analogy, Odd Man Out, Number Review System",
+  clk_d6: "Coding-Decoding, Family Relations, Sense of Direction",
+  clk_d7: "Time & Angles, Clock Reflection, Calendar, Clerical Ability",
+  clk_d8: "Buffer / Catch-up",
+  clk_d9: "Weekly Mixed Review - Reasoning Full",
+  clk_d10: "ICA Principles, Values, Co-op vs Joint Stock/Capitalism/Socialism",
+  clk_d11: "Co-op Abroad: England, Germany (Raiffeisen/Schulze), Denmark",
+  clk_d12: "Committees: AIRCS, VL Mehta, CRAFICARD, NCDC/NDDB/NHB/NABARD",
+  clk_d13: "Co-op Education: ICA, NCUI, VAMNICOM, ICM, ACSTI, KICMA",
+  clk_d14: "PACS, KSCB, KCC, NAFSCOB, COBI",
+  clk_d15: "Buffer / Catch-up",
+  clk_d16: "Weekly Mixed Review - Co-op Part 1",
+  clk_d17: "PCARDB/KSCARB, Long-term Loan Procedure, NFARDB",
+  clk_d18: "Non-agri Credit, Urban Co-op Banks, Housing Co-op, NFUCB",
+  clk_d19: "Marketing Societies: Kerafed, Rubco, RAIDCO, CAMPCO",
+  clk_d20: "Consumer Co-op: Consumerfed, Neethi Stores, NCCF",
+  clk_d21: "APCOS, Dairy Co-op Unions, KCMMF",
+  clk_d22: "Buffer / Catch-up",
+  clk_d23: "Weekly Mixed Review - Co-op Part 2",
+  clk_d24: "Industrial Co-op (Hantex, Coirfed, Dinesh Beedi) + SC/ST Fed, Matsyafed",
+  clk_d25: "Risk Fund, Deposit Guarantee, Ombudsman, Welfare Schemes",
+  clk_d26: "Functional Mgmt: HR, Motivation, Leadership, Decision-making",
+  clk_d27: "Financial Mgmt, Time/Stress Mgmt, Communication, Co-op Dept Kerala",
+  clk_d28: "Weekly Mixed Review - Co-op Full",
+  clk_d29: "Kerala Co-op Societies Act 1969 - Part 1",
+  clk_d30: "Kerala Co-op Societies Act 1969 - Part 2",
+  clk_d31: "Kerala Co-op Societies Rules 1969 - Part 1",
+  clk_d32: "Kerala Co-op Societies Rules 1969 - Part 2",
+  clk_d33: "Buffer / Catch-up",
+  clk_d34: "Weekly Mixed Review - Act & Rules",
+  clk_d35: "English Grammar: Sentence Types, PoS, Agreement, Tenses, Voice, Speech",
+  clk_d36: "English Vocabulary: Synonyms, Antonyms, One-word Subs, Phrasal Verbs, Idioms",
+  clk_d37: "GK: UN, Freedom Struggle, Travancore History, Social Reform",
+  clk_d38: "GK: Constitution, Five-Year Plans, Reorganization, Governance",
+  clk_d39: "GK: Geography, Crops/Minerals, Art/Sports/Culture, Current Affairs",
+  clk_d40: "Buffer / Catch-up",
+  clk_d41: "Weekly Mixed Review - English + GK",
+  clk_d42: "Banking System in India, CRR/SLR/Repo, NABARD",
+  clk_d43: "Banker-Customer Relationship, Special Customer Types",
+  clk_d44: "KYC/AML Guidelines, RBI Regulatory Functions",
+  clk_d45: "Negotiable Instruments Act: Instruments, Crossing Types",
+  clk_d46: "Endorsement: Types, Parties, Effects",
+  clk_d47: "Buffer / Catch-up",
+  clk_d48: "Weekly Mixed Review - Banking Part 1",
+  clk_d49: "Payment Systems: RTGS/NEFT/UPI/CBS/Cards",
+  clk_d50: "Grievance Mechanisms: Ombudsman 2021, COPRA 2019",
+  clk_d51: "Deposits, SB A/c Types, PMJDY, FD, RD",
+  clk_d52: "DD, Lockers, Nomination, Lien, Pledge, Hypothecation, Mortgage",
+  clk_d53: "Priority Sector, KCC, MSME Loans",
+  clk_d54: "Loan Types, NPA Norms, SMA + Weekly Review Banking Full",
+  clk_d55: "Definitions, Objects, Branches, Principles, Concepts, Conventions",
+  clk_d56: "Journal, Ledger, Subsidiary Books, Trial Balance, Errors & Rectification",
+  clk_d57: "Final Accounts + Adjustments",
+  clk_d58: "Depreciation, Bills of Exchange, Consignment, Non-trading A/c",
+  clk_d59: "Co-op Accounting: Day Book, General Ledger, R&D Statement, BRS",
+  clk_d60: "Buffer / Catch-up",
+  clk_d61: "Weekly Mixed Review - Accounting Part 1",
+  clk_d62: "Full-syllabus Mixed Review (All Subjects)",
+  clk_d63: "Full-syllabus Mixed Review Continued",
+  clk_d64: "Weak-topic Cleanup Before Light Phase",
+  clk_d65: "Light Phase: Notes Flip + 10 MCQs (Reasoning)",
+  clk_d66: "Light Phase: Notes Flip + 10 MCQs (Principles)",
+  clk_d67: "Light Phase: Notes Flip + 10 MCQs (Act & Rules)",
+  clk_d68: "Light Phase: Notes Flip + 10 MCQs (Banking)",
+  clk_d69: "Light Phase: Notes Flip + 10 MCQs (Accounting)",
+  clk_d70: "Light Phase: Notes Flip + 10 MCQs (Reasoning)",
+  clk_d71: "Light Phase: Notes Flip + 10 MCQs (Principles)",
+  clk_d72: "Light Phase: Notes Flip + 10 MCQs (Act & Rules)",
+  clk_d73: "Light Phase: Notes Flip + 10 MCQs (Banking)",
+  clk_d74: "Light Phase: Notes Flip + 10 MCQs (Accounting)",
+  clk_d75: "Light Phase: Notes Flip + 10 MCQs (Reasoning)",
+  clk_d76: "Light Phase: Notes Flip + 10 MCQs (Principles)",
+  clk_d77: "Light Phase: Notes Flip + 10 MCQs (Act & Rules)",
+  clk_d78: "Light Phase: Notes Flip + 10 MCQs (Banking)",
+  clk_d79: "Light Phase: Notes Flip + 10 MCQs (Accounting)",
+  clk_d80: "Light Phase: Notes Flip + 10 MCQs (Reasoning)",
+  clk_d81: "Light Phase: Notes Flip + 10 MCQs (Principles)",
+  clk_d82: "Light Phase: Notes Flip + 10 MCQs (Act & Rules)",
+  clk_d83: "Light Phase: Notes Flip + 10 MCQs (Banking)",
+  clk_d84: "Light Phase: Notes Flip + 10 MCQs (Accounting)",
+  clk_d85: "Light Phase: Notes Flip + 10 MCQs (Reasoning)",
+  clk_d86: "Light Phase: Notes Flip + 10 MCQs (Principles)",
+  clk_d87: "Light Phase: Notes Flip + 10 MCQs (Act & Rules)",
+  clk_d88: "Light Phase: Notes Flip + 10 MCQs (Banking)",
+  clk_d89: "Light Phase: Notes Flip + 10 MCQs (Accounting)",
+  clk_d90: "Light Phase: Notes Flip + 10 MCQs (Mixed)",
+  clk_d91: "Cost Accounting: Objectives, Advantages, Limitations, Types",
+  clk_d92: "Elements of Cost, Overheads, Opportunity/Sunk/Differential Cost, MIS",
+  clk_d93: "Material Control: Bin Card, Stores Ledger, EOQ, Issue Valuation",
+  clk_d94: "Labour Cost, Wage Payment Systems",
+  clk_d95: "Buffer / Catch-up",
+  clk_d96: "Weekly Mixed Review - Cost Accounting",
+  clk_d97: "Financial Planning: Forecasting, SWOT, Profit Planning, Budgeting",
+  clk_d98: "Analysis of FS: Trial Balance/R&D, Trading & P&L, Balance Sheet",
+  clk_d99: "Ratio Analysis, Working Capital, CVP Analysis, Break-even",
+  clk_d100: "Comparative/Trend/Common-size Statements, Cash & Fund Flow",
+  clk_d101: "Fraud - Causes, Fraud Triangle, Prevention; Statutory Audit",
+  clk_d102: "Buffer / Catch-up",
+  clk_d103: "Weekly Mixed Review - Accounting Full",
+  clk_d104: "Full Mock 1 (100-mark)",
+  clk_d105: "Deep Mock Review 1",
+  clk_d106: "Weak-Area Focus from Mock 1",
+  clk_d107: "Mixed Practice - K/S/M/T Rotation",
+  clk_d108: "Full Mock 2 (100-mark)",
+  clk_d109: "Deep Mock Review 2",
+  clk_d110: "Weak-Area Focus from Mock 2",
+  clk_d111: "Mixed Practice - K/S/M/T Rotation",
+  clk_d112: "Full Mock 3 (100-mark)",
+  clk_d113: "Deep Mock Review 3",
+  clk_d114: "Weak-Area Focus from Mock 3",
+  clk_d115: "Mixed Practice - K/S/M/T Rotation",
+  clk_d116: "Full Mock 4 (100-mark)",
+  clk_d117: "Deep Mock Review 4",
+  clk_d118: "Weak-Area Focus from Mock 4",
+  clk_d119: "Mixed Practice - K/S/M/T Rotation",
+  clk_d120: "Full Mock 5 (100-mark)",
+  clk_d121: "Deep Mock Review 5 + Final Sprint Begins",
+};
+
+const SUBJS_CLERK={
+  cat_reasoning: { ids: ["clk_d1","clk_d2","clk_d3","clk_d4","clk_d5","clk_d6","clk_d7","clk_d9","clk_d65","clk_d70","clk_d75","clk_d80","clk_d85"], c: "var(--reasoning)", n: "Reasoning (III)", m: "10 Marks" },
+  cat_principles: { ids: ["clk_d10","clk_d11","clk_d12","clk_d13","clk_d14","clk_d16","clk_d17","clk_d18","clk_d19","clk_d20","clk_d21","clk_d23","clk_d24","clk_d25","clk_d26","clk_d27","clk_d28","clk_d66","clk_d71","clk_d76","clk_d81","clk_d86"], c: "var(--principles)", n: "Principles of Co-op (IV)", m: "15 Marks" },
+  cat_act: { ids: ["clk_d29","clk_d30","clk_d31","clk_d32","clk_d34","clk_d67","clk_d72","clk_d77","clk_d82","clk_d87"], c: "var(--act)", n: "Act & Rules (V)", m: "15 Marks" },
+  cat_english: { ids: ["clk_d35","clk_d36","clk_d41"], c: "var(--english)", n: "General English (I)", m: "10 Marks" },
+  cat_gk: { ids: ["clk_d37","clk_d38","clk_d39"], c: "var(--gk)", n: "General Knowledge (II)", m: "10 Marks" },
+  cat_banking: { ids: ["clk_d42","clk_d43","clk_d44","clk_d45","clk_d46","clk_d48","clk_d49","clk_d50","clk_d51","clk_d52","clk_d53","clk_d54","clk_d68","clk_d73","clk_d78","clk_d83","clk_d88"], c: "var(--banking)", n: "Banking (VI)", m: "20 Marks" },
+  cat_accounting: { ids: ["clk_d55","clk_d56","clk_d57","clk_d58","clk_d59","clk_d61","clk_d69","clk_d74","clk_d79","clk_d84","clk_d89","clk_d91","clk_d92","clk_d93","clk_d94","clk_d96","clk_d97","clk_d98","clk_d99","clk_d100","clk_d101","clk_d103"], c: "var(--accounting)", n: "Accounting (VII)", m: "20 Marks" },
+};
+
+const TOPIC_META_CLERK={
+  clk_d1:{w:1},clk_d2:{w:1},clk_d3:{w:1},clk_d4:{w:1},clk_d5:{w:1},clk_d6:{w:1},clk_d7:{w:1},clk_d8:{w:1},clk_d9:{w:1},
+  clk_d10:{w:1},clk_d11:{w:1},clk_d12:{w:1},clk_d13:{w:1},clk_d14:{w:1},clk_d15:{w:1},clk_d16:{w:1},clk_d17:{w:1},
+  clk_d18:{w:1},clk_d19:{w:1},clk_d20:{w:1},clk_d21:{w:1},clk_d22:{w:1},clk_d23:{w:1},clk_d24:{w:1},clk_d25:{w:1},
+  clk_d26:{w:1},clk_d27:{w:1},clk_d28:{w:1},clk_d29:{w:1},clk_d30:{w:1},clk_d31:{w:1},clk_d32:{w:1},clk_d33:{w:1},
+  clk_d34:{w:1},clk_d35:{w:1},clk_d36:{w:1},clk_d37:{w:1},clk_d38:{w:1},clk_d39:{w:1},clk_d40:{w:1},clk_d41:{w:1},
+  clk_d42:{w:1},clk_d43:{w:1},clk_d44:{w:1},clk_d45:{w:1},clk_d46:{w:1},clk_d47:{w:1},clk_d48:{w:1},clk_d49:{w:1},
+  clk_d50:{w:1},clk_d51:{w:1},clk_d52:{w:1},clk_d53:{w:1},clk_d54:{w:1},clk_d55:{w:1},clk_d56:{w:1},clk_d57:{w:1},
+  clk_d58:{w:1},clk_d59:{w:1},clk_d60:{w:1},clk_d61:{w:1},clk_d62:{w:1},clk_d63:{w:1},clk_d64:{w:1},clk_d65:{w:1},
+  clk_d66:{w:1},clk_d67:{w:1},clk_d68:{w:1},clk_d69:{w:1},clk_d70:{w:1},clk_d71:{w:1},clk_d72:{w:1},clk_d73:{w:1},
+  clk_d74:{w:1},clk_d75:{w:1},clk_d76:{w:1},clk_d77:{w:1},clk_d78:{w:1},clk_d79:{w:1},clk_d80:{w:1},clk_d81:{w:1},
+  clk_d82:{w:1},clk_d83:{w:1},clk_d84:{w:1},clk_d85:{w:1},clk_d86:{w:1},clk_d87:{w:1},clk_d88:{w:1},clk_d89:{w:1},
+  clk_d90:{w:1},clk_d91:{w:1},clk_d92:{w:1},clk_d93:{w:1},clk_d94:{w:1},clk_d95:{w:1},clk_d96:{w:1},clk_d97:{w:1},
+  clk_d98:{w:1},clk_d99:{w:1},clk_d100:{w:1},clk_d101:{w:1},clk_d102:{w:1},clk_d103:{w:1},clk_d104:{w:1},clk_d105:{w:1},
+  clk_d106:{w:1},clk_d107:{w:1},clk_d108:{w:1},clk_d109:{w:1},clk_d110:{w:1},clk_d111:{w:1},clk_d112:{w:1},
+  clk_d113:{w:1},clk_d114:{w:1},clk_d115:{w:1},clk_d116:{w:1},clk_d117:{w:1},clk_d118:{w:1},clk_d119:{w:1},
+  clk_d120:{w:1},clk_d121:{w:1}
+};
+
+COURSE_DATA['CLERK26']={sch:SCH_CLERK,labels:{...LABELS, ...LABELS_CLERK},subjs:SUBJS,dynamic:false};
+
+
 const ACCA_30_DAYS = [
   // Days 1-2
   {ids: ['fr1', 'fr2a'], title: 'Conceptual Framework + IFRS 18 Presentation'}, // 1
@@ -1752,11 +2034,17 @@ function backfillSR(){
 
 function applyData(data){
   remoteData={...data};
-  document.querySelectorAll('.main-sl input[type=checkbox]').forEach(b=>{b.checked=!!data[b.id];});
-  document.querySelectorAll('.ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  document.querySelectorAll('.pending-ds').forEach(b=>{b.checked=!!data[b.getAttribute('data-id')];});
-  const dm=$('daily_mock');if(dm)dm.checked=!!data['mock_'+ts()];
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{const b=document.getElementById(id);if(b)b.checked=!!data['misc_'+id];});
+  if (typeof syllabusBoxes !== 'undefined' && syllabusBoxes.length) {
+    syllabusBoxes.forEach(b=>{
+      const isChecked = !!data[b.id];
+      if (b.checked !== isChecked) b.checked = isChecked;
+    });
+  }
+  const dm=$('daily_mock');if(dm){const c=!!data['mock_'+ts()]; if(dm.checked!==c) dm.checked=c;}
+  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b){const c=!!data['misc_'+id]; if(b.checked!==c) b.checked=c;}
+  });
   backfillSR();
   updateAll();renderPending();renderRevisions();
   if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26' || (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26_P2') makeCard();
@@ -1860,8 +2148,8 @@ function makeCard(){
   const lateStart = getLateStartDate();
   if (dc) dc.style.display = '';
 
-  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2') {
-    // Phase 1 and 2: show daily schedule card
+  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26') {
+    // ACCA Phase 1/2 and Clerk: show daily schedule card
     if(todaySec) todaySec.style.display = '';
     if(pendingSec) pendingSec.style.display = '';
     if(pendingCard) pendingCard.style.display = '';
@@ -1892,7 +2180,8 @@ function makeCard(){
     CSEB11:{text: lateStart ? `CSEB · New Joinee · Started ${lateStart}` : 'CSEB · Cat 11 · Exam TBA', date:new Date(2026,6,11)},
     CAT09: {text:'Asst Secretary · Cat 09 · Exam TBA',date:new Date(2026,7,16)},
     ACCA26: {text: lateStart ? `Sep 10 FR Exam · Started ${lateStart}` : 'Sep 10 FR Exam', date:new Date(Date.UTC(2026, 8, 10))},
-    ACCA26_P2: {text: 'Dec 10 FR Exam', date:new Date(Date.UTC(2026, 11, 10))}
+    ACCA26_P2: {text: 'Dec 10 FR Exam', date:new Date(Date.UTC(2026, 11, 10))},
+    CLERK26: {text: 'Junior Clerk · Exam TBA', date:null}
   };
   const meta=examMeta[activeCourse]||examMeta.CSEB11;
   const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
@@ -2520,15 +2809,15 @@ function renderLeaderboard(users){
   const wrap=$('lb-wrap');
   if(!wrap)return;
   const activeCourse = getLBActiveCourse();
-  const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2';
-  if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB11 and ACCA courses.</div>';return;}
+  const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26';
+  if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB, Clerk, and ACCA courses.</div>';return;}
   const titleEl = $('lb-title');
   const subEl = $('lb-sub');
   if(titleEl) {
-    titleEl.textContent = activeCourse === 'ACCA26_P2' ? '🏆 Phase 2 Leaderboard' : activeCourse === 'ACCA26' ? '🏆 ACCA FR Leaderboard' : '🏆 CSEB11 Leaderboard';
+    titleEl.textContent = activeCourse === 'ACCA26_P2' ? '🏆 Phase 2 Leaderboard' : activeCourse === 'ACCA26' ? '🏆 ACCA FR Leaderboard' : activeCourse === 'CLERK26' ? '🏆 CSEB Clerk Leaderboard' : '🏆 CSEB11 Leaderboard';
   }
   if(subEl) {
-    subEl.textContent = activeCourse === 'ACCA26_P2' ? '90-Day Plan · Live rankings' : activeCourse === 'ACCA26' ? 'ACCA FR · Live rankings' : 'CSEB · Live rankings';
+    subEl.textContent = activeCourse === 'ACCA26_P2' ? '90-Day Plan · Live rankings' : activeCourse === 'ACCA26' ? 'ACCA FR · Live rankings' : activeCourse === 'CLERK26' ? 'Junior Clerk · Live rankings' : 'CSEB · Live rankings';
   }
   if(!users||!users.length){wrap.innerHTML='<div class="lb-empty">No rankings yet — be the first!</div>';return;}
 
@@ -2565,9 +2854,14 @@ function renderLeaderboard(users){
       <div class="lb-pod-topics">${u.topics} topics</div>
     </div>`).join('')}</div>`;
 
-  // full list
-  const listHtml=`<div class="lb-list">${sorted.map((u,i)=>{
-    const rank=i+1;
+  // full list (limit to top 50 for performance, plus current user if not in top 50)
+  let renderList = sorted.slice(0, 50);
+  if (myRank > 50 && me) {
+    renderList.push(me);
+  }
+  
+  const listHtml=`<div class="lb-list">${renderList.map((u)=>{
+    const rank=sorted.findIndex(x=>x.uid===u.uid)+1;
     const isMe=u.uid===currentUid;
     const status=lbStatus(rank,total);
     return `<div class="lb-row${isMe?' lb-me':''}">
@@ -2590,7 +2884,7 @@ function renderLeaderboard(users){
 function updateLBData(){
   if(!currentUid || !remoteData || !remoteData._loaded) return;
   const activeCourse = getLBActiveCourse();
-  if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2') return;
+  if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2' && activeCourse !== 'CLERK26') return;
   const {subjs}=getCourseData();
   const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
   const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
@@ -2617,7 +2911,7 @@ function startLBListener() {
     if (currentLBTrack === activeCourse) return;
     if (lbUnsub) { lbUnsub(); lbUnsub = null; }
     currentLBTrack = activeCourse;
-    if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2') {
+    if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2' && activeCourse !== 'CLERK26') {
       renderLeaderboard([]);
       return;
     }
@@ -2722,6 +3016,7 @@ if (addBtn) {
     const inp=$('pd-course-input');
     let code=(inp.value||'').trim().toUpperCase();
     if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
+    if (code === 'CSEB11' && ts() >= '2026-09-11') code = 'CLERK26';
     const err=$('pd-course-err');
     err.textContent='';
     if(!code){err.textContent='Enter a code.';return;}
@@ -2731,6 +3026,9 @@ if (addBtn) {
     let updated=[...existing,code];
     if (code === 'ACCA26_P2' && updated.includes('ACCA26')) {
       updated = updated.filter(c => c !== 'ACCA26');
+    }
+    if (code === 'CLERK26' && updated.includes('CSEB11')) {
+      updated = updated.filter(c => c !== 'CSEB11');
     }
     remoteData.courses=updated;remoteData.activeCourse=code;
     inp.value='';renderCourses(remoteData);
@@ -2840,10 +3138,34 @@ async function openStats() {
   const srData = remoteData._sr || {};
   const activeLabels = cd.labels || {};
   let revDue = 0;
-  Object.entries(srData).forEach(([id, s]) => {
-    if (s && s.next && s.next <= ts() && !!remoteData[id] && activeLabels[id]) revDue++;
-  });
   
+  // 14-Day Rolling Average & Projected Finish
+  const todayTS = ts();
+  const cutoffDate = new Date(todayTS);
+  cutoffDate.setDate(cutoffDate.getDate() - 14);
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+
+  let windowComp = 0;
+  let windowFirstDate = null;
+  let hasAnyModern = false;
+
+  Object.entries(srData).forEach(([id, s]) => {
+    // 1. Revision Due Count
+    if (s && s.next && s.next <= ts() && !!remoteData[id] && activeLabels[id]) revDue++;
+    
+    // 2. 14-Day Rolling Average calculations
+    if (!validTopicIds.has(id)) return;
+    if (s && s.completed && s.completed.startsWith('20')) {
+      hasAnyModern = true;
+      if (s.completed >= cutoffStr) {
+        windowComp++;
+        if (!windowFirstDate || s.completed < windowFirstDate) {
+          windowFirstDate = s.completed;
+        }
+      }
+    }
+  });
+
   // Hours Estimate
   const hours = Math.round(comp * 1.25);
   
@@ -2878,30 +3200,6 @@ async function openStats() {
     daysBack--;
     checkDateStr = addDaysStr(ts(), daysBack);
   }
-  
-  // 14-Day Rolling Average & Projected Finish
-  const todayTS = ts();
-  const todayDate = new Date(todayTS);
-  const cutoffDate = new Date(todayTS);
-  cutoffDate.setDate(cutoffDate.getDate() - 14);
-  const cutoffStr = cutoffDate.toISOString().split('T')[0];
-
-  let windowComp = 0;
-  let windowFirstDate = null;
-  let hasAnyModern = false;
-
-  Object.entries(srData).forEach(([id, s]) => {
-    if (!validTopicIds.has(id)) return;
-    if (s && s.completed && s.completed.startsWith('20')) {
-      hasAnyModern = true;
-      if (s.completed >= cutoffStr) {
-        windowComp++;
-        if (!windowFirstDate || s.completed < windowFirstDate) {
-          windowFirstDate = s.completed;
-        }
-      }
-    }
-  });
 
   let trueAvg = 0;
   avg = "0.0/d";
@@ -3299,54 +3597,62 @@ function initApp(user){
       showWhatsNew();
       renderNotifToggle();
       checkAndNotify();
-      checkAutoPhaseTransition();
+      handleAutoTransitions();
       window.initialLoadComplete = true;
     }
     syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
 
-// ── AUTO PHASE-2 TRANSITION ──────────────────────────────────────────────
-// ACCA26 users automatically move to Phase 2 on or after Sep 11 2026
-async function checkAutoPhaseTransition(){
-  return; // Auto-transition disabled by user request to prevent data loss
+// ── AUTO TRANSITIONS ──────────────────────────────────────────────────────
+// Transitions for courses that shift into new phases or schedules automatically
+async function handleAutoTransitions(){
   if(!currentUid||!remoteData) return;
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
-  if(activeCourse !== 'ACCA26') return;
-  if(ts() < '2026-09-11') return;
-  
-  const p1History = {
-    _activity: remoteData._activity || {},
-    _loggedSessions: (remoteData._loggedSessions || []).filter(s => s.course === 'ACCA26'),
-    _timeAccuracy: remoteData._timeAccuracy || {},
-    completedTopics: []
-  };
-
-  const { subjs } = getCourseData();
   const updates = {};
-  
-  Object.values(subjs || {}).forEach(s => {
-    if (s && s.ids) {
-      s.ids.forEach(id => {
-        if (remoteData[id]) {
-          p1History.completedTopics.push(id);
-          updates[id] = deleteField();
-        }
-      });
-    }
-  });
+  let transitioned = false;
 
-  updates.p1_history = p1History;
-  updates._sr = {};
-  updates._activity = {};
-  updates._loggedSessions = (remoteData._loggedSessions || []).filter(s => s.course !== 'ACCA26');
+  // 1. ACCA Phase 2 Transition (Sep 11 2026 onwards)
+  if(activeCourse === 'ACCA26' && ts() >= '2026-09-11') {
+    const p1History = {
+      _activity: remoteData._activity || {},
+      _loggedSessions: (remoteData._loggedSessions || []).filter(s => s.course === 'ACCA26'),
+      _timeAccuracy: remoteData._timeAccuracy || {},
+      completedTopics: []
+    };
+    const { subjs } = getCourseData();
+    Object.values(subjs || {}).forEach(s => {
+      if (s && s.ids) {
+        s.ids.forEach(id => {
+          if (remoteData[id]) {
+            p1History.completedTopics.push(id);
+            updates[id] = deleteField();
+          }
+          if (remoteData._sr && remoteData._sr[id]) {
+            updates[`_sr.${id}`] = deleteField();
+          }
+        });
+      }
+    });
+    updates.p1_history = p1History;
+    updates._loggedSessions = (remoteData._loggedSessions || []).filter(s => s.course !== 'ACCA26');
+    updates.activeCourse = 'ACCA26_P2';
+    updates.courses = [...new Set([...(remoteData.courses || [activeCourse]).filter(c => c !== 'ACCA26'), 'ACCA26_P2'])];
+    transitioned = true;
+    console.log('[Transition] Auto-transitioned ACCA26 → ACCA26_P2 and archived data');
+  }
   
-  const courses = remoteData.courses || [activeCourse];
-  updates.activeCourse = 'ACCA26_P2';
-  updates.courses = [...new Set([...courses.filter(c => c !== 'ACCA26'), 'ACCA26_P2'])];
+  // 2. CSEB Clerk Transition (Sep 11 2026 onwards)
+  if(activeCourse === 'CSEB11' && ts() >= '2026-09-11') {
+    updates.activeCourse = 'CLERK26';
+    updates.courses = [...new Set([...(remoteData.courses || [activeCourse]).filter(c => c !== 'CSEB11'), 'CLERK26'])];
+    transitioned = true;
+    console.log('[Transition] Auto-transitioned CSEB11 → CLERK26');
+  }
 
-  await updateDoc(doc(db, 'users', currentUid), updates).catch(e=>console.warn('[Phase2] transition failed:', e));
-  console.log('[Phase2] Auto-transitioned ACCA26 → ACCA26_P2 and archived data');
+  if (transitioned) {
+    await updateDoc(doc(db, 'users', currentUid), updates).catch(e=>console.warn('[Transition] failed:', e));
+  }
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
@@ -4731,10 +5037,23 @@ function generateStudyInsights() {
   const logged = remoteData._loggedSessions || [];
   const srData = remoteData._sr || {};
 
-  // 1. Burnout / Overstudy Detection
+  // 1 & 2. Burnout Detection and Topic Efficiency
   const todayDate = ts();
   let todaysSessions = 0;
-  logged.forEach(s => { if (s.date && s.date.startsWith(todayDate)) todaysSessions++; });
+  const topicEff = {};
+
+  logged.forEach(session => {
+    // Check burnout
+    if (session.date && session.date.startsWith(todayDate)) todaysSessions++;
+    
+    // Check topic efficiency
+    if (session._topicIds) {
+      session._topicIds.forEach(id => {
+        topicEff[id] = (topicEff[id] || 0) + 1;
+      });
+    }
+  });
+
   if (todaysSessions >= 6) {
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
@@ -4742,16 +5061,6 @@ function generateStudyInsights() {
       </div>
     `);
   }
-
-  // 2. Topic Efficiency (High effort, still pending)
-  const topicEff = {};
-  logged.forEach(session => {
-    if (session._topicIds) {
-      session._topicIds.forEach(id => {
-        topicEff[id] = (topicEff[id] || 0) + 1;
-      });
-    }
-  });
 
   let stuckTopic = null;
   let stuckCount = 0;
