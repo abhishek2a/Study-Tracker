@@ -1009,7 +1009,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.4.2';
+const APP_VERSION = '1.4.6';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk'};
 const DEFAULT_COURSE='CSEB11';
@@ -2040,6 +2040,14 @@ function applyData(data){
       if (b.checked !== isChecked) b.checked = isChecked;
     });
   }
+  document.querySelectorAll('.ds').forEach(b=>{
+    const c = !!data[b.getAttribute('data-id')];
+    if (b.checked !== c) b.checked = c;
+  });
+  document.querySelectorAll('.pending-ds').forEach(b=>{
+    const c = !!data[b.getAttribute('data-id')];
+    if (b.checked !== c) b.checked = c;
+  });
   const dm=$('daily_mock');if(dm){const c=!!data['mock_'+ts()]; if(dm.checked!==c) dm.checked=c;}
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
@@ -2047,7 +2055,7 @@ function applyData(data){
   });
   backfillSR();
   updateAll();renderPending();renderRevisions();
-  if ((remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26' || (remoteData.activeCourse || DEFAULT_COURSE) === 'ACCA26_P2') makeCard();
+  makeCard();
   renderCourses(remoteData);renderExamStrip();updatePageTitle();
 }
 
@@ -2134,6 +2142,12 @@ function makeCard(){
   const {sch,labels}=getCourseData();
   const dc=$('daycard');
   const activeCourse=remoteData.activeCourse||DEFAULT_COURSE;
+  
+  const cacheKey = activeCourse + '_' + ts();
+  if (window._lastDayCardCacheKey === cacheKey && window._lastDayCardHtml) {
+    return; // Already rendered for today, applyData handles checkbox state sync
+  }
+  window._lastDayCardCacheKey = cacheKey;
   
   // Use the synchronized string components to generate a uniform date object
   const [istYear, istMonth, istDay] = ts().split('-').map(Number);
@@ -2308,6 +2322,7 @@ function makeCard(){
   }
   
   const headerTitle = activeCourse.startsWith('ACCA26') ? "📌 30-Day Study Strategy" : "📌 Today's Topics";
+  window._lastDayCardHtml = true;
   dc.innerHTML=`<div class="day-card ${sched.p}">
     <div class="day-top"><h2>${headerTitle}</h2>${dateBadge}</div>${inner}${routineHtml}</div>`;
   dc.querySelectorAll('.ds').forEach(b=>{
@@ -2408,13 +2423,28 @@ function updateAll(){
   requestAnimationFrame(() => {
     updateAllTicking = false;
     const {subjs}=getCourseData();
-    const boxes=syllabusBoxes;
-    if(!boxes.length)return;
-    const total=boxes.length,done=boxes.filter(b=>!!remoteData[b.id]).length,pct=total?Math.round(done/total*100):0;
+    let statsSubjs = subjs;
+    let total = 0;
+    let done = 0;
+    
+    if (remoteData.activeCourse === 'CLERK26') {
+      statsSubjs = SUBJS_CLERK;
+      Object.values(statsSubjs).forEach(v => {
+        total += v.ids.length;
+        done += v.ids.filter(id => !!remoteData[id]).length;
+      });
+    } else {
+      const boxes=syllabusBoxes;
+      if(!boxes.length)return;
+      total = boxes.length;
+      done = boxes.filter(b=>!!remoteData[b.id]).length;
+    }
+    
+    const pct = total ? Math.round(done/total*100) : 0;
     if(domGfill)domGfill.style.width=pct+'%';
     if(domPct)domPct.textContent=pct+'%';
     if(domSpills){
-        const spillEntries = Object.entries(subjs);
+        const spillEntries = Object.entries(statsSubjs);
         // Only rebuild innerHTML if children count doesn't match (first render or course switch)
         if (domSpills.children.length !== spillEntries.length) {
           const spillsHtml = spillEntries.map(([k,v])=>{
@@ -2886,8 +2916,9 @@ function updateLBData(){
   const activeCourse = getLBActiveCourse();
   if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2' && activeCourse !== 'CLERK26') return;
   const {subjs}=getCourseData();
-  const done=Object.values(subjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
-  const total=Object.values(subjs).reduce((acc,v)=>acc+v.ids.length,0);
+  const statsSubjs = activeCourse === 'CLERK26' ? SUBJS_CLERK : subjs;
+  const done=Object.values(statsSubjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
+  const total=Object.values(statsSubjs).reduce((acc,v)=>acc+v.ids.length,0);
   const pct=total?Math.round(done/total*100):0;
   // silently update leaderboard
   setDoc(doc(db,'leaderboard',currentUid),{
@@ -3125,7 +3156,11 @@ async function openStats() {
   
   let total = 0, comp = 0, pend = 0, avg = 0;
   const validTopicIds = new Set();
-  Object.values(cd.subjs).forEach(subj => {
+  
+  // For CLERK26, the progress stats should track the daily plan (SUBJS_CLERK) since the syllabus (SUBJS) is decoupled
+  const statsSubjs = activeCourse === 'CLERK26' ? SUBJS_CLERK : cd.subjs;
+  
+  Object.values(statsSubjs).forEach(subj => {
     if (!subj.ids) return;
     subj.ids.forEach(id => {
       validTopicIds.add(id);
@@ -3141,6 +3176,7 @@ async function openStats() {
   
   // 14-Day Rolling Average & Projected Finish
   const todayTS = ts();
+  const todayDate = new Date(todayTS);
   const cutoffDate = new Date(todayTS);
   cutoffDate.setDate(cutoffDate.getDate() - 14);
   const cutoffStr = cutoffDate.toISOString().split('T')[0];
