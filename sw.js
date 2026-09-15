@@ -1,7 +1,6 @@
 
-const CACHE = 'study-tracker-v1.4.8-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v1.5.4-offline-bandwidth-opt';
 const PRECACHE = [
-  '/', 
   './index.html', 
   './manifest.json', 
   './logo.svg',
@@ -10,9 +9,8 @@ const PRECACHE = [
 ];
 
 self.addEventListener('install', e => {
-  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(PRECACHE))
+    caches.open(CACHE).then(c => Promise.allSettled(PRECACHE.map(req => c.add(req))))
   );
 });
 
@@ -34,15 +32,15 @@ self.addEventListener('fetch', e => {
   
   // Force iOS Safari WebKit to bypass aggressive HTTP disk cache on navigation & core app files when online
   let fetchPromise;
-  if (e.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.json')) {
-    fetchPromise = fetch(e.request.url, { cache: 'no-cache', credentials: 'omit' });
+  if (e.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.json')) {
+    fetchPromise = fetch(e.request.url, { cache: 'no-cache' });
   } else {
     fetchPromise = fetch(e.request);
   }
 
   e.respondWith(
     fetchPromise.then(res => {
-      if (res && res.status === 200 && (res.type === 'basic' || res.type === 'default' || res.type === 'cors')) {
+      if (res && res.status === 200 && (res.type === 'basic' || res.type === 'cors')) {
         const resClone = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, resClone)).catch(()=>{});
       }

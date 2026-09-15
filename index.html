@@ -185,35 +185,12 @@ body {
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
 .revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
-/* Leaderboard */
-.lb-podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-@media(max-width:600px){.lb-podium{gap:8px}}
-.lb-pod{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;text-align:center;position:relative;box-shadow:var(--shadow)}
-.lb-pod.gold{border-color:rgba(255,200,0,.3);background:rgba(255,200,0,.04)}
-.lb-pod.silver{border-color:rgba(180,180,200,.3);background:rgba(180,180,200,.04)}
-.lb-pod.bronze{border-color:rgba(200,120,60,.3);background:rgba(200,120,60,.04)}
-.lb-pod-medal{font-size:1.6rem;margin-bottom:4px}
-.lb-pod-name{font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
-.lb-pod-you{font-size:.55rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 4px;margin:0 auto 4px;width:fit-content}
-.lb-pod-pct{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;margin:3px 0}
-.lb-pod-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim)}
+/* Modal shared styles */
 .lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:90px;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
 [data-theme="light"] .lb-stat{background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
 .lb-stat-val{font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:2px}
 .lb-stat-lbl{font-size:.65rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em}
-.lb-list{display:flex;flex-direction:column;gap:6px}
-.lb-row{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.15s}
-.lb-row.lb-me{border-color:var(--accent);background:rgba(240,160,32,.06)}
-.lb-rank{font-size:.78rem;font-weight:800;color:var(--dim);font-family:var(--mono);width:28px;flex-shrink:0;text-align:center}
-.lb-name-col{flex:1;display:flex;flex-direction:column;min-width:0;justify-content:center}
-.lb-name-wrap{display:flex;align-items:center;min-width:0;gap:6px}
-.lb-name{font-size:.86rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-you{font-size:.6rem;font-weight:800;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;flex-shrink:0}
-.lb-pct{font-size:.86rem;font-weight:800;color:var(--text);letter-spacing:-.01em;flex-shrink:0}
-.lb-topics{font-size:.62rem;font-family:var(--mono);color:var(--dim);flex-shrink:0;margin-left:4px}
-.lb-status{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-empty{padding:24px;text-align:center;font-size:.8rem;color:var(--dim);font-family:var(--mono)}
 @media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
 .revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
 
@@ -330,9 +307,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .pd-sep{height:1px;background:var(--border);margin:3px 0}
 .pd-item.danger{color:var(--dim)}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
-#lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity 0.2s,visibility 0.2s;opacity:0;visibility:hidden}
-#lb-overlay.open{opacity:1;visibility:visible}
-.lb-box{width:100%;max-width:540px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 12px 32px rgba(0,0,0,.6);overflow:hidden;animation:modalPop .4s cubic-bezier(.34,1.56,.64,1)}
+.lb-box{width:100%;max-width:540px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 12px 32px rgba(0,0,0,.6);overflow:hidden;animation:modalPop .25s cubic-bezier(0,.0,.2,1)}
 [data-theme="light"] .lb-box{background:var(--s1);border:1px solid rgba(0,0,0,0.1);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5), 0 12px 32px rgba(0,0,0,.2)}
 .lb-hdr{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:transparent;flex-shrink:0}
 [data-theme="light"] .lb-hdr{border-bottom:1px solid rgba(0,0,0,0.05)}
@@ -343,7 +318,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .lb-body{padding:24px;overflow-y:auto;flex:1;scrollbar-width:none;-ms-overflow-style:none}
 .lb-body::-webkit-scrollbar{display:none}
 @media(max-width:600px){
-  #lb-overlay, #settings-overlay, #log-session-overlay, #whats-new-overlay {align-items:flex-end;padding:0}
+  #settings-overlay, #log-session-overlay, #whats-new-overlay {align-items:flex-end !important;padding:0 !important;}
   .lb-box, .wn-box {max-width:100%;max-height:calc(100% - 20px) !important;border-radius:24px 24px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom)}
   .lb-body{padding:16px;padding-bottom:32px}
 }
@@ -470,7 +445,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 1.2.96</div>
+      <div class="wn-title" id="wn-title">Version 1.5.1</div>
       <div class="wn-sub" id="wn-sub">Optimized rendering and mobile performance</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -497,15 +472,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     </div>
     <div style="padding:24px 26px 48px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px">
       <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:start">
-        <div style="flex:1 1 120px">
+        <div style="flex:1 1 100px">
           <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📅 Date</label>
           <input type="date" id="ls-date" style="width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;text-align:left;-webkit-text-align:left;box-sizing:border-box">
         </div>
-        <div style="flex:1 1 80px">
-          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">▶️ Start</label>
+        <div style="flex:1 1 70px">
+          <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">➡️ Start</label>
           <input type="time" id="ls-time" style="width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 8px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;text-align:left;-webkit-text-align:left;box-sizing:border-box">
         </div>
-        <div style="flex:1 1 80px">
+        <div style="flex:1 1 70px">
           <label style="display:block;font-size:.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⏹️ End</label>
           <input type="time" id="ls-end-time" style="width:100%;height:46px;min-height:46px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 8px;font-size:.9rem;color:var(--text);font-family:var(--font);outline:none;text-align:left;-webkit-text-align:left;box-sizing:border-box">
         </div>
@@ -555,13 +530,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 </div>
 
 <div id="stats-overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title" style="display:none;position:fixed;inset:0;z-index:990;background:var(--bg);overflow-y:auto;padding-bottom:40px;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px)">
-  <style>
-    [data-theme="light"] #stats-overlay{background:var(--bg)!important}
-    [data-theme="light"] #stats-overlay .logo span{color:var(--accent)}
-    [data-theme="light"] #stats-overlay .tnav{background:rgba(0,0,0,0.06)!important;color:var(--text)!important;border-color:rgba(0,0,0,0.12)!important}
-    [data-theme="light"] #stats-overlay .sec{border-color:var(--border)}
-    [data-theme="light"] #stats-overlay h2{color:var(--blue)}
-  </style>
+
   <div class="topbar" style="position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:100;padding-bottom:12px;padding-top:12px;margin-top:-12px;">
     <div class="logo" id="stats-title">Study <span>Statistics</span></div>
     <div class="topright">
@@ -661,15 +630,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
             <button id="pd-course-add-btn" style="padding:7px 11px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap">Add</button>
           </div>
           <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
-          <div class="pd-sep" id="pd-lb-sep"></div>
-          <button class="pd-item" id="pd-lb-item" role="menuitem">🏆 Leaderboard</button>
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-stats-item" role="menuitem">📊 Statistics</button>
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.4.8</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v1.5.1</div>
         </div>
       </div>
     </div>
@@ -685,8 +652,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
     <div id="acca-study-tip" style="display:none;background:linear-gradient(145deg, var(--s1), var(--s2));border:1px solid rgba(84,162,255,0.2);border-radius:16px;padding:18px 22px;margin-bottom:24px;box-shadow:0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;transition: transform 0.2s ease;">
       <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:var(--blue);"></div>
-      <div style="font-size:0.75rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-        💡 ACCA FR Study Tip
+      <div id="acca-tip-title" style="font-size:0.75rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+        💡 ACCA Study Tip
       </div>
       <div id="acca-tip-text" style="font-size:0.95rem;color:var(--text);line-height:1.6;font-weight:500;"></div>
     </div>
@@ -714,19 +681,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
     <div class="subj-grid" id="dynamic-syllabus"></div>
 
-  </div>
-</div>
-
-<div id="lb-overlay" role="dialog" aria-modal="true" aria-labelledby="lb-title">
-  <div class="lb-box">
-    <div class="lb-hdr">
-      <div>
-        <h2 id="lb-title" style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0">🏆 Leaderboard</h2>
-        <p id="lb-sub" style="font-size:.75rem;color:var(--dim);margin-top:2px;font-family:var(--mono)">Live rankings</p>
-      </div>
-      <button class="lb-close" id="lb-close" aria-label="Close leaderboard">✕</button>
-    </div>
-    <div class="lb-body" id="lb-wrap"></div>
   </div>
 </div>
 
@@ -763,7 +717,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>View What's New in v1.2.96</span>
+          <span>View What's New in v1.5.1</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -846,12 +800,14 @@ const app = initializeApp({
 });
 
 let appCheck;
-if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-  appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider("6Lc-QYItAAAAAMtjgzf-qwtheV8xYEP85ZsTW5ZF"),
-    isTokenAutoRefreshEnabled: true
-  });
-}
+try {
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider("6Lc-QYItAAAAAMtjgzf-qwtheV8xYEP85ZsTW5ZF"),
+      isTokenAutoRefreshEnabled: true
+    });
+  }
+} catch(e) { console.warn('AppCheck blocked or failed:', e); }
 let analytics, perf, appStartPerfTime = performance.now(), _firstScreenTrace = null;
 try {
   analytics = getAnalytics(app);
@@ -885,7 +841,7 @@ try {
   db = getFirestore(app);
 }
 
-let currentUid=null,unsubSnap=null,remoteData={ activeCourse: localStorage.getItem('cached_ac') || null },writeDebounce=null,lbUnsub=null;
+let currentUid=null,unsubSnap=null,remoteData={ activeCourse: localStorage.getItem('cached_ac') || null },writeDebounce=null;
 // cached DOM refs
 let domGfill,domPct,domSpills;
 // deferred dates: {date -> deferUntilTimestamp}
@@ -945,7 +901,7 @@ async function submitAuth(){
     if(mode==='signup'){
       const rawCode=($('auth-code').value||'').replace(/\s+/g, '').toUpperCase();
       let code=rawCode;
-      if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
+      if (code === 'ACCA26' && ts() >= '2026-09-10') code = 'ACCA26_P2';
       if (code === 'CSEB11' && ts() >= '2026-09-11') code = 'CLERK26';
       const name=$('auth-name').value.trim();
       const cred=await createUserWithEmailAndPassword(auth,email,pass);
@@ -956,8 +912,13 @@ async function submitAuth(){
         if($('pd-name')) $('pd-name').textContent = name;
         if($('profile-avatar')) $('profile-avatar').textContent = name.slice(0,2).toUpperCase();
       } catch(err){ console.error('[Signup] Profile update failed:', err); }
-      try{ await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); } catch(err){ console.error('[Signup] User doc creation failed:', err); }
-      try{ await setDoc(doc(db,'leaderboard',cred.user.uid),{displayName:name,progressPercent:0,completedTopics:0,activeCourse:code,signupDate:ts(),updatedAt:new Date().toISOString()},{merge:true}); } catch(err){ console.error('[Signup] Leaderboard doc creation failed:', err); }
+      try { 
+        await setDoc(doc(db,'users',cred.user.uid),{courses:[code],activeCourse:code,signupDate:ts()},{merge:true}); 
+      } catch(err) { 
+        console.error('[Signup] User doc creation failed:', err); 
+        try { await cred.user.delete(); } catch(e) {}
+        throw new Error("Network error creating profile. Please try again.");
+      }
       logAppEvent('login_success', { method: 'email', type: 'signup', course: code });
     } else {
       const cred=await signInWithEmailAndPassword(auth,email,pass);
@@ -966,7 +927,7 @@ async function submitAuth(){
   } catch(e){
     console.error('Auth submit error:', e);
     logAppEvent('login_failure', { method: 'email', type: mode, error_code: e.code || 'unknown' });
-    $('auth-err').textContent=e.message || authErrMsg(e.code) || 'Authentication error. Please try again.';
+    $('auth-err').textContent = authErrMsg(e.code) || e.message || 'Authentication error. Please try again.';
     btn.disabled=false;
     btn.textContent=mode==='login'?'Sign In':'Create Account';
   }
@@ -1008,9 +969,9 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.4.6';
+const APP_VERSION = '1.5.4';
 // Course data registry — add new courses here as COURSE_CODES[key]
-const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk'};
+const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
 const COURSE_DATA={};
 
@@ -1419,6 +1380,7 @@ const TOPIC_META_FR_P2={
   fr_p2_d81:{w:1},fr_p2_d82:{w:1},fr_p2_d83:{w:1},fr_p2_d84:{w:1},fr_p2_d85:{w:1},fr_p2_d86:{w:1},fr_p2_d87:{w:1},fr_p2_d88:{w:1},fr_p2_d89:{w:1},fr_p2_d90:{w:1}
 };
 const SCH_ACCA_P2 = {
+  "2026-09-10": { "ids": [], "p": "catchup", "title": "Welcome to ACCA FR Phase 2 — Dec 10 Exam Plan" },
   "2026-09-11": { "ids": ["fr_p2_d1"], "title": "Sep 11 - Conceptual Framework & IFRS 18" },
   "2026-09-12": { "ids": ["fr_p2_d2"], "title": "Sep 12 - IFRS 13 (Fair Value)" },
   "2026-09-13": { "ids": ["fr_p2_d3"], "title": "Sep 13 - IAS 8 & IAS 10" },
@@ -1790,7 +1752,105 @@ const TOPIC_META_CLERK={
   clk_d120:{w:1},clk_d121:{w:1}
 };
 
-COURSE_DATA['CLERK26']={sch:SCH_CLERK,labels:{...LABELS, ...LABELS_CLERK},subjs:SUBJS,dynamic:false};
+
+// ── ACCA AA (Audit and Assurance) ──────────────────────────
+const LABELS_AA = {
+  // A Audit framework and regulation
+  aa_a1: "The concept of audit and other assurance engagements",
+  aa_a2: "External audits",
+  aa_a3: "Corporate governance",
+  aa_a4: "Professional ethics and ACCA's Code of Ethics and Conduct",
+  
+  // B Planning and risk assessment
+  aa_b1: "Obtaining, accepting and continuing audit engagements",
+  aa_b2: "Objective and general principles",
+  aa_b3: "Assessing audit risks",
+  aa_b4: "Understanding the entity and its environment and the applicable financial reporting framework",
+  aa_b5: "Fraud, laws and regulations",
+  aa_b6: "Audit planning and documentation",
+
+  // C Internal control
+  aa_c1: "Systems of internal control",
+  aa_c2: "The use and evaluation of systems of internal control by auditors",
+  aa_c3: "Tests of controls",
+  aa_c4: "Communication on internal control",
+  aa_c5: "Internal audit and governance and the differences between external audit and internal audit",
+  aa_c6: "The scope of the internal audit function, outsourcing and internal audit assignments",
+
+  // D Audit evidence
+  aa_d1: "Assertions and audit evidence",
+  aa_d2: "Audit procedures",
+  aa_d3: "Audit sampling and other means of testing",
+  aa_d4: "The audit of specific items",
+  aa_d5: "Automated tools and techniques",
+  aa_d6: "The work of others",
+  aa_d7: "Not-for-profit organisations",
+
+  // E Review and reporting
+  aa_e1: "Subsequent events",
+  aa_e2: "Going concern",
+  aa_e3: "Written representations",
+  aa_e4: "Audit finalisation and the final review",
+  aa_e5: "The Independent Auditor's Report",
+
+  // F Employability and technology skills
+  aa_f1: "Use computer technology to efficiently access and manipulate relevant information",
+  aa_f2: "Work on relevant response options, using available functions and technology",
+  aa_f3: "Navigate windows and computer screens to create and amend responses",
+  aa_f4: "Present data and information effectively, using the appropriate tools"
+};
+
+const SUBJS_AA = {
+  aa_a: { n: 'Audit framework and regulation', c: '#ff6b6b', m: 'Section A', ids: ['aa_a1','aa_a2','aa_a3','aa_a4'] },
+  aa_b: { n: 'Planning and risk assessment', c: '#4ecdc4', m: 'Section B', ids: ['aa_b1','aa_b2','aa_b3','aa_b4','aa_b5','aa_b6'] },
+  aa_c: { n: 'Internal control', c: '#45b7d1', m: 'Section C', ids: ['aa_c1','aa_c2','aa_c3','aa_c4','aa_c5','aa_c6'] },
+  aa_d: { n: 'Audit evidence', c: '#96ceb4', m: 'Section D', ids: ['aa_d1','aa_d2','aa_d3','aa_d4','aa_d5','aa_d6','aa_d7'] },
+  aa_e: { n: 'Review and reporting', c: '#ffeead', m: 'Section E', ids: ['aa_e1','aa_e2','aa_e3','aa_e4','aa_e5'] },
+  aa_f: { n: 'Employability and tech skills', c: '#ff9999', m: 'Section F', ids: ['aa_f1','aa_f2','aa_f3','aa_f4'] }
+};
+
+const SCH_AA = {
+  "2026-09-25": { ids: ["aa_b1", "aa_b2"], title: "Audit Risk" },
+  "2026-09-26": { ids: ["aa_b3"], title: "Audit Risk" },
+  "2026-09-27": { ids: ["aa_b4"], title: "Audit Risk" },
+  "2026-09-28": { ids: ["aa_b5"], title: "Audit Risk + Weekly Exam", p: "mock" },
+  "2026-09-29": { ids: ["aa_b6", "aa_d1"], title: "Audit Risk + Substantive Procedures" },
+  "2026-09-30": { ids: ["aa_d2", "aa_d3"], title: "Substantive Procedures" },
+  "2026-10-01": { ids: ["aa_d4", "aa_d5"], title: "Substantive Procedures" },
+  "2026-10-02": { ids: ["aa_d6", "aa_d7"], title: "Substantive Procedures + Weekly Exam", p: "mock" },
+  "2026-10-03": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-04": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-05": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-06": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-07": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-08": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-09": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-10": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-11": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-12": { ids: ["aa_e1", "aa_e2", "aa_e3"], title: "Reporting + Weekly Exam", p: "mock" },
+  "2026-10-13": { ids: ["aa_e4", "aa_e5"], title: "Reporting" },
+  "2026-10-14": { ids: ["aa_c1", "aa_c2"], title: "Internal Control" },
+  "2026-10-15": { ids: ["aa_c3"], title: "Internal Control" },
+  "2026-10-16": { ids: ["aa_c4", "aa_c5"], title: "Internal Control" },
+  "2026-10-17": { ids: ["aa_c6"], title: "Internal Control + Weekly Exam", p: "mock" },
+  "2026-10-18": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-19": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-20": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-21": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-22": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-23": { ids: [], p: "catchup", title: "Catchup Day" },
+  "2026-10-24": { ids: ["aa_f1", "aa_f2"], p: "catchup", title: "Catchup Day + Tech Skills" },
+  "2026-10-25": { ids: ["aa_f3", "aa_f4"], p: "catchup", title: "Catchup Day + Tech Skills" },
+  "2026-10-26": { ids: ["aa_a4"], title: "Ethics + Weekly Exam", p: "mock" },
+  "2026-10-27": { ids: [], title: "Ethics", p: "catchup" },
+  "2026-10-28": { ids: ["aa_a3"], title: "Corporate Governance" },
+  "2026-10-29": { ids: [], title: "Corporate Governance", p: "catchup" },
+  "2026-10-30": { ids: ["aa_a1", "aa_a2"], title: "Quality Management + Weekly Exam", p: "mock" }
+};
+
+COURSE_DATA['AA26'] = { sch: SCH_AA, labels: LABELS_AA, subjs: SUBJS_AA, dynamic: false };
+
+COURSE_DATA['CLERK26']={sch:SCH_CLERK,labels:{...LABELS, ...LABELS_CLERK},subjs:SUBJS_CLERK,dynamic:false};
 
 
 const ACCA_30_DAYS = [
@@ -1919,7 +1979,7 @@ function getCourseData() {
   const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
   const data = COURSE_DATA[activeCourseKey] || COURSE_DATA[DEFAULT_COURSE];
   
-  if (activeCourseKey.startsWith('ACCA26')) {
+  if (activeCourseKey === 'ACCA26') {
     const now = new Date();
     const nov10 = new Date(Date.UTC(2026, 10, 10)); // Nov 10, 2026
     
@@ -1927,9 +1987,7 @@ function getCourseData() {
       return { ...data, sch: getShiftedACCASchedule('2026-11-10') };
     }
     
-    if (activeCourseKey === 'ACCA26') {
-      return { ...data, sch: getShiftedACCASchedule('2026-08-07') };
-    }
+    return { ...data, sch: getShiftedACCASchedule('2026-08-07') };
   }
 
   if ((activeCourseKey === 'CSEB11' || !COURSE_DATA[activeCourseKey]) && typeof getLateStartDate === 'function') {
@@ -2004,7 +2062,7 @@ function saveToFirestore(){
     
     _lastAppliedJSON = JSON.stringify(payload);
     setDoc(doc(db,'users',currentUid), payload, {merge:true}).catch(err => console.error('[Firestore Save] Failed:', err));
-    if(typeof updateLBData === 'function') updateLBData();
+
   }, 600);
 }
 
@@ -2039,6 +2097,10 @@ function applyData(data){
       if (b.checked !== isChecked) b.checked = isChecked;
     });
   }
+  document.querySelectorAll('.q-practice input[type=checkbox]').forEach(b=>{
+    const c = !!data[b.id];
+    if (b.checked !== c) b.checked = c;
+  });
   document.querySelectorAll('.ds').forEach(b=>{
     const c = !!data[b.getAttribute('data-id')];
     if (b.checked !== c) b.checked = c;
@@ -2051,6 +2113,10 @@ function applyData(data){
   ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
     if(b){const c=!!data['misc_'+id]; if(b.checked!==c) b.checked=c;}
+  });
+  ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b){const c=!!data[id]; if(b.checked!==c) b.checked=c;}
   });
   backfillSR();
   updateAll();renderPending();renderRevisions();
@@ -2089,6 +2155,7 @@ function deferDate(date,cardEl){
 
 let _lastPendingHtml='';
 let _lastCourseForPending = '';
+let confettiFired = false;
 function renderPending(){
   const activeCourse = remoteData.activeCourse || 'CSEB11';
   if (_lastCourseForPending !== activeCourse) {
@@ -2106,7 +2173,8 @@ function renderPending(){
     confettiFired = false;
   }
   const html=pending.map(({date,s,unchecked})=>{
-    const dl=new Date(date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    const [py,pm,pd]=date.split('-').map(Number);
+    const dl=new Date(py,pm-1,pd).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
     const items=unchecked.map(id=>`<li><label><input type="checkbox" class="pending-ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     return `<div class="day-card pending-card" style="margin-bottom:10px">
       <div class="day-top"><h2>⚠ ${s.l || s.title || 'Pending Topics'}</h2><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="day-badge">${dl}</span><button class="defer-btn" data-date="${date}">Defer 24h</button></div></div>
@@ -2140,9 +2208,10 @@ function syncMinorCheck(key, val) {
 function makeCard(){
   const {sch,labels}=getCourseData();
   const dc=$('daycard');
+  if(!dc) return;
   const activeCourse=remoteData.activeCourse||DEFAULT_COURSE;
   
-  const cacheKey = activeCourse + '_' + ts();
+  const cacheKey = activeCourse + '_' + ts() + '_' + (remoteData.signupDate || '') + '_' + (remoteData._loaded ? '1' : '0');
   if (window._lastDayCardCacheKey === cacheKey && window._lastDayCardHtml) {
     return; // Already rendered for today, applyData handles checkbox state sync
   }
@@ -2194,12 +2263,20 @@ function makeCard(){
     CAT09: {text:'Asst Secretary · Cat 09 · Exam TBA',date:new Date(2026,7,16)},
     ACCA26: {text: lateStart ? `Sep 10 FR Exam · Started ${lateStart}` : 'Sep 10 FR Exam', date:new Date(Date.UTC(2026, 8, 10))},
     ACCA26_P2: {text: 'Dec 10 FR Exam', date:new Date(Date.UTC(2026, 11, 10))},
-    CLERK26: {text: 'Junior Clerk · Exam TBA', date:null}
+    CLERK26: {text: 'Junior Clerk - Exam TBA', date:null},
+    AA26: {text: 'ACCA AA - Exam TBA', date:null}
   };
   const meta=examMeta[activeCourse]||examMeta.CSEB11;
   const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
   
   if(!sched){
+    // AA26 and CLERK26 don't use the EXAMS array — show simple no-plan card
+    if (activeCourse === 'AA26' || activeCourse === 'CLERK26') {
+      dc.innerHTML=`<div class="day-card catchup">
+        ${tag}<div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
+        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.</p></div>`;
+      return;
+    }
     // No plan entry for today (e.g. gap day or beyond schedule)
     const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
     const allPostponed = courseExams.every(e=>e.postponed);
@@ -2219,18 +2296,26 @@ function makeCard(){
   }
   let inner='';
   const titleStr = sched.l || sched.title || 'Daily Topics';
+  
+  // Generate standard topic list if ids exist
+  let topicHtml = '';
+  if (sched.ids && sched.ids.length > 0) {
+    const items = sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
+    topicHtml = `<div class="day-sub" style="margin-top:16px">${titleStr} · Tick to sync syllabus</div><ul class="cl" style="margin-bottom:12px">${items}</ul>`;
+  }
+
   if(sched.p==='mock'){
-    inner=`${tag}<div class="day-sub">${titleStr}</div><ul class="cl">
+    inner=`${tag}${topicHtml}<div class="day-sub">Weekly Exam / Mock Day</div><ul class="cl">
       <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
       <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='catchup'){
-    inner=`${tag}<div class="day-sub">${titleStr}</div><ul class="cl">
+    inner=`${tag}${topicHtml}<div class="day-sub">Catchup Day</div><ul class="cl">
       <li><label><input type="checkbox" id="cu1_${ts()}" ${remoteData['cu1_'+ts()]?'checked':''}><span>Revise pending topics</span></label></li>
       <li><label><input type="checkbox" id="cu2_${ts()}" ${remoteData['cu2_'+ts()]?'checked':''}><span>Clarify doubts with mentor</span></label></li>
       <li><label><input type="checkbox" id="cu3_${ts()}" ${remoteData['cu3_'+ts()]?'checked':''}><span>Practice past questions</span></label></li></ul>`;
   } else if(sched.p==='eve'){
-    inner=`${tag}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
+    inner=`${tag}${topicHtml}<div class="day-sub">Light revision only — no new topics</div><ul class="cl">
       <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
       <li><label><input type="checkbox" id="e2" ${remoteData['misc_e2']?'checked':''}><span>Prepare: Hall ticket, ID, pens, water</span></label></li>
       <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
@@ -2320,7 +2405,7 @@ function makeCard(){
     `;
   }
   
-  const headerTitle = activeCourse.startsWith('ACCA26') ? "📌 30-Day Study Strategy" : "📌 Today's Topics";
+  const headerTitle = activeCourse === 'ACCA26_P2' ? "📌 90-Day Study Strategy" : activeCourse === 'ACCA26' ? "📌 30-Day Study Strategy" : "📌 Today's Topics";
   window._lastDayCardHtml = true;
   dc.innerHTML=`<div class="day-card ${sched.p}">
     <div class="day-top"><h2>${headerTitle}</h2>${dateBadge}</div>${inner}${routineHtml}</div>`;
@@ -2345,7 +2430,7 @@ function renderSyllabus(){
   if (hdr) hdr.innerHTML = '📊 Full Syllabus';
 
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
-  const isACCA = activeCourse.startsWith('ACCA26');
+  const isACCA = activeCourse.startsWith('ACCA26') || activeCourse === 'AA26';
 
   const frag = document.createDocumentFragment();
 
@@ -2444,8 +2529,10 @@ function updateAll(){
     if(domPct)domPct.textContent=pct+'%';
     if(domSpills){
         const spillEntries = Object.entries(statsSubjs);
-        // Only rebuild innerHTML if children count doesn't match (first render or course switch)
-        if (domSpills.children.length !== spillEntries.length) {
+        const firstChild = domSpills.children[0];
+        const firstKey = firstChild ? firstChild.getAttribute('data-subj') : null;
+        // Rebuild if count changed OR first subject key doesn't match (course switch with same count)
+        if (domSpills.children.length !== spillEntries.length || (firstKey && spillEntries[0] && firstKey !== spillEntries[0][0])) {
           const spillsHtml = spillEntries.map(([k,v])=>{
             const d=v.ids.filter(id=>!!remoteData[id]).length,t=v.ids.length;
             const mf=document.getElementById('mf-'+k);if(mf)mf.style.width=Math.round(d/t*100)+'%';
@@ -2470,6 +2557,8 @@ function updateAll(){
       const p1 = Math.ceil((new Date(2026,8,10) - _t) / 86400000);
       const p2 = Math.ceil((new Date(2026,11,10) - _t) / 86400000);
       examDiff = _ac === 'ACCA26_P2' ? p2 : (p1 >= 0 ? p1 : p2);
+    } else if (_ac === 'AA26') {
+      examDiff = Math.ceil((new Date(2026,11,7) - _t) / 86400000);
     } else {
       const courseExams = _ac === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
       const next = courseExams.filter(e=>!e.postponed).map(e=>{
@@ -2484,7 +2573,7 @@ function updateAll(){
       <div class="pd-stat-row"><span class="pd-stat-label">Complete</span><span class="pd-stat-value">${pct}%</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">Streak</span><span class="pd-stat-value">${streak}d</span></div>
       <div class="pd-stat-row"><span class="pd-stat-label">To exam</span><span class="pd-stat-value">${examDiff>0?examDiff+'d':examDiff===0?'Today!':'TBA'}</span></div>`;
-    if (typeof checkAndNotify === 'function') checkAndNotify();
+    if (typeof checkAndNotify === 'function') { clearTimeout(window._coachTimer); window._coachTimer = setTimeout(checkAndNotify, 2000); }
     if (typeof renderStudyTip === 'function') renderStudyTip();
   });
 }
@@ -2493,7 +2582,7 @@ function renderStudyTip() {
   const tipEl = document.getElementById('acca-study-tip');
   if (!tipEl) return;
   const active = remoteData.activeCourse || DEFAULT_COURSE;
-  if (!active.startsWith('ACCA')) {
+  if (!active.startsWith('ACCA') && active !== 'AA26') {
     tipEl.style.display = 'none';
     return;
   }
@@ -2507,17 +2596,10 @@ function renderStudyTip() {
   tipEl.style.display = 'block';
 }
 
-
-
 function updatePageTitle(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
   const courseName=COURSE_CODES[active]||'';
   document.title=courseName?`Study Tracker · ${courseName}`:'Study Tracker';
-  const lbBtn = document.getElementById('pd-lb-item');
-  const lbSep = document.getElementById('pd-lb-sep');
-  const showLb = (active === 'CSEB11' || active === 'ACCA26');
-  if (lbBtn) lbBtn.style.display = showLb ? 'flex' : 'none';
-  if (lbSep) lbSep.style.display = showLb ? 'block' : 'none';
 }
 
 function renderExamStrip(){
@@ -2525,6 +2607,15 @@ function renderExamStrip(){
   const active=remoteData.activeCourse||DEFAULT_COURSE;
   const [ty, tm, td] = ts().split('-').map(Number);
   const todayUTC = Date.UTC(ty, tm-1, td);
+  
+  if(active==='AA26'){
+    const examDate = Date.UTC(2026, 11, 7); // Dec 7, 2026
+    const diff = Math.round((examDate-todayUTC)/86400000);
+    const status = diff<0?'✅ Completed':diff===0?'🔥 TODAY':diff+' days left';
+    const color = diff<0?'var(--green)':diff===0?'var(--accent)':'var(--green)';
+    es.innerHTML = `<div class="epill next-exam"><div class="en">ACCA AA Exam</div><div class="ed" style="color:${color}">${status}</div><div class="en2">Audit and Assurance</div><div class="edd" style="margin-top:4px;color:var(--dim)">Dec 7, 2026</div></div>`;
+    return;
+  }
   
   if(active==='ACCA26' || active==='ACCA26_P2'){
     const p1Date = Date.UTC(2026,8,10);
@@ -2635,14 +2726,19 @@ function onCheck(id, val) {
   window._localWritePending = Date.now();
   if (currentUid) {
     const payload = { [id]: val };
-    if (srSubUpdate) payload._sr = srSubUpdate;
-    if (actData) payload._activity = actData;
+    if (val) {
+      if (srSubUpdate) payload._sr = remoteData._sr; // Merge the whole updated _sr object safely
+    } else {
+      if (!isNonTopicId) payload[`_sr.${id}`] = deleteField(); // Dot notation for nested delete
+    }
+    if (actData) payload._activity = remoteData._activity; // Safe to send full activity map
     if (remoteData._timeAccuracy) payload._timeAccuracy = remoteData._timeAccuracy;
     
+    // De-bounce UI updates using the stringified state
     const clean = { ...remoteData };
     delete clean._loaded;
     _lastAppliedJSON = JSON.stringify(clean);
-    setDoc(doc(db,'users',currentUid), payload, {merge:true})
+    updateDoc(doc(db,'users',currentUid), payload)
       .catch(err => console.error('[Sync] Write failed:', err));
   }
 
@@ -2666,53 +2762,7 @@ function getRevisionsDue(){
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
 
-async function markRevised(id, difficulty){
-  triggerHaptic('success');
-  if(!remoteData._sr||!remoteData._sr[id])return;
-  const s=remoteData._sr[id];
-  
-  if (s.ease === undefined) s.ease = 2.5;
-  if (s.interval === undefined) s.interval = 1;
-  
-  if (difficulty === 'easy') {
-    s.ease += 0.15;
-    s.interval = s.count === 0 ? 3 : s.interval * s.ease * 1.3;
-  } else if (difficulty === 'medium') {
-    s.interval = s.count === 0 ? 2 : s.interval * s.ease;
-  } else if (difficulty === 'hard') {
-    s.ease = Math.max(1.3, s.ease - 0.2);
-    s.interval = Math.max(1, s.interval * 0.5); 
-  }
-  
-  s.count++;
-  s.interval = Math.round(s.interval);
-  s.lastRev = ts();
-  
-  const activeCourseKey = remoteData.activeCourse || DEFAULT_COURSE;
-  if (activeCourseKey === 'ACCA26_P2') {
-    const examDate = new Date('2026-12-10T00:00:00Z');
-    const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
-    const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
-    if (s.interval > daysToExam) {
-      s.interval = daysToExam;
-    }
-  }
 
-  s.next = addDaysStr(s.lastRev, s.interval);
-  
-  const actData = logActivity();
-  if (typeof recordTimeAccuracy === 'function') recordTimeAccuracy(difficulty !== 'hard');
-  
-  if(currentUid){
-    const updatePayload = { _sr: { [id]: s }, _activity: actData };
-    if (remoteData._timeAccuracy) updatePayload._timeAccuracy = remoteData._timeAccuracy;
-    _lastAppliedJSON = JSON.stringify(remoteData);
-    setDoc(doc(db,'users',currentUid), updatePayload, {merge:true})
-      .catch(e=>console.error('[SR] Failed to save revision progress:',e));
-  }
-  
-  renderRevisions();updateAll();
-}
 
 function renderRevisions(){
   const rc=$('revisecard'),sec=$('revise-sec');if(!rc||!sec)return;
@@ -2810,180 +2860,6 @@ function renderRevisions(){
   }
 }
 
-// ── LEADERBOARD ──
-const TOTAL_CSEB_TOPICS=82; // total topics in CSEB11 syllabus
-
-function lbStatus(rank,total){
-  const pct=rank/total;
-  if(pct<=0.1)return'🔥 Top Performer';
-  if(pct<=0.3)return'🚀 Rising Fast';
-  return'📚 Consistent Learner';
-}
-
-function getLBActiveCourse() {
-  let raw = String((typeof remoteData !== 'undefined' && remoteData && remoteData.activeCourse) || '').trim();
-  if (!raw) {
-    const cList = (typeof remoteData !== 'undefined' && remoteData && Array.isArray(remoteData.courses)) ? remoteData.courses : [];
-    if (cList.length > 0) raw = String(cList[0]).trim();
-    else raw = DEFAULT_COURSE;
-  }
-  if (raw === 'ACCA26_P2') return 'ACCA26_P2';
-  if (raw.startsWith('ACCA')) return 'ACCA26';
-  if (raw.startsWith('CSEB')) return 'CSEB11';
-  if (raw === 'CAT09') return 'CAT09';
-  return raw || 'CSEB11';
-}
-
-function renderLeaderboard(users){
-  const wrap=$('lb-wrap');
-  if(!wrap)return;
-  const activeCourse = getLBActiveCourse();
-  const isSupported = activeCourse === 'CSEB11' || activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26';
-  if(!isSupported){wrap.innerHTML='<div class="lb-empty">Leaderboard is currently available for CSEB, Clerk, and ACCA courses.</div>';return;}
-  const titleEl = $('lb-title');
-  const subEl = $('lb-sub');
-  if(titleEl) {
-    titleEl.textContent = activeCourse === 'ACCA26_P2' ? '🏆 Phase 2 Leaderboard' : activeCourse === 'ACCA26' ? '🏆 ACCA FR Leaderboard' : activeCourse === 'CLERK26' ? '🏆 CSEB Clerk Leaderboard' : '🏆 CSEB11 Leaderboard';
-  }
-  if(subEl) {
-    subEl.textContent = activeCourse === 'ACCA26_P2' ? '90-Day Plan · Live rankings' : activeCourse === 'ACCA26' ? 'ACCA FR · Live rankings' : activeCourse === 'CLERK26' ? 'Junior Clerk · Live rankings' : 'CSEB · Live rankings';
-  }
-  if(!users||!users.length){wrap.innerHTML='<div class="lb-empty">No rankings yet — be the first!</div>';return;}
-
-  // sort: % desc → topics desc → signupDate asc
-  const sorted=[...users].sort((a,b)=>{
-    if(b.pct!==a.pct)return b.pct-a.pct;
-    if(b.topics!==a.topics)return b.topics-a.topics;
-    return (a.signupDate||'').localeCompare(b.signupDate||'');
-  });
-
-  const myRank=sorted.findIndex(u=>u.uid===currentUid)+1;
-  const total=sorted.length;
-  const me=sorted.find(u=>u.uid===currentUid);
-
-  // stats bar
-  const statsHtml=me?`<div class="lb-stats">
-    <div class="lb-stat"><div class="lb-stat-val">#${myRank}</div><div class="lb-stat-lbl">Your Rank</div></div>
-    <div class="lb-stat"><div class="lb-stat-val">${myRank-1}</div><div class="lb-stat-lbl">Ahead of You</div></div>
-    <div class="lb-stat"><div class="lb-stat-val">${total-myRank}</div><div class="lb-stat-lbl">Behind You</div></div>
-    <div class="lb-stat"><div class="lb-stat-val">${total}</div><div class="lb-stat-lbl">Total Users</div></div>
-  </div>`:''
-
-  const safeName = (n) => (n||'').replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  
-  // podium top 3
-  const medals=['🥇','🥈','🥉'];
-  const podClasses=['gold','silver','bronze'];
-  const podiumHtml=`<div class="lb-podium">${sorted.slice(0,3).map((u,i)=>`
-    <div class="lb-pod ${podClasses[i]}">
-      <div class="lb-pod-medal">${medals[i]}</div>
-      <div class="lb-pod-name">${safeName(u.name)}</div>
-      ${u.uid===currentUid?'<div class="lb-pod-you">YOU</div>':''}
-      <div class="lb-pod-pct">${u.pct}%</div>
-      <div class="lb-pod-topics">${u.topics} topics</div>
-    </div>`).join('')}</div>`;
-
-  // full list (limit to top 50 for performance, plus current user if not in top 50)
-  let renderList = sorted.slice(0, 50);
-  if (myRank > 50 && me) {
-    renderList.push(me);
-  }
-  
-  const listHtml=`<div class="lb-list">${renderList.map((u)=>{
-    const rank=sorted.findIndex(x=>x.uid===u.uid)+1;
-    const isMe=u.uid===currentUid;
-    const status=lbStatus(rank,total);
-    return `<div class="lb-row${isMe?' lb-me':''}">
-      <div class="lb-rank">#${rank}</div>
-      <div class="lb-name-col">
-        <div class="lb-name-wrap">
-          <div class="lb-name">${safeName(u.name)}</div>
-          ${isMe?'<div class="lb-you">YOU</div>':''}
-        </div>
-        <div class="lb-status">${status}</div>
-      </div>
-      <div class="lb-topics">${u.topics}t</div>
-      <div class="lb-pct">${u.pct}%</div>
-    </div>`;
-  }).join('')}</div>`;
-
-  wrap.innerHTML=statsHtml+podiumHtml+listHtml;
-}
-
-function updateLBData(){
-  if(!currentUid || !remoteData || !remoteData._loaded) return;
-  const activeCourse = getLBActiveCourse();
-  if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2' && activeCourse !== 'CLERK26') return;
-  const {subjs}=getCourseData();
-  const statsSubjs = activeCourse === 'CLERK26' ? SUBJS_CLERK : subjs;
-  const done=Object.values(statsSubjs).reduce((acc,v)=>acc+v.ids.filter(id=>!!remoteData[id]).length,0);
-  const total=Object.values(statsSubjs).reduce((acc,v)=>acc+v.ids.length,0);
-  const pct=total?Math.round(done/total*100):0;
-  // silently update leaderboard
-  setDoc(doc(db,'leaderboard',currentUid),{
-    displayName:remoteData._displayName||'',
-    progressPercent:pct,
-    completedTopics:done,
-    activeCourse:activeCourse,
-    signupDate:remoteData.signupDate||'',
-    updatedAt:new Date().toISOString()
-  },{merge:true}).catch(err => {
-    console.error('[Leaderboard] Error writing to leaderboard:', err);
-  });
-}
-
-let currentLBTrack = null; // ✨ Tracking lock variable
-
-function startLBListener() {
-  try {
-    if (!remoteData || !remoteData._loaded) return;
-    const activeCourse = getLBActiveCourse();
-    if (currentLBTrack === activeCourse) return;
-    if (lbUnsub) { lbUnsub(); lbUnsub = null; }
-    currentLBTrack = activeCourse;
-    if (activeCourse !== 'CSEB11' && activeCourse !== 'ACCA26' && activeCourse !== 'ACCA26_P2' && activeCourse !== 'CLERK26') {
-      renderLeaderboard([]);
-      return;
-    }
-    const q = query(
-      collection(db, 'leaderboard'),
-      orderBy('progressPercent', 'desc'),
-      limit(300)
-    );
-    lbUnsub = onSnapshot(q, snap => {
-      const users = [];
-      snap.docs.forEach(d => {
-        const data = d.data();
-        let docCourse = String(data.activeCourse || 'CSEB11').trim();
-        if (docCourse !== 'ACCA26_P2' && docCourse.startsWith('ACCA')) docCourse = 'ACCA26';
-        if (docCourse.startsWith('CSEB')) docCourse = 'CSEB11';
-        
-        let targetCourse = String(activeCourse || 'CSEB11').trim();
-        if (targetCourse !== 'ACCA26_P2' && targetCourse.startsWith('ACCA')) targetCourse = 'ACCA26';
-        if (targetCourse.startsWith('CSEB')) targetCourse = 'CSEB11';
-        if (docCourse === targetCourse) {
-          let dispName = data.displayName || data.name || data._displayName || '';
-          if (!dispName || dispName === 'Anonymous Learner' || dispName.includes('@')) {
-            const prefix = targetCourse.startsWith('ACCA') ? 'ACCA Candidate' : 'CSEB Candidate';
-            dispName = `${prefix} #${d.id.slice(0, 4).toUpperCase()}`;
-          }
-          users.push({
-            uid: d.id,
-            name: dispName,
-            pct: data.progressPercent || 0,
-            topics: data.completedTopics || 0,
-            signupDate: data.signupDate || ''
-          });
-        }
-      });
-      renderLeaderboard(users);
-    }, err => {
-      const lb = document.getElementById('lb-wrap');
-      if (lb) lb.innerHTML = '<div style="padding:20px;text-align:center;color:var(--red);font-size:0.85rem">Could not load leaderboard. Check connection or permissions.</div>';
-      console.warn('[Leaderboard] connection error:', err);
-    });
-  } catch(e) { console.warn('startLBListener safely handled error:', e); }
-}
 
 function calcStreak(){
   const activity = remoteData._activity || {};
@@ -3017,10 +2893,10 @@ function renderCourses(data){
       const code=btn.getAttribute('data-course');
       remoteData.activeCourse=code;
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
-      startLBListener();updateLBData();
+
       makeCard();bindSyllabus();updateAll();renderPending();
       closeDrop();
-      setDoc(doc(db,'users',currentUid),{activeCourse:code},{merge:true}).catch(e=>console.warn(e));
+      if (typeof saveToFirestore === 'function') saveToFirestore();
     });
   });
   pc.querySelectorAll('.pd-remove').forEach(btn=>{
@@ -3031,9 +2907,9 @@ function renderCourses(data){
       remoteData.courses=updated;
       if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=updated.length?updated[0]:DEFAULT_COURSE;
       renderCourses(remoteData);renderExamStrip();updatePageTitle();
-      startLBListener();updateLBData();
+
       makeCard();bindSyllabus();updateAll();renderPending();
-      setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:remoteData.activeCourse},{merge:true}).catch(e=>console.warn(e));
+      if (typeof saveToFirestore === 'function') saveToFirestore();
     });
   });
 }
@@ -3044,10 +2920,11 @@ if (addBtn) {
   addBtn.addEventListener('click',async function(e){
     e.stopPropagation();
     const inp=$('pd-course-input');
-    let code=(inp.value||'').trim().toUpperCase();
-    if (code === 'ACCA26' && ts() >= '2026-09-11') code = 'ACCA26_P2';
-    if (code === 'CSEB11' && ts() >= '2026-09-11') code = 'CLERK26';
     const err=$('pd-course-err');
+    if (!inp || !err) return;
+    let code=(inp.value||'').trim().toUpperCase();
+    if (code === 'ACCA26' && ts() >= '2026-09-10') code = 'ACCA26_P2';
+    if (code === 'CSEB11' && ts() >= '2026-09-11') code = 'CLERK26';
     err.textContent='';
     if(!code){err.textContent='Enter a code.';return;}
     if(!COURSE_CODES[code]){err.textContent='Invalid code.';return;}
@@ -3062,9 +2939,9 @@ if (addBtn) {
     }
     remoteData.courses=updated;remoteData.activeCourse=code;
     inp.value='';renderCourses(remoteData);
-    startLBListener();updateLBData();
+
     makeCard();bindSyllabus();updateAll();renderPending();
-    setDoc(doc(db,'users',currentUid),{courses:updated,activeCourse:code},{merge:true}).catch(e=>console.warn(e));
+    if (typeof saveToFirestore === 'function') saveToFirestore();
   });
 }
 
@@ -3110,7 +2987,7 @@ const AudioEngine = {
   async playSuccess() {}
 };
 
-let confettiFired = false;
+
 async function triggerConfetti() {
   if (confettiFired) return;
   confettiFired = true;
@@ -3155,7 +3032,7 @@ async function openStats() {
   
   const statsTitle = $('stats-title');
   if (statsTitle) {
-    let tName = activeCourse.startsWith('ACCA') ? 'ACCA FR' : activeCourse === 'CLERK26' ? 'Clerk' : activeCourse === 'CAT09' ? 'Asst Sec' : 'CSEB';
+    let tName = activeCourse.startsWith('ACCA') ? 'ACCA FR' : activeCourse === 'AA26' ? 'ACCA AA' : activeCourse === 'CLERK26' ? 'Clerk' : activeCourse === 'CAT09' ? 'Asst Sec' : 'CSEB';
     statsTitle.innerHTML = `${tName} <span>Statistics</span>`;
   }
   
@@ -3181,10 +3058,9 @@ async function openStats() {
   
   // 14-Day Rolling Average & Projected Finish
   const todayTS = ts();
-  const todayDate = new Date(todayTS);
-  const cutoffDate = new Date(todayTS);
-  cutoffDate.setDate(cutoffDate.getDate() - 14);
-  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+  const [ty, tm, td] = todayTS.split('-').map(Number);
+  const cutoffDate = new Date(ty, tm - 1, td - 14);
+  const cutoffStr = cutoffDate.getFullYear() + '-' + String(cutoffDate.getMonth() + 1).padStart(2, '0') + '-' + String(cutoffDate.getDate()).padStart(2, '0');
 
   let windowComp = 0;
   let windowFirstDate = null;
@@ -3533,6 +3409,8 @@ function renderProductivityCorrelator() {
     let courseAdvice = "your hardest syllabus topics and challenging practice problems";
     if (activeCourse.startsWith('ACCA')) {
       courseAdvice = "your toughest IFRS standards, consolidations, and complex accounting calculations";
+    } else if (activeCourse === 'AA26') {
+      courseAdvice = "your most complex audit procedures, risk assessments, and challenging ethical scenarios";
     } else if (activeCourse === 'CAT09') {
       courseAdvice = "heavy KCS Act statutory rules, legal sections, and challenging co-operative theory";
     } else if (activeCourse === 'CSEB11') {
@@ -3566,23 +3444,13 @@ function initApp(user){
     $('auth-overlay').classList.add('hidden');
     $('app').classList.add('visible');
     
-    if (user.email && user.displayName) {
-      const emailPrefix = user.email.split('@')[0];
-      if (user.displayName.toLowerCase() === emailPrefix.toLowerCase()) {
-        try {
-          updateProfile(user, { displayName: '' }).catch(e => console.warn('[Profile] displayName clear failed:', e));
-          user.displayName = null;
-          setDoc(doc(db, 'leaderboard', user.uid), { displayName: '' }, { merge: true }).catch(e => console.warn('[LB] displayName clear failed:', e));
-        } catch(e) {}
-      }
-    }
     const name=user.displayName||user.email.split('@')[0]||'Student';
     const initials=name.slice(0,2).toUpperCase();
     const av = $('profile-avatar'); if(av) av.textContent=initials;
     const pn = $('profile-name'); if(pn) pn.textContent=name;
     const pdn = $('pd-name'); if(pdn) pdn.textContent=user.displayName||name;
     const pde = $('pd-email'); if(pde) pde.textContent=user.email||'';
-    remoteData._displayName=user.displayName||''; // cache for leaderboard (prevent email prefix leak)
+    remoteData._displayName=user.displayName||''; // cache for profile display
     const td = $('todaydisp'); if(td) td.textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   } catch(e) { console.error('UI init error:', e); }
   try{
@@ -3605,8 +3473,6 @@ function initApp(user){
     } catch(err) { console.warn('[Perf] Trace stop failed:', err); }
   }
   if(unsubSnap){unsubSnap();unsubSnap=null;}
-  if(typeof lbUnsub !== 'undefined' && lbUnsub){lbUnsub();lbUnsub=null;}
-  if(typeof currentLBTrack !== 'undefined'){currentLBTrack=null;}
   
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
@@ -3618,7 +3484,7 @@ function initApp(user){
       if(snap.exists()){
         const oldCourse = remoteData.activeCourse;
         const wasLoaded = remoteData._loaded;
-        remoteData={...remoteData,...snapData, _loaded: true};
+        remoteData={ activeCourse: remoteData.activeCourse, ...snapData, _loaded: true };
         if (remoteData.activeCourse) localStorage.setItem('cached_ac', remoteData.activeCourse);
         if (!wasLoaded || oldCourse !== remoteData.activeCourse) {
           makeCard();
@@ -3632,9 +3498,8 @@ function initApp(user){
       remoteData._loaded = true;
     }
     
-    startLBListener();
-    updateLBData();
-    if (!snap.metadata.hasPendingWrites) {
+
+    if (!snap.metadata.hasPendingWrites && snap.exists()) {
       showWhatsNew();
       renderNotifToggle();
       checkAndNotify();
@@ -3650,94 +3515,105 @@ function initApp(user){
 async function handleAutoTransitions(){
   if(!currentUid||!remoteData) return;
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const courses = remoteData.courses || [activeCourse];
   const updates = {};
   let transitioned = false;
+  let newActiveCourse = activeCourse;
+  let newCourses = [...courses];
 
-  // 1. ACCA Phase 2 Transition (Sep 11 2026 onwards)
-  if(activeCourse === 'ACCA26' && ts() >= '2026-09-11') {
+  // 1. ACCA Phase 2 Transition (Sep 10 2026 onwards — exam day)
+  if(courses.includes('ACCA26') && ts() >= '2026-09-10') {
     const p1History = {
       _activity: remoteData._activity || {},
       _loggedSessions: (remoteData._loggedSessions || []).filter(s => s.course === 'ACCA26'),
       _timeAccuracy: remoteData._timeAccuracy || {},
       completedTopics: []
     };
-    const { subjs } = getCourseData();
-    Object.values(subjs || {}).forEach(s => {
+    // Mock getCourseData since we aren't relying on global activeCourse state
+    Object.values(SUBJS_FR || {}).forEach(s => {
       if (s && s.ids) {
         s.ids.forEach(id => {
           if (remoteData[id]) {
             p1History.completedTopics.push(id);
             updates[id] = deleteField();
+            delete remoteData[id]; // Also delete locally to prevent saveToFirestore resurrection
           }
           if (remoteData._sr && remoteData._sr[id]) {
             updates[`_sr.${id}`] = deleteField();
+            delete remoteData._sr[id];
           }
         });
       }
     });
     updates.p1_history = p1History;
     updates._loggedSessions = (remoteData._loggedSessions || []).filter(s => s.course !== 'ACCA26');
-    updates.activeCourse = 'ACCA26_P2';
-    updates.courses = [...new Set([...(remoteData.courses || [activeCourse]).filter(c => c !== 'ACCA26'), 'ACCA26_P2'])];
+    remoteData._loggedSessions = updates._loggedSessions;
+    
+    newCourses = [...new Set([...newCourses.filter(c => c !== 'ACCA26'), 'ACCA26_P2'])];
+    if (newActiveCourse === 'ACCA26') newActiveCourse = 'ACCA26_P2';
+    
     transitioned = true;
     console.log('[Transition] Auto-transitioned ACCA26 → ACCA26_P2 and archived data');
   }
   
   // 2. CSEB Clerk Transition (Sep 11 2026 onwards)
-  if(activeCourse === 'CSEB11' && ts() >= '2026-09-11') {
-    updates.activeCourse = 'CLERK26';
-    updates.courses = [...new Set([...(remoteData.courses || [activeCourse]).filter(c => c !== 'CSEB11'), 'CLERK26'])];
+  if(courses.includes('CSEB11') && ts() >= '2026-09-11') {
+    newCourses = [...new Set([...newCourses.filter(c => c !== 'CSEB11'), 'CLERK26'])];
+    if (newActiveCourse === 'CSEB11') newActiveCourse = 'CLERK26';
     transitioned = true;
     console.log('[Transition] Auto-transitioned CSEB11 → CLERK26');
   }
 
   if (transitioned) {
+    updates.activeCourse = newActiveCourse;
+    updates.courses = newCourses;
+    remoteData.activeCourse = newActiveCourse;
+    remoteData.courses = newCourses;
     await updateDoc(doc(db, 'users', currentUid), updates).catch(e=>console.warn('[Transition] failed:', e));
   }
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '1.2.96';
+const WHATS_NEW_VERSION = APP_VERSION;
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
   const hasACCA = String(activeCourse).startsWith('ACCA');
-  const hasOther = !hasACCA;
+  const isAA = activeCourse === 'AA26';
+  const isClerk = activeCourse === 'CLERK26';
 
   let html = `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">🚀 System Stability Updates</div>
-      <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Mobile Layout Fixes</div><div class="wn-item-desc">Fixed an iOS Safari/Chrome bug where modal headers were cropped off the top of the screen.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">Zero-Delay Caching</div><div class="wn-item-desc">Implemented a course caching engine so your active course loads instantly without flashing the default course.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--accent);">🔥 Major Update — v${APP_VERSION}</div>
+      <div class="wn-item"><div class="wn-item-icon">📚</div><div class="wn-item-text"><div class="wn-item-title">ACCA Audit and Assurance (AA26)</div><div class="wn-item-desc">Added full syllabus, schedule, and smart coach support for ACCA AA. Course starts Sep 25, 2026.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🐛</div><div class="wn-item-text"><div class="wn-item-title">Critical Bug Fixes</div><div class="wn-item-desc">Fixed course transition bugs, timezone off-by-one errors, log session deletion sync, and missing catchup syncs.</div></div></div>
     </div>
   `;
 
   if (hasACCA) {
     html += `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--blue);">🌟 ACCA Exclusive Features</div>
-      <div class="wn-item"><div class="wn-item-icon">💡</div><div class="wn-item-text"><div class="wn-item-title">Daily Study Tips</div><div class="wn-item-desc">A rotating, highly targeted ACCA FR study tip now appears on your dashboard every single day to keep you focused and exam-ready!</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--blue);">📚 ACCA FR Phase 2 — Dec 10 Exam</div>
+      <div class="wn-item"><div class="wn-item-icon">🎯</div><div class="wn-item-text"><div class="wn-item-title">90-Day Study Strategy</div><div class="wn-item-desc">Your personalized 90-day plan towards the December 10 exam is now live! Every day brings focused topics, weekly reviews, and full mock exams in the final stretch.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">ACCA FR Statistics</div><div class="wn-item-desc">All statistics now correctly show your Phase 2 progress. Your Phase 1 data has been safely archived.</div></div></div>
     </div>
     `;
   }
 
-  if (hasOther) {
+  if (isClerk) {
     html += `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--green);">🛡️ CSEB Syllabus Updates</div>
-      <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Enhanced Study Metrics</div><div class="wn-item-desc">Your daily syllabus progress and exam readiness are now tracked with deeper precision, directly linked to your active course selection.</div></div></div>
+      <div class="wn-section-lbl" style="color:var(--green);">🛡️ Junior Clerk Course</div>
+      <div class="wn-item"><div class="wn-item-icon">✅</div><div class="wn-item-text"><div class="wn-item-title">Syllabus Fix</div><div class="wn-item-desc">The Junior Clerk syllabus now correctly displays all Clerk-specific topics and subjects instead of the CSEB syllabus.</div></div></div>
     </div>
     `;
   }
 
   html += `
   <div class="wn-section">
-    <div class="wn-section-lbl" style="color:var(--green);">⚡ Performance Overhaul</div>
-    <div class="wn-item"><div class="wn-item-icon">🚀</div><div class="wn-item-text"><div class="wn-item-title">Zero Layout Thrashing</div><div class="wn-item-desc">The scroll and UI rendering engines have been heavily optimized. Complex panels (like Revisions) now use virtual HTML caching to only redraw when necessary, completely eliminating lag and battery drain when you rapidly tick off checkboxes!</div></div></div>
-  </div>
-  <div class="wn-section">
-    <div class="wn-section-lbl" style="color:var(--blue);">📲 Native App Experience</div>
-    <div class="wn-item"><div class="wn-item-icon">✨</div><div class="wn-item-text"><div class="wn-item-title">Install to Home Screen</div><div class="wn-item-desc">You can now install Study Tracker directly to your home screen! Enjoy instant offline access, zero browser clutter, and a beautiful full-screen experience. Just tap the <strong>Install</strong> banner at the bottom of your screen!</div></div></div>
+    <div class="wn-section-lbl" style="color:var(--green);">🚀 Performance & UI</div>
+    <div class="wn-item"><div class="wn-item-icon">🧹</div><div class="wn-item-text"><div class="wn-item-title">Cleaner Interface</div><div class="wn-item-desc">Removed the Leaderboard feature to simplify the app and reduce Firestore usage. Focus is now purely on your personal study progress.</div></div></div>
+    <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Smarter Caching</div><div class="wn-item-desc">The daily plan card now intelligently invalidates its cache when your course data arrives from the server, preventing stale "Plan Paused" displays.</div></div></div>
   </div>
   `;
 
@@ -3783,7 +3659,7 @@ function checkAndNotify() {
 
   // 1. Compute Syllabus & Completion stats
   let total = 0, covered = 0;
-  let topSubjName = activeCourse.startsWith('ACCA') ? 'Financial Reporting' : 'Co-operative Law';
+  let topSubjName = activeCourse.startsWith('ACCA') ? 'Financial Reporting' : activeCourse === 'AA26' ? 'Audit and Assurance' : 'Co-operative Law';
   let maxSubjDone = -1;
   Object.entries(cd.subjs || {}).forEach(([k, s]) => {
     if (!s.ids || k === 'exam' || k === 'mocks') return;
@@ -3802,6 +3678,8 @@ function checkAndNotify() {
     const p1Date = new Date('2026-09-10');
     const p2Date = new Date('2026-12-10');
     examDate = activeCourse === 'ACCA26_P2' ? p2Date : (new Date() > p1Date ? p2Date : p1Date);
+  } else if (activeCourse === 'AA26') {
+    examDate = new Date('2026-12-07'); // Default to December for AA
   } else if (typeof EXAMS !== 'undefined') {
     const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
     const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -3820,7 +3698,9 @@ function checkAndNotify() {
   const lsStr = typeof getLateStartDate === 'function' ? getLateStartDate() : null;
   const acca1Start = lsStr || '2026-08-07';
   const startMs = new Date(
+    activeCourse === 'AA26' ? '2026-09-25' :
     activeCourse === 'ACCA26_P2' ? '2026-09-11' : 
+    activeCourse === 'CLERK26' ? '2026-09-12' :
     (activeCourse === 'ACCA26' ? acca1Start : '2026-06-12')
   ).getTime();
   let tgtPct = 0;
@@ -3831,7 +3711,8 @@ function checkAndNotify() {
   let currentStreak = 0;
   let d = new Date();
   for (let i = 0; i < 60; i++) {
-    const dtStr = new Date(d.getTime() - (i * 86400000)).toISOString().split('T')[0];
+    const pastD = new Date(d.getTime() - (i * 86400000));
+    const dtStr = pastD.getFullYear() + '-' + String(pastD.getMonth()+1).padStart(2, '0') + '-' + String(pastD.getDate()).padStart(2, '0');
     if (remoteData._activity?.[dtStr] || (i === 0 && covered > 0)) {
       currentStreak++;
     } else if (i > 0) {
@@ -3922,7 +3803,7 @@ function checkAndNotify() {
           <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-weight:900;font-family:var(--mono);">✓</span> Explore your study syllabus below</div>
           <div style="display:flex;align-items:center;gap:10px;"><span style="color:${step4Done ? 'var(--green)' : 'var(--accent)'};font-weight:900;font-family:var(--mono);">${step4Done ? '✓' : '◯'}</span> ${step4Done ? 'First topic completed!' : 'Complete your first topic below'}</div>
         </div>
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.82rem;color:var(--dim);font-family:var(--font);">
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:0.82rem;color:var(--dim);font-family:var(--font);">
           <strong style="color:var(--accent);">⚡ Quick Tip:</strong> Completing your first topics unlocks your automated <strong style="color:var(--text);">Smart Study Coach</strong> & AI schedule predictions!
         </div>
       </div>
@@ -4161,8 +4042,6 @@ onAuthStateChanged(auth,user=>{
       initApp(user);
     } else {
       currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
-      if(lbUnsub){lbUnsub();lbUnsub=null;}
-      currentLBTrack=null;
       remoteData={};syllabusBoxes=[];
       try{localStorage.removeItem('cseb_deferred');}catch(e){}
       hideSplash();
@@ -4178,16 +4057,7 @@ onAuthStateChanged(auth,user=>{
   }
 });
 
-// Wire What's New Escape key
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape'){
-    const wn = document.getElementById('whats-new-overlay');
-    if(wn && wn.classList.contains('open')){
-      wn.classList.remove('open');
-      localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION);
-    }
-  }
-});
+
 
 function updateThemeColorMeta(theme) {
   // Remove ALL existing theme-color tags (including the hardcoded media query ones)
@@ -4241,7 +4111,7 @@ const profileDrop=$('profile-drop');
 let dropOpen=false,_dropTouch=false;
 
 function closeDrop(){dropOpen=false;if(profileDrop){profileDrop.dataset.open='';}}
-function toggleDrop(){dropOpen=!dropOpen;profileDrop.dataset.open=dropOpen?'1':'';}
+function toggleDrop(){ if(!profileDrop) return; dropOpen=!dropOpen; profileDrop.dataset.open=dropOpen?'1':''; }
 
 // touchend handles tap; preventDefault stops synthetic click from also firing
 profileBtn.addEventListener('touchend',function(e){
@@ -4261,19 +4131,19 @@ document.addEventListener('touchstart',function(e){
 },{passive:true});
 
 if($('settings-notif-row')) {
-  $('settings-notif-row').addEventListener('click', () => {
+  const el_settings_notif_row = $('settings-notif-row'); if(el_settings_notif_row) el_settings_notif_row.addEventListener('click', () => {
     const nowEnabled = remoteData.notifEnabled !== false;
     const next = !nowEnabled;
     remoteData.notifEnabled = next;
     if(typeof currentUid !== 'undefined' && currentUid && typeof db !== 'undefined' && typeof doc !== 'undefined' && typeof setDoc !== 'undefined') {
-      setDoc(doc(db,'users',currentUid),{notifEnabled:next},{merge:true}).catch(()=>{});
+      if (typeof saveToFirestore === 'function') saveToFirestore();
     }
     renderNotifToggle();
     if(next && typeof checkAndNotify === 'function') checkAndNotify();
   });
 }
 if($('settings-whats-new-btn')) {
-  $('settings-whats-new-btn').addEventListener('click', () => {
+  const el_settings_whats_new_btn = $('settings-whats-new-btn'); if(el_settings_whats_new_btn) el_settings_whats_new_btn.addEventListener('click', () => {
     $('settings-overlay').style.opacity = '0';
     setTimeout(() => {
       $('settings-overlay').style.visibility = 'hidden';
@@ -4282,7 +4152,7 @@ if($('settings-whats-new-btn')) {
   });
 }
 
-$('pd-settings-item').addEventListener('click', (e) => {
+const el_pd_settings_item = $('pd-settings-item'); if(el_pd_settings_item) el_pd_settings_item.addEventListener('click', (e) => {
   e.stopPropagation();
   closeDrop();
   renderNotifToggle();
@@ -4302,18 +4172,18 @@ $('pd-settings-item').addEventListener('click', (e) => {
     }
   }
 });
-$('settings-close').addEventListener('click', () => {
+const el_settings_close = $('settings-close'); if(el_settings_close) el_settings_close.addEventListener('click', () => {
   $('settings-overlay').style.opacity = '0';
   setTimeout(() => $('settings-overlay').style.visibility = 'hidden', 200);
 });
-$('settings-overlay').addEventListener('click', function(e) {
+const el_settings_overlay = $('settings-overlay'); if(el_settings_overlay) el_settings_overlay.addEventListener('click', function(e) {
   if(e.target === this) {
     $('settings-overlay').style.opacity = '0';
     setTimeout(() => $('settings-overlay').style.visibility = 'hidden', 200);
   }
 });
 
-$('settings-name-save').addEventListener('click', async function() {
+const el_settings_name_save = $('settings-name-save'); if(el_settings_name_save) el_settings_name_save.addEventListener('click', async function() {
   if(!auth.currentUser) return;
   if(!navigator.onLine) { alert('You must be online to change your account name.'); return; }
   const currentName = remoteData._displayName || auth.currentUser.displayName || '';
@@ -4328,7 +4198,7 @@ $('settings-name-save').addEventListener('click', async function() {
       $('profile-avatar').textContent = newName.slice(0, 2).toUpperCase();
       $('profile-name').textContent = newName;
       $('pd-name').textContent = newName;
-      updateLBData();
+
       btn.textContent = 'Saved!';
       setTimeout(()=>btn.textContent='Save', 2000);
     } catch(e) {
@@ -4340,7 +4210,7 @@ $('settings-name-save').addEventListener('click', async function() {
   }
 });
 
-$('settings-reset-pw').addEventListener('click', async function() {
+const el_settings_reset_pw = $('settings-reset-pw'); if(el_settings_reset_pw) el_settings_reset_pw.addEventListener('click', async function() {
   if(!auth.currentUser) return;
   const btn = this;
   btn.textContent = 'Sending...';
@@ -4363,7 +4233,7 @@ $('settings-reset-pw').addEventListener('click', async function() {
 });
 
 
-$('settings-reset-btn').addEventListener('click', async function() {
+const el_settings_reset_btn = $('settings-reset-btn'); if(el_settings_reset_btn) el_settings_reset_btn.addEventListener('click', async function() {
   if(!auth.currentUser) return;
   if(confirm('Are you sure you want to reset your course progress? This will wipe all completed topics, spaced repetition memory, and logged sessions for your current course. This cannot be undone.')) {
     const btn = this;
@@ -4375,16 +4245,19 @@ $('settings-reset-btn').addEventListener('click', async function() {
       const cd = typeof getCourseData === 'function' ? getCourseData() : null;
       const currentIds = new Set();
       
-      // 1. Identify all IDs for the active course and delete their completion status
+      const cleanBackup = { ...remoteData };
+      delete cleanBackup._loaded;
+      
+      // 1. Identify all IDs for the active course and set them to deleteField()
       if (cd && cd.subjs) {
         Object.values(cd.subjs).forEach(subj => {
           if (!subj.ids) return;
           subj.ids.forEach(id => {
             currentIds.add(id);
-            delete remoteData[id];
-            delete remoteData[`${id}_kap`];
-            delete remoteData[`${id}_bpp`];
-            delete remoteData[`${id}_sh`];
+            delete remoteData[id]; cleanBackup[id] = deleteField();
+            delete remoteData[`${id}_kap`]; cleanBackup[`${id}_kap`] = deleteField();
+            delete remoteData[`${id}_bpp`]; cleanBackup[`${id}_bpp`] = deleteField();
+            delete remoteData[`${id}_sh`]; cleanBackup[`${id}_sh`] = deleteField();
           });
         });
       }
@@ -4396,6 +4269,10 @@ $('settings-reset-btn').addEventListener('click', async function() {
             delete remoteData._sr[key];
           }
         }
+        currentIds.forEach(id => {
+          cleanBackup[`_sr.${id}`] = deleteField();
+        });
+        delete cleanBackup._sr;
       }
       
       // 3. Filter out logged sessions belonging to the active course
@@ -4406,27 +4283,18 @@ $('settings-reset-btn').addEventListener('click', async function() {
         }
         return true;
       });
+      cleanBackup._loggedSessions = remoteData._loggedSessions;
 
-      // 4. Rebuild the _activity map (streaks) using only the remaining sessions
-      remoteData._activity = {};
-      remoteData._loggedSessions.forEach(s => {
-        if (s.date && s.count) {
-          remoteData._activity[s.date] = (remoteData._activity[s.date] || 0) + s.count;
-        }
-      });
+      // Notice: We intentionally do NOT rebuild _activity here to preserve historical study streaks!
       
       // Keep timeAccuracy intact, or reset it. Since it spans multiple courses, retaining it is safer.
       try { localStorage.removeItem('cseb_deferred'); deferred = {}; } catch(e) {}
       
       const userRef = doc(db, 'users', currentUid);
-      const cleanBackup = { ...remoteData };
-      delete cleanBackup._loaded;
       
-      // CRITICAL: Change { merge: false } to { merge: true } to prevent accidental document destruction
-      await setDoc(userRef, cleanBackup, { merge: true });
-      
-      if (typeof updateLBData === 'function') updateLBData();
-      
+      // CRITICAL: Use updateDoc for dot notation deleteField() support
+      await updateDoc(userRef, cleanBackup);
+
       btn.textContent = 'Progress Reset!';
       updateAll();
       setTimeout(() => {
@@ -4445,7 +4313,7 @@ $('settings-reset-btn').addEventListener('click', async function() {
   }
 });
 
-$('settings-delete-btn').addEventListener('click', async function() {
+const el_settings_delete_btn = $('settings-delete-btn'); if(el_settings_delete_btn) el_settings_delete_btn.addEventListener('click', async function() {
   if(!auth.currentUser) return;
   if(confirm('Are you sure you want to permanently delete your account and all data? This cannot be undone.')) {
     const btn = this;
@@ -4454,19 +4322,12 @@ $('settings-delete-btn').addEventListener('click', async function() {
     try {
       const uid = auth.currentUser.uid;
       const userRef = doc(db, 'users', uid);
-      const lbRef = doc(db, 'leaderboard', uid);
       
       const backupUser = { ...remoteData };
-      let backupLeaderboard = null;
-      try { 
-        const lbSnap = await getDoc(lbRef);
-        if (lbSnap.exists()) backupLeaderboard = lbSnap.data();
-      } catch(e) {}
       
       try {
         // 1. Delete DB documents FIRST while the auth token is still valid
         try { await deleteDoc(userRef); } catch(e){}
-        try { await deleteDoc(lbRef); } catch(e){}
 
         // 2. Attempt to delete the Auth User
         await deleteUser(auth.currentUser);
@@ -4476,9 +4337,6 @@ $('settings-delete-btn').addEventListener('click', async function() {
       } catch(e) {
         // 3. If Auth deletion fails, restore the DB documents so data isn't lost!
         try { await setDoc(userRef, backupUser); } catch(err){}
-        if (backupLeaderboard) {
-          try { await setDoc(lbRef, backupLeaderboard); } catch(err){}
-        }
 
         if (e.code === 'auth/requires-recent-login') {
           alert('Security Required: Please sign out and sign back in to delete your account.');
@@ -4504,22 +4362,6 @@ document.querySelectorAll('.settings-theme-btn').forEach(btn=>{
     setTheme(this.dataset.t);
   });
 });
-const lbItem=document.getElementById('pd-lb-item');
-if(lbItem) lbItem.addEventListener('click',function(e){
-  e.stopPropagation();
-  closeDrop();
-  if (typeof updateLBData === 'function') updateLBData();
-  const ov = document.getElementById('lb-overlay');
-  if(ov) ov.classList.add('open');
-});
-const lbClose=document.getElementById('lb-close');
-if(lbClose) lbClose.addEventListener('click', function(e) {
-  const ov = document.getElementById('lb-overlay');
-  if(ov) ov.classList.remove('open');
-});
-document.getElementById('lb-overlay').addEventListener('click', function(e) {
-  if(e.target === this) this.classList.remove('open');
-});
 
 const statsBtn = document.getElementById('pd-stats-item');
 if(statsBtn) statsBtn.addEventListener('click', function(e) {
@@ -4528,7 +4370,7 @@ if(statsBtn) statsBtn.addEventListener('click', function(e) {
   openStats();
 });
 
-document.getElementById('signout-item').addEventListener('click',function(e){
+const el_signout = document.getElementById('signout-item'); if(el_signout) el_signout.addEventListener('click',function(e){
   e.stopPropagation();doSignOut();
 });
 
@@ -4549,7 +4391,7 @@ function openLogSession() {
   const dateInput = $('ls-date');
   const timeInput = $('ls-time');
   const endTimeInput = $('ls-end-time');
-  if (dateInput) dateInput.value = now.toISOString().split('T')[0];
+  if (dateInput) dateInput.value = ts();
   if (timeInput) timeInput.value = new Date(now.getTime() - 3600000).toTimeString().slice(0, 5);
   if (endTimeInput) endTimeInput.value = now.toTimeString().slice(0, 5);
 
@@ -4795,7 +4637,7 @@ function renderStatsLoggedSessions() {
             </div>
             <div style="font-size:0.72rem;color:var(--dim);margin-top:2px;">${s.date || ''}</div>
           </div>
-          <button onclick="deleteLoggedSession('${s.id}')" aria-label="Remove log" title="Remove session log" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--dim);cursor:pointer;width:32px;height:32px;display:grid;place-content:center;font-size:0.85rem;border-radius:8px;transition:0.15s;flex-shrink:0;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='rgba(224,80,80,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='var(--dim)';this.style.background='transparent'">✕</button>
+          <button onclick="deleteLoggedSession('${s.id}')" aria-label="Remove log" title="Remove session log" style="background:transparent;border:1px solid var(--border);color:var(--dim);cursor:pointer;width:32px;height:32px;display:grid;place-content:center;font-size:0.85rem;border-radius:8px;transition:0.15s;flex-shrink:0;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='rgba(224,80,80,0.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)';this.style.background='transparent'">✕</button>
         </div>
     `;
     frag.appendChild(card);
@@ -4820,9 +4662,11 @@ function deleteLoggedSession(id) {
     });
 
     // Start with an EMPTY _sr object, sending only specific delta changes
-    const dbPayload = { _sr: {} };
+    const dbPayload = {};
+    let topicsReverted = 0;
     targetSession._topicIds.forEach(tId => {
       if (topicsToSkip.has(tId)) return; // Skip reverting this topic to protect newer progress
+      topicsReverted++;
       const p = targetSession._prevStates[tId];
       if (p) {
         if (!p.completed) {
@@ -4835,45 +4679,31 @@ function deleteLoggedSession(id) {
         
         if (!p.sr) {
           if (remoteData._sr) delete remoteData._sr[tId];
-          if (dbPayload._sr) dbPayload._sr[tId] = deleteField();
+          dbPayload[`_sr.${tId}`] = deleteField();
         } else {
           if (!remoteData._sr) remoteData._sr = {};
           remoteData._sr[tId] = p.sr;
-          if (dbPayload._sr) dbPayload._sr[tId] = p.sr;
+          dbPayload[`_sr.${tId}`] = p.sr;
         }
       }
     });
     if (targetSession.date && remoteData._activity && typeof remoteData._activity[targetSession.date] === 'number') {
-      remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - targetSession.count);
-      if (!dbPayload._activity) dbPayload._activity = {};
+      remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - topicsReverted);
       if (remoteData._activity[targetSession.date] === 0) {
         delete remoteData._activity[targetSession.date];
-        dbPayload._activity[targetSession.date] = deleteField();
+        dbPayload[`_activity.${targetSession.date}`] = deleteField();
       } else {
-        dbPayload._activity[targetSession.date] = remoteData._activity[targetSession.date];
+        dbPayload[`_activity.${targetSession.date}`] = remoteData._activity[targetSession.date];
       }
     }
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
     dbPayload._loggedSessions = remoteData._loggedSessions;
-
-    if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
-      if (dbPayload._sr && Object.keys(dbPayload._sr).length === 0) {
-        delete dbPayload._sr;
-      }
-      if (dbPayload._activity && Object.keys(dbPayload._activity).length === 0) {
-        delete dbPayload._activity;
-      }
-      const cleanBackup = { ...remoteData };
-      delete cleanBackup._loaded;
-      _lastAppliedJSON = JSON.stringify(cleanBackup);
-      setDoc(doc(db, 'users', currentUid), dbPayload, { merge: true }).catch(err => console.error('[Log Undo] Failed:', err));
-      if (typeof updateLBData === 'function') updateLBData();
-    } else if (typeof saveToFirestore === 'function') {
-      saveToFirestore();
+    if (currentUid) {
+      updateDoc(doc(db, 'users', currentUid), dbPayload).catch(e => console.error('Delete log sync error', e));
     }
   } else {
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
-    if (typeof saveToFirestore === 'function') saveToFirestore();
+    if (currentUid) updateDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions });
   }
   updateAll();
   if (typeof renderPending === 'function') renderPending();
@@ -4918,9 +4748,13 @@ async function saveLogSession() {
     alert("Please select at least one topic to log!");
     return;
   }
-  const dateVal = $('ls-date').value || ts();
-  const timeVal = $('ls-time').value || "13:00";
-  const endTimeVal = $('ls-end-time').value || "14:00";
+  const lsDateEl = $('ls-date');
+  const lsTimeEl = $('ls-time');
+  const lsEndTimeEl = $('ls-end-time');
+  if(!lsDateEl || !lsTimeEl || !lsEndTimeEl) return;
+  const dateVal = lsDateEl.value || ts();
+  const timeVal = lsTimeEl.value || "13:00";
+  const endTimeVal = lsEndTimeEl.value || "14:00";
   const hour = parseInt(timeVal.split(':')[0], 10);
 
   let bucket = 'night';
@@ -4981,8 +4815,9 @@ async function saveLogSession() {
       s.lastRev = dateVal;
       
       
-      if (activeCourseKey === 'ACCA26_P2') {
-        const examDate = new Date('2026-12-10T00:00:00Z');
+      if (activeCourseKey === 'ACCA26_P2' || activeCourseKey === 'AA26') {
+        const examDateStr = activeCourseKey === 'AA26' ? '2026-12-07T00:00:00Z' : '2026-12-10T00:00:00Z';
+        const examDate = new Date(examDateStr);
         const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
         const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
         if (s.interval > daysToExam) s.interval = daysToExam;
@@ -5018,26 +4853,11 @@ async function saveLogSession() {
     _prevStates: prevStates
   };
   remoteData._loggedSessions.unshift(sessionRecord);
-  if (remoteData._loggedSessions.length > 20) {
-    remoteData._loggedSessions = remoteData._loggedSessions.slice(0, 20);
+  if (remoteData._loggedSessions.length > 100) {
+    remoteData._loggedSessions = remoteData._loggedSessions.slice(0, 100);
   }
 
-  if (currentUid && typeof doc === 'function') {
-    const payload = { _sr: {} };
-    topicIds.forEach(id => { 
-      payload[id] = true; 
-      // ONLY send the updated SR topics
-      if (remoteData._sr && remoteData._sr[id]) payload._sr[id] = remoteData._sr[id];
-    });
-    
-    // ONLY send today's activity date update
-    payload._activity = { [dateVal]: remoteData._activity[dateVal] };
-    
-    payload._loggedSessions = remoteData._loggedSessions;
-
-    setDoc(doc(db, 'users', currentUid), payload, { merge: true })
-      .catch(err => console.error('[Log Session] Save failed:', err));
-  } else {
+  if (typeof saveToFirestore === 'function') {
     saveToFirestore();
   }
 
@@ -5052,7 +4872,7 @@ async function saveLogSession() {
   if (typeof triggerConfetti === 'function') triggerConfetti();
   closeLogSession();
 
-  const toast = document.getElementById('update-toast');
+  const toast = document.getElementById('session-toast');
   if (toast) {
     toast.innerHTML = `✅ Logged ${topicIds.length} topic${topicIds.length > 1 ? 's' : ''} successfully!`;
     toast.style.visibility = 'visible';
@@ -5171,8 +4991,6 @@ function generateStudyInsights() {
 // Escape key closes any open modal
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  const lb = document.getElementById('lb-overlay');
-  if (lb && lb.classList.contains('open')) { lb.classList.remove('open'); return; }
   const st = document.getElementById('settings-overlay');
   if (st && st.style.visibility === 'visible') {
     st.style.opacity = '0';
@@ -5301,7 +5119,9 @@ try {
 </script>
 <div id="update-toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--blue);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,150,240,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:9999;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
   ✨ New update available!
-  <button id="update-btn" style="background:#fff;color:var(--blue);border:none;border-radius:20px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:0.15s">Reload</button>
+  <button id="update-btn" onclick="window.location.reload()" style="background:#fff;color:var(--blue);border:none;border-radius:20px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:0.15s">Reload</button>
+</div>
+<div id="session-toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,240,150,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:9999;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
 </div>
 
 <style>
@@ -5328,6 +5148,7 @@ try {
 
 </body>
 </html>
+
 
 
 
