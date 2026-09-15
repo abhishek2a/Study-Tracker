@@ -969,7 +969,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.5.4';
+const APP_VERSION = '1.5.5';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -992,6 +992,19 @@ const ACCA_FR_TIPS = [
   "Don't only practise your strongest topics. Spend extra time on the areas where you repeatedly lose marks. Improving a weak area can give you more marks than perfecting an already-strong area.",
   "Before the exam, practise questions under time pressure. FR isn't only about knowing the accounting treatment — you also need to make decisions quickly and accurately.",
   "🔥 One rule to remember: Don't study FR to recognise the answer. Study FR so you can explain why the answer is correct."
+];
+
+const ACCA_AA_TIPS = [
+  "For audit risk questions, don’t simply identify the risk. Always explain why the risk exists, its impact on the financial statements, and what audit procedure could address it.",
+  "For substantive procedures, don’t write vague points such as “check the invoice.” Always state what you would check, how you would check it, and what evidence you expect to obtain.",
+  "For internal control questions, don’t simply identify a weakness. Always explain the consequence of the weakness and give a practical recommendation to improve the control.",
+  "For audit evidence questions, always consider whether the evidence is sufficient and appropriate, and remember that the reliability of evidence depends on its source and nature.",
+  "For audit opinion questions, don’t simply memorise the different opinions. Always consider materiality and whether the matter is pervasive before deciding which opinion is appropriate.",
+  "For ethics questions, identify the ethical threat first and then consider the appropriate safeguard instead of simply naming the threat.",
+  "For scenario-based questions, don’t give generic textbook answers. Always use the specific information provided in the scenario to demonstrate application.",
+  "For audit procedures, always link the procedure to the relevant assertion, such as existence, completeness, valuation, accuracy, or cut-off, to make your answer more precise.",
+  "For written answers, keep each point clear and concise, and avoid repeating the same idea in different words because marks are awarded for relevant and distinct points.",
+  "For final revision, focus on practising questions and reviewing your mistakes rather than repeatedly reading the study material, as AA is mainly about applying audit knowledge to scenarios."
 ];
 
 const EXAMS=[
@@ -2264,7 +2277,7 @@ function makeCard(){
     ACCA26: {text: lateStart ? `Sep 10 FR Exam · Started ${lateStart}` : 'Sep 10 FR Exam', date:new Date(Date.UTC(2026, 8, 10))},
     ACCA26_P2: {text: 'Dec 10 FR Exam', date:new Date(Date.UTC(2026, 11, 10))},
     CLERK26: {text: 'Junior Clerk - Exam TBA', date:null},
-    AA26: {text: 'ACCA AA - Exam TBA', date:null}
+    AA26: {text: 'Dec 7 AA Exam', date:new Date(Date.UTC(2026, 11, 7))}
   };
   const meta=examMeta[activeCourse]||examMeta.CSEB11;
   const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
@@ -2272,9 +2285,15 @@ function makeCard(){
   if(!sched){
     // AA26 and CLERK26 don't use the EXAMS array — show simple no-plan card
     if (activeCourse === 'AA26' || activeCourse === 'CLERK26') {
+      const todayStr = ts();
+      let msg = "Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.";
+      if (activeCourse === 'AA26' && todayStr < '2026-09-25') {
+        msg = "The 75-Day Study Plan for ACCA AA begins on <strong>Sept 25, 2026</strong>. Use this time to get familiar with the syllabus below.";
+      }
+      
       dc.innerHTML=`<div class="day-card catchup">
         ${tag}<div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
-        <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.</p></div>`;
+        <p style="font-size:.85rem;color:var(--dim);margin-top:8px;line-height:1.5">${msg}</p></div>`;
       return;
     }
     // No plan entry for today (e.g. gap day or beyond schedule)
@@ -2586,12 +2605,13 @@ function renderStudyTip() {
     tipEl.style.display = 'none';
     return;
   }
-  const tipIndex = Math.floor(Math.random() * ACCA_FR_TIPS.length);
+  const tipsArray = active === 'AA26' ? ACCA_AA_TIPS : ACCA_FR_TIPS;
+  const tipIndex = Math.floor(Math.random() * tipsArray.length);
   
-  if (tipIndex === 15) {
-    document.getElementById('acca-tip-text').innerHTML = `<strong>${ACCA_FR_TIPS[tipIndex]}</strong>`;
+  if (tipsArray === ACCA_FR_TIPS && tipIndex === 15) {
+    document.getElementById('acca-tip-text').innerHTML = `<strong>${tipsArray[tipIndex]}</strong>`;
   } else {
-    document.getElementById('acca-tip-text').textContent = ACCA_FR_TIPS[tipIndex];
+    document.getElementById('acca-tip-text').textContent = tipsArray[tipIndex];
   }
   tipEl.style.display = 'block';
 }
