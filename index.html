@@ -969,7 +969,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.5.5';
+const APP_VERSION = '1.5.6';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -4405,7 +4405,18 @@ function openLogSession() {
 
   _logSelectedTopics.clear();
   updateLogCountBadge();
-  if ($('ls-notes')) $('ls-notes').value = '';
+  const notesInput = $('ls-notes');
+  if (notesInput) {
+    notesInput.value = '';
+    const active = remoteData.activeCourse || DEFAULT_COURSE;
+    if (active === 'AA26') {
+      notesInput.placeholder = 'e.g. Audit Risk Basking Co...';
+    } else if (active.startsWith('ACCA')) {
+      notesInput.placeholder = 'e.g. Interpretation Ray Co...';
+    } else {
+      notesInput.placeholder = 'e.g. Practiced past paper questions...';
+    }
+  }
 
   const now = new Date();
   const dateInput = $('ls-date');
