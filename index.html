@@ -969,7 +969,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.5.8';
+const APP_VERSION = '1.5.9';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -4784,8 +4784,10 @@ function clearAllLoggedSessions() {
 window.clearAllLoggedSessions = clearAllLoggedSessions;
 
 async function saveLogSession() {
-  if (_logSelectedTopics.size === 0) {
-    alert("Please select at least one topic to log!");
+  const notesEl = $('ls-notes');
+  const hasNotes = notesEl && notesEl.value.trim().length > 0;
+  if (_logSelectedTopics.size === 0 && !hasNotes) {
+    alert("Please select at least one topic or enter a note to log your session!");
     return;
   }
   const lsDateEl = $('ls-date');
