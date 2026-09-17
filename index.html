@@ -969,7 +969,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '1.5.6';
+const APP_VERSION = '1.5.8';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -3079,6 +3079,7 @@ async function openStats() {
   // 14-Day Rolling Average & Projected Finish
   const todayTS = ts();
   const [ty, tm, td] = todayTS.split('-').map(Number);
+  const todayDate = new Date(ty, tm - 1, td);
   const cutoffDate = new Date(ty, tm - 1, td - 14);
   const cutoffStr = cutoffDate.getFullYear() + '-' + String(cutoffDate.getMonth() + 1).padStart(2, '0') + '-' + String(cutoffDate.getDate()).padStart(2, '0');
 
@@ -3209,14 +3210,22 @@ async function openStats() {
   $('st-speed').textContent = pace.toFixed(1) + '%';
   $('st-finish').textContent = finishDate;
 
+  window.lazyLoadChartJS().then(() => {
+    try {
+      renderSRForecastChart();
+    } catch (e) {
+      console.error('Chart rendering error:', e);
+    }
+  }).catch(e => {
+    console.warn('Chart.js failed to load (likely blocked by browser/adblocker). Graph skipped.');
+  });
+
   try {
-    await window.lazyLoadChartJS();
-    renderSRForecastChart();
     renderProductivityCorrelator();
     if (typeof generateStudyInsights === 'function') generateStudyInsights();
     if (typeof renderStatsLoggedSessions === 'function') renderStatsLoggedSessions();
   } catch (e) {
-    console.error('SR Forecaster/Productivity rendering error:', e);
+    console.error('Stats rendering error:', e);
   }
 }
 
@@ -3695,11 +3704,11 @@ function checkAndNotify() {
   let examDate = new Date('2026-08-27');
   let isPostponed = false;
   if (activeCourse.startsWith('ACCA26')) {
-    const p1Date = new Date('2026-09-10');
-    const p2Date = new Date('2026-12-10');
+    const p1Date = new Date(Date.UTC(2026, 8, 10)); // Sep 10
+    const p2Date = new Date(Date.UTC(2026, 11, 10)); // Dec 10
     examDate = activeCourse === 'ACCA26_P2' ? p2Date : (new Date() > p1Date ? p2Date : p1Date);
   } else if (activeCourse === 'AA26') {
-    examDate = new Date('2026-12-07'); // Default to December for AA
+    examDate = new Date(Date.UTC(2026, 11, 7)); // Dec 7 for AA
   } else if (typeof EXAMS !== 'undefined') {
     const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
     const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -3718,10 +3727,10 @@ function checkAndNotify() {
   const lsStr = typeof getLateStartDate === 'function' ? getLateStartDate() : null;
   const acca1Start = lsStr || '2026-08-07';
   const startMs = new Date(
-    activeCourse === 'AA26' ? '2026-09-25' :
-    activeCourse === 'ACCA26_P2' ? '2026-09-11' : 
-    activeCourse === 'CLERK26' ? '2026-09-12' :
-    (activeCourse === 'ACCA26' ? acca1Start : '2026-06-12')
+    activeCourse === 'AA26' ? '2026-09-25T00:00:00Z' :
+    activeCourse === 'ACCA26_P2' ? '2026-09-11T00:00:00Z' : 
+    activeCourse === 'CLERK26' ? '2026-09-12T00:00:00Z' :
+    (activeCourse === 'ACCA26' ? `${acca1Start}T00:00:00Z` : '2026-06-12T00:00:00Z')
   ).getTime();
   let tgtPct = 0;
   if (nowMs >= examMs) tgtPct = 100;
@@ -4979,7 +4988,9 @@ function generateStudyInsights() {
   const nowMs = Date.now();
   for (const [id, s] of Object.entries(srData)) {
     if (remoteData[id] && s.lastRev) {
-      const daysSince = Math.floor((nowMs - new Date(s.lastRev).getTime()) / 86400000);
+      const [ry, rm, rd] = s.lastRev.split('-').map(Number);
+      const revMs = new Date(ry, rm - 1, rd).getTime();
+      const daysSince = Math.floor((nowMs - revMs) / 86400000);
       if (daysSince >= 14 && daysSince > staleDays) {
         staleDays = daysSince;
         staleTopic = id;
