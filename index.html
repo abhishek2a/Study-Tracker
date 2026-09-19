@@ -24,7 +24,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Study Tracker">
 <meta name="mobile-web-app-capable" content="yes">
 <script>if(window.location.protocol!=='file:'){var _m=document.createElement('link');_m.rel='manifest';_m.href='manifest.json';document.head.appendChild(_m);}</script>
@@ -105,7 +105,7 @@ body {
   .topbar{padding:max(12px, env(safe-area-inset-top, 12px)) 16px 12px!important;min-height:calc(50px + env(safe-area-inset-top, 0px))!important;position:sticky;top:0;width:100%}
 }
 @media (display-mode: standalone), (display-mode: fullscreen) {
-  .topbar{padding-top:max(44px, env(safe-area-inset-top, 44px))!important;min-height:calc(50px + max(44px, env(safe-area-inset-top, 44px)))!important}
+  .topbar{padding-top:max(12px, env(safe-area-inset-top, 12px))!important;min-height:calc(50px + env(safe-area-inset-top, 0px))!important}
 }
 .logo{font-size:1rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--accent)}
@@ -975,7 +975,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.0.1';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
