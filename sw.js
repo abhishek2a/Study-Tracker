@@ -1,10 +1,10 @@
 
-const CACHE = 'study-tracker-v1.6.0-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v2.0.0-offline-bandwidth-opt';
 const PRECACHE = [
   './index.html', 
   './manifest.json', 
   './logo.svg',
-  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js',
+  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.1/dist/confetti.browser.min.js',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'
 ];
 
