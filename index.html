@@ -451,7 +451,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.0.0</div>
+      <div class="wn-title" id="wn-title">Version 2.0.1</div>
       <div class="wn-sub" id="wn-sub">iOS optimized · New features · Bug fixes</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -642,7 +642,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.0.0</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.0.1</div>
         </div>
       </div>
     </div>
@@ -723,7 +723,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>View What's New in v2.0.0</span>
+          <span>View What's New in v2.0.1</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -951,15 +951,27 @@ function showForgot(){
 async function doReset(){
   const email=$('reset-email').value.trim();
   const msg=$('reset-msg');
+  const btn=$('reset-btn');
   if(!email){msg.style.color='var(--red)';msg.textContent='Enter your email.';return;}
+  btn.disabled=true;
+  btn.textContent='Sending…';
   try{
     await sendPasswordResetEmail(auth,email);
     msg.style.color='var(--green)';
-    msg.textContent='✓ Reset link sent. Check spam/junk if it doesn\'t appear in a few minutes.';
-    $('reset-btn').disabled=true;
+    msg.textContent='✓ Reset link sent! Check your inbox (and spam/junk folder).';
+    setTimeout(()=>{ btn.disabled=false; btn.textContent='Send Reset Link'; }, 10000);
   }catch(e){
     msg.style.color='var(--red)';
-    msg.textContent=e.code==='auth/user-not-found'?'No account with that email.':'Error: '+e.code;
+    const errMap = {
+      'auth/user-not-found': 'No account found with that email.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a few minutes and try again.',
+      'auth/network-request-failed': 'Network error. Check your internet connection.',
+      'auth/invalid-credential': 'No account found with that email.'
+    };
+    msg.textContent = errMap[e.code] || 'Error sending reset link. Please try again.';
+    btn.disabled=false;
+    btn.textContent='Send Reset Link';
   }
 };
 
