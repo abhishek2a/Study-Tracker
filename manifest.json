@@ -3,6 +3,7 @@
   "short_name": "StudyTracker",
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#020305",
   "theme_color": "#020305",
   "icons": [
@@ -17,6 +18,22 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log Study Session",
+      "short_name": "Log Session",
+      "description": "Log a new study session",
+      "url": "./index.html?action=log",
+      "icons": [{"src": "./logo.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "View Statistics",
+      "short_name": "Stats",
+      "description": "View study analytics",
+      "url": "./index.html?action=stats",
+      "icons": [{"src": "./logo.svg", "sizes": "any", "type": "image/svg+xml"}]
     }
   ]
 }

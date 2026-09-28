@@ -1,5 +1,5 @@
 
-const CACHE = 'study-tracker-v2.1.0-offline-bandwidth-opt';
+const CACHE = 'study-tracker-v2.2.0-offline-bandwidth-opt';
 const PRECACHE = [
   './index.html', 
   './manifest.json', 
