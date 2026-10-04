@@ -250,7 +250,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .cl input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
 .cl input[type=checkbox]:checked::before{transform:scale(1)}
 .cl input[type=checkbox]:checked+span{text-decoration:line-through;color:var(--dim);opacity:0.65}
-#splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s cubic-bezier(.4,0,.2,1),visibility .4s}
+#splash{position:fixed;inset:0;height:100dvh;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s cubic-bezier(.4,0,.2,1),visibility .4s}
 #splash::before{content:"";position:absolute;width:260px;height:260px;background:radial-gradient(circle,rgba(84,162,255,0.12),transparent 70%);border-radius:50%;pointer-events:none}
 #splash.splash-done{opacity:0;visibility:hidden;pointer-events:none}
 .splash-icon{font-size:2.8rem;margin-bottom:-6px;filter:drop-shadow(0 4px 16px rgba(84,162,255,0.3));animation:splashPulse 2s ease-in-out infinite}
@@ -2905,9 +2905,10 @@ function renderRevisions(){
 function calcStreak(){
   const activity = remoteData._activity || {};
   let streak = 0;
+  const hasActivityForDate = (dt) => activity[dt] || (remoteData._loggedSessions || []).some(s => s.date === dt);
   for (let i = 0; ; i++) {
     const date = addDaysStr(ts(), -i);
-    if (!activity[date]) {
+    if (!hasActivityForDate(date)) {
       if (i === 0) continue; // Allow today to be missed
       break;
     }
@@ -3137,11 +3138,13 @@ async function openStats() {
   const dates = Object.keys(activity).sort().reverse();
   const activeDays = dates.length;
   
+  const hasActivityForDate = (dt) => activity[dt] || (remoteData._loggedSessions || []).some(s => s.date === dt);
+  
   let daysBack = 0;
   let checkDateStr = ts();
   
   // Check if today is active
-  if (activity[checkDateStr]) {
+  if (hasActivityForDate(checkDateStr)) {
     streak++;
     daysBack--;
     checkDateStr = addDaysStr(ts(), daysBack);
@@ -3149,7 +3152,7 @@ async function openStats() {
     // If today is NOT active, see if yesterday was (they still have a streak alive)
     daysBack--;
     checkDateStr = addDaysStr(ts(), daysBack);
-    if (activity[checkDateStr]) {
+    if (hasActivityForDate(checkDateStr)) {
       streak++;
       daysBack--;
       checkDateStr = addDaysStr(ts(), daysBack);
@@ -3157,7 +3160,7 @@ async function openStats() {
   }
   
   // Continue counting backwards
-  while (activity[checkDateStr]) {
+  while (hasActivityForDate(checkDateStr)) {
     streak++;
     daysBack--;
     checkDateStr = addDaysStr(ts(), daysBack);
@@ -3764,12 +3767,13 @@ function checkAndNotify() {
   // 3. Calculate streak (only count days with actual logged activity)
   let currentStreak = 0;
   const todayStr = ts();
-  const todayActive = !!(remoteData._activity?.[todayStr]);
+  const hasActivityForDate = (dt) => remoteData._activity?.[dt] || (remoteData._loggedSessions || []).some(s => s.date === dt);
+  const todayActive = hasActivityForDate(todayStr);
   let d = new Date();
   for (let i = 0; i < 60; i++) {
     const pastD = new Date(d.getTime() - (i * 86400000));
     const dtStr = pastD.getFullYear() + '-' + String(pastD.getMonth()+1).padStart(2, '0') + '-' + String(pastD.getDate()).padStart(2, '0');
-    if (remoteData._activity?.[dtStr]) {
+    if (hasActivityForDate(dtStr)) {
       currentStreak++;
     } else if (i === 0) {
       continue; // today has no activity yet — check yesterday
