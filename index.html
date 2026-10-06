@@ -2813,16 +2813,28 @@ function renderRevisions(){
   if (!cd || !cd.labels) { sec.style.display='none'; return; }
   const activeLabels = cd.labels;
   
+  // Only unique IDs — de-duplicate by id in case label appears in multiple _sr keys
+  const seenIds = new Set();
   const allSr = Object.entries(remoteData._sr || {})
-    .filter(([id,s])=>s && typeof s==='object' && !!remoteData[id] && activeLabels[id])
-    .map(([id,s])=>{
+    .filter(([id,s]) => {
+      if (!s || typeof s !== 'object') return false;
+      if (!remoteData[id]) return false;          // must be marked complete in syllabus
+      if (!activeLabels[id]) return false;        // must belong to active course
+      if (seenIds.has(id)) return false;          // deduplicate same id
+      seenIds.add(id);
+      return true;
+    })
+    .map(([id,s]) => {
       const mem = getMemoryRetention(id);
       return {id, label: activeLabels[id], ...s, mem};
     });
     
-  const due = allSr.filter(s => s.next <= ts()).sort((a,b)=>a.next.localeCompare(b.next));
-  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== ts()).sort((a,b)=>a.mem - b.mem);
-  const smart = allSr.filter(s => s.next > ts() && s.lastRev !== ts()).sort((a,b)=>a.mem - b.mem).slice(0, 4);
+  const due = allSr.filter(s => s.next <= ts()).sort((a,b) => a.next.localeCompare(b.next));
+  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== ts()).sort((a,b) => a.mem - b.mem);
+  // Exclude items already in 'due' or 'weak' from smart recommendations
+  const dueAndWeakIds = new Set([...due.map(s => s.id), ...weak.map(s => s.id)]);
+  const smart = allSr.filter(s => s.next > ts() && s.lastRev !== ts() && !dueAndWeakIds.has(s.id)).sort((a,b) => a.mem - b.mem).slice(0, 3);
+  
   
   const hasContent = due.length || weak.length || smart.length;
   sec.style.display = hasContent ? 'flex' : 'none';
@@ -5016,11 +5028,15 @@ function generateStudyInsights() {
     `);
   }
 
-  // 3. Revision Warning (Stale topics)
+  // 3. Revision Warning (Stale topics) — only for ACTIVE COURSE topics
+  const activeCourseForInsights = remoteData.activeCourse || DEFAULT_COURSE;
+  const cdForInsights = COURSE_DATA[activeCourseForInsights];
+  const activeLabelsForInsights = (cdForInsights && cdForInsights.labels) ? cdForInsights.labels : {};
   let staleTopic = null;
   let staleDays = 0;
   const nowMs = Date.now();
   for (const [id, s] of Object.entries(srData)) {
+    if (!activeLabelsForInsights[id]) continue; // Skip topics from other courses
     if (remoteData[id] && s.lastRev) {
       const [ry, rm, rd] = s.lastRev.split('-').map(Number);
       const revMs = new Date(ry, rm - 1, rd).getTime();
@@ -5033,8 +5049,7 @@ function generateStudyInsights() {
   }
 
   if (staleTopic && !stuckTopic) { // Don't overwhelm with too many warnings
-    const cd = typeof getCourseData === 'function' ? getCourseData() : null;
-    const tName = cd && cd.labels ? (cd.labels[staleTopic] || 'an older topic') : 'an older topic';
+    const tName = activeLabelsForInsights[staleTopic] || 'an older topic';
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
         <strong style="color:var(--red);">Memory Decay Risk:</strong> It's been <strong>${staleDays} days</strong> since you last reviewed <em>${tName}</em>. It is at high risk of being forgotten. Add it to tomorrow's quick revision!
