@@ -782,20 +782,20 @@ window.lazyLoadConfetti = async function() {
   return window._loadingConfetti;
 };
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-performance.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-performance.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {
   initializeAppCheck,
   ReCaptchaV3Provider
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app-check.js";
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
@@ -1305,9 +1305,9 @@ COURSE_DATA['ACCA26']={sch:{},labels:LABELS_FR,subjs:SUBJS_FR,dynamic:false};
 // 🎓 ACCA FR Phase 2 (Sep 11 2026 - Dec 10 2026) 🎓
 const LABELS_FR_P2 = {
   fr_new_2: "Conceptual Framework",
-  fr_new_3: "IFRS 18, IFRS 13",
+  fr_new_3: "IFRS 18, IFRS 13, IAS 2",
   fr_new_4: "IAS 16",
-  fr_new_5: "IAS 16, IAS 40",
+  fr_new_5: "IAS 16, IAS 40, IAS 41",
   fr_new_7: "IAS 23, IAS 20",
   fr_new_8: "IAS 38, IFRS 5",
   fr_new_9: "IAS 36",
@@ -1316,7 +1316,7 @@ const LABELS_FR_P2 = {
   fr_new_12: "IFRS 16 (Part 1)",
   fr_new_14: "IFRS 16 (Part 2)",
   fr_new_15: "IFRS 9 (Part 1)",
-  fr_new_16: "IFRS 9, IAS 8",
+  fr_new_16: "IFRS 9, IAS 8, IAS 10",
   fr_new_17: "IAS 12 (Part 1)",
   fr_new_18: "IAS 12 (Part 2)",
   fr_new_19: "IFRS 15 (Part 1)",
@@ -1330,7 +1330,7 @@ const LABELS_FR_P2 = {
   fr_new_29: "Consolidation (Part 4)",
   fr_new_30: "Cashflow Statement (Part 1)",
   fr_new_31: "Cashflow Statement (Part 2)",
-  fr_new_32: "IAS 20, IAS 21",
+  fr_new_32: "IAS 21",
   fr_new_33: "Interpretation (Part 1)",
   fr_new_35: "Interpretation (Part 2)",
   fr_new_36: "Interpretation (Part 3)",
