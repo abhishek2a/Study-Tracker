@@ -165,7 +165,7 @@ body {
 @media(max-width:800px){.day-grid{grid-template-columns:1fr}}
 .pending-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:11px;display:flex;align-items:center;gap:8px}
 .pending-lbl::before{content:'';width:3px;height:14px;background:var(--red);border-radius:2px;display:inline-block}
-.day-card{background:var(--s1);border-radius:var(--radius);padding:22px 24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:inset 0 1px 1px rgba(255,255,255,0.04), var(--shadow);contain:layout style;content-visibility:auto;contain-intrinsic-size:auto 120px;transition:border-color .2s ease, background-color .2s ease;-webkit-transform:translateZ(0);transform:translateZ(0)}
+.day-card{background:var(--s1);border-radius:var(--radius);padding:22px 24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:inset 0 1px 1px rgba(255,255,255,0.04), var(--shadow);transition:border-color .2s ease, background-color .2s ease;-webkit-transform:translateZ(0);transform:translateZ(0)}
 .day-card+.day-card{margin-top:14px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:linear-gradient(0deg,rgba(77,150,240,.035),rgba(77,150,240,.035)),var(--s1)}.day-card.banking::before{background:var(--banking)}
@@ -335,12 +335,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .mock-mini .cl input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 @media(max-width:820px){.subj-grid{grid-template-columns:1fr}}
-.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);content-visibility:auto;contain-intrinsic-size:auto 200px}
+.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
 .subj-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .subj-hdr h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text);font-family:var(--font)}
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
 .mini-track{height:2px;border-radius:99px;background:var(--border);margin-bottom:11px;overflow:hidden}
-.mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s;will-change:width}
+.mini-fill{height:100%;width:0%;border-radius:99px;transition:width .4s}
 .pd-sync-row{font-size:0.65rem;margin-top:4px;font-family:var(--mono);color:var(--dim)}
 .skeleton{background:linear-gradient(90deg, var(--s2) 25%, var(--s3) 50%, var(--s2) 75%);background-size:200% 100%;animation:skeletonLoading 1.5s infinite;border-radius:8px}
 @keyframes skeletonLoading{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -453,7 +453,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.0</div>
+      <div class="wn-title" id="wn-title">Version 2.2.3</div>
       <div class="wn-sub" id="wn-sub">iOS optimized · New features · Bug fixes</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -644,7 +644,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.0</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.3</div>
         </div>
       </div>
     </div>
@@ -725,7 +725,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>View What's New in v2.2.0</span>
+          <span>View What's New in v2.2.3</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -990,7 +990,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.2.3';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -1303,208 +1303,115 @@ const TOPIC_META_FR={
 COURSE_DATA['ACCA26']={sch:{},labels:LABELS_FR,subjs:SUBJS_FR,dynamic:false};
 
 // 🎓 ACCA FR Phase 2 (Sep 11 2026 - Dec 10 2026) 🎓
-const LABELS_FR_P2={
-  fr_p2_d1: "Conceptual Framework & IFRS 18",
-  fr_p2_d2: "IFRS 13 (Fair Value)",
-  fr_p2_d3: "IAS 8 & IAS 10",
-  fr_p2_d4: "Review/Test: Days 1-3",
-  fr_p2_d5: "IAS 16 (PPE) - Theory",
-  fr_p2_d6: "IAS 16 (PPE) - Practice",
-  fr_p2_d7: "IAS 23 & IFRS 5",
-  fr_p2_d8: "IAS 40 & IAS 41",
-  fr_p2_d9: "IAS 2 (Inventories)",
-  fr_p2_d10: "IAS 38 (Intangible Assets)",
-  fr_p2_d11: "Buffer / Catch-up",
-  fr_p2_d12: "IAS 36 (Impairment) - Theory",
-  fr_p2_d13: "IAS 36 - Practice",
-  fr_p2_d14: "Weekly Mixed Review + Sec C",
-  fr_p2_d15: "IAS 37 (Provisions) - Theory",
-  fr_p2_d16: "IAS 37 - Practice",
-  fr_p2_d17: "IAS 20 (Gov Grants)",
-  fr_p2_d18: "IFRS 16 (Leases) - Theory",
-  fr_p2_d19: "IFRS 16 - Practice",
-  fr_p2_d20: "Buffer / Catch-up",
-  fr_p2_d21: "IFRS 9 (Financial Instruments) - Theory",
-  fr_p2_d22: "IFRS 9 - Practice",
-  fr_p2_d23: "IAS 12 (Deferred Tax) - Theory",
-  fr_p2_d24: "IAS 12 - Practice",
-  fr_p2_d25: "Weekly Mixed Review + Sec C",
-  fr_p2_d26: "IFRS 15 (Revenue) - Theory",
-  fr_p2_d27: "IFRS 15 - Practice",
-  fr_p2_d28: "IAS 21, IAS 27 & IAS 28",
-  fr_p2_d29: "DIAGNOSTIC MOCK",
-  fr_p2_d30: "Buffer/Rest + Self-Assessment",
-  fr_p2_d31: "IAS 33 (Earnings Per Share)",
-  fr_p2_d32: "Interpretation Intro",
-  fr_p2_d33: "FS Prep (Single Entity) Part 1 Theory",
-  fr_p2_d34: "FS Prep Part 1 Practice",
-  fr_p2_d35: "FS Prep Part 2 Theory",
-  fr_p2_d36: "FS Prep Part 2 Practice",
-  fr_p2_d37: "Weekly Mixed Review + Sec C",
-  fr_p2_d38: "Cashflow (IAS 7) Part 1 Theory",
-  fr_p2_d39: "Cashflow Part 1 Practice",
-  fr_p2_d40: "Cashflow Part 2 Theory",
-  fr_p2_d41: "Cashflow Part 2 Practice",
-  fr_p2_d42: "Tech Articles & Examiner Reports",
-  fr_p2_d43: "IFRS 3 & 10 Consolidation Basics Theory",
-  fr_p2_d44: "IFRS 3 & 10 Consolidation Basics Practice",
-  fr_p2_d45: "IFRS 3 & 10 Consolidation Full Exam Q",
-  fr_p2_d46: "Weekly Mixed Review + Sec C",
-  fr_p2_d47: "IFRS 10 NCI & RE Theory",
-  fr_p2_d48: "IFRS 10 NCI & RE Practice",
-  fr_p2_d49: "IFRS 10 NCI & RE Full Exam Q",
-  fr_p2_d50: "Consolidation Intra-group & PURP Theory",
-  fr_p2_d51: "Consolidation Intra-group Practice",
-  fr_p2_d52: "Consolidation Intra-group Full Exam Q",
-  fr_p2_d53: "Tech Articles Review",
-  fr_p2_d54: "Consolidated SOPL Theory",
-  fr_p2_d55: "Consolidated SOPL Practice",
-  fr_p2_d56: "Consolidated SOPL Full Exam Q",
-  fr_p2_d57: "Interpretation Ratios",
-  fr_p2_d58: "Interpretation Written Analysis",
-  fr_p2_d59: "SECTION C MOCK",
-  fr_p2_d60: "Review Mock + Mistake Log",
-  fr_p2_d61: "Conceptual Framework & IFRS 18",
-  fr_p2_d62: "IFRS 13, IAS 8 & IAS 10",
-  fr_p2_d63: "IAS 16",
-  fr_p2_d64: "IAS 23, IAS 40 & IAS 41",
-  fr_p2_d65: "IAS 38 & IFRS 5 + Mixed",
-  fr_p2_d66: "FULL MOCK 1",
-  fr_p2_d67: "Deep Mock Review",
-  fr_p2_d68: "IAS 36",
-  fr_p2_d69: "IAS 37 & IAS 20",
-  fr_p2_d70: "IFRS 16",
-  fr_p2_d71: "IFRS 9",
-  fr_p2_d72: "IAS 12 + Mixed Practice",
-  fr_p2_d73: "FULL MOCK 2",
-  fr_p2_d74: "Deep Mock Review",
-  fr_p2_d75: "IFRS 15, IAS 21 & IAS 27",
-  fr_p2_d76: "IAS 33",
-  fr_p2_d77: "FS Prep Recap",
-  fr_p2_d78: "Cashflow Recap",
-  fr_p2_d79: "Consolidation Recap",
-  fr_p2_d80: "FULL MOCK 3",
-  fr_p2_d81: "Deep Mock Review",
-  fr_p2_d82: "Consolidation Intra-group Recap",
-  fr_p2_d83: "Interpretation Profitability, Liquidity & Efficiency",
-  fr_p2_d84: "Interpretation Investor Ratios & Analysis",
-  fr_p2_d85: "Weak-Area Focus + Mixed Practice",
-  fr_p2_d86: "FULL MOCK 4",
-  fr_p2_d87: "Deep Mock Review",
-  fr_p2_d88: "FULL MOCK 5",
-  fr_p2_d89: "Deep Mock Review + Weak-Area Consolidation",
-  fr_p2_d90: "Light Revision & Rest",
+const LABELS_FR_P2 = {
+  fr_new_2: "Conceptual Framework",
+  fr_new_3: "IFRS 18, IFRS 13",
+  fr_new_4: "IAS 16",
+  fr_new_5: "IAS 16, IAS 40",
+  fr_new_7: "IAS 23, IAS 20",
+  fr_new_8: "IAS 38, IFRS 5",
+  fr_new_9: "IAS 36",
+  fr_new_10: "IAS 37 (Part 1)",
+  fr_new_11: "IAS 37 (Part 2)",
+  fr_new_12: "IFRS 16 (Part 1)",
+  fr_new_14: "IFRS 16 (Part 2)",
+  fr_new_15: "IFRS 9 (Part 1)",
+  fr_new_16: "IFRS 9, IAS 8",
+  fr_new_17: "IAS 12 (Part 1)",
+  fr_new_18: "IAS 12 (Part 2)",
+  fr_new_19: "IFRS 15 (Part 1)",
+  fr_new_21: "IFRS 15 (Part 2)",
+  fr_new_22: "FS Preparation (Part 1)",
+  fr_new_23: "FS Preparation (Part 2)",
+  fr_new_24: "IAS 33",
+  fr_new_25: "Consolidation (Part 1)",
+  fr_new_26: "Consolidation (Part 2)",
+  fr_new_28: "Consolidation (Part 3)",
+  fr_new_29: "Consolidation (Part 4)",
+  fr_new_30: "Cashflow Statement (Part 1)",
+  fr_new_31: "Cashflow Statement (Part 2)",
+  fr_new_32: "IAS 20, IAS 21",
+  fr_new_33: "Interpretation (Part 1)",
+  fr_new_35: "Interpretation (Part 2)",
+  fr_new_36: "Interpretation (Part 3)",
+  fr_new_37: "Interpretation (Part 4)",
+  fr_new_38: "Extra Question Practice 1",
+  fr_new_39: "Extra Question Practice 2"
 };
-const SUBJS_FR_P2={
-  cat_A: { ids: ["fr_p2_d1","fr_p2_d61"], c: "#6c8ebf", n: "Conceptual Framework (A)", m: "Section A" },
-  cat_B: { ids: ["fr_p2_d2","fr_p2_d3","fr_p2_d5","fr_p2_d6","fr_p2_d7","fr_p2_d8","fr_p2_d9","fr_p2_d10","fr_p2_d12","fr_p2_d13","fr_p2_d15","fr_p2_d16","fr_p2_d17","fr_p2_d18","fr_p2_d19","fr_p2_d21","fr_p2_d22","fr_p2_d23","fr_p2_d24","fr_p2_d26","fr_p2_d27","fr_p2_d28","fr_p2_d31","fr_p2_d62","fr_p2_d63","fr_p2_d64","fr_p2_d65","fr_p2_d68","fr_p2_d69","fr_p2_d70","fr_p2_d71","fr_p2_d72","fr_p2_d75","fr_p2_d76"], c: "#82b366", n: "Accounting for Transactions (B)", m: "Section A/B" },
-  cat_C: { ids: ["fr_p2_d33","fr_p2_d34","fr_p2_d35","fr_p2_d36","fr_p2_d38","fr_p2_d39","fr_p2_d40","fr_p2_d41","fr_p2_d77","fr_p2_d78"], c: "#9b59b6", n: "Preparation of FS (C)", m: "Section C" },
-  cat_D: { ids: ["fr_p2_d43","fr_p2_d44","fr_p2_d45","fr_p2_d47","fr_p2_d48","fr_p2_d49","fr_p2_d50","fr_p2_d51","fr_p2_d52","fr_p2_d54","fr_p2_d55","fr_p2_d56","fr_p2_d59","fr_p2_d79","fr_p2_d82"], c: "#f07850", n: "Consolidation (D)", m: "Section C" },
-  cat_E: { ids: ["fr_p2_d32","fr_p2_d57","fr_p2_d58","fr_p2_d83","fr_p2_d84"], c: "#d6a500", n: "Interpretation (E)", m: "Section C" }
+
+const SUBJS_FR_P2 = {
+  basics: { ids: ["fr_new_2", "fr_new_3", "fr_new_4", "fr_new_5"], c: "#6c8ebf", n: "Foundations & Basics", m: "Section A" },
+  assets: { ids: ["fr_new_7", "fr_new_8", "fr_new_9", "fr_new_10", "fr_new_11", "fr_new_12", "fr_new_14"], c: "#82b366", n: "Non-Current Assets", m: "Section A/B" },
+  other: { ids: ["fr_new_15", "fr_new_16", "fr_new_17", "fr_new_18", "fr_new_19", "fr_new_21", "fr_new_24", "fr_new_32"], c: "#f07850", n: "Other Standards", m: "Section B" },
+  prep: { ids: ["fr_new_22", "fr_new_23", "fr_new_30", "fr_new_31"], c: "#9b59b6", n: "FS Preparation & Cashflow", m: "Section C" },
+  cons: { ids: ["fr_new_25", "fr_new_26", "fr_new_28", "fr_new_29"], c: "#d6a500", n: "Consolidation", m: "Section C" },
+  interp: { ids: ["fr_new_33", "fr_new_35", "fr_new_36", "fr_new_37", "fr_new_38", "fr_new_39"], c: "#e74c3c", n: "Interpretation & Practice", m: "Section C" }
 };
-const TOPIC_META_FR_P2={
-  fr_p2_d1:{w:1},fr_p2_d2:{w:1},fr_p2_d3:{w:1},fr_p2_d4:{w:1},fr_p2_d5:{w:1},fr_p2_d6:{w:1},fr_p2_d7:{w:1},fr_p2_d8:{w:1},fr_p2_d9:{w:1},fr_p2_d10:{w:1},
-  fr_p2_d11:{w:1},fr_p2_d12:{w:1},fr_p2_d13:{w:1},fr_p2_d14:{w:1},fr_p2_d15:{w:1},fr_p2_d16:{w:1},fr_p2_d17:{w:1},fr_p2_d18:{w:1},fr_p2_d19:{w:1},fr_p2_d20:{w:1},
-  fr_p2_d21:{w:1},fr_p2_d22:{w:1},fr_p2_d23:{w:1},fr_p2_d24:{w:1},fr_p2_d25:{w:1},fr_p2_d26:{w:1},fr_p2_d27:{w:1},fr_p2_d28:{w:1},fr_p2_d29:{w:1},fr_p2_d30:{w:1},
-  fr_p2_d31:{w:1},fr_p2_d32:{w:1},fr_p2_d33:{w:1},fr_p2_d34:{w:1},fr_p2_d35:{w:1},fr_p2_d36:{w:1},fr_p2_d37:{w:1},fr_p2_d38:{w:1},fr_p2_d39:{w:1},fr_p2_d40:{w:1},
-  fr_p2_d41:{w:1},fr_p2_d42:{w:1},fr_p2_d43:{w:1},fr_p2_d44:{w:1},fr_p2_d45:{w:1},fr_p2_d46:{w:1},fr_p2_d47:{w:1},fr_p2_d48:{w:1},fr_p2_d49:{w:1},fr_p2_d50:{w:1},
-  fr_p2_d51:{w:1},fr_p2_d52:{w:1},fr_p2_d53:{w:1},fr_p2_d54:{w:1},fr_p2_d55:{w:1},fr_p2_d56:{w:1},fr_p2_d57:{w:1},fr_p2_d58:{w:1},fr_p2_d59:{w:1},fr_p2_d60:{w:1},
-  fr_p2_d61:{w:1},fr_p2_d62:{w:1},fr_p2_d63:{w:1},fr_p2_d64:{w:1},fr_p2_d65:{w:1},fr_p2_d66:{w:1},fr_p2_d67:{w:1},fr_p2_d68:{w:1},fr_p2_d69:{w:1},fr_p2_d70:{w:1},
-  fr_p2_d71:{w:1},fr_p2_d72:{w:1},fr_p2_d73:{w:1},fr_p2_d74:{w:1},fr_p2_d75:{w:1},fr_p2_d76:{w:1},fr_p2_d77:{w:1},fr_p2_d78:{w:1},fr_p2_d79:{w:1},fr_p2_d80:{w:1},
-  fr_p2_d81:{w:1},fr_p2_d82:{w:1},fr_p2_d83:{w:1},fr_p2_d84:{w:1},fr_p2_d85:{w:1},fr_p2_d86:{w:1},fr_p2_d87:{w:1},fr_p2_d88:{w:1},fr_p2_d89:{w:1},fr_p2_d90:{w:1}
-};
+
+const TOPIC_META_FR_P2 = {};
+[2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39].forEach(i => TOPIC_META_FR_P2['fr_new_' + i] = {w:1});
+
 const SCH_ACCA_P2 = {
-  "2026-09-10": { "ids": [], "p": "catchup", "title": "Welcome to ACCA FR Phase 2 — Dec 10 Exam Plan" },
-  "2026-09-11": { "ids": ["fr_p2_d1"], "title": "Sep 11 - Conceptual Framework & IFRS 18" },
-  "2026-09-12": { "ids": ["fr_p2_d2"], "title": "Sep 12 - IFRS 13 (Fair Value)" },
-  "2026-09-13": { "ids": ["fr_p2_d3"], "title": "Sep 13 - IAS 8 & IAS 10" },
-  "2026-09-14": { "ids": ["fr_p2_d4"], "title": "Sep 14 - Review/Test: Days 1-3" },
-  "2026-09-15": { "ids": ["fr_p2_d5"], "title": "Sep 15 - IAS 16 (PPE) - Theory" },
-  "2026-09-16": { "ids": ["fr_p2_d6"], "title": "Sep 16 - IAS 16 (PPE) - Practice" },
-  "2026-09-17": { "ids": ["fr_p2_d7"], "title": "Sep 17 - IAS 23 & IFRS 5" },
-  "2026-09-18": { "ids": ["fr_p2_d8"], "title": "Sep 18 - IAS 40 & IAS 41" },
-  "2026-09-19": { "ids": ["fr_p2_d9"], "title": "Sep 19 - IAS 2 (Inventories)" },
-  "2026-09-20": { "ids": ["fr_p2_d10"], "title": "Sep 20 - IAS 38 (Intangible Assets)" },
-  "2026-09-21": { "ids": ["fr_p2_d11"], "title": "Sep 21 - Buffer / Catch-up" },
-  "2026-09-22": { "ids": ["fr_p2_d12"], "title": "Sep 22 - IAS 36 (Impairment) - Theory" },
-  "2026-09-23": { "ids": ["fr_p2_d13"], "title": "Sep 23 - IAS 36 - Practice" },
-  "2026-09-24": { "ids": ["fr_p2_d14"], "title": "Sep 24 - Weekly Mixed Review + Sec C" },
-  "2026-09-25": { "ids": ["fr_p2_d15"], "title": "Sep 25 - IAS 37 (Provisions) - Theory" },
-  "2026-09-26": { "ids": ["fr_p2_d16"], "title": "Sep 26 - IAS 37 - Practice" },
-  "2026-09-27": { "ids": ["fr_p2_d17"], "title": "Sep 27 - IAS 20 (Gov Grants)" },
-  "2026-09-28": { "ids": ["fr_p2_d18"], "title": "Sep 28 - IFRS 16 (Leases) - Theory" },
-  "2026-09-29": { "ids": ["fr_p2_d19"], "title": "Sep 29 - IFRS 16 - Practice" },
-  "2026-09-30": { "ids": ["fr_p2_d20"], "title": "Sep 30 - Buffer / Catch-up" },
-  "2026-10-01": { "ids": ["fr_p2_d21"], "title": "Oct 1 - IFRS 9 (Financial Instruments) - Theory" },
-  "2026-10-02": { "ids": ["fr_p2_d22"], "title": "Oct 2 - IFRS 9 - Practice" },
-  "2026-10-03": { "ids": ["fr_p2_d23"], "title": "Oct 3 - IAS 12 (Deferred Tax) - Theory" },
-  "2026-10-04": { "ids": ["fr_p2_d24"], "title": "Oct 4 - IAS 12 - Practice" },
-  "2026-10-05": { "ids": ["fr_p2_d25"], "title": "Oct 5 - Weekly Mixed Review + Sec C" },
-  "2026-10-06": { "ids": ["fr_p2_d26"], "title": "Oct 6 - IFRS 15 (Revenue) - Theory" },
-  "2026-10-07": { "ids": ["fr_p2_d27"], "title": "Oct 7 - IFRS 15 - Practice" },
-  "2026-10-08": { "ids": ["fr_p2_d28"], "title": "Oct 8 - IAS 21, IAS 27 & IAS 28" },
-  "2026-10-09": { "ids": ["fr_p2_d29"], "title": "Oct 9 - DIAGNOSTIC MOCK" },
-  "2026-10-10": { "ids": ["fr_p2_d30"], "title": "Oct 10 - Buffer/Rest + Self-Assessment" },
-  "2026-10-11": { "ids": ["fr_p2_d31"], "title": "Oct 11 - IAS 33 (Earnings Per Share)" },
-  "2026-10-12": { "ids": ["fr_p2_d32"], "title": "Oct 12 - Interpretation Intro" },
-  "2026-10-13": { "ids": ["fr_p2_d33"], "title": "Oct 13 - FS Prep (Single Entity) Part 1 Theory" },
-  "2026-10-14": { "ids": ["fr_p2_d34"], "title": "Oct 14 - FS Prep Part 1 Practice" },
-  "2026-10-15": { "ids": ["fr_p2_d35"], "title": "Oct 15 - FS Prep Part 2 Theory" },
-  "2026-10-16": { "ids": ["fr_p2_d36"], "title": "Oct 16 - FS Prep Part 2 Practice" },
-  "2026-10-17": { "ids": ["fr_p2_d37"], "title": "Oct 17 - Weekly Mixed Review + Sec C" },
-  "2026-10-18": { "ids": ["fr_p2_d38"], "title": "Oct 18 - Cashflow (IAS 7) Part 1 Theory" },
-  "2026-10-19": { "ids": ["fr_p2_d39"], "title": "Oct 19 - Cashflow Part 1 Practice" },
-  "2026-10-20": { "ids": ["fr_p2_d40"], "title": "Oct 20 - Cashflow Part 2 Theory" },
-  "2026-10-21": { "ids": ["fr_p2_d41"], "title": "Oct 21 - Cashflow Part 2 Practice" },
-  "2026-10-22": { "ids": ["fr_p2_d42"], "title": "Oct 22 - Tech Articles & Examiner Reports" },
-  "2026-10-23": { "ids": ["fr_p2_d43"], "title": "Oct 23 - IFRS 3 & 10 Consolidation Basics Theory" },
-  "2026-10-24": { "ids": ["fr_p2_d44"], "title": "Oct 24 - IFRS 3 & 10 Consolidation Basics Practice" },
-  "2026-10-25": { "ids": ["fr_p2_d45"], "title": "Oct 25 - IFRS 3 & 10 Consolidation Full Exam Q" },
-  "2026-10-26": { "ids": ["fr_p2_d46"], "title": "Oct 26 - Weekly Mixed Review + Sec C" },
-  "2026-10-27": { "ids": ["fr_p2_d47"], "title": "Oct 27 - IFRS 10 NCI & RE Theory" },
-  "2026-10-28": { "ids": ["fr_p2_d48"], "title": "Oct 28 - IFRS 10 NCI & RE Practice" },
-  "2026-10-29": { "ids": ["fr_p2_d49"], "title": "Oct 29 - IFRS 10 NCI & RE Full Exam Q" },
-  "2026-10-30": { "ids": ["fr_p2_d50"], "title": "Oct 30 - Consolidation Intra-group & PURP Theory" },
-  "2026-10-31": { "ids": ["fr_p2_d51"], "title": "Oct 31 - Consolidation Intra-group Practice" },
-  "2026-11-01": { "ids": ["fr_p2_d52"], "title": "Nov 1 - Consolidation Intra-group Full Exam Q" },
-  "2026-11-02": { "ids": ["fr_p2_d53"], "title": "Nov 2 - Tech Articles Review" },
-  "2026-11-03": { "ids": ["fr_p2_d54"], "title": "Nov 3 - Consolidated SOPL Theory" },
-  "2026-11-04": { "ids": ["fr_p2_d55"], "title": "Nov 4 - Consolidated SOPL Practice" },
-  "2026-11-05": { "ids": ["fr_p2_d56"], "title": "Nov 5 - Consolidated SOPL Full Exam Q" },
-  "2026-11-06": { "ids": ["fr_p2_d57"], "title": "Nov 6 - Interpretation Ratios" },
-  "2026-11-07": { "ids": ["fr_p2_d58"], "title": "Nov 7 - Interpretation Written Analysis" },
-  "2026-11-08": { "ids": ["fr_p2_d59"], "title": "Nov 8 - SECTION C MOCK" },
-  "2026-11-09": { "ids": ["fr_p2_d60"], "title": "Nov 9 - Review Mock + Mistake Log" },
-  "2026-11-10": { "ids": ["fr_p2_d61"], "title": "Nov 10 (Day 1) - Conceptual Framework & IFRS 18" },
-  "2026-11-11": { "ids": ["fr_p2_d62"], "title": "Nov 11 (Day 2) - IFRS 13, IAS 8 & IAS 10" },
-  "2026-11-12": { "ids": ["fr_p2_d63"], "title": "Nov 12 (Day 3) - IAS 16" },
-  "2026-11-13": { "ids": ["fr_p2_d64"], "title": "Nov 13 (Day 4) - IAS 23, IAS 40 & IAS 41" },
-  "2026-11-14": { "ids": ["fr_p2_d65"], "title": "Nov 14 (Day 5) - IAS 38 & IFRS 5 + Mixed" },
-  "2026-11-15": { "ids": ["fr_p2_d66"], "title": "Nov 15 (Day 6) - FULL MOCK 1" },
-  "2026-11-16": { "ids": ["fr_p2_d67"], "title": "Nov 16 (Day 7) - Deep Mock Review" },
-  "2026-11-17": { "ids": ["fr_p2_d68"], "title": "Nov 17 (Day 8) - IAS 36" },
-  "2026-11-18": { "ids": ["fr_p2_d69"], "title": "Nov 18 (Day 9) - IAS 37 & IAS 20" },
-  "2026-11-19": { "ids": ["fr_p2_d70"], "title": "Nov 19 (Day 10) - IFRS 16" },
-  "2026-11-20": { "ids": ["fr_p2_d71"], "title": "Nov 20 (Day 11) - IFRS 9" },
-  "2026-11-21": { "ids": ["fr_p2_d72"], "title": "Nov 21 (Day 12) - IAS 12 + Mixed Practice" },
-  "2026-11-22": { "ids": ["fr_p2_d73"], "title": "Nov 22 (Day 13) - FULL MOCK 2" },
-  "2026-11-23": { "ids": ["fr_p2_d74"], "title": "Nov 23 (Day 14) - Deep Mock Review" },
-  "2026-11-24": { "ids": ["fr_p2_d75"], "title": "Nov 24 (Day 15) - IFRS 15, IAS 21 & IAS 27" },
-  "2026-11-25": { "ids": ["fr_p2_d76"], "title": "Nov 25 (Day 16) - IAS 33" },
-  "2026-11-26": { "ids": ["fr_p2_d77"], "title": "Nov 26 (Day 17) - FS Prep Recap" },
-  "2026-11-27": { "ids": ["fr_p2_d78"], "title": "Nov 27 (Day 18) - Cashflow Recap" },
-  "2026-11-28": { "ids": ["fr_p2_d79"], "title": "Nov 28 (Day 19) - Consolidation Recap" },
-  "2026-11-29": { "ids": ["fr_p2_d80"], "title": "Nov 29 (Day 20) - FULL MOCK 3" },
-  "2026-11-30": { "ids": ["fr_p2_d81"], "title": "Nov 30 (Day 21) - Deep Mock Review" },
-  "2026-12-01": { "ids": ["fr_p2_d82"], "title": "Dec 1 (Day 22) - Consolidation Intra-group Recap" },
-  "2026-12-02": { "ids": ["fr_p2_d83"], "title": "Dec 2 (Day 23) - Interpretation Profitability, Liquidity & Efficiency" },
-  "2026-12-03": { "ids": ["fr_p2_d84"], "title": "Dec 3 (Day 24) - Interpretation Investor Ratios & Analysis" },
-  "2026-12-04": { "ids": ["fr_p2_d85"], "title": "Dec 4 (Day 25) - Weak-Area Focus + Mixed Practice" },
-  "2026-12-05": { "ids": ["fr_p2_d86"], "title": "Dec 5 (Day 26) - FULL MOCK 4" },
-  "2026-12-06": { "ids": ["fr_p2_d87"], "title": "Dec 6 (Day 27) - Deep Mock Review" },
-  "2026-12-07": { "ids": ["fr_p2_d88"], "title": "Dec 7 (Day 28) - FULL MOCK 5" },
-  "2026-12-08": { "ids": ["fr_p2_d89"], "title": "Dec 8 (Day 29) - Deep Mock Review + Weak-Area Consolidation" },
-  "2026-12-09": { "ids": ["fr_p2_d90"], "title": "Dec 9 (Day 30) - Light Revision & Rest" },
+  "2026-09-15": { ids: [], p: "catchup", title: "15-09-26 - Catchup Day" },
+  "2026-09-16": { ids: [], p: "catchup", title: "16-09-26 - Catchup Day" },
+  "2026-09-17": { ids: ["fr_new_2"], title: "17-09-26 - Conceptual Framework" },
+  "2026-09-18": { ids: ["fr_new_3"], title: "18-09-26 - IFRS 18, IFRS 13" },
+  "2026-09-19": { ids: ["fr_new_4"], title: "19-09-26 - IAS 16" },
+  "2026-09-20": { ids: ["fr_new_5"], title: "20-09-26 - IAS 16, IAS 40" },
+  "2026-09-21": { ids: [], p: "catchup", title: "21-09-26 - Catchup Day" },
+  "2026-09-22": { ids: [], p: "catchup", title: "22-09-26 - Catchup Day" },
+  "2026-09-23": { ids: [], p: "catchup", title: "23-09-26 - Catchup Day" },
+  "2026-09-24": { ids: [], p: "catchup", title: "24-09-26 - Catchup Day" },
+  "2026-09-25": { ids: [], p: "catchup", title: "25-09-26 - Catchup Day" },
+  "2026-09-26": { ids: [], p: "catchup", title: "26-09-26 - Catchup Day" },
+  "2026-09-27": { ids: [], p: "catchup", title: "27-09-26 - Catchup Day" },
+  "2026-09-28": { ids: ["fr_new_7"], title: "28-09-26 - IAS 23, IAS 20" },
+  "2026-09-29": { ids: ["fr_new_8"], title: "29-09-26 - IAS 38, IFRS 5" },
+  "2026-09-30": { ids: ["fr_new_9"], title: "30-09-26 - IAS 36" },
+  "2026-10-01": { ids: ["fr_new_10"], title: "01-10-26 - IAS 37 (Part 1)" },
+  "2026-10-02": { ids: ["fr_new_11"], title: "02-10-26 - IAS 37 (Part 2)" },
+  "2026-10-03": { ids: ["fr_new_12"], title: "03-10-26 - IFRS 16 (Part 1)" },
+  "2026-10-04": { ids: [], p: "catchup", title: "04-10-26 - Catchup Day" },
+  "2026-10-05": { ids: [], p: "catchup", title: "05-10-26 - Catchup Day" },
+  "2026-10-06": { ids: [], p: "catchup", title: "06-10-26 - Catchup Day" },
+  "2026-10-07": { ids: [], p: "catchup", title: "07-10-26 - Catchup Day" },
+  "2026-10-08": { ids: [], p: "catchup", title: "08-10-26 - Catchup Day" },
+  "2026-10-09": { ids: [], p: "catchup", title: "09-10-26 - Catchup Day" },
+  "2026-10-10": { ids: [], p: "catchup", title: "10-10-26 - Catchup Day" },
+  "2026-10-11": { ids: [], p: "catchup", title: "11-10-26 - Catchup Day" },
+  "2026-10-12": { ids: ["fr_new_14"], title: "12-10-26 - IFRS 16 (Part 2)" },
+  "2026-10-13": { ids: ["fr_new_15"], title: "13-10-26 - IFRS 9 (Part 1)" },
+  "2026-10-14": { ids: ["fr_new_16"], title: "14-10-26 - IFRS 9, IAS 8" },
+  "2026-10-15": { ids: ["fr_new_17"], title: "15-10-26 - IAS 12 (Part 1)" },
+  "2026-10-16": { ids: ["fr_new_18"], title: "16-10-26 - IAS 12 (Part 2)" },
+  "2026-10-17": { ids: ["fr_new_19"], title: "17-10-26 - IFRS 15 (Part 1)" },
+  "2026-10-18": { ids: [], p: "catchup", title: "18-10-26 - Catchup Day" },
+  "2026-10-19": { ids: [], p: "catchup", title: "19-10-26 - Catchup Day" },
+  "2026-10-20": { ids: [], p: "catchup", title: "20-10-26 - Catchup Day" },
+  "2026-10-21": { ids: [], p: "catchup", title: "21-10-26 - Catchup Day" },
+  "2026-10-22": { ids: [], p: "catchup", title: "22-10-26 - Catchup Day" },
+  "2026-10-23": { ids: [], p: "catchup", title: "23-10-26 - Catchup Day" },
+  "2026-10-24": { ids: [], p: "catchup", title: "24-10-26 - Catchup Day" },
+  "2026-10-25": { ids: [], p: "catchup", title: "25-10-26 - Catchup Day" },
+  "2026-10-26": { ids: ["fr_new_21"], title: "26-10-26 - IFRS 15 (Part 2)" },
+  "2026-10-27": { ids: ["fr_new_22"], title: "27-10-26 - FS Preparation (Part 1)" },
+  "2026-10-28": { ids: ["fr_new_23"], title: "28-10-26 - FS Preparation (Part 2)" },
+  "2026-10-29": { ids: ["fr_new_24"], title: "29-10-26 - IAS 33" },
+  "2026-10-30": { ids: ["fr_new_25"], title: "30-10-26 - Consolidation (Part 1)" },
+  "2026-10-31": { ids: ["fr_new_26"], title: "31-10-26 - Consolidation (Part 2)" },
+  "2026-11-01": { ids: [], p: "catchup", title: "01-11-26 - Catchup Day" },
+  "2026-11-02": { ids: ["fr_new_28"], title: "02-11-26 - Consolidation (Part 3)" },
+  "2026-11-03": { ids: ["fr_new_29"], title: "03-11-26 - Consolidation (Part 4)" },
+  "2026-11-04": { ids: ["fr_new_30"], title: "04-11-26 - Cashflow Statement (Part 1)" },
+  "2026-11-05": { ids: ["fr_new_31"], title: "05-11-26 - Cashflow Statement (Part 2)" },
+  "2026-11-06": { ids: ["fr_new_32"], title: "06-11-26 - IAS 20, IAS 21" },
+  "2026-11-07": { ids: ["fr_new_33"], title: "07-11-26 - Interpretation (Part 1)" },
+  "2026-11-08": { ids: [], p: "catchup", title: "08-11-26 - Catchup Day" },
+  "2026-11-09": { ids: ["fr_new_35"], title: "09-11-26 - Interpretation (Part 2)" },
+  "2026-11-10": { ids: ["fr_new_36"], title: "10-11-26 - Interpretation (Part 3)" },
+  "2026-11-11": { ids: ["fr_new_37"], title: "11-11-26 - Interpretation (Part 4)" },
+  "2026-11-12": { ids: ["fr_new_38"], title: "12-11-26 - Extra Question Practice 1" },
+  "2026-11-13": { ids: ["fr_new_39"], title: "13-11-26 - Extra Question Practice 2" }
 };
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
 
@@ -2125,6 +2032,33 @@ function backfillSR(){
 
 function applyData(data){
   remoteData={...data};
+
+  if (remoteData.activeCourse === 'ACCA26_P2' && !localStorage.getItem('migrated_fr_new_sr_v1')) {
+    localStorage.setItem('migrated_fr_new_sr_v1', 'true');
+    const toMigrate = [
+      { id: 'fr_new_2', stagger: 1 },
+      { id: 'fr_new_3', stagger: 3 },
+      { id: 'fr_new_4', stagger: 7 }
+    ];
+    let migratedAny = false;
+    toMigrate.forEach(m => {
+      remoteData[m.id] = true;
+      if (!remoteData._sr) remoteData._sr = {};
+      remoteData._sr[m.id] = {
+        completed: ts(),
+        lastRev: ts(),
+        count: 1, // Start them at interval idx 1
+        next: addDaysStr(ts(), m.stagger),
+        interval: m.stagger,
+        ease: 2.5
+      };
+      migratedAny = true;
+    });
+    if (migratedAny) {
+      setTimeout(saveToFirestore, 1000);
+      console.log('Migrated staggered SR dates for FR_P2');
+    }
+  }
   if (typeof syllabusBoxes !== 'undefined' && syllabusBoxes.length) {
     syllabusBoxes.forEach(b=>{
       const isChecked = !!data[b.id];
@@ -2264,7 +2198,7 @@ function makeCard(){
   const lateStart = getLateStartDate();
   if (dc) dc.style.display = '';
 
-  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26') {
+  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26' || activeCourse === 'AA26') {
     // ACCA Phase 1/2 and Clerk: show daily schedule card
     if(todaySec) todaySec.style.display = '';
     if(pendingSec) pendingSec.style.display = '';
@@ -2477,7 +2411,7 @@ function renderSyllabus(){
   Object.entries(subjs).forEach(([k,v])=>{
     const items=v.ids.map(id=>{
       let subBoxes = '';
-      if (isACCA && k !== 'exam' && k !== 'mocks') {
+      if (isACCA && k !== 'exam' && k !== 'mocks' && id !== 'fr_new_38' && id !== 'fr_new_39') {
         subBoxes = `
         <div class="q-practice-hdr">Practice Questions</div>
         <div class="q-practice">
@@ -3216,6 +3150,8 @@ async function openStats() {
       const p1Date = new Date(Date.UTC(2026, 8, 10)); // Sep 10, 2026 (Phase 1)
       const p2Date = new Date(Date.UTC(2026, 11, 10)); // Dec 10, 2026 (Phase 2)
       examDate = activeCourse === 'ACCA26_P2' ? p2Date : (todayDate > p1Date ? p2Date : p1Date);
+    } else if (activeCourse === 'AA26') {
+      examDate = new Date(Date.UTC(2026, 11, 7)); // Dec 7, 2026
     } else {
       const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
       const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => { const [ay,am,ad]=a.date.split('-').map(Number); const [by,bm,bd]=b.date.split('-').map(Number); return new Date(ay,am-1,ad) - new Date(by,bm-1,bd); });
@@ -3648,7 +3584,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.0'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.3'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -3659,19 +3595,20 @@ function buildWhatsNewHTML(){
   let html = `
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">🚀 What's New — v${APP_VERSION}</div>
-      <div class="wn-item"><div class="wn-item-icon">🍎</div><div class="wn-item-text"><div class="wn-item-title">iOS Native Experience</div><div class="wn-item-desc">Native Spring Physics for smooth overlays and full View Transitions so screens cross-fade seamlessly just like native iOS apps.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">🖥️</div><div class="wn-item-text"><div class="wn-item-title">Desktop Borderless Mode</div><div class="wn-item-desc">On Windows 11 & macOS, the app title bar now merges beautifully into the window controls. Enhanced with beautiful transparent pill scrollbars.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">Quick App Shortcuts</div><div class="wn-item-desc">Long-press the app icon on Android or right-click on Windows/Mac to instantly open "Log Session" or view "Stats" straight from your home screen.</div></div></div>
-      <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Native Text Selection</div><div class="wn-item-desc">The annoying native magnifying glass and text selection no longer pops up when interacting with cards and buttons on mobile devices.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🧠</div><div class="wn-item-text"><div class="wn-item-title">Smarter Spaced Repetition</div><div class="wn-item-desc">Completely rebuilt memory engine — now follows neuroscience research: Day 1 → 3 → 7 → 14 → 30 → 60 days. Topics reviewed as "Easy" advance faster; "Hard" brings them back sooner so nothing slips through.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Revision Duplicates Fixed</div><div class="wn-item-desc">Topics no longer appear twice across "Overdue", "Weak Areas", and "Today Recommended". Each topic shows exactly once in the right place.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">AI Insights Fixed</div><div class="wn-item-desc">Memory Decay Risk warning no longer pulls data from old courses. It now only shows stale topics from your current active course.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">🔥</div><div class="wn-item-text"><div class="wn-item-title">Study Streak Improved</div><div class="wn-item-desc">Streak now counts days where you logged any session — even note-only sessions with no specific topic. Your real effort is always counted.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">⚡</div><div class="wn-item-text"><div class="wn-item-title">Under the Hood Fixes</div><div class="wn-item-desc">Resolved memory leaks in the syllabus tracker, debounced background saves, and patched a blank screen bug for new ACCA AA users.</div></div></div>
     </div>
   `;
 
   if (hasACCA || isAA) {
     html += `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--blue);">📚 ACCA Improvements</div>
-      ${isAA ? '<div class="wn-item"><div class="wn-item-icon">🎯</div><div class="wn-item-text"><div class="wn-item-title">ACCA AA — Dec 7 Exam</div><div class="wn-item-desc">Full syllabus, 75-day study schedule starting Sep 25, and 10 AA-specific study tips powered by the Smart Coach.</div></div></div>' : ''}
-      ${hasACCA ? '<div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">FR Phase 2 — Dec 10 Exam</div><div class="wn-item-desc">Your 90-day plan towards December 10 is live with weekly reviews and full mock exams in the final stretch.</div></div></div>' : ''}
+      <div class="wn-section-lbl" style="color:var(--blue);">📚 ACCA Updates</div>
+      ${isAA ? '<div class="wn-item"><div class="wn-item-icon">🎯</div><div class="wn-item-text"><div class="wn-item-title">ACCA AA — Dec 7 Exam</div><div class="wn-item-desc">SR schedule automatically caps revision intervals so you never schedule a review past your exam date. Stay focused right until Dec 7.</div></div></div>' : ''}
+      ${hasACCA ? '<div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">FR Phase 2 — Dec 10 Exam</div><div class="wn-item-desc">Same smart exam-date cap applied — revision intervals shrink as your exam approaches so you revise the right topics at the right time.</div></div></div>' : ''}
     </div>
     `;
   }
@@ -3680,7 +3617,7 @@ function buildWhatsNewHTML(){
     html += `
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--green);">🛡️ Junior Clerk Course</div>
-      <div class="wn-item"><div class="wn-item-icon">✅</div><div class="wn-item-text"><div class="wn-item-title">Syllabus Fix</div><div class="wn-item-desc">The Junior Clerk syllabus now correctly displays all Clerk-specific topics and subjects instead of the CSEB syllabus.</div></div></div>
+      <div class="wn-item"><div class="wn-item-icon">✅</div><div class="wn-item-text"><div class="wn-item-title">Syllabus & SR Fix</div><div class="wn-item-desc">Spaced repetition now works correctly for Clerk-specific topics. Revision reminders appear only for your own course content.</div></div></div>
     </div>
     `;
   }
@@ -4879,28 +4816,37 @@ async function saveLogSession() {
     if (!isNonTopicId) {
       let s = remoteData._sr[id];
       if (!s || !s.next) {
-         s = { completed: dateVal, lastRev: dateVal, count: 0, next: dateVal, ease: 2.5, interval: 1 };
+        s = { completed: dateVal, lastRev: dateVal, count: 0, next: dateVal, ease: 2.5, interval: 1 };
       }
-      
-      if (typeof s.ease !== 'number' || isNaN(s.ease)) s.ease = 2.5;
-      if (typeof s.interval !== 'number' || isNaN(s.interval)) s.interval = 1;
+
       if (typeof s.count !== 'number' || isNaN(s.count)) s.count = 0;
-      
+
+      // ── Fixed SR Schedule (neuroscience-backed) ──────────────────────────
+      // Review #0 → 1 day  (initial: review within 24h of first learning)
+      // Review #1 → 3 days (second recall after short pause)
+      // Review #2 → 7 days
+      // Review #3 → 14 days
+      // Review #4 → 30 days
+      // Review #5+ → 60 days (long-term retention maintenance)
+      const BASE_SCHEDULE = [1, 3, 7, 14, 30, 60];
+      let scheduleIdx = s.count; // which step are we on?
+
+      // Difficulty modifier: easy skips one step ahead, hard drops one step back
       if (selectedDiff === 'easy') {
-        s.ease += 0.15;
-        s.interval = s.count === 0 ? 3 : s.interval * s.ease * 1.3;
-      } else if (selectedDiff === 'medium') {
-        s.interval = s.count === 0 ? 2 : s.interval * s.ease;
+        scheduleIdx = Math.min(scheduleIdx + 1, BASE_SCHEDULE.length - 1);
+        if (typeof s.ease === 'number') s.ease = Math.min(s.ease + 0.1, 3.5);
       } else if (selectedDiff === 'hard') {
-        s.ease = Math.max(1.3, s.ease - 0.2);
-        s.interval = Math.max(1, s.interval * 0.5); 
+        scheduleIdx = Math.max(scheduleIdx - 1, 0);
+        if (typeof s.ease === 'number') s.ease = Math.max(s.ease - 0.15, 1.3);
       }
-      
+
+      // Clamp to last entry for all reviews beyond schedule length
+      s.interval = BASE_SCHEDULE[Math.min(scheduleIdx, BASE_SCHEDULE.length - 1)];
+
       s.count++;
-      s.interval = Math.round(s.interval);
       s.lastRev = dateVal;
-      
-      
+
+      // Cap interval to days remaining before exam for ACCA / AA courses
       if (activeCourseKey === 'ACCA26_P2' || activeCourseKey === 'AA26') {
         const examDateStr = activeCourseKey === 'AA26' ? '2026-12-07T00:00:00Z' : '2026-12-10T00:00:00Z';
         const examDate = new Date(examDateStr);
@@ -4908,7 +4854,7 @@ async function saveLogSession() {
         const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
         if (s.interval > daysToExam) s.interval = daysToExam;
       }
-      
+
       s.next = typeof addDaysStr === 'function' ? addDaysStr(s.lastRev, s.interval) : addDaysStr(dateVal, s.interval);
       remoteData._sr[id] = s;
       
