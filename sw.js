@@ -1,7 +1,7 @@
-// Study Tracker Service Worker — v2.2.3
+// Study Tracker Service Worker — v2.2.6
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.2.3';
+const VERSION = 'v2.2.6';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
 const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
 
@@ -17,6 +17,12 @@ const CORE_FILES = [
 const CDN_FILES = [
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.1/dist/confetti.browser.min.js',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-performance.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js',
+  'https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js'
 ];
 
 // Helper: return a safe offline fallback Response (never undefined)
@@ -54,7 +60,7 @@ self.addEventListener('install', e => {
       ),
     ])
   );
-  self.skipWaiting();
+  // Removed unconditional self.skipWaiting() here so active sessions aren't interrupted
 });
 
 // ── ACTIVATE ──────────────────────────────────────────────────────────────────
@@ -95,7 +101,9 @@ self.addEventListener('fetch', e => {
   // 2. CDN assets → Cache-first
   if (
     url.hostname.includes('cdn.jsdelivr.net') ||
-    url.hostname.includes('cdnjs.cloudflare.com')
+    url.hostname.includes('cdnjs.cloudflare.com') ||
+    url.hostname.includes('www.gstatic.com') ||
+    url.hostname.includes('gstatic.com')
   ) {
     e.respondWith(
       caches.open(CACHE_CDN).then(async cache => {
