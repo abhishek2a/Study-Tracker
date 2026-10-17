@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -444,7 +444,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.8</div>
+      <div class="wn-title" id="wn-title">Version 2.2.9</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -626,7 +626,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.8</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.9</div>
         </div>
       </div>
     </div>
@@ -983,7 +983,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.8';
+const APP_VERSION = '2.2.9';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -1984,43 +1984,53 @@ let _lastAppliedJSON = '';
 function saveToFirestore(){
   if(!currentUid) return;
   window._localWritePending = Date.now();
-  // Debounce: batch rapid writes (e.g. confidence sliders or checkmarks) into one Firestore call
+  // Debounce: batch rapid writes into one Firestore call
   clearTimeout(_fsTimer);
   _fsTimer = setTimeout(() => {
     _fsTimer = null;
-    // Create a clean copy without ephemeral client flag
     const payload = { ...remoteData };
     delete payload._loaded;
-    
+
     _lastAppliedJSON = JSON.stringify(payload);
     setDoc(doc(db,'users',currentUid), payload, {merge:true}).catch(err => console.error('[Firestore Save] Failed:', err));
 
   }, 600);
 }
-
 function backfillSR(){
   if(!remoteData._sr)remoteData._sr={};
   const courses=remoteData.courses&&remoteData.courses.length?remoteData.courses:[DEFAULT_COURSE];
-  let dirty=false;
+  const srUpdates={};
+  const today = ts();
   courses.forEach(c=>{
     const cd=COURSE_DATA[c];if(!cd)return;
     Object.entries(cd.subjs).forEach(([subjKey,v])=>{
-      // Skip mocks and exam subjects — these don't need spaced-repetition scheduling
       if(subjKey==='mocks'||subjKey==='exam')return;
       v.ids.forEach(id=>{
         const entry=remoteData._sr[id];
-        // only create SR entry if ticked AND no valid entry exists — never overwrite existing dates
-        if(remoteData[id]&&(!entry||typeof entry!=='object'||!entry.next||!entry.completed)){
-          const today=ts();
-          remoteData._sr[id]={completed:today,lastRev:today,count:0,next:addDaysStr(today,1),ease:2.5,interval:1};
-          dirty=true;
+        // Auto-heal: If topic is completed but has no valid SR entry, restore it
+        if(remoteData[id] && (!entry || typeof entry!=='object' || !entry.next || !entry.completed)){
+          let compDate = today;
+          if (cd.sch) {
+            for (const [sDate, sObj] of Object.entries(cd.sch)) {
+              if (sObj.ids && sObj.ids.includes(id) && sDate < today) {
+                compDate = sDate;
+                break;
+              }
+            }
+          }
+          // If scheduled in the past, it is DUE TODAY for revision!
+          const nextDate = compDate < today ? today : addDaysStr(today, 1);
+          const newEntry={completed:compDate,lastRev:compDate,count:compDate < today ? 1 : 0,next:nextDate,ease:2.5,interval:1};
+          remoteData._sr[id]=newEntry;
+          srUpdates[`_sr.${id}`]=newEntry;
         }
       });
     });
   });
-  if(dirty)saveToFirestore();
+  if(Object.keys(srUpdates).length>0 && currentUid){
+    updateDoc(doc(db,'users',currentUid),srUpdates).catch(err=>console.error('[backfillSR] Write failed:',err));
+  }
 }
-
 function applyData(data){
   remoteData={...data};
 
@@ -2751,6 +2761,8 @@ function onCheck(id, val) {
   const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = val;
 
   updateAll();
+  window._lastReviseHtml = ''; // reset cache on every check so SR section is always fresh
+  if (typeof renderRevisions === 'function') renderRevisions();
 }
 
 function getRevisionsDue(){
@@ -2759,14 +2771,13 @@ function getRevisionsDue(){
   const cd = COURSE_DATA[activeCourse];
   if (!cd || !cd.labels) return [];
   const activeLabels = cd.labels;
+  const today = ts();
   
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s&&typeof s==='object'&&s.next&&s.next<=ts()&&!!remoteData[id]&&remoteData[id]!==null&&activeLabels[id])
+    .filter(([id,s])=>s && typeof s==='object' && s.next && s.next<=today && (!!remoteData[id] || !!s.completed) && activeLabels[id])
     .map(([id,s])=>({id,label:activeLabels[id],count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
-
-
 
 function renderRevisions(){
   const rc=$('revisecard'),sec=$('revise-sec');if(!rc||!sec)return;
@@ -2775,16 +2786,20 @@ function renderRevisions(){
   const cd = COURSE_DATA[activeCourse];
   if (!cd || !cd.labels) { sec.style.display='none'; return; }
   const activeLabels = cd.labels;
+  const today = ts();
   
   // Only unique IDs — de-duplicate by id in case label appears in multiple _sr keys
   const seenIds = new Set();
   const allSr = Object.entries(remoteData._sr || {})
     .filter(([id,s]) => {
       if (!s || typeof s !== 'object') return false;
-      if (!remoteData[id]) return false;          // must be marked complete in syllabus
-      if (!activeLabels[id]) return false;        // must belong to active course
-      if (seenIds.has(id)) return false;          // deduplicate same id
+      if (!remoteData[id] && !s.completed) return false; // must be completed or logged
+      if (!activeLabels[id]) return false;              // must belong to active course
+      if (seenIds.has(id)) return false;                // deduplicate same id
       seenIds.add(id);
+      // Auto-heal remoteData[id] if it was completed in _sr
+      if (!remoteData[id]) remoteData[id] = true;
+      if (!s.next && s.completed) s.next = s.completed;
       return true;
     })
     .map(([id,s]) => {
@@ -2792,24 +2807,20 @@ function renderRevisions(){
       return {id, label: activeLabels[id], ...s, mem};
     });
     
-  const due = allSr.filter(s => s.next <= ts()).sort((a,b) => a.next.localeCompare(b.next));
-  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== ts()).sort((a,b) => a.mem - b.mem);
-  // Exclude items already in 'due' or 'weak' from smart recommendations
+  const due = allSr.filter(s => s.next && s.next <= today).sort((a,b) => a.next.localeCompare(b.next));
+  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== today).sort((a,b) => a.mem - b.mem);
   const dueAndWeakIds = new Set([...due.map(s => s.id), ...weak.map(s => s.id)]);
-  const smart = allSr.filter(s => s.next > ts() && s.lastRev !== ts() && !dueAndWeakIds.has(s.id)).sort((a,b) => a.mem - b.mem).slice(0, 3);
-  
-  
-  const hasContent = due.length || weak.length || smart.length;
-  sec.style.display = hasContent ? 'flex' : 'none';
+  const upcoming = allSr.filter(s => s.next && s.next > today && !dueAndWeakIds.has(s.id)).sort((a,b) => a.next.localeCompare(b.next)).slice(0, 4);
+
+  // Always keep section visible so users never experience a missing section bug
+  sec.style.display = 'flex';
   const nav=$('revise-nav'),badge=$('revise-badge');
-  if(nav) nav.style.display = due.length && window.innerWidth>600 ? 'inline-flex' : 'none';
-  if(badge) badge.textContent = due.length || '';
-  
-  if(!hasContent){rc.innerHTML='';return;}
+  if(nav) nav.style.display = window.innerWidth>600 ? 'inline-flex' : 'none';
+  if(badge) badge.textContent = due.length ? due.length : '';
   
   const renderItem = (item, isDue) => {
-    const overdue = item.next < ts();
-    const nextStr = item.next === addDaysStr(ts(), 1) ? 'Tomorrow' : item.next === ts() ? 'Today' : item.next;
+    const overdue = item.next < today;
+    const nextStr = item.next === addDaysStr(today, 1) ? 'Tomorrow' : item.next === today ? 'Today' : item.next;
     const memColor = item.mem < 50 ? 'var(--red)' : item.mem < 80 ? 'var(--accent)' : 'var(--green)';
     const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
     const c = colors[Math.min(item.count || 0, colors.length-1)];
@@ -2819,7 +2830,7 @@ function renderRevisions(){
         <div class="revise-dot" style="background:${c}"></div>
         <div style="flex:1;min-width:0">
           <div class="revise-text">${item.label}</div>
-          <div class="revise-meta">${isDue ? (overdue?'<span style="color:var(--red)">Overdue</span>':'Due today') : 'Memory: ' + item.mem + '%'} &bull; Next: ${nextStr}</div>
+          <div class="revise-meta">${isDue ? (overdue?'<span style="color:var(--red);font-weight:700">Overdue</span>':'<span style="color:var(--accent);font-weight:700">Due today</span>') : 'Memory: ' + item.mem + '%'} &bull; Next: ${nextStr}</div>
         </div>
       </div>
       
@@ -2836,18 +2847,37 @@ function renderRevisions(){
   let html = '';
   if(due.length) {
     html += `<div class="revise-grid" style="margin-bottom:20px">${due.map(d=>renderItem(d, true)).join('')}</div>`;
+  } else if(allSr.length > 0) {
+    html += `
+      <div style="background:rgba(40,212,142,0.08);border:1px solid rgba(40,212,142,0.25);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;width:100%;">
+        <span style="font-size:1.6rem;">🎉</span>
+        <div>
+          <strong style="color:var(--green);font-size:0.92rem;display:block;">All Caught Up For Today!</strong>
+          <span style="font-size:0.78rem;color:var(--dim);">You have 0 overdue revisions right now. Check out upcoming scheduled reviews below.</span>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:24px 20px;text-align:center;margin-bottom:16px;width:100%;">
+        <span style="font-size:2rem;display:block;margin-bottom:8px;">📚</span>
+        <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Revision Topics Yet</strong>
+        <span style="font-size:0.78rem;color:var(--dim);">Tick completed topics in the syllabus above or log a study session to begin your spaced repetition schedule!</span>
+      </div>
+    `;
   }
+
   if(weak.length) {
     html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
                <h2 style="color:var(--red)"><span style="display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Weak Areas</h2>
              </div>`;
     html += `<div class="revise-grid" style="margin-bottom:20px">${weak.map(d=>renderItem(d, false)).join('')}</div>`;
   }
-  if(smart.length) {
+  if(upcoming.length) {
     html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
-               <h2 style="color:var(--blue)"><span style="display:inline-block;width:6px;height:6px;background:var(--blue);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Today Recommended</h2>
+               <h2 style="color:var(--blue)"><span style="display:inline-block;width:6px;height:6px;background:var(--blue);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Upcoming Reviews</h2>
              </div>`;
-    html += `<div class="revise-grid">${smart.map(d=>renderItem(d, false)).join('')}</div>`;
+    html += `<div class="revise-grid">${upcoming.map(d=>renderItem(d, false)).join('')}</div>`;
   }
   
   if (window._lastReviseHtml === html) return;
@@ -2911,7 +2941,7 @@ function renderCourses(data){
       remoteData.activeCourse=code;
       withViewTransition(() => {
         renderCourses(remoteData);renderExamStrip();updatePageTitle();
-        makeCard();bindSyllabus();updateAll();renderPending();
+        makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderRevisions();
         closeDrop();
       });
       if (typeof saveToFirestore === 'function') saveToFirestore();
@@ -2926,7 +2956,7 @@ function renderCourses(data){
       if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=updated.length?updated[0]:DEFAULT_COURSE;
       withViewTransition(() => {
         renderCourses(remoteData);renderExamStrip();updatePageTitle();
-        makeCard();bindSyllabus();updateAll();renderPending();
+        makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
       });
       if (typeof saveToFirestore === 'function') saveToFirestore();
     });
@@ -3084,7 +3114,7 @@ async function openStats() {
 
   Object.entries(srData).forEach(([id, s]) => {
     // 1. Revision Due Count
-    if (s && s.next && s.next <= ts() && !!remoteData[id] && activeLabels[id]) revDue++;
+    if (s && s.next && s.next <= ts() && (!!remoteData[id] || !!s.completed) && activeLabels[id]) revDue++;
     
     // 2. 14-Day Rolling Average calculations
     if (!validTopicIds.has(id)) return;
@@ -3601,7 +3631,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.8'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.9'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -4771,6 +4801,7 @@ function clearAllLoggedSessions() {
   renderStatsLoggedSessions();
 }
 window.clearAllLoggedSessions = clearAllLoggedSessions;
+
 
 async function saveLogSession() {
   const notesEl = $('ls-notes');
