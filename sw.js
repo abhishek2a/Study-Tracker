@@ -1,7 +1,7 @@
-// Study Tracker Service Worker — v2.2.6
+// Study Tracker Service Worker — v2.2.8
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.2.6';
+const VERSION = 'v2.2.8';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
 const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
 
@@ -111,7 +111,7 @@ self.addEventListener('fetch', e => {
         if (cached) return cached;
         try {
           const fresh = await fetch(e.request);
-          if (fresh && fresh.status === 200) {
+          if (fresh && (fresh.status === 200 || fresh.type === 'opaque')) {
             cache.put(e.request, fresh.clone()).catch(() => {});
           }
           return fresh;
@@ -140,7 +140,10 @@ self.addEventListener('fetch', e => {
           return res;
         } catch (_) {
           // Network failed — try cache
-          const cached = await caches.match(e.request, { ignoreSearch: true });
+          let cached = await caches.match(e.request, { ignoreSearch: true });
+          if (!cached && e.request.mode === 'navigate') {
+            cached = (await caches.match('./index.html')) || (await caches.match('./'));
+          }
           return cached || offlineFallback(url);
         }
       })()
