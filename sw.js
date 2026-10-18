@@ -1,7 +1,7 @@
-﻿// Study Tracker Service Worker — v2.2.9
+// Study Tracker Service Worker — v2.2.11
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.2.9';
+const VERSION = 'v2.2.11';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
 const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
 
@@ -11,6 +11,7 @@ const CORE_FILES = [
   './index.html',
   './manifest.json',
   './logo.svg',
+  './icon.svg',
 ];
 
 // Heavy CDN assets — cache-first (immutable versioned URLs, safe to cache forever)
@@ -85,6 +86,9 @@ self.addEventListener('fetch', e => {
   } catch (_) {
     return; // Invalid URL — let the browser handle it
   }
+
+  // Only handle http and https requests (ignore chrome-extension:, data:, blob:, etc.)
+  if (!url.protocol.startsWith('http')) return;
 
   // 1. Always bypass SW for Firebase / Firestore / Google Auth
   if (

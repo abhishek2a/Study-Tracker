@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -444,7 +444,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.9</div>
+      <div class="wn-title" id="wn-title">Version 2.2.11</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -626,7 +626,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.9</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.11</div>
         </div>
       </div>
     </div>
@@ -707,7 +707,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span>View What's New in v2.2.7</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.11)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -983,7 +983,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.9';
+const APP_VERSION = '2.2.11';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -1336,21 +1336,55 @@ const LABELS_FR_P2 = {
   fr_new_36: "Interpretation (Part 3)",
   fr_new_37: "Interpretation (Part 4)",
   fr_new_38: "Extra Question Practice 1",
-  fr_new_39: "Extra Question Practice 2"
+  fr_new_39: "Extra Question Practice 2",
+
+  // -- Unified Topic Labels for Full Syllabus, Logger & Revision --
+  fr_new_ias37: "IAS 37 (Provisions & Contingencies)",
+  fr_new_ifrs16: "IFRS 16 (Leases)",
+  fr_new_ifrs9: "IFRS 9 (Financial Instruments)",
+  fr_new_ias12: "IAS 12 (Income Taxes)",
+  fr_new_ifrs15: "IFRS 15 (Revenue)",
+  fr_new_fsprep: "FS Preparation",
+  fr_new_cons: "Consolidation",
+  fr_new_cashflow: "Cashflow Statement",
+  fr_new_interp: "Interpretation",
+  fr_new_eqp: "Extra Question Practice"
 };
 
+// Full Syllabus structure: Each standard is a single unified topic item
 const SUBJS_FR_P2 = {
   basics: { ids: ["fr_new_2", "fr_new_3", "fr_new_ifrs13", "fr_new_ias2", "fr_new_4", "fr_new_5", "fr_new_ias41"], c: "#6c8ebf", n: "Foundations & Basics", m: "Section A" },
-  assets: { ids: ["fr_new_7", "fr_new_ias20", "fr_new_8", "fr_new_ifrs5", "fr_new_9", "fr_new_10", "fr_new_11", "fr_new_12", "fr_new_14"], c: "#82b366", n: "Non-Current Assets", m: "Section A/B" },
-  other: { ids: ["fr_new_15", "fr_new_16", "fr_new_ias8", "fr_new_ias10", "fr_new_17", "fr_new_18", "fr_new_19", "fr_new_21", "fr_new_24", "fr_new_32"], c: "#f07850", n: "Other Standards", m: "Section B" },
-  prep: { ids: ["fr_new_22", "fr_new_23", "fr_new_30", "fr_new_31"], c: "#9b59b6", n: "FS Preparation & Cashflow", m: "Section C" },
-  cons: { ids: ["fr_new_25", "fr_new_26", "fr_new_28", "fr_new_29"], c: "#d6a500", n: "Consolidation", m: "Section C" },
-  interp: { ids: ["fr_new_33", "fr_new_35", "fr_new_36", "fr_new_37", "fr_new_38", "fr_new_39"], c: "#e74c3c", n: "Interpretation & Practice", m: "Section C" }
+  assets: { ids: ["fr_new_7", "fr_new_ias20", "fr_new_8", "fr_new_ifrs5", "fr_new_9", "fr_new_ias37", "fr_new_ifrs16"], c: "#82b366", n: "Non-Current Assets", m: "Section A/B" },
+  other: { ids: ["fr_new_ifrs9", "fr_new_ias8", "fr_new_ias10", "fr_new_ias12", "fr_new_ifrs15", "fr_new_24", "fr_new_32"], c: "#f07850", n: "Other Standards", m: "Section B" },
+  prep: { ids: ["fr_new_fsprep", "fr_new_cashflow"], c: "#9b59b6", n: "FS Preparation & Cashflow", m: "Section C" },
+  cons: { ids: ["fr_new_cons"], c: "#d6a500", n: "Consolidation", m: "Section C" },
+  interp: { ids: ["fr_new_interp", "fr_new_eqp"], c: "#e74c3c", n: "Interpretation & Practice", m: "Section C" }
 };
+
+// Map each unified syllabus standard to its daily timetable breakdown
+const FR_P2_PART_MAP = {
+  fr_new_ias37: ['fr_new_10', 'fr_new_11'],
+  fr_new_ifrs16: ['fr_new_12', 'fr_new_14'],
+  fr_new_ifrs9: ['fr_new_15', 'fr_new_16'],
+  fr_new_ias12: ['fr_new_17', 'fr_new_18'],
+  fr_new_ifrs15: ['fr_new_19', 'fr_new_21'],
+  fr_new_fsprep: ['fr_new_22', 'fr_new_23'],
+  fr_new_cons: ['fr_new_25', 'fr_new_26', 'fr_new_28', 'fr_new_29'],
+  fr_new_cashflow: ['fr_new_30', 'fr_new_31'],
+  fr_new_interp: ['fr_new_33', 'fr_new_35', 'fr_new_36', 'fr_new_37'],
+  fr_new_eqp: ['fr_new_38', 'fr_new_39']
+};
+
+const FR_P2_CHILD_TO_PARENT = {};
+Object.entries(FR_P2_PART_MAP).forEach(([parentId, children]) => {
+  children.forEach(childId => {
+    FR_P2_CHILD_TO_PARENT[childId] = parentId;
+  });
+});
 
 const TOPIC_META_FR_P2 = {};
 [2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39].forEach(i => TOPIC_META_FR_P2['fr_new_' + i] = {w:1});
-['ifrs13', 'ias2', 'ias41', 'ias20', 'ifrs5', 'ias8', 'ias10'].forEach(k => TOPIC_META_FR_P2['fr_new_' + k] = {w:1});
+['ifrs13', 'ias2', 'ias41', 'ias20', 'ifrs5', 'ias8', 'ias10', 'ias37', 'ifrs16', 'ifrs9', 'ias12', 'ifrs15', 'fsprep', 'cons', 'cashflow', 'interp', 'eqp'].forEach(k => TOPIC_META_FR_P2['fr_new_' + k] = {w:1});
 
 const SCH_ACCA_P2 = {
   "2026-09-15": { ids: [], p: "catchup", title: "15-09-26 - Catchup Day" },
@@ -2011,10 +2045,10 @@ function backfillSR(){
         if(remoteData[id] && (!entry || typeof entry!=='object' || !entry.next || !entry.completed)){
           let compDate = today;
           if (cd.sch) {
+            const searchIds = (c === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined' && FR_P2_PART_MAP[id]) ? FR_P2_PART_MAP[id] : [id];
             for (const [sDate, sObj] of Object.entries(cd.sch)) {
-              if (sObj.ids && sObj.ids.includes(id) && sDate < today) {
+              if (sObj.ids && sObj.ids.some(sid => searchIds.includes(sid)) && sDate < today) {
                 compDate = sDate;
-                break;
               }
             }
           }
@@ -2089,6 +2123,41 @@ function applyData(data){
       setTimeout(saveToFirestore, 1200);
       console.log('Migrated demerged ACCA FR topics to separate boxes');
     }
+  }
+
+  // Automatic sync & migration for unified FR Phase 2 standards
+  if (remoteData.activeCourse === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined') {
+    Object.entries(FR_P2_PART_MAP).forEach(([parentId, children]) => {
+      // If parent is checked, ensure all child parts are marked checked
+      if (remoteData[parentId]) {
+        children.forEach(cid => { remoteData[cid] = true; });
+      } else {
+        // If all child parts are checked, mark parent checked
+        const allChildrenChecked = children.length > 0 && children.every(cid => !!remoteData[cid]);
+        if (allChildrenChecked) {
+          remoteData[parentId] = true;
+        }
+      }
+
+      // Migrate practice question progress (kap, bpp, sh) from children to parent
+      ['kap', 'bpp', 'sh'].forEach(qb => {
+        if (!remoteData[`${parentId}_${qb}`]) {
+          const hasChildQb = children.some(cid => !!remoteData[`${cid}_${qb}`]);
+          if (hasChildQb) remoteData[`${parentId}_${qb}`] = true;
+        }
+      });
+
+      // Migrate existing SR entries from children to parent if parent doesn't have one
+      if (!remoteData._sr) remoteData._sr = {};
+      if (!remoteData._sr[parentId] || typeof remoteData._sr[parentId] !== 'object' || !remoteData._sr[parentId].next) {
+        for (const cid of children) {
+          if (remoteData._sr[cid] && typeof remoteData._sr[cid] === 'object' && remoteData._sr[cid].next) {
+            remoteData._sr[parentId] = { ...remoteData._sr[cid] };
+            break;
+          }
+        }
+      }
+    });
   }
   if (typeof syllabusBoxes !== 'undefined' && syllabusBoxes.length) {
     syllabusBoxes.forEach(b=>{
@@ -2365,10 +2434,10 @@ function makeCard(){
       let crTime = null;
       let formulaTime = '<div><strong style="color:var(--text);">20 min:</strong> Formula & IFRS revision</div>';
       
-      const isTheory = ids.includes('fr1') || ids.includes('fr2a') || ids.includes('fr10b') || ids.includes('fr12');
-      const isConsol = ids.includes('fr15');
-      const isRatios = ids.includes('fr18');
-      const isSingleEntity = ids.includes('fr13');
+      const isTheory = ids.includes('fr1') || ids.includes('fr2a') || ids.includes('fr10b') || ids.includes('fr12') || ids.includes('fr_new_2') || ids.includes('fr_new_3') || ids.includes('fr_new_ias8');
+      const isConsol = ids.includes('fr15') || ids.some(i => i.startsWith('fr_new_25') || i.startsWith('fr_new_26') || i.startsWith('fr_new_28') || i.startsWith('fr_new_29') || i === 'fr_new_cons');
+      const isRatios = ids.includes('fr18') || ids.some(i => i.startsWith('fr_new_33') || i.startsWith('fr_new_35') || i.startsWith('fr_new_36') || i.startsWith('fr_new_37') || i === 'fr_new_interp');
+      const isSingleEntity = ids.includes('fr13') || ids.some(i => i.startsWith('fr_new_22') || i.startsWith('fr_new_23') || i === 'fr_new_fsprep');
       
       if (isTheory) {
         learnTime = '1.5–2 hrs';
@@ -2442,7 +2511,7 @@ function renderSyllabus(){
   Object.entries(subjs).forEach(([k,v])=>{
     const items=v.ids.map(id=>{
       let subBoxes = '';
-      if (isACCA && k !== 'exam' && k !== 'mocks' && id !== 'fr_new_38' && id !== 'fr_new_39') {
+      if (isACCA && k !== 'exam' && k !== 'mocks' && id !== 'fr_new_38' && id !== 'fr_new_39' && id !== 'fr_new_eqp') {
         subBoxes = `
         <div class="q-practice-hdr">Practice Questions</div>
         <div class="q-practice">
@@ -2523,9 +2592,17 @@ function updateAll(){
       });
     } else {
       const boxes=syllabusBoxes;
-      if(!boxes.length)return;
-      total = boxes.length;
-      done = boxes.filter(b=>!!remoteData[b.id]).length;
+      if(boxes && boxes.length) {
+        total = boxes.length;
+        done = boxes.filter(b=>!!remoteData[b.id]).length;
+      } else {
+        Object.values(statsSubjs).forEach(v => {
+          if (v.ids) {
+            total += v.ids.length;
+            done += v.ids.filter(id => !!remoteData[id]).length;
+          }
+        });
+      }
     }
     
     const pct = total ? Math.round(done/total*100) : 0;
@@ -2689,13 +2766,19 @@ function addDaysStr(dateStr, days) {
 }
 
 function getMemoryRetention(id) {
+  if (!remoteData._sr) return 100;
   const s = remoteData._sr[id];
   if(!s || !s.completed) return 0;
   const lastDateStr = s.lastRev || s.completed;
-  const elapsedDays = Math.max(0, (new Date(ts()) - new Date(lastDateStr)) / (1000 * 60 * 60 * 24));
-  const strength = s.interval || 1;
+  if (!lastDateStr) return 0;
+  const nowMs = new Date(ts() + 'T00:00:00Z').getTime();
+  const lastMs = new Date(lastDateStr + 'T00:00:00Z').getTime();
+  if (isNaN(nowMs) || isNaN(lastMs)) return 100;
+  const elapsedDays = Math.max(0, (nowMs - lastMs) / 86400000);
+  const strength = Math.max(1, s.interval || 1);
   const retention = Math.exp(-elapsedDays / strength);
-  return Math.max(0, Math.min(100, Math.round(retention * 100)));
+  const pct = Math.max(0, Math.min(100, Math.round(retention * 100)));
+  return isNaN(pct) ? 100 : pct;
 }
 
 
@@ -2727,9 +2810,51 @@ function onCheck(id, val) {
     srSubUpdate = isNonTopicId ? null : { [id]: deleteField() };
   }
 
+  // --- Two-way synchronization for ACCA26_P2 unified standards <-> timetable parts ---
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const extraPayload = {};
+  
+  if (activeCourse === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined') {
+    if (FR_P2_PART_MAP[id]) {
+      // User toggled a unified syllabus standard -> sync all timetable child parts
+      const children = FR_P2_PART_MAP[id];
+      children.forEach(cid => {
+        remoteData[cid] = val;
+        extraPayload[cid] = val;
+        const dBox = document.querySelector(`.ds[data-id="${cid}"]`); if (dBox) dBox.checked = val;
+        const pBox = document.querySelector(`.pending-ds[data-id="${cid}"]`); if (pBox) pBox.checked = val;
+      });
+    } else if (FR_P2_CHILD_TO_PARENT[id]) {
+      // User toggled a timetable child part -> sync parent syllabus standard
+      const parentId = FR_P2_CHILD_TO_PARENT[id];
+      const children = FR_P2_PART_MAP[parentId];
+      const allChildrenDone = children.every(cid => (cid === id ? val : !!remoteData[cid]));
+      
+      if (remoteData[parentId] !== allChildrenDone) {
+        remoteData[parentId] = allChildrenDone;
+        extraPayload[parentId] = allChildrenDone;
+        const parentBox = document.getElementById(parentId); if (parentBox) parentBox.checked = allChildrenDone;
+        
+        if (allChildrenDone) {
+          if (!remoteData._sr) remoteData._sr = {};
+          if (!remoteData._sr[parentId] || typeof remoteData._sr[parentId] !== 'object' || !remoteData._sr[parentId].next) {
+            const pEntry = { completed: todayStr, lastRev: todayStr, count: 0, next: addDaysStr(todayStr, 1), ease: 2.5, interval: 1 };
+            remoteData._sr[parentId] = pEntry;
+            extraPayload[`_sr.${parentId}`] = pEntry;
+          }
+        } else {
+          if (remoteData._sr && remoteData._sr[parentId]) {
+            delete remoteData._sr[parentId];
+            extraPayload[`_sr.${parentId}`] = deleteField();
+          }
+        }
+      }
+    }
+  }
+
   window._localWritePending = Date.now();
   if (currentUid) {
-    const payload = { [id]: val };
+    const payload = { [id]: val, ...extraPayload };
     if (val) {
       if (srSubUpdate && srSubUpdate[id]) {
         payload[`_sr.${id}`] = srSubUpdate[id]; // Safe atomic nested field update!
@@ -2774,7 +2899,13 @@ function getRevisionsDue(){
   const today = ts();
   
   return Object.entries(remoteData._sr)
-    .filter(([id,s])=>s && typeof s==='object' && s.next && s.next<=today && (!!remoteData[id] || !!s.completed) && activeLabels[id])
+    .filter(([id,s])=>{
+      if (!s || typeof s!=='object' || !s.next || s.next>today) return false;
+      if (!remoteData[id] && !s.completed) return false;
+      if (!activeLabels[id]) return false;
+      if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return false;
+      return true;
+    })
     .map(([id,s])=>({id,label:activeLabels[id],count:s.count,completed:s.completed,next:s.next}))
     .sort((a,b)=>a.next.localeCompare(b.next));
 }
@@ -2795,6 +2926,7 @@ function renderRevisions(){
       if (!s || typeof s !== 'object') return false;
       if (!remoteData[id] && !s.completed) return false; // must be completed or logged
       if (!activeLabels[id]) return false;              // must belong to active course
+      if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return false;
       if (seenIds.has(id)) return false;                // deduplicate same id
       seenIds.add(id);
       // Auto-heal remoteData[id] if it was completed in _sr
@@ -2941,7 +3073,7 @@ function renderCourses(data){
       remoteData.activeCourse=code;
       withViewTransition(() => {
         renderCourses(remoteData);renderExamStrip();updatePageTitle();
-        makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderRevisions();
+        makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
         closeDrop();
       });
       if (typeof saveToFirestore === 'function') saveToFirestore();
@@ -3112,11 +3244,10 @@ async function openStats() {
   let windowFirstDate = null;
   let hasAnyModern = false;
 
+  revDue = typeof getRevisionsDue === 'function' ? getRevisionsDue().length : 0;
+
   Object.entries(srData).forEach(([id, s]) => {
-    // 1. Revision Due Count
-    if (s && s.next && s.next <= ts() && (!!remoteData[id] || !!s.completed) && activeLabels[id]) revDue++;
-    
-    // 2. 14-Day Rolling Average calculations
+    // 14-Day Rolling Average calculations
     if (!validTopicIds.has(id)) return;
     if (s && s.completed && s.completed.startsWith('20')) {
       hasAnyModern = true;
@@ -3288,7 +3419,8 @@ function renderSRForecastChart() {
   }
 
   Object.entries(srData).forEach(([id, s]) => {
-    if (s && s.next && !!remoteData[id] && activeLabels[id]) {
+    if (s && s.next && (!!remoteData[id] || !!s.completed) && activeLabels[id]) {
+      if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return;
       const idx = dateStrs.indexOf(s.next);
       if (idx !== -1) {
         counts[idx]++;
@@ -3503,6 +3635,8 @@ function initApp(user){
     const pde = $('pd-email'); if(pde) pde.textContent=user.email||'';
     remoteData._displayName=user.displayName||''; // cache for profile display
     const td = $('todaydisp'); if(td) td.textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const appVerEl = $('app-version-disp'); if(appVerEl) appVerEl.textContent = 'v' + APP_VERSION;
+    const wnBtnSpan = document.querySelector('#settings-whats-new-btn span'); if(wnBtnSpan) wnBtnSpan.textContent = `View What's New (v${APP_VERSION})`;
   } catch(e) { console.error('UI init error:', e); }
   try{
     renderExamStrip();
@@ -3631,40 +3765,40 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.9'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.11'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
 
   return `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">📋 What's New — v${APP_VERSION}</div>
+      <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
-        <div class="wn-item-icon">📊</div>
+        <div class="wn-item-icon">&#128214;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Accurate "Best Time of Day" Stats</div>
-          <div class="wn-item-desc">The Productivity Correlator now recomputes your peak study hours live from your actual logged study sessions and verified completion state, eliminating stale historical counters.</div>
+          <div class="wn-item-title">Unified Syllabus Standards</div>
+          <div class="wn-item-desc">Standards with multi-day study parts (IAS 37, IFRS 16, IFRS 9, IAS 12, IFRS 15, FS Prep, Consolidation, Cashflow, Interpretation) are now consolidated into single standard entries in the Full Syllabus and Session Logger.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">📦</div>
+        <div class="wn-item-icon">&#128197;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Demerged Accounting Standards</div>
-          <div class="wn-item-desc">Standards like IAS 8, IAS 10, IAS 16, IAS 20, IAS 23, IAS 40, IAS 41, and IFRS 13 now each have their own independent checkbox in the syllabus, daily plan, and session logger.</div>
+          <div class="wn-item-title">Two-Way Timetable &amp; Syllabus Sync</div>
+          <div class="wn-item-desc">Your daily timetable preserves Part 1 and Part 2 breakdown for focused daily study. Completing timetable parts tracks towards mastering the standard, and ticking the syllabus box completes all scheduled parts.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">⚡</div>
+        <div class="wn-item-icon">&#129504;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker &amp; Offline Boot</div>
-          <div class="wn-item-desc">Upgraded Service Worker (v2.2.8) with resilient offline app shell fallback and fresh cache pruning for fast, reliable offline studying.</div>
+          <div class="wn-item-title">Spaced Repetition Auto-Healing</div>
+          <div class="wn-item-desc">Revision cards automatically heal and display consolidated standard names with real-time memory decay tracking, upcoming review forecast, and zero duplicate cards.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">🚀</div>
+        <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Ultra-Smooth 60fps Performance</div>
-          <div class="wn-item-desc">Ticking checkboxes and completing topics now responds instantly without UI stutter, powered by CSS layout containment and non-blocking background sync.</div>
+          <div class="wn-item-title">Updated Service Worker v2.2.11</div>
+          <div class="wn-item-desc">Fresh cache pruning and instant offline boot ensuring all syllabus and timetable enhancements load instantly across devices.</div>
         </div>
       </div>
     </div>
@@ -4202,16 +4336,21 @@ const el_pd_settings_item = $('pd-settings-item'); if(el_pd_settings_item) el_pd
   $('settings-overlay').style.opacity = '1';
   
 
+  const wnBtnSpan = document.querySelector('#settings-whats-new-btn span');
+  if(wnBtnSpan) wnBtnSpan.textContent = `View What's New (v${APP_VERSION})`;
+
   $('settings-name-input').value = remoteData._displayName || auth.currentUser?.displayName || '';
   
   if (auth.currentUser && auth.currentUser.metadata) {
     try {
       const lastLogin = new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString(undefined, {dateStyle:'medium', timeStyle:'short'});
       const created = new Date(auth.currentUser.metadata.creationTime).toLocaleDateString(undefined, {dateStyle:'medium'});
-      $('settings-login-info').innerHTML = `Last Sign In: <strong style="color:var(--text)">${lastLogin}</strong><br>Member Since: <strong style="color:var(--text)">${created}</strong>`;
+      $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Last Sign In: <strong style="color:var(--text)">${lastLogin}</strong><br>Member Since: <strong style="color:var(--text)">${created}</strong>`;
     } catch(err) {
-      $('settings-login-info').textContent = 'Activity info unavailable';
+      $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Activity info unavailable`;
     }
+  } else {
+    $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong>`;
   }
 });
 const el_settings_close = $('settings-close'); if(el_settings_close) el_settings_close.addEventListener('click', () => {
@@ -4482,10 +4621,11 @@ window.closeLogSession = closeLogSession;
 
 window.openReviseLogSession = function(id) {
   openLogSession();
+  const targetId = (typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) ? FR_P2_CHILD_TO_PARENT[id] : id;
   const { subjs } = typeof getCourseData === 'function' ? getCourseData() : {subjs:{}};
   let foundSubj = null;
   for (const [subjKey, subjVal] of Object.entries(subjs)) {
-    if (subjVal.ids && subjVal.ids.includes(id)) {
+    if (subjVal.ids && (subjVal.ids.includes(targetId) || subjVal.ids.includes(id))) {
       foundSubj = subjKey;
       break;
     }
@@ -4931,6 +5071,16 @@ async function saveLogSession() {
     const mainBox = document.getElementById(id); if (mainBox) mainBox.checked = isChecked;
     const dailyBox = document.querySelector(`.ds[data-id="${id}"]`); if (dailyBox) dailyBox.checked = isChecked;
     const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = isChecked;
+
+    if (activeCourseKey === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined' && FR_P2_PART_MAP[id]) {
+      FR_P2_PART_MAP[id].forEach(cid => {
+        remoteData[cid] = isChecked;
+        const cdBox = document.querySelector(`.ds[data-id="${cid}"]`);
+        if (cdBox) cdBox.checked = isChecked;
+        const cpBox = document.querySelector(`.pending-ds[data-id="${cid}"]`);
+        if (cpBox) cpBox.checked = isChecked;
+      });
+    }
   });
 
   if (!remoteData._loggedSessions) remoteData._loggedSessions = [];
@@ -5046,6 +5196,7 @@ function generateStudyInsights() {
   const nowMs = Date.now();
   for (const [id, s] of Object.entries(srData)) {
     if (!activeLabelsForInsights[id]) continue; // Skip topics from other courses
+    if (activeCourseForInsights === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) continue;
     if (remoteData[id] && s.lastRev) {
       const [ry, rm, rd] = s.lastRev.split('-').map(Number);
       const revMs = new Date(ry, rm - 1, rd).getTime();
