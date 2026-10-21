@@ -50,8 +50,8 @@ html { background: var(--bg); overflow-x: hidden; width: 100%; max-width: 100vw;
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal;overflow-x:hidden;width:100%;max-width:100vw;position:relative}
-/* Prevent 300ms tap delay and text-selection jank on all interactive elements for mobile/PWA */
-a,button,input,select,label,[role=button],.cl label,.cl li,.revise-btn-diff,.pd-item,.subj-hdr,.day-card,.epill,.revise-item{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent!important}
+/* Prevent 300ms tap delay, accidental border/focus blinks, and text-selection jank on all interactive elements */
+a,button,input,select,label,[role=button],.cl label,.cl li,.revise-btn-diff,.pd-item,.subj-hdr,.day-card,.epill,.revise-item,.sr-tab-btn{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent!important;outline:none}
 /* Cross-Platform UI Polish (Android, iOS, Windows, macOS) */
 body {
   padding-left: env(safe-area-inset-left);
@@ -138,7 +138,7 @@ body {
 @media(min-width:601px){#btt{display:none!important}}
 .user-chip{font-size:.68rem;color:var(--dim);font-family:var(--mono);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
 .signout-btn{font-size:.68rem;padding:4px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;flex-shrink:0}
-.signout-btn:hover{border-color:var(--red);color:var(--red)}
+@media(hover:hover){.signout-btn:hover{border-color:var(--red);color:var(--red)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .wrap{max-width:1280px;width:100%;margin:0 auto;padding:32px 40px;box-sizing:border-box}
 @media(max-width:900px){.wrap{padding:20px 18px}}
@@ -216,7 +216,7 @@ body {
 .lb-stat-val{font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:2px}
 .lb-stat-lbl{font-size:.65rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em}
 @media(max-width:720px){.revise-grid{grid-template-columns:minmax(0,1fr)!important}}
-.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;align-items:stretch;gap:10px;transition:border-color .15s;-webkit-tap-highlight-color:transparent;min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;align-items:stretch;gap:10px;-webkit-tap-highlight-color:transparent!important;outline:none!important;min-width:0;width:100%;max-width:100%;box-sizing:border-box}
 @media(max-width:480px){.revise-item{padding:12px 12px;border-radius:10px}}
 
 .revise-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -227,7 +227,7 @@ body {
 .revise-btn-diff{flex:1;padding:6px 0;border:1px solid;border-radius:8px;background:transparent;font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .2s ease;-webkit-tap-highlight-color:transparent;display:flex;justify-content:center;align-items:center;gap:4px}
 @media(hover:hover){.revise-btn-diff:hover{background:var(--s3)}}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:border-color .12s, color .12s;white-space:nowrap;flex-shrink:0}
-.defer-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(hover:hover){.defer-btn:hover{border-color:var(--accent);color:var(--accent)}}
 
 /* Exam-Anchored Spaced Repetition Mastery Hub */
 .sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.08) 0%,rgba(40,212,142,0.06) 100%),var(--s1);border:1px solid rgba(84,162,255,0.25);border-radius:16px;padding:18px 20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.18);position:relative;overflow:hidden;width:100%;max-width:100%;box-sizing:border-box}
@@ -254,8 +254,11 @@ body {
 .sr-wave-step strong{display:block;font-size:0.74rem;margin-bottom:2px}
 .sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;overflow-y:hidden;padding:4px 4px 8px 4px;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-x:contain;scroll-behavior:smooth;width:100%;max-width:100%;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
 .sr-tabs::-webkit-scrollbar{display:none}
-.sr-tab-btn{padding:8px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:background .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;touch-action:pan-x pan-y;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-.sr-tab-btn:hover{border-color:var(--blue);color:var(--text)}
+.sr-tab-btn{padding:8px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:background .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;touch-action:pan-x pan-y;-webkit-tap-highlight-color:transparent!important;outline:none!important;user-select:none;-webkit-user-select:none}
+@media(hover:hover){
+  .sr-tab-btn:hover{border-color:var(--blue);color:var(--text)}
+}
+.sr-tab-btn:focus,.sr-tab-btn:focus-visible,.sr-tab-btn:active{outline:none!important}
 .sr-tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 10px rgba(84,162,255,0.3)}
 .sr-tab-count{background:rgba(255,255,255,0.22);padding:1px 6px;border-radius:99px;font-size:0.66rem;font-family:var(--mono)}
 .sr-tab-btn:not(.active) .sr-tab-count{background:var(--s3);color:var(--text)}
@@ -316,8 +319,21 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .splash-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;animation:splashLoad 1s cubic-bezier(.4,0,.2,1) forwards}
 @keyframes splashLoad{0%{width:10%}50%{width:75%}100%{width:100%}}
 .hidden{display:none!important}
-*:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
-.cl input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+/* Eliminate accidental focus/border outline blinks on touch devices */
+*:focus{outline:none}
+*:focus-visible{outline:none}
+button:focus,button:active,button:focus-visible,[role="button"]:focus,[role="button"]:active{outline:none!important}
+input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="password"]:focus-visible,input[type="date"]:focus-visible,input[type="time"]:focus-visible,input[type="number"]:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--blue)!important;
+  outline-offset:2px;
+}
+@media(hover:hover) and (pointer:fine){
+  a:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:2px;
+  }
+}
+.cl input[type=checkbox]:focus-visible{outline:none}
 [data-theme="amoled"]{--bg:#000000;--s1:#060606;--s2:#0a0a0a;--s3:#0f0f0f;--border:#141414;--dim:#586073}
 [data-theme="light"]{
   color-scheme: light;
@@ -404,7 +420,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .q-practice{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.38fr);gap:6px 8px;margin:6px 0 14px 20px;padding:0;width:calc(100% - 20px)}
 /* Override .cl label width:100% for q-practice grid cells */
 .q-practice label{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px;width:100%!important;box-sizing:border-box!important;padding:6px 9px!important;border-radius:10px!important;border:1px solid var(--border)!important;background:var(--s2);cursor:pointer;transition:background .15s, border-color .15s, color .15s, transform .1s;font-size:.70rem!important;color:var(--text)!important;font-family:var(--font)!important;font-weight:600;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent!important;min-height:34px;overflow:hidden}
-.q-practice label:hover{border-color:var(--blue)!important;background:rgba(84,162,255,.08)!important;color:var(--blue)!important}
+@media(hover:hover){
+  .q-practice label:hover{border-color:var(--blue)!important;background:rgba(84,162,255,.08)!important;color:var(--blue)!important}
+}
 .q-practice label:active{transform:scale(0.98)}
 .q-practice label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-0.02em}
 .q-practice input[type=checkbox]{pointer-events:none!important;width:15px!important;height:15px!important;min-width:15px!important;border-radius:4px!important;margin:0!important;flex-shrink:0;border:1.5px solid var(--dim)!important;background:transparent!important;-webkit-appearance:none;appearance:none;display:grid;place-content:center;transition:all .15s;cursor:pointer}
@@ -512,7 +530,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.19</div>
+      <div class="wn-title" id="wn-title">Version 2.2.20</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -694,7 +712,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.19</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.20</div>
         </div>
       </div>
     </div>
@@ -775,7 +793,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.19)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.20)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1051,7 +1069,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.19';
+const APP_VERSION = '2.2.20';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -3387,7 +3405,7 @@ function renderRevisions(){
         </div>
 
         <div style="display:flex;gap:6px">
-          <button class="revise-log-btn" data-rid="${item.id}" style="color:var(--blue);border:1px solid rgba(84,162,255,0.35);flex:1;padding:9px 0;border-radius:8px;background:rgba(84,162,255,0.06);font-size:0.76rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background 0.2s ease;display:flex;justify-content:center;align-items:center;gap:6px">
+          <button class="revise-log-btn" data-rid="${item.id}" style="color:var(--blue);border:1px solid rgba(84,162,255,0.35);flex:1;padding:9px 0;border-radius:8px;background:rgba(84,162,255,0.06);font-size:0.76rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background 0.2s ease;display:flex;justify-content:center;align-items:center;gap:6px;outline:none;-webkit-tap-highlight-color:transparent;">
             📝 Log Revision Session
           </button>
         </div>
@@ -4254,7 +4272,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.19'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.20'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -4262,6 +4280,13 @@ function buildWhatsNewHTML(){
   return `
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🛡️</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Eliminated Accidental Touch Border Blinks</div>
+          <div class="wn-item-desc">Removed aggressive global focus outline rings and hover borders on touch devices. Tapping or brushing across cards, tabs, and buttons no longer triggers flickering borders or accidental outlines.</div>
+        </div>
+      </div>
       <div class="wn-item">
         <div class="wn-item-icon">🔄</div>
         <div class="wn-item-text">
@@ -4284,16 +4309,9 @@ function buildWhatsNewHTML(){
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">🚀</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Refined Back-to-Top Clearance</div>
-          <div class="wn-item-desc">Tuned scroll threshold so the floating quick-navigation button stays out of your way until you scroll deep into the page.</div>
-        </div>
-      </div>
-      <div class="wn-item">
         <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v2.2.19</div>
+          <div class="wn-item-title">Updated Service Worker v2.2.20</div>
           <div class="wn-item-desc">Cache alignment and offline performance updates across all devices.</div>
         </div>
       </div>
