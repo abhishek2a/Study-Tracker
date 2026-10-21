@@ -210,6 +210,36 @@ body {
 @media(hover:hover){.revise-btn-diff:hover{background:var(--s3)}}
 .defer-btn{font-size:.62rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:border-color .12s, color .12s;white-space:nowrap;flex-shrink:0}
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Exam-Anchored Spaced Repetition Mastery Hub */
+.sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.08) 0%,rgba(40,212,142,0.06) 100%),var(--s1);border:1px solid rgba(84,162,255,0.25);border-radius:16px;padding:18px 20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.18);position:relative;overflow:hidden}
+[data-theme="light"] .sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.1) 0%,rgba(40,212,142,0.08) 100%),#fff;border-color:rgba(84,162,255,0.35);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+.sr-hero-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sr-exam-title{font-size:1.05rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sr-pill-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sr-pill-countdown{background:rgba(84,162,255,0.14);color:var(--blue);border:1px solid rgba(84,162,255,0.3);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono);letter-spacing:-0.01em;display:inline-flex;align-items:center;gap:5px}
+.sr-pill-target{background:rgba(224,149,0,0.12);color:var(--accent);border:1px solid rgba(224,149,0,0.25);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono)}
+.sr-readiness-wrap{margin-bottom:16px}
+.sr-readiness-labels{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:0.82rem}
+.sr-readiness-bar{width:100%;height:8px;background:var(--s3);border-radius:99px;overflow:hidden;position:relative}
+.sr-readiness-fill{height:100%;border-radius:99px;transition:width 0.6s cubic-bezier(0.16,1,0.3,1)}
+.sr-metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:600px){.sr-metrics-grid{grid-template-columns:1fr;gap:8px}}
+.sr-metric-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.sr-metric-val{font-size:1.1rem;font-weight:800;color:var(--text);font-family:var(--font)}
+.sr-metric-lbl{font-size:0.64rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
+.sr-pacing-box{background:rgba(40,212,142,0.07);border:1px solid rgba(40,212,142,0.2);border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:0.78rem;color:var(--text);line-height:1.45;display:flex;align-items:flex-start;gap:10px}
+.sr-waves-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:640px){.sr-waves-bar{grid-template-columns:1fr}}
+.sr-wave-step{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.7rem;color:var(--dim);transition:all 0.2s ease}
+.sr-wave-step.active{border-color:var(--blue);background:rgba(84,162,255,0.08);color:var(--text);font-weight:700}
+.sr-wave-step strong{display:block;font-size:0.74rem;margin-bottom:2px}
+.sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.sr-tab-btn{padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px}
+.sr-tab-btn:hover{border-color:var(--blue);color:var(--text)}
+.sr-tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 10px rgba(84,162,255,0.3)}
+.sr-tab-count{background:rgba(255,255,255,0.22);padding:1px 6px;border-radius:99px;font-size:0.66rem;font-family:var(--mono)}
+.sr-tab-btn:not(.active) .sr-tab-count{background:var(--s3);color:var(--text)}
 input[type="date"], input[type="time"] {
   appearance: none;
   -webkit-appearance: none;
@@ -457,7 +487,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.15</div>
+      <div class="wn-title" id="wn-title">Version 2.2.17</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -639,7 +669,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.15</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.17</div>
         </div>
       </div>
     </div>
@@ -678,7 +708,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       </div>
     </div>
 
-    <div class="sec" id="revise-sec" style="display:none"><h2>🧠 Due for Revision</h2><p>Spaced repetition · based on memory science</p></div>
+    <div class="sec" id="revise-sec" style="display:none"><h2>🧠 Exam Spaced Repetition</h2><p>Target-anchored active recall · Complete all revisions before exam day</p></div>
     <div id="revisecard" style="margin-bottom:20px"></div>
 
     <div class="sec" id="syllabus-sec"><h2>📚 Full Syllabus</h2><p>Tick topics as done · syncs across devices</p></div>
@@ -720,7 +750,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.15)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.17)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -996,7 +1026,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.15';
+const APP_VERSION = '2.2.17';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -1844,8 +1874,8 @@ COURSE_DATA['CLERK26']={sch:SCH_CLERK,labels:{...LABELS, ...LABELS_CLERK},subjs:
 
 const ACCA_30_DAYS = [
   // Days 1-2
-  {ids: ['fr1', 'fr2a'], title: 'Conceptual Framework + IFRS 18 Presentation'}, // 1
-  {ids: ['fr1', 'fr2a'], title: 'Conceptual Framework + IFRS 18 Presentation'}, // 2
+  {ids: ['fr1', 'fr2a', 'fr2b'], title: 'Conceptual Framework + IFRS 18 Presentation + IFRS 13 Fair Value'}, // 1
+  {ids: ['fr1', 'fr2a', 'fr2b'], title: 'Conceptual Framework + IFRS 18 Presentation + IFRS 13 Fair Value'}, // 2
 
   // Days 3-4
   {ids: ['fr12'], title: 'IFRS 15 Revenue'}, // 3
@@ -1863,7 +1893,7 @@ const ACCA_30_DAYS = [
   {ids: ['fr_ias2', 'fr17a'], title: 'IAS 2 Inventory + IAS 20 Government Grants'}, // 9
 
   // Day 10
-  {ids: ['fr7', 'fr_ias41'], title: 'IAS 37 Provisions + IAS 10 Events + IAS 41 Agriculture'}, // 10
+  {ids: ['fr7', 'fr10a', 'fr_ias41'], title: 'IAS 37 Provisions + IAS 10 Events + IAS 41 Agriculture'}, // 10
 
   // Days 11-12
   {ids: ['fr9'], title: 'IFRS 9 Financial Instruments (Assets, Liabilities, Expected Credit Loss, Compound Instruments)'}, // 11
@@ -1884,11 +1914,11 @@ const ACCA_30_DAYS = [
   {ids: ['fr13', 'fr5b'], title: 'Single Entity Financial Statements (SOPL, OCI, SFP, Notes, Corrections)'}, // 18
 
   // Days 19-23
-  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 19
-  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 20
-  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 21
-  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 22
-  {ids: ['fr15', 'fr_ias27'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 23
+  {ids: ['fr15', 'fr_ias27', 'fr_ias28'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 19
+  {ids: ['fr15', 'fr_ias27', 'fr_ias28'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 20
+  {ids: ['fr15', 'fr_ias27', 'fr_ias28'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 21
+  {ids: ['fr15', 'fr_ias27', 'fr_ias28'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 22
+  {ids: ['fr15', 'fr_ias27', 'fr_ias28'], title: 'Consolidation (IFRS 3, IFRS 10, IAS 28, IAS 27)'}, // 23
 
   // Days 24-26
   {ids: ['fr18'], title: 'Interpretation & Ratio Analysis'}, // 24
@@ -2050,6 +2080,7 @@ function backfillSR(){
   const today = ts();
   courses.forEach(c=>{
     const cd=COURSE_DATA[c];if(!cd)return;
+    const examTarget = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(c) : null;
     Object.entries(cd.subjs).forEach(([subjKey,v])=>{
       if(subjKey==='mocks'||subjKey==='exam')return;
       v.ids.forEach(id=>{
@@ -2066,10 +2097,18 @@ function backfillSR(){
             }
           }
           // If scheduled in the past, it is DUE TODAY for revision!
-          const nextDate = compDate < today ? today : addDaysStr(today, 1);
+          let nextDate = compDate < today ? today : addDaysStr(today, 1);
+          if (examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0 && nextDate >= examTarget.dateStr) {
+            nextDate = addDaysStr(examTarget.dateStr, -1);
+            if (nextDate < today) nextDate = today;
+          }
           const newEntry={completed:compDate,lastRev:compDate,count:compDate < today ? 1 : 0,next:nextDate,ease:2.5,interval:1};
           remoteData._sr[id]=newEntry;
           srUpdates[`_sr.${id}`]=newEntry;
+        } else if (entry && examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0 && entry.next && entry.next >= examTarget.dateStr) {
+          entry.next = addDaysStr(examTarget.dateStr, -1);
+          if (entry.next < today) entry.next = today;
+          srUpdates[`_sr.${id}`]=entry;
         }
       });
     });
@@ -2353,16 +2392,23 @@ function makeCard(){
   const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
   
   if(!sched){
-    // AA26 and CLERK26 don't use the EXAMS array — show simple no-plan card
-    if (activeCourse === 'AA26' || activeCourse === 'CLERK26') {
+    // ACCA, AA, and Clerk courses don't use the legacy EXAMS array — use getCourseExamTarget
+    if (activeCourse.startsWith('ACCA') || activeCourse === 'AA26' || activeCourse === 'CLERK26') {
+      const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
       const todayStr = ts();
+      const done = target && !target.isPostponed && todayStr > target.dateStr;
+      if (done) {
+        dc.innerHTML = `<div class="day-card done">
+          ${tag}<div class="day-top"><h2>🏁 Exam Completed</h2>${dateBadge}</div>
+          <p style="font-size:.85rem;color:var(--dim);margin-top:8px">Exam date (${target.dateStr}) has passed. Great effort!</p></div>`;
+        return;
+      }
       let msg = "Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.";
       if (activeCourse === 'AA26' && todayStr < '2026-09-25') {
         msg = "The 75-Day Study Plan for ACCA AA begins on <strong>Sept 25, 2026</strong>. Use this time to get familiar with the syllabus below.";
       }
-      
-      dc.innerHTML=`<div class="day-card catchup">
-        ${tag}<div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
+      dc.innerHTML = `<div class="day-card catchup">
+        ${tag}<div class="day-top"><h2>📅 Catchup & Revision Day</h2>${dateBadge}</div>
         <p style="font-size:.85rem;color:var(--dim);margin-top:8px;line-height:1.5">${msg}</p></div>`;
       return;
     }
@@ -2652,24 +2698,10 @@ function updateAll(){
           });
         }
     }
-    // Use EXAMS array as source of truth for countdown; skip postponed exams
-    const _t=new Date();_t.setHours(0,0,0,0);
-    const _ac=remoteData.activeCourse||DEFAULT_COURSE;
-    let examDiff = -1;
-    if (_ac === 'ACCA26' || _ac === 'ACCA26_P2') {
-      const p1 = Math.ceil((new Date(2026,8,10) - _t) / 86400000);
-      const p2 = Math.ceil((new Date(2026,11,10) - _t) / 86400000);
-      examDiff = _ac === 'ACCA26_P2' ? p2 : (p1 >= 0 ? p1 : p2);
-    } else if (_ac === 'AA26') {
-      examDiff = Math.ceil((new Date(2026,11,7) - _t) / 86400000);
-    } else {
-      const courseExams = _ac === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
-      const next = courseExams.filter(e=>!e.postponed).map(e=>{
-        const [y,m,d]=e.date.split('-').map(Number);
-        return Math.ceil((new Date(y,m-1,d) - _t) / 86400000);
-      }).filter(d=>d>=0).sort((a,b)=>a-b);
-      examDiff = next.length ? next[0] : -1;
-    }
+    // Use getCourseExamTarget as single source of truth for drawer countdown
+    const _ac = remoteData.activeCourse || DEFAULT_COURSE;
+    const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(_ac) : null;
+    const examDiff = (target && !target.isPostponed && target.daysLeft >= 0) ? target.daysLeft : -1;
     const streak=calcStreak();
     const ps=$('pd-stats');
     if(ps)ps.innerHTML=`
@@ -2692,10 +2724,12 @@ function renderStudyTip() {
   const tipsArray = active === 'AA26' ? ACCA_AA_TIPS : ACCA_FR_TIPS;
   const tipIndex = Math.floor(Math.random() * tipsArray.length);
   
+  const tipText = document.getElementById('acca-tip-text');
+  if (!tipText) return;
   if (tipsArray === ACCA_FR_TIPS && tipIndex === 15) {
-    document.getElementById('acca-tip-text').innerHTML = `<strong>${tipsArray[tipIndex]}</strong>`;
+    tipText.innerHTML = `<strong>${tipsArray[tipIndex]}</strong>`;
   } else {
-    document.getElementById('acca-tip-text').textContent = tipsArray[tipIndex];
+    tipText.textContent = tipsArray[tipIndex];
   }
   tipEl.style.display = 'block';
 }
@@ -2750,6 +2784,17 @@ function renderExamStrip(){
     return;
   }
   
+  if(active==='CLERK26'){
+    const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget('CLERK26') : null;
+    const diff = target ? target.daysLeft : 0;
+    const isPostponed = target ? target.isPostponed : false;
+    const status = isPostponed ? '⏸️ Date TBA' : (diff<0 ? '✅ Completed' : (diff===0 ? '🔥 TODAY' : diff+' days left'));
+    const color = isPostponed ? 'var(--dim)' : (diff<0 ? 'var(--green)' : (diff===0 ? 'var(--accent)' : 'var(--green)'));
+    const dateText = isPostponed ? 'Date TBA' : 'Jan 11, 2027';
+    es.innerHTML = `<div class="epill next-exam"><div class="en">CSEB Junior Clerk</div><div class="ed" style="color:${color}">${status}</div><div class="en2">Junior Clerk / Cashier 2026-27</div><div class="edd" style="margin-top:4px;color:var(--dim)">${dateText}</div></div>`;
+    return;
+  }
+  
   const parseUTC=s=>{const[y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d);};
   const courseExams=active==='CAT09'?EXAMS.filter(e=>e.cat.includes('09')):EXAMS.filter(e=>!e.cat.includes('09'));
   const upcoming=courseExams.filter(e=>parseUTC(e.date)>=todayUTC && !e.postponed).sort((a,b)=>parseUTC(a.date)-parseUTC(b.date));
@@ -2780,6 +2825,118 @@ function renderExamStrip(){
   }).join('');
 }
 
+function getCourseExamTarget(courseKey) {
+  const c = courseKey || (typeof remoteData !== 'undefined' && remoteData.activeCourse) || (typeof DEFAULT_COURSE !== 'undefined' ? DEFAULT_COURSE : 'ACCA26_P2');
+  let dateStr = '2026-12-10';
+  let name = 'ACCA Financial Reporting (FR)';
+  let shortName = 'Dec 10 FR Exam';
+  let isPostponed = false;
+  let targetScore = '75%+ Distinction';
+  let subjectCode = 'FR';
+
+  if (c === 'ACCA26_P2') {
+    dateStr = '2026-12-10';
+    name = 'ACCA Financial Reporting (FR - Dec 2026)';
+    shortName = 'Dec 10 FR Exam';
+    subjectCode = 'FR';
+  } else if (c === 'AA26') {
+    dateStr = '2026-12-07';
+    name = 'ACCA Audit and Assurance (AA - Dec 2026)';
+    shortName = 'Dec 7 AA Exam';
+    subjectCode = 'AA';
+  } else if (c === 'ACCA26') {
+    const todayStr = typeof ts === 'function' ? ts() : new Date().toISOString().slice(0, 10);
+    dateStr = (todayStr > '2026-09-10') ? '2026-12-10' : '2026-09-10';
+    name = 'ACCA Financial Reporting';
+    shortName = (dateStr === '2026-12-10') ? 'Dec 10 FR Exam' : 'Sep 10 FR Exam';
+    subjectCode = 'FR';
+  } else if (c === 'CLERK26') {
+    dateStr = '2027-01-11';
+    name = 'CSEB Junior Clerk / Cashier 2026-27';
+    shortName = 'Jan 11 Clerk Exam';
+    subjectCode = 'CLERK';
+  } else if (c === 'CAT09') {
+    dateStr = '2026-08-16';
+    name = 'Assistant Secretary (Cat 09/2026)';
+    shortName = 'Cat 09 Exam';
+    isPostponed = true;
+    subjectCode = 'ASST_SEC';
+  } else {
+    // CSEB11 fallback
+    dateStr = '2026-07-11';
+    name = 'Junior Clerk / Cashier (Cat 11/2026)';
+    shortName = 'CSEB Exam';
+    isPostponed = true;
+    subjectCode = 'CSEB';
+  }
+
+  const todayStr = typeof ts === 'function' ? ts() : new Date().toISOString().slice(0, 10);
+  const [ey, em, ed] = dateStr.split('-').map(Number);
+  const examMs = Date.UTC(ey, em - 1, ed);
+  const [ty, tm, td] = todayStr.split('-').map(Number);
+  const todayMs = Date.UTC(ty, tm - 1, td);
+  const daysLeft = Math.max(0, Math.round((examMs - todayMs) / 86400000));
+
+  return {
+    courseKey: c,
+    dateStr,
+    examMs,
+    daysLeft,
+    name,
+    shortName,
+    subjectCode,
+    isPostponed,
+    targetScore
+  };
+}
+
+function calcExamAnchoredInterval(daysToExam, currentCount, difficulty, ease) {
+  if (daysToExam > 60 || isNaN(daysToExam)) {
+    const BASE_SCHEDULE = [1, 3, 7, 14, 30, 60];
+    let idx = currentCount || 0;
+    if (difficulty === 'easy') idx = Math.min(idx + 1, BASE_SCHEDULE.length - 1);
+    else if (difficulty === 'hard') idx = Math.max(idx - 1, 0);
+    let interval = BASE_SCHEDULE[Math.min(idx, BASE_SCHEDULE.length - 1)];
+    if (!isNaN(daysToExam) && daysToExam > 0) {
+      interval = Math.min(interval, Math.max(1, daysToExam - 1));
+    }
+    return interval;
+  }
+
+  let baseIntervals;
+  let maxRatio;
+
+  if (daysToExam > 35) {
+    baseIntervals = [1, 3, 7, 12, 18, 24];
+    maxRatio = 0.40;
+  } else if (daysToExam > 20) {
+    baseIntervals = [1, 3, 6, 9, 13, 16];
+    maxRatio = 0.35;
+  } else if (daysToExam > 10) {
+    baseIntervals = [1, 2, 4, 6, 8, 10];
+    maxRatio = 0.30;
+  } else if (daysToExam > 4) {
+    baseIntervals = [1, 2, 3, 4, 4];
+    maxRatio = 0.25;
+  } else {
+    baseIntervals = [1, 1, 2];
+    maxRatio = 0.25;
+  }
+
+  let idx = currentCount || 0;
+  if (difficulty === 'easy') idx = Math.min(idx + 1, baseIntervals.length - 1);
+  else if (difficulty === 'hard') idx = Math.max(idx - 1, 0);
+
+  let interval = baseIntervals[Math.min(idx, baseIntervals.length - 1)];
+  const maxCap = Math.max(1, Math.floor(daysToExam * maxRatio));
+  interval = Math.min(interval, maxCap);
+
+  const hardCeiling = Math.max(1, daysToExam - 1);
+  interval = Math.min(interval, hardCeiling);
+
+  return interval;
+}
+
 function addDaysStr(dateStr, days) {
   const [y, m, d] = dateStr.split('-').map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
@@ -2798,7 +2955,8 @@ function getMemoryRetention(id) {
   if (isNaN(nowMs) || isNaN(lastMs)) return 100;
   const elapsedDays = Math.max(0, (nowMs - lastMs) / 86400000);
   const strength = Math.max(1, s.interval || 1);
-  const retention = Math.exp(-elapsedDays / strength);
+  // Target 90% retention at the scheduled interval: R = exp(ln(0.9) * t / I)
+  const retention = Math.exp(-0.10536 * (elapsedDays / strength));
   const pct = Math.max(0, Math.min(100, Math.round(retention * 100)));
   return isNaN(pct) ? 100 : pct;
 }
@@ -2919,13 +3077,19 @@ function getRevisionsDue(){
   if (!cd || !cd.labels) return [];
   const activeLabels = cd.labels;
   const today = ts();
+  const examTarget = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
   
   return Object.entries(remoteData._sr)
     .filter(([id,s])=>{
-      if (!s || typeof s!=='object' || !s.next || s.next>today) return false;
+      if (!s || typeof s!=='object') return false;
       if (!remoteData[id] && !s.completed) return false;
       if (!activeLabels[id]) return false;
       if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return false;
+      if (examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0 && s.next && s.next >= examTarget.dateStr) {
+        s.next = addDaysStr(examTarget.dateStr, -1);
+        if (s.next < today) s.next = today;
+      }
+      if (!s.next || s.next > today) return false;
       return true;
     })
     .map(([id,s])=>({id,label:activeLabels[id],count:s.count,completed:s.completed,next:s.next}))
@@ -2940,8 +3104,24 @@ function renderRevisions(){
   if (!cd || !cd.labels) { sec.style.display='none'; return; }
   const activeLabels = cd.labels;
   const today = ts();
+  const examTarget = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
   
-  // Only unique IDs — de-duplicate by id in case label appears in multiple _sr keys
+  // Auto-clamp any scheduled dates that land past the target exam date
+  if (examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0) {
+    let clampedAny = false;
+    Object.entries(remoteData._sr || {}).forEach(([id, s]) => {
+      if (s && s.next && s.next >= examTarget.dateStr) {
+        s.next = addDaysStr(examTarget.dateStr, -1);
+        if (s.next < today) s.next = today;
+        clampedAny = true;
+      }
+    });
+    if (clampedAny) {
+      setTimeout(() => { if (typeof saveToFirestore === 'function') saveToFirestore(); }, 2000);
+    }
+  }
+
+  // Only unique IDs for active course
   const seenIds = new Set();
   const allSr = Object.entries(remoteData._sr || {})
     .filter(([id,s]) => {
@@ -2951,7 +3131,6 @@ function renderRevisions(){
       if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return false;
       if (seenIds.has(id)) return false;                // deduplicate same id
       seenIds.add(id);
-      // Auto-heal remoteData[id] if it was completed in _sr
       if (!remoteData[id]) remoteData[id] = true;
       if (!s.next && s.completed) s.next = s.completed;
       return true;
@@ -2962,86 +3141,304 @@ function renderRevisions(){
     });
     
   const due = allSr.filter(s => s.next && s.next <= today).sort((a,b) => a.next.localeCompare(b.next));
-  const weak = allSr.filter(s => s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== today).sort((a,b) => a.mem - b.mem);
+  const weak = allSr.filter(s => s.mem < 70 || (s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== today)).sort((a,b) => a.mem - b.mem);
   const dueAndWeakIds = new Set([...due.map(s => s.id), ...weak.map(s => s.id)]);
-  const upcoming = allSr.filter(s => s.next && s.next > today && !dueAndWeakIds.has(s.id)).sort((a,b) => a.next.localeCompare(b.next)).slice(0, 4);
+  const upcoming = allSr.filter(s => s.next && s.next > today && !dueAndWeakIds.has(s.id)).sort((a,b) => a.next.localeCompare(b.next));
 
-  // Always keep section visible so users never experience a missing section bug
+  // Compute Syllabus & Exam Readiness Metrics
+  let totalTopics = 0;
+  let coveredTopics = 0;
+  const countedSubjIds = new Set();
+  Object.entries(cd.subjs || {}).forEach(([k, s]) => {
+    if (!s.ids || k === 'exam' || k === 'mocks') return;
+    s.ids.forEach(id => {
+      if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return;
+      if (countedSubjIds.has(id)) return;
+      countedSubjIds.add(id);
+      totalTopics++;
+      if (remoteData[id]) coveredTopics++;
+    });
+  });
+
+  const covPct = totalTopics > 0 ? Math.round((coveredTopics / totalTopics) * 100) : 0;
+  const multiPassCount = allSr.filter(s => (s.count || 0) >= 2).length;
+  const multiPassPct = totalTopics > 0 ? Math.min(100, Math.round((multiPassCount / totalTopics) * 100)) : 0;
+  const avgMem = allSr.length > 0 ? Math.round(allSr.reduce((acc, s) => acc + s.mem, 0) / allSr.length) : 0;
+  
+  // High-Score Exam Readiness Formula: 40% syllabus coverage + 35% multi-pass review depth + 25% retention
+  const readiness = Math.min(100, Math.round((covPct * 0.40) + (multiPassPct * 0.35) + (avgMem * 0.25)));
+
+  let readinessColor = 'var(--red)';
+  let readinessBadge = '⚠️ Building Foundation';
+  if (readiness >= 85) {
+    readinessColor = 'var(--green)';
+    readinessBadge = '🏆 85%+ Rank Ready';
+  } else if (readiness >= 70) {
+    readinessColor = 'var(--blue)';
+    readinessBadge = '🌟 70–84 Marks (Distinction)';
+  } else if (readiness >= 50) {
+    readinessColor = 'var(--accent)';
+    readinessBadge = '📈 50–69 Marks';
+  }
+
+  // Pacing Strategy & Roadmap
+  const remainingTopics = Math.max(0, totalTopics - coveredTopics);
+  let pacingHtml = '';
+  const daysLeft = examTarget ? examTarget.daysLeft : 50;
+
+  if (examTarget && !examTarget.isPostponed && daysLeft > 0) {
+    const bufferDays = 7;
+    const studyDays = Math.max(1, daysLeft - bufferDays);
+    if (daysLeft > 7) {
+      if (remainingTopics > 0) {
+        const topicsPerWeek = Math.max(1, Math.ceil((remainingTopics / studyDays) * 7));
+        pacingHtml = `⚡ <strong>Target Pace for ${examTarget.shortName}:</strong> Complete <strong>~${topicsPerWeek} new topics/week</strong> and clear <strong>${Math.max(2, due.length)} daily revisions</strong> to ensure 3 full revision passes before the final 7-day mock sprint!`;
+      } else {
+        pacingHtml = `🎯 <strong>Full Syllabus Covered!</strong> Maintain <strong>2–3 active recall reviews daily</strong> to lock in peak memory retention for <strong>${examTarget.shortName}</strong>!`;
+      }
+    } else {
+      pacingHtml = `🚨 <strong>Final Exam Sprint (${daysLeft} Days to ${examTarget.shortName}):</strong> Intensive recall mode active. Practice exam kit MCQs and revise high-weight standards!`;
+    }
+  } else {
+    pacingHtml = `⚡ <strong>Daily Pacing:</strong> Maintain steady progress with 1–2 syllabus topics and daily spaced repetition reviews.`;
+  }
+
+  const isWave1 = daysLeft > 21;
+  const isWave2 = daysLeft > 7 && daysLeft <= 21;
+  const isWave3 = daysLeft <= 7;
+
+  // Always keep section visible
   sec.style.display = 'flex';
   const nav=$('revise-nav'),badge=$('revise-badge');
   if(nav) nav.style.display = window.innerWidth>600 ? 'inline-flex' : 'none';
   if(badge) badge.textContent = due.length ? due.length : '';
-  
+
+  // Tab State
+  window._srActiveTab = window._srActiveTab || 'due';
+
+  // Hero Banner HTML
+  const heroHtml = `
+    <div class="sr-hero-banner">
+      <div class="sr-hero-hdr">
+        <div>
+          <div class="sr-exam-title">
+            <span>🎯 ${examTarget ? examTarget.name : 'Target Exam'}</span>
+          </div>
+          <div style="font-size:0.75rem;color:var(--dim);margin-top:3px;font-family:var(--font)">
+            Exam-Anchored Spaced Repetition · Paced for peak recall on exam morning
+          </div>
+        </div>
+        <div class="sr-pill-group">
+          ${examTarget && !examTarget.isPostponed && daysLeft > 0 ? `
+            <div class="sr-pill-countdown">⏰ ${daysLeft} Days to ${examTarget.shortName}</div>
+          ` : ''}
+          <div class="sr-pill-target">🏆 ${examTarget ? examTarget.targetScore : '75%+ Distinction'}</div>
+        </div>
+      </div>
+
+      <div class="sr-readiness-wrap">
+        <div class="sr-readiness-labels">
+          <strong style="color:var(--text);font-size:0.86rem;display:flex;align-items:center;gap:6px">
+            High-Score Exam Readiness Index
+            <span style="font-size:0.68rem;padding:2px 8px;border-radius:99px;background:${readinessColor}22;color:${readinessColor};border:1px solid ${readinessColor}44">${readinessBadge}</span>
+          </strong>
+          <strong style="color:${readinessColor};font-size:1.05rem;font-family:var(--mono)">${readiness}%</strong>
+        </div>
+        <div class="sr-readiness-bar">
+          <div class="sr-readiness-fill" style="width:${readiness}%;background:${readinessColor};"></div>
+        </div>
+      </div>
+
+      <div class="sr-metrics-grid">
+        <div class="sr-metric-card">
+          <div class="sr-metric-val" style="color:var(--blue)">${coveredTopics} / ${totalTopics} <span style="font-size:0.72rem;font-weight:600;opacity:0.8">(${covPct}%)</span></div>
+          <div class="sr-metric-lbl">Syllabus Covered</div>
+        </div>
+        <div class="sr-metric-card">
+          <div class="sr-metric-val" style="color:var(--green)">${multiPassCount} / ${totalTopics} <span style="font-size:0.72rem;font-weight:600;opacity:0.8">(${multiPassPct}%)</span></div>
+          <div class="sr-metric-lbl">Multi-Pass Retention (2+ Passes)</div>
+        </div>
+        <div class="sr-metric-card">
+          <div class="sr-metric-val" style="color:var(--accent)">${avgMem}%</div>
+          <div class="sr-metric-lbl">Active Memory Strength</div>
+        </div>
+      </div>
+
+      <div class="sr-pacing-box">
+        <div style="font-size:1.1rem;line-height:1">💡</div>
+        <div style="flex:1">${pacingHtml}</div>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)">
+        <div style="font-size:0.68rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Pre-Exam Mastery Roadmap</div>
+        <div class="sr-waves-bar">
+          <div class="sr-wave-step ${isWave1 ? 'active' : ''}">
+            <strong>Wave 1: Concept Mastery ${isWave1 ? '· Active' : ''}</strong>
+            <span>> 21 Days: Syllabus learning & 1st spaced recall</span>
+          </div>
+          <div class="sr-wave-step ${isWave2 ? 'active' : ''}">
+            <strong>Wave 2: Exam Kit Drills ${isWave2 ? '· Active' : ''}</strong>
+            <span>7–21 Days: Kaplan, BPP, Study Hub & Examiner Reports</span>
+          </div>
+          <div class="sr-wave-step ${isWave3 ? 'active' : ''}">
+            <strong>Wave 3: Final 7-Day Peak ${isWave3 ? '· Active' : ''}</strong>
+            <span>Last 7 Days: Timed Mocks & Super-Recall Drill</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Filter Tabs HTML
+  const tabsHtml = `
+    <div class="sr-tabs" id="sr-filter-tabs">
+      <button class="sr-tab-btn ${window._srActiveTab === 'due' ? 'active' : ''}" data-tab="due">
+        🚨 Due Today <span class="sr-tab-count">${due.length}</span>
+      </button>
+      <button class="sr-tab-btn ${window._srActiveTab === 'weak' ? 'active' : ''}" data-tab="weak">
+        ⚡ Weak Retention <span class="sr-tab-count">${weak.length}</span>
+      </button>
+      <button class="sr-tab-btn ${window._srActiveTab === 'upcoming' ? 'active' : ''}" data-tab="upcoming">
+        📅 Pre-Exam Waves <span class="sr-tab-count">${upcoming.length}</span>
+      </button>
+      <button class="sr-tab-btn ${window._srActiveTab === 'all' ? 'active' : ''}" data-tab="all">
+        🏆 All Topics <span class="sr-tab-count">${allSr.length}</span>
+      </button>
+    </div>
+  `;
+
   const renderItem = (item, isDue) => {
     const overdue = item.next < today;
     const nextStr = item.next === addDaysStr(today, 1) ? 'Tomorrow' : item.next === today ? 'Today' : item.next;
     const memColor = item.mem < 50 ? 'var(--red)' : item.mem < 80 ? 'var(--accent)' : 'var(--green)';
-    const colors=['var(--blue)','var(--green)','var(--accent)','var(--principles)','var(--english)','var(--reasoning)'];
-    const c = colors[Math.min(item.count || 0, colors.length-1)];
+    const passCount = item.count || 0;
+    const passLabel = passCount === 0 ? '1st Recall' : passCount === 1 ? '2nd Pass' : passCount === 2 ? '3rd Pass' : `${passCount + 1}th Pass`;
     
-    return `<div class="revise-item" style="display:block">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div class="revise-dot" style="background:${c}"></div>
-        <div style="flex:1;min-width:0">
-          <div class="revise-text">${item.label}</div>
-          <div class="revise-meta">${isDue ? (overdue?'<span style="color:var(--red);font-weight:700">Overdue</span>':'<span style="color:var(--accent);font-weight:700">Due today</span>') : 'Memory: ' + item.mem + '%'} &bull; Next: ${nextStr}</div>
+    let examBufferStr = '';
+    if (examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0) {
+      const [ny, nm, nd] = (item.next || today).split('-').map(Number);
+      const nextMs = Date.UTC(ny, nm - 1, nd);
+      const daysBeforeExam = Math.max(0, Math.round((examTarget.examMs - nextMs) / 86400000));
+      examBufferStr = `<span style="font-family:var(--mono);font-size:0.65rem;color:var(--dim)">${daysBeforeExam}d before ${examTarget.shortName}</span>`;
+    }
+
+    const badgeColor = isDue 
+      ? (overdue ? 'rgba(224,80,80,0.15);color:var(--red);border-color:rgba(224,80,80,0.3)' : 'rgba(224,149,0,0.15);color:var(--accent);border-color:rgba(224,149,0,0.3)')
+      : 'rgba(84,162,255,0.12);color:var(--blue);border-color:rgba(84,162,255,0.25)';
+
+    const badgeText = isDue 
+      ? (overdue ? '🚨 Overdue' : '⏰ Due Today')
+      : `📅 ${nextStr}`;
+
+    return `
+      <div class="revise-item" style="display:flex;flex-direction:column;align-items:stretch;padding:15px 16px;background:var(--s1);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.04);transition:transform 0.15s ease, border-color 0.15s ease;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+            <span style="font-size:0.65rem;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:6px;background:var(--s2);border:1px solid var(--border);color:var(--dim);white-space:nowrap">${passLabel}</span>
+            <div class="revise-text" style="font-size:0.86rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.label}</div>
+          </div>
+          <span style="font-size:0.68rem;font-weight:700;font-family:var(--mono);padding:3px 8px;border-radius:99px;border:1px solid;white-space:nowrap;background:${badgeColor}">${badgeText}</span>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:0.72rem;">
+          <span style="color:var(--dim);">Memory Retention: <strong style="color:${memColor}">${item.mem}%</strong></span>
+          ${examBufferStr}
+        </div>
+
+        <div style="width:100%;height:5px;background:var(--s3);border-radius:99px;margin-bottom:14px;overflow:hidden">
+          <div style="width:${item.mem}%;height:100%;background:${memColor};border-radius:99px;transition:width 0.4s ease"></div>
+        </div>
+
+        <div style="display:flex;gap:6px">
+          <button class="revise-log-btn" data-rid="${item.id}" style="color:var(--blue);border:1px solid rgba(84,162,255,0.35);flex:1;padding:9px 0;border-radius:8px;background:rgba(84,162,255,0.06);font-size:0.76rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background 0.2s ease;display:flex;justify-content:center;align-items:center;gap:6px">
+            📝 Log Revision Session
+          </button>
         </div>
       </div>
-      
-      <div style="width:100%;height:3px;background:var(--s2);border-radius:2px;margin-bottom:14px;overflow:hidden">
-        <div style="width:${item.mem}%;height:100%;background:${memColor};transition:width 0.3s ease"></div>
-      </div>
-      
-      <div style="display:flex;gap:6px">
-        <button class="revise-log-btn" data-rid="${item.id}" style="color:var(--blue);border:1px solid rgba(84,162,255,0.3);flex:1;padding:8px 0;border-radius:8px;background:transparent;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .2s ease;display:flex;justify-content:center;align-items:center;gap:6px">📝 Log Revision Session</button>
-      </div>
-    </div>`;
+    `;
   };
 
-  let html = '';
-  if(due.length) {
-    html += `<div class="revise-grid" style="margin-bottom:20px">${due.map(d=>renderItem(d, true)).join('')}</div>`;
-  } else if(allSr.length > 0) {
-    html += `
-      <div style="background:rgba(40,212,142,0.08);border:1px solid rgba(40,212,142,0.25);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;width:100%;">
-        <span style="font-size:1.6rem;">🎉</span>
-        <div>
-          <strong style="color:var(--green);font-size:0.92rem;display:block;">All Caught Up For Today!</strong>
-          <span style="font-size:0.78rem;color:var(--dim);">You have 0 overdue revisions right now. Check out upcoming scheduled reviews below.</span>
+  let listHtml = '';
+  if (window._srActiveTab === 'due') {
+    if (due.length) {
+      listHtml = `<div class="revise-grid">${due.map(d => renderItem(d, true)).join('')}</div>`;
+    } else if (allSr.length > 0) {
+      listHtml = `
+        <div style="background:rgba(40,212,142,0.08);border:1px solid rgba(40,212,142,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
+          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🎉</span>
+          <strong style="color:var(--green);font-size:0.96rem;display:block;margin-bottom:4px;">All Due Revisions Cleared For Today!</strong>
+          <span style="font-size:0.78rem;color:var(--dim);display:block;margin-bottom:12px;">You have 0 overdue topics right now. Maintain your edge for ${examTarget ? examTarget.shortName : 'exam day'} by reviewing weak topics or checking upcoming waves below.</span>
+          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+            <button class="sr-tab-btn" data-tab="weak" style="background:var(--s2);border-color:var(--border)">⚡ Review Weak Topics (${weak.length})</button>
+            <button class="sr-tab-btn" data-tab="upcoming" style="background:var(--s2);border-color:var(--border)">📅 View Pre-Exam Waves (${upcoming.length})</button>
+          </div>
         </div>
-      </div>
-    `;
-  } else {
-    html += `
-      <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:24px 20px;text-align:center;margin-bottom:16px;width:100%;">
-        <span style="font-size:2rem;display:block;margin-bottom:8px;">📚</span>
-        <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Revision Topics Yet</strong>
-        <span style="font-size:0.78rem;color:var(--dim);">Tick completed topics in the syllabus above or log a study session to begin your spaced repetition schedule!</span>
-      </div>
-    `;
+      `;
+    } else {
+      listHtml = `
+        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:26px 20px;text-align:center;width:100%;">
+          <span style="font-size:2rem;display:block;margin-bottom:8px;">📚</span>
+          <strong style="color:var(--text);font-size:0.94rem;display:block;margin-bottom:4px;">No Revision Topics Yet</strong>
+          <span style="font-size:0.78rem;color:var(--dim);">Tick completed standards in the syllabus above or log a study session to kick off your spaced repetition schedule for ${examTarget ? examTarget.shortName : 'exam day'}!</span>
+        </div>
+      `;
+    }
+  } else if (window._srActiveTab === 'weak') {
+    if (weak.length) {
+      listHtml = `<div class="revise-grid">${weak.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
+    } else {
+      listHtml = `
+        <div style="background:rgba(84,162,255,0.08);border:1px solid rgba(84,162,255,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
+          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🌟</span>
+          <strong style="color:var(--blue);font-size:0.96rem;display:block;margin-bottom:4px;">Outstanding Memory Retention!</strong>
+          <span style="font-size:0.78rem;color:var(--dim);">No weak topics found (<70%). All your reviewed standards currently have strong active retention!</span>
+        </div>
+      `;
+    }
+  } else if (window._srActiveTab === 'upcoming') {
+    if (upcoming.length) {
+      listHtml = `<div class="revise-grid">${upcoming.map(d => renderItem(d, false)).join('')}</div>`;
+    } else {
+      listHtml = `
+        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
+          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📅</span>
+          <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Upcoming Scheduled Reviews</strong>
+          <span style="font-size:0.78rem;color:var(--dim);">All topics are either due today or awaiting initial study in the syllabus.</span>
+        </div>
+      `;
+    }
+  } else if (window._srActiveTab === 'all') {
+    if (allSr.length) {
+      listHtml = `<div class="revise-grid">${allSr.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
+    } else {
+      listHtml = `
+        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
+          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📚</span>
+          <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Topics Tracked Yet</strong>
+          <span style="font-size:0.78rem;color:var(--dim);">Complete syllabus standards to populate your spaced repetition engine.</span>
+        </div>
+      `;
+    }
   }
 
-  if(weak.length) {
-    html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
-               <h2 style="color:var(--red)"><span style="display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Weak Areas</h2>
-             </div>`;
-    html += `<div class="revise-grid" style="margin-bottom:20px">${weak.map(d=>renderItem(d, false)).join('')}</div>`;
-  }
-  if(upcoming.length) {
-    html += `<div class="sec" style="margin:20px 0 10px;padding-bottom:6px;border-bottom:none">
-               <h2 style="color:var(--blue)"><span style="display:inline-block;width:6px;height:6px;background:var(--blue);border-radius:50%;margin-bottom:2px;margin-right:6px"></span>Upcoming Reviews</h2>
-             </div>`;
-    html += `<div class="revise-grid">${upcoming.map(d=>renderItem(d, false)).join('')}</div>`;
-  }
-  
-  if (window._lastReviseHtml === html) return;
-  window._lastReviseHtml = html;
-  rc.innerHTML = html;
+  const fullHtml = heroHtml + tabsHtml + listHtml;
+
+  if (window._lastReviseHtml === fullHtml) return;
+  window._lastReviseHtml = fullHtml;
+  rc.innerHTML = fullHtml;
   
   if (!window._revisecardListenerAttached) {
     window._revisecardListenerAttached = true;
     let _reviseTouch = false;
     rc.addEventListener('touchend', function(e) {
+      const tab = e.target.closest('.sr-tab-btn');
+      if (tab) {
+        e.preventDefault();
+        window._srActiveTab = tab.getAttribute('data-tab');
+        window._lastReviseHtml = '';
+        renderRevisions();
+        return;
+      }
       const b = e.target.closest('.revise-log-btn');
       if (b) {
         e.preventDefault();
@@ -3051,6 +3448,13 @@ function renderRevisions(){
       }
     });
     rc.addEventListener('click', function(e) {
+      const tab = e.target.closest('.sr-tab-btn');
+      if (tab) {
+        window._srActiveTab = tab.getAttribute('data-tab');
+        window._lastReviseHtml = '';
+        renderRevisions();
+        return;
+      }
       const b = e.target.closest('.revise-log-btn');
       if (b) {
         if (_reviseTouch) return;
@@ -3142,8 +3546,9 @@ if (addBtn) {
     }
     remoteData.courses=updated;remoteData.activeCourse=code;
     withViewTransition(() => {
-      inp.value='';renderCourses(remoteData);
-      makeCard();bindSyllabus();updateAll();renderPending();
+      inp.value='';renderCourses(remoteData);renderExamStrip();updatePageTitle();
+      makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
+      closeDrop();
     });
     if (typeof saveToFirestore === 'function') saveToFirestore();
   });
@@ -3312,7 +3717,8 @@ async function openStats() {
 
   const pace = total > 0 ? (comp / total) * 100 : 0;
   let finishDate = '-';
-  $('st-finish').style.color = ''; // Reset color
+  const finishEl = $('st-finish');
+  if (finishEl) finishEl.style.color = ''; // Reset color
   
   if (comp > 0 && trueAvg > 0 && pend > 0) {
     const daysLeft = Math.ceil(pend / trueAvg);
@@ -3323,44 +3729,39 @@ async function openStats() {
     // Exam Date Check
     let examDate = null;
     const activeCourse = remoteData.activeCourse || 'CSEB11';
-    if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2') {
-      const p1Date = new Date(Date.UTC(2026, 8, 10)); // Sep 10, 2026 (Phase 1)
-      const p2Date = new Date(Date.UTC(2026, 11, 10)); // Dec 10, 2026 (Phase 2)
-      examDate = activeCourse === 'ACCA26_P2' ? p2Date : (todayDate > p1Date ? p2Date : p1Date);
-    } else if (activeCourse === 'AA26') {
-      examDate = new Date(Date.UTC(2026, 11, 7)); // Dec 7, 2026
-    } else {
-      const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
-      const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => { const [ay,am,ad]=a.date.split('-').map(Number); const [by,bm,bd]=b.date.split('-').map(Number); return new Date(ay,am-1,ad) - new Date(by,bm-1,bd); });
-      if (upcoming.length > 0) { const [_ey,_em,_ed] = upcoming[0].date.split('-').map(Number); examDate = new Date(_ey, _em-1, _ed); }
+    const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
+    if (target && !target.isPostponed && target.dateStr) {
+      const [_ey, _em, _ed] = target.dateStr.split('-').map(Number);
+      examDate = new Date(_ey, _em - 1, _ed);
     }
     
     if (examDate) {
       if (fd > examDate) {
         finishDate += ' ⚠️';
-        $('st-finish').style.color = 'var(--red)';
+        if (finishEl) finishEl.style.color = 'var(--red)';
       } else {
         finishDate += ' ✅';
-        $('st-finish').style.color = 'var(--green)';
+        if (finishEl) finishEl.style.color = 'var(--green)';
       }
     }
   } else if (pend === 0) {
     finishDate = 'Finished! 🎉';
-    $('st-finish').style.color = 'var(--green)';
+    if (finishEl) finishEl.style.color = 'var(--green)';
   } else if (trueAvg === 0 && comp > 0) {
     finishDate = 'Slacking! 🐌';
-    $('st-finish').style.color = 'var(--red)';
+    if (finishEl) finishEl.style.color = 'var(--red)';
   }
 
-  $('st-total').textContent = total;
-  $('st-comp').textContent = comp;
-  $('st-pend').textContent = pend;
-  $('st-rev').textContent = revDue;
-  $('st-hours').textContent = hours + 'h';
-  $('st-streak').textContent = streak + ' 🔥';
-  $('st-avg').textContent = avg;
-  $('st-speed').textContent = pace.toFixed(1) + '%';
-  $('st-finish').textContent = finishDate;
+  const setStatText = (id, val) => { const el = $(id); if (el) el.textContent = val; };
+  setStatText('st-total', total);
+  setStatText('st-comp', comp);
+  setStatText('st-pend', pend);
+  setStatText('st-rev', revDue);
+  setStatText('st-hours', hours + 'h');
+  setStatText('st-streak', streak + ' 🔥');
+  setStatText('st-avg', avg);
+  setStatText('st-speed', pace.toFixed(1) + '%');
+  if (finishEl) finishEl.textContent = finishDate;
 
   // Defer heavy chart and sub-lists so the modal slide-up transition is silky smooth (60fps)
   setTimeout(() => {
@@ -3543,7 +3944,17 @@ function renderProductivityCorrelator() {
   // A topic counts as "mastered" only if remoteData[id] === true.
   // Notes-only sessions (no topics) count as 1 attempt + 1 mastered.
   const bucketTopics = { morning: new Map(), afternoon: new Map(), evening: new Map(), night: new Map() };
-  const loggedSessions = remoteData._loggedSessions || [];
+  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+  const cd = COURSE_DATA[activeCourse];
+  const validTopicIds = new Set();
+  if (cd && cd.subjs) {
+    Object.values(cd.subjs).forEach(s => { if (s && s.ids) s.ids.forEach(id => validTopicIds.add(id)); });
+  }
+  const loggedSessions = (remoteData._loggedSessions || []).filter(s => {
+    if (s.course) return s.course === activeCourse;
+    if (s._topicIds && s._topicIds.length > 0) return s._topicIds.some(id => validTopicIds.has(id));
+    return true;
+  });
 
   loggedSessions.forEach(session => {
     const bk = session.bucket;
@@ -3580,11 +3991,19 @@ function renderProductivityCorrelator() {
   const lowest = active.length > 1 ? active[active.length - 1] : null;
 
   if (badgeEl) {
-    badgeEl.innerHTML = `
-      <span style="font-size:0.75rem;font-weight:800;background:rgba(40,212,142,0.16);color:var(--green);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
-        <span>⚡ PEAK COGNITIVE EFFICIENCY:</span> <span>${peak.icon} ${peak.label.split(' ')[0].toUpperCase()} (${peak.acc !== null ? peak.acc + '%' : 'N/A'} MASTERY)</span>
-      </span>
-    `;
+    if (active.length > 0 && peak.acc !== null) {
+      badgeEl.innerHTML = `
+        <span style="font-size:0.75rem;font-weight:800;background:rgba(40,212,142,0.16);color:var(--green);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
+          <span>⚡ PEAK COGNITIVE EFFICIENCY:</span> <span>${peak.icon} ${peak.label.split(' ')[0].toUpperCase()} (${peak.acc}% MASTERY)</span>
+        </span>
+      `;
+    } else {
+      badgeEl.innerHTML = `
+        <span style="font-size:0.75rem;font-weight:700;background:var(--s2);color:var(--dim);border:1px solid var(--border);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
+          <span>💡 STUDY TIP:</span> <span>LOG SESSIONS TO DISCOVER YOUR PEAK PRODUCTIVITY HOURS</span>
+        </span>
+      `;
+    }
   }
 
   bucketsEl.innerHTML = analyzed.map(b => {
@@ -3618,7 +4037,7 @@ function renderProductivityCorrelator() {
       courseAdvice = "your most complex audit procedures, risk assessments, and challenging ethical scenarios";
     } else if (activeCourse === 'CAT09') {
       courseAdvice = "heavy KCS Act statutory rules, legal sections, and challenging co-operative theory";
-    } else if (activeCourse === 'CSEB11') {
+    } else if (activeCourse === 'CLERK26' || activeCourse === 'CSEB11') {
       courseAdvice = "difficult banking reasoning, tricky accounting calculations, and core co-operation rules";
     }
     insightEl.innerHTML = `
@@ -3787,7 +4206,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.15'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.17'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -3796,31 +4215,38 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
-        <div class="wn-item-icon">&#128221;</div>
+        <div class="wn-item-icon">🎯</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Desktop &amp; Web Layout Optimization</div>
-          <div class="wn-item-desc">Fixed text cut-off on web for "Examiners Report" by expanding column proportions, optimizing grid margins, and fine-tuning responsive typography across all screen resolutions.</div>
+          <div class="wn-item-title">Exam-Anchored Spaced Repetition</div>
+          <div class="wn-item-desc">Spaced repetition schedules across all courses now automatically anchor to your target exam date (Dec 10 for ACCA FR, Dec 7 for AA). Review intervals dynamically compress as exam day approaches to guarantee 3 to 5 recall passes before exam day.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">&#128214;</div>
+        <div class="wn-item-icon">🏆</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Unified Syllabus Standards</div>
-          <div class="wn-item-desc">Standards with multi-day study parts (IAS 37, IFRS 16, IFRS 9, IAS 12, IFRS 15, FS Prep, Consolidation, Cashflow, Interpretation) are consolidated into single standard entries in the Full Syllabus and Session Logger.</div>
+          <div class="wn-item-title">High-Score Exam Readiness Hub</div>
+          <div class="wn-item-desc">Interactive gauge in the Spaced Repetition section calculates your true readiness index based on syllabus coverage (40%), multi-pass review depth (35%), and active memory retention (25%) aiming for 75%+ distinction.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">&#128197;</div>
+        <div class="wn-item-icon">⚡</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Two-Way Timetable &amp; Syllabus Sync</div>
-          <div class="wn-item-desc">Your daily timetable preserves Part 1 and Part 2 breakdown for focused daily study. Completing timetable parts tracks towards mastering the standard, and ticking the syllabus box completes all scheduled parts.</div>
+          <div class="wn-item-title">Strategic Pacing &amp; 3-Wave Roadmap</div>
+          <div class="wn-item-desc">Real-time daily pace indicator guides weekly syllabus completion and daily reviews. Visual 3-wave roadmap outlines Concept Mastery, Exam Kit Practice, and Final 7-Day Timed Mock Sprint.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🛡️</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Smart Pre-Exam Date Clamping &amp; Stability</div>
+          <div class="wn-item-desc">All review intervals are hard-capped to finish before exam morning. Fixed timetable catchup cards, unified exam target countdowns across drawer and statistics, and full course-reset safety.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v2.2.15</div>
-          <div class="wn-item-desc">Immediate cache invalidation and offline sync for web &amp; mobile layout fixes.</div>
+          <div class="wn-item-title">Updated Service Worker v2.2.17</div>
+          <div class="wn-item-desc">Enhanced offline fallback support for subdirectories and smooth controller activation without unexpected page reloads.</div>
         </div>
       </div>
     </div>
@@ -3834,9 +4260,12 @@ function showWhatsNew(force = false){
 
   const overlay = document.getElementById('whats-new-overlay');
   if(!overlay) return;
-  document.getElementById('wn-body').innerHTML = buildWhatsNewHTML();
-  document.getElementById('wn-title').textContent = 'Version ' + APP_VERSION;
-  document.getElementById('wn-sub').textContent = `${COURSE_CODES[activeCourse] || activeCourse} · Here's what changed in this update`;
+  const bodyEl = document.getElementById('wn-body');
+  const titleEl = document.getElementById('wn-title');
+  const subEl = document.getElementById('wn-sub');
+  if (bodyEl) bodyEl.innerHTML = buildWhatsNewHTML();
+  if (titleEl) titleEl.textContent = 'Version ' + APP_VERSION;
+  if (subEl) subEl.textContent = `${COURSE_CODES[activeCourse] || activeCourse} · Here's what changed in this update`;
   overlay.classList.add('open');
 }
 window.showWhatsNew = showWhatsNew;
@@ -3879,28 +4308,15 @@ function checkAndNotify() {
   const revDue = typeof getRevisionsDue === 'function' ? getRevisionsDue().length : 0;
 
   // 2. Compute Target Pace & Days to Exam
-  let examDate = new Date(2026, 7, 27); // Aug 27 (month 0-indexed, iOS safe)
-  let isPostponed = false;
-  if (activeCourse.startsWith('ACCA26')) {
-    const p1Date = new Date(Date.UTC(2026, 8, 10)); // Sep 10
-    const p2Date = new Date(Date.UTC(2026, 11, 10)); // Dec 10
-    examDate = activeCourse === 'ACCA26_P2' ? p2Date : (new Date() > p1Date ? p2Date : p1Date);
-  } else if (activeCourse === 'AA26') {
-    examDate = new Date(Date.UTC(2026, 11, 7)); // Dec 7 for AA
-  } else if (typeof EXAMS !== 'undefined') {
-    const courseExams = activeCourse === 'CAT09' ? EXAMS.filter(e=>e.cat.includes('09')) : EXAMS.filter(e=>!e.cat.includes('09'));
-    const upcoming = courseExams.filter(e => !e.postponed).sort((a,b) => { const [ay,am,ad]=a.date.split('-').map(Number); const [by,bm,bd]=b.date.split('-').map(Number); return new Date(ay,am-1,ad) - new Date(by,bm-1,bd); });
-    if (upcoming.length > 0) {
-      const [_ey,_em,_ed] = upcoming[0].date.split('-').map(Number); examDate = new Date(_ey, _em-1, _ed);
-    } else if (courseExams.every(e => e.postponed)) {
-      isPostponed = true;
-      examDate = new Date(Date.now() + (45 * 86400000));
-    }
-  }
-
+  const examTarget = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
+  let isPostponed = examTarget ? examTarget.isPostponed : false;
+  let daysToExam = examTarget ? examTarget.daysLeft : 45;
+  const examMs = examTarget ? examTarget.examMs : Date.now() + 45 * 86400000;
+  const examDate = examTarget && examTarget.dateStr ? (() => {
+    const [ey, em, ed] = examTarget.dateStr.split('-').map(Number);
+    return new Date(ey, em - 1, ed);
+  })() : new Date(examMs);
   const nowMs = Date.now();
-  const examMs = examDate.getTime();
-  const daysToExam = Math.ceil((examMs - nowMs) / (1000 * 60 * 60 * 24));
 
   const lsStr = typeof getLateStartDate === 'function' ? getLateStartDate() : null;
   const acca1Start = lsStr || '2026-08-07';
@@ -4312,20 +4728,26 @@ function closeDrop(){dropOpen=false;if(profileDrop){profileDrop.dataset.open='';
 function toggleDrop(){ if(!profileDrop) return; dropOpen=!dropOpen; profileDrop.dataset.open=dropOpen?'1':''; }
 
 // touchend handles tap; preventDefault stops synthetic click from also firing
-profileBtn.addEventListener('touchend',function(e){
-  e.preventDefault();_dropTouch=true;toggleDrop();
-  setTimeout(()=>{_dropTouch=false;},400);
-});
-// click handles mouse; skip if already handled by touchend
-profileBtn.addEventListener('click',function(e){
-  e.stopPropagation();if(_dropTouch)return;toggleDrop();
-});
-profileDrop.addEventListener('click',e=>e.stopPropagation());
-profileDrop.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+if (profileBtn) {
+  profileBtn.addEventListener('touchend',function(e){
+    e.preventDefault();_dropTouch=true;toggleDrop();
+    setTimeout(()=>{_dropTouch=false;},400);
+  });
+  // click handles mouse; skip if already handled by touchend
+  profileBtn.addEventListener('click',function(e){
+    e.stopPropagation();if(_dropTouch)return;toggleDrop();
+  });
+}
+if (profileDrop) {
+  profileDrop.addEventListener('click',e=>e.stopPropagation());
+  profileDrop.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+}
 
 document.addEventListener('click',closeDrop);
 document.addEventListener('touchstart',function(e){
-  if(!profileBtn.contains(e.target)&&!profileDrop.contains(e.target))closeDrop();
+  const isInsideBtn = profileBtn && profileBtn.contains(e.target);
+  const isInsideDrop = profileDrop && profileDrop.contains(e.target);
+  if(!isInsideBtn && !isInsideDrop) closeDrop();
 },{passive:true});
 
 if($('settings-notif-row')) {
@@ -4361,18 +4783,20 @@ const el_pd_settings_item = $('pd-settings-item'); if(el_pd_settings_item) el_pd
   const wnBtnSpan = document.querySelector('#settings-whats-new-btn span');
   if(wnBtnSpan) wnBtnSpan.textContent = `View What's New (v${APP_VERSION})`;
 
-  $('settings-name-input').value = remoteData._displayName || auth.currentUser?.displayName || '';
+  const nameInp = $('settings-name-input');
+  if (nameInp) nameInp.value = remoteData._displayName || auth.currentUser?.displayName || '';
   
+  const loginInfo = $('settings-login-info');
   if (auth.currentUser && auth.currentUser.metadata) {
     try {
       const lastLogin = new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString(undefined, {dateStyle:'medium', timeStyle:'short'});
       const created = new Date(auth.currentUser.metadata.creationTime).toLocaleDateString(undefined, {dateStyle:'medium'});
-      $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Last Sign In: <strong style="color:var(--text)">${lastLogin}</strong><br>Member Since: <strong style="color:var(--text)">${created}</strong>`;
+      if (loginInfo) loginInfo.innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Last Sign In: <strong style="color:var(--text)">${lastLogin}</strong><br>Member Since: <strong style="color:var(--text)">${created}</strong>`;
     } catch(err) {
-      $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Activity info unavailable`;
+      if (loginInfo) loginInfo.innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong><br>Activity info unavailable`;
     }
   } else {
-    $('settings-login-info').innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong>`;
+    if (loginInfo) loginInfo.innerHTML = `App Version: <strong style="color:var(--text)">v${APP_VERSION}</strong>`;
   }
 });
 const el_settings_close = $('settings-close'); if(el_settings_close) el_settings_close.addEventListener('click', () => {
@@ -4390,7 +4814,9 @@ const el_settings_name_save = $('settings-name-save'); if(el_settings_name_save)
   if(!auth.currentUser) return;
   if(!navigator.onLine) { alert('You must be online to change your account name.'); return; }
   const currentName = remoteData._displayName || auth.currentUser.displayName || '';
-  const newName = $('settings-name-input').value.trim();
+  const nameInp = $('settings-name-input');
+  if (!nameInp) return;
+  const newName = nameInp.value.trim();
   if(newName !== '' && newName !== currentName) {
     const btn = this;
     btn.textContent = '...';
@@ -4398,9 +4824,9 @@ const el_settings_name_save = $('settings-name-save'); if(el_settings_name_save)
     try {
       await updateProfile(auth.currentUser, { displayName: newName });
       remoteData._displayName = newName;
-      $('profile-avatar').textContent = newName.slice(0, 2).toUpperCase();
-      $('profile-name').textContent = newName;
-      $('pd-name').textContent = newName;
+      const av = $('profile-avatar'); if (av) av.textContent = newName.slice(0, 2).toUpperCase();
+      const pn = $('profile-name'); if (pn) pn.textContent = newName;
+      const pdn = $('pd-name'); if (pdn) pdn.textContent = newName;
 
       btn.textContent = 'Saved!';
       setTimeout(()=>btn.textContent='Save', 2000);
@@ -4444,6 +4870,12 @@ const el_settings_reset_btn = $('settings-reset-btn'); if(el_settings_reset_btn)
     btn.disabled = true;
     
     try {
+      if (typeof _fsTimer !== 'undefined' && _fsTimer !== null) {
+        clearTimeout(_fsTimer);
+        _fsTimer = null;
+      }
+      window._localWritePending = null;
+
       const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
       const cd = typeof getCourseData === 'function' ? getCourseData() : null;
       const currentIds = new Set();
@@ -4455,16 +4887,21 @@ const el_settings_reset_btn = $('settings-reset-btn'); if(el_settings_reset_btn)
       if (cd && cd.subjs) {
         Object.values(cd.subjs).forEach(subj => {
           if (!subj.ids) return;
-          subj.ids.forEach(id => {
-            currentIds.add(id);
-            delete remoteData[id]; cleanBackup[id] = deleteField();
-            delete remoteData[`${id}_kap`]; cleanBackup[`${id}_kap`] = deleteField();
-            delete remoteData[`${id}_bpp`]; cleanBackup[`${id}_bpp`] = deleteField();
-            delete remoteData[`${id}_sh`]; cleanBackup[`${id}_sh`] = deleteField();
-            delete remoteData[`${id}_er`]; cleanBackup[`${id}_er`] = deleteField();
-          });
+          subj.ids.forEach(id => currentIds.add(id));
         });
       }
+      if (activeCourse === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined') {
+        Object.values(FR_P2_PART_MAP).forEach(children => {
+          children.forEach(cid => currentIds.add(cid));
+        });
+      }
+      currentIds.forEach(id => {
+        delete remoteData[id]; cleanBackup[id] = deleteField();
+        delete remoteData[`${id}_kap`]; cleanBackup[`${id}_kap`] = deleteField();
+        delete remoteData[`${id}_bpp`]; cleanBackup[`${id}_bpp`] = deleteField();
+        delete remoteData[`${id}_sh`]; cleanBackup[`${id}_sh`] = deleteField();
+        delete remoteData[`${id}_er`]; cleanBackup[`${id}_er`] = deleteField();
+      });
       
       // 2. Selectively delete ONLY the active course's Spaced Repetition data
       if (remoteData._sr) {
@@ -4540,6 +4977,9 @@ const el_settings_delete_btn = $('settings-delete-btn'); if(el_settings_delete_b
 
         // 2. Attempt to delete the Auth User
         await deleteUser(auth.currentUser);
+        ['cached_ac', 'cseb_deferred', 'migrated_fr_new_sr_v1', 'migrated_fr_demerge_v2'].forEach(k => {
+          try { localStorage.removeItem(k); } catch(_) {}
+        });
 
         $('settings-overlay').style.opacity='0';
         setTimeout(()=>$('settings-overlay').style.visibility='hidden',200);
@@ -4659,12 +5099,14 @@ window.openReviseLogSession = function(id) {
       select.value = foundSubj;
       renderLogTopics();
     }
-    const cb = document.querySelector(`#ls-topics-container input[type="checkbox"][value="${id}"]`);
+    const resolvedId = targetId || id;
+    const cb = document.querySelector(`#ls-topics-container input[type="checkbox"][value="${resolvedId}"]`) ||
+               document.querySelector(`#ls-topics-container input[type="checkbox"][value="${id}"]`);
     if (cb) {
       cb.checked = true;
-      if (typeof toggleLogTopic === 'function') toggleLogTopic(id, true, cb);
+      if (typeof toggleLogTopic === 'function') toggleLogTopic(resolvedId, true, cb);
     } else {
-      _logSelectedTopics.add(id);
+      _logSelectedTopics.add(resolvedId);
       if (typeof updateLogCountBadge === 'function') updateLogCountBadge();
     }
   }
@@ -4912,7 +5354,8 @@ function deleteLoggedSession(id) {
       }
     });
     if (targetSession.date && remoteData._activity && typeof remoteData._activity[targetSession.date] === 'number') {
-      remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - topicsReverted);
+      const activityToRevert = Math.max(topicsReverted, (targetSession._topicIds && targetSession._topicIds.length === 0) ? 1 : 0);
+      remoteData._activity[targetSession.date] = Math.max(0, remoteData._activity[targetSession.date] - activityToRevert);
       if (remoteData._activity[targetSession.date] === 0) {
         delete remoteData._activity[targetSession.date];
         dbPayload[`_activity.${targetSession.date}`] = deleteField();
@@ -4920,6 +5363,19 @@ function deleteLoggedSession(id) {
         dbPayload[`_activity.${targetSession.date}`] = remoteData._activity[targetSession.date];
       }
     }
+    targetSession._topicIds.forEach(tId => {
+      const isChecked = !!remoteData[tId];
+      const mb = document.getElementById(tId); if (mb) mb.checked = isChecked;
+      const dbBox = document.querySelector(`.ds[data-id="${tId}"]`); if (dbBox) dbBox.checked = isChecked;
+      const pb = document.querySelector(`.pending-ds[data-id="${tId}"]`); if (pb) pb.checked = isChecked;
+      if (remoteData.activeCourse === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined' && FR_P2_PART_MAP[tId]) {
+        FR_P2_PART_MAP[tId].forEach(cid => {
+          remoteData[cid] = isChecked;
+          const cdBox = document.querySelector(`.ds[data-id="${cid}"]`); if (cdBox) cdBox.checked = isChecked;
+          const cpBox = document.querySelector(`.pending-ds[data-id="${cid}"]`); if (cpBox) cpBox.checked = isChecked;
+        });
+      }
+    });
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
     dbPayload._loggedSessions = remoteData._loggedSessions;
     if (currentUid) {
@@ -4929,9 +5385,11 @@ function deleteLoggedSession(id) {
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
     if (currentUid) updateDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions });
   }
+  if (typeof makeCard === 'function') makeCard();
   updateAll();
   if (typeof renderPending === 'function') renderPending();
   if (typeof renderRevisions === 'function') renderRevisions();
+  if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   renderStatsLoggedSessions();
 }
@@ -4961,6 +5419,7 @@ function clearAllLoggedSessions() {
   } else if (typeof saveToFirestore === 'function') {
     saveToFirestore();
   }
+  if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   renderStatsLoggedSessions();
 }
 window.clearAllLoggedSessions = clearAllLoggedSessions;
@@ -5023,41 +5482,44 @@ async function saveLogSession() {
 
       if (typeof s.count !== 'number' || isNaN(s.count)) s.count = 0;
 
-      // ── Fixed SR Schedule (neuroscience-backed) ──────────────────────────
-      // Review #0 → 1 day  (initial: review within 24h of first learning)
-      // Review #1 → 3 days (second recall after short pause)
-      // Review #2 → 7 days
-      // Review #3 → 14 days
-      // Review #4 → 30 days
-      // Review #5+ → 60 days (long-term retention maintenance)
-      const BASE_SCHEDULE = [1, 3, 7, 14, 30, 60];
-      let scheduleIdx = s.count; // which step are we on?
+      // ── Exam-Anchored Adaptive Spaced Repetition (Neuroscience + Target Exam Deadline) ──
+      const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourseKey) : null;
+      let daysToExam = 999;
+      if (target && !target.isPostponed && target.daysLeft > 0) {
+        const [ey, em, ed] = target.dateStr.split('-').map(Number);
+        const examMs = Date.UTC(ey, em - 1, ed);
+        const [ry, rm, rd] = dateVal.split('-').map(Number);
+        const revMs = Date.UTC(ry, rm - 1, rd);
+        daysToExam = Math.max(1, Math.round((examMs - revMs) / 86400000));
+      }
 
-      // Difficulty modifier: easy skips one step ahead, hard drops one step back
+      s.interval = typeof calcExamAnchoredInterval === 'function' 
+        ? calcExamAnchoredInterval(daysToExam, s.count, selectedDiff, s.ease)
+        : 1;
+
+      // Adjust ease factor
       if (selectedDiff === 'easy') {
-        scheduleIdx = Math.min(scheduleIdx + 1, BASE_SCHEDULE.length - 1);
         if (typeof s.ease === 'number') s.ease = Math.min(s.ease + 0.1, 3.5);
       } else if (selectedDiff === 'hard') {
-        scheduleIdx = Math.max(scheduleIdx - 1, 0);
         if (typeof s.ease === 'number') s.ease = Math.max(s.ease - 0.15, 1.3);
       }
 
-      // Clamp to last entry for all reviews beyond schedule length
-      s.interval = BASE_SCHEDULE[Math.min(scheduleIdx, BASE_SCHEDULE.length - 1)];
-
       s.count++;
       s.lastRev = dateVal;
+      s.next = typeof addDaysStr === 'function'
+        ? addDaysStr(s.lastRev || dateVal, s.interval)
+        : (() => {
+            const [y, m, d] = (s.lastRev || dateVal).split('-').map(Number);
+            const dt = new Date(Date.UTC(y, m - 1, d));
+            dt.setUTCDate(dt.getUTCDate() + s.interval);
+            return dt.toISOString().slice(0, 10);
+          })();
 
-      // Cap interval to days remaining before exam for ACCA / AA courses
-      if (activeCourseKey === 'ACCA26_P2' || activeCourseKey === 'AA26') {
-        const examDateStr = activeCourseKey === 'AA26' ? '2026-12-07T00:00:00Z' : '2026-12-10T00:00:00Z';
-        const examDate = new Date(examDateStr);
-        const lastRevDate = new Date(s.lastRev + 'T00:00:00Z');
-        const daysToExam = Math.max(1, Math.floor((examDate - lastRevDate) / (1000 * 60 * 60 * 24)) - 1);
-        if (s.interval > daysToExam) s.interval = daysToExam;
+      // Hard ceiling: Guarantee final review before exam day
+      if (target && !target.isPostponed && target.daysLeft > 0 && s.next >= target.dateStr) {
+        s.next = addDaysStr(target.dateStr, -1);
+        if (s.next < dateVal) s.next = dateVal;
       }
-
-      s.next = typeof addDaysStr === 'function' ? addDaysStr(s.lastRev, s.interval) : addDaysStr(dateVal, s.interval);
       remoteData._sr[id] = s;
       
       // Syllabus Auto-Sync: Only auto-complete if they didn't struggle heavily
@@ -5096,13 +5558,15 @@ async function saveLogSession() {
     const pendingBox = document.querySelector(`.pending-ds[data-id="${id}"]`); if (pendingBox) pendingBox.checked = isChecked;
 
     if (activeCourseKey === 'ACCA26_P2' && typeof FR_P2_PART_MAP !== 'undefined' && FR_P2_PART_MAP[id]) {
-      FR_P2_PART_MAP[id].forEach(cid => {
-        remoteData[cid] = isChecked;
-        const cdBox = document.querySelector(`.ds[data-id="${cid}"]`);
-        if (cdBox) cdBox.checked = isChecked;
-        const cpBox = document.querySelector(`.pending-ds[data-id="${cid}"]`);
-        if (cpBox) cpBox.checked = isChecked;
-      });
+      if (isChecked) {
+        FR_P2_PART_MAP[id].forEach(cid => {
+          remoteData[cid] = true;
+          const cdBox = document.querySelector(`.ds[data-id="${cid}"]`);
+          if (cdBox) cdBox.checked = true;
+          const cpBox = document.querySelector(`.pending-ds[data-id="${cid}"]`);
+          if (cpBox) cpBox.checked = true;
+        });
+      }
     }
   });
 
@@ -5142,7 +5606,9 @@ async function saveLogSession() {
 
   const toast = document.getElementById('session-toast');
   if (toast) {
-    toast.innerHTML = `✅ Logged ${topicIds.length} topic${topicIds.length > 1 ? 's' : ''} successfully!`;
+    toast.innerHTML = topicIds.length > 0
+      ? `✅ Logged ${topicIds.length} topic${topicIds.length > 1 ? 's' : ''} successfully!`
+      : `✅ Study notes logged successfully!`;
     toast.style.visibility = 'visible';
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(-50%) translateY(0)';
@@ -5166,19 +5632,28 @@ function generateStudyInsights() {
   const logged = remoteData._loggedSessions || [];
   const srData = remoteData._sr || {};
 
-  // 1 & 2. Burnout Detection and Topic Efficiency
+  // 1 & 2. Burnout Detection and Topic Efficiency (Scoped to active course)
+  const activeCourseForInsights = remoteData.activeCourse || DEFAULT_COURSE;
+  const cdForInsights = COURSE_DATA[activeCourseForInsights];
+  const activeLabelsForInsights = (cdForInsights && cdForInsights.labels) ? cdForInsights.labels : {};
   const todayDate = ts();
   let todaysSessions = 0;
   const topicEff = {};
 
   logged.forEach(session => {
+    const belongs = session.course === activeCourseForInsights ||
+      (session._topicIds && session._topicIds.some(id => activeLabelsForInsights[id]));
+    if (!belongs) return;
+
     // Check burnout
     if (session.date && session.date.startsWith(todayDate)) todaysSessions++;
     
     // Check topic efficiency
     if (session._topicIds) {
       session._topicIds.forEach(id => {
-        topicEff[id] = (topicEff[id] || 0) + 1;
+        if (activeLabelsForInsights[id]) {
+          topicEff[id] = (topicEff[id] || 0) + 1;
+        }
       });
     }
   });
@@ -5194,15 +5669,14 @@ function generateStudyInsights() {
   let stuckTopic = null;
   let stuckCount = 0;
   for (const [id, count] of Object.entries(topicEff)) {
-    if (!remoteData[id] && count >= 3 && count > stuckCount) {
+    if (!remoteData[id] && count >= 3 && count > stuckCount && activeLabelsForInsights[id]) {
       stuckCount = count;
       stuckTopic = id;
     }
   }
 
   if (stuckTopic) {
-    const cd = typeof getCourseData === 'function' ? getCourseData() : null;
-    const tName = cd && cd.labels ? (cd.labels[stuckTopic] || 'a heavy topic') : 'a heavy topic';
+    const tName = activeLabelsForInsights[stuckTopic] || 'a heavy topic';
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
         <strong style="color:var(--accent);">Study Efficiency:</strong> You've logged <strong>${stuckCount} sessions</strong> on <em>${tName}</em> but haven't marked it complete yet. You might be stuck in a 'passive reading' loop. Switch to active recall or practice questions today!
@@ -5211,17 +5685,15 @@ function generateStudyInsights() {
   }
 
   // 3. Revision Warning (Stale topics) — only for ACTIVE COURSE topics
-  const activeCourseForInsights = remoteData.activeCourse || DEFAULT_COURSE;
-  const cdForInsights = COURSE_DATA[activeCourseForInsights];
-  const activeLabelsForInsights = (cdForInsights && cdForInsights.labels) ? cdForInsights.labels : {};
   let staleTopic = null;
   let staleDays = 0;
   const nowMs = Date.now();
   for (const [id, s] of Object.entries(srData)) {
     if (!activeLabelsForInsights[id]) continue; // Skip topics from other courses
     if (activeCourseForInsights === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) continue;
-    if (remoteData[id] && s.lastRev) {
-      const [ry, rm, rd] = s.lastRev.split('-').map(Number);
+    const lastRevDate = s.lastRev || s.completed;
+    if (remoteData[id] && lastRevDate) {
+      const [ry, rm, rd] = lastRevDate.split('-').map(Number);
       const revMs = new Date(ry, rm - 1, rd).getTime();
       const daysSince = Math.floor((nowMs - revMs) / 86400000);
       if (daysSince >= 14 && daysSince > staleDays) {
@@ -5287,7 +5759,12 @@ try { initTheme(); } catch(e) {}
 try {
   if('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     let refreshing = false;
+    let hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) {
+        hadController = true;
+        return;
+      }
       if (!refreshing) {
         refreshing = true;
         window.location.reload();

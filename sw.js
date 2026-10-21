@@ -1,7 +1,7 @@
-// Study Tracker Service Worker — v2.2.15
+// Study Tracker Service Worker — v2.2.17
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.2.15';
+const VERSION = 'v2.2.17';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
 const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
 
@@ -27,13 +27,14 @@ const CDN_FILES = [
 ];
 
 // Helper: return a safe offline fallback Response (never undefined)
-function offlineFallback(url) {
-  const isHtml = url && url.pathname && (url.pathname.endsWith('.html') || url.pathname === '/');
+function offlineFallback(url, request) {
+  const isNav = request && request.mode === 'navigate';
+  const isHtml = isNav || (url && url.pathname && (url.pathname.endsWith('.html') || url.pathname.endsWith('/') || url.pathname === '/'));
   if (isHtml) {
     return new Response(
-      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Study Tracker — Offline</title></head>
+      `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Study Tracker — Offline</title></head>
        <body style="background:#020305;color:#e2e8f0;font-family:system-ui;display:flex;align-items:center;
-       justify-content:center;height:100vh;margin:0;flex-direction:column;gap:16px">
+       justify-content:center;height:100vh;margin:0;flex-direction:column;gap:16px;text-align:center;padding:20px;">
          <div style="font-size:2.5rem">⚡</div>
          <div style="font-size:1.2rem;font-weight:800">StudyTracker</div>
          <div style="color:#64748b;font-size:0.85rem">You're offline — connect to the internet to continue</div>
@@ -148,7 +149,7 @@ self.addEventListener('fetch', e => {
           if (!cached && e.request.mode === 'navigate') {
             cached = (await caches.match('./index.html')) || (await caches.match('./'));
           }
-          return cached || offlineFallback(url);
+          return cached || offlineFallback(url, e.request);
         }
       })()
     );
@@ -172,7 +173,7 @@ self.addEventListener('fetch', e => {
       // Return cached version immediately if available; otherwise wait for network
       if (cached) return cached;
       const fresh = await networkPromise;
-      return fresh || offlineFallback(url);
+      return fresh || offlineFallback(url, e.request);
     })()
   );
 });
