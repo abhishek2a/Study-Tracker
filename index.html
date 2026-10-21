@@ -32,7 +32,7 @@
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
 <title>Study Tracker</title>
 <style>
-html { background: var(--bg); }
+html { background: var(--bg); overflow-x: hidden; width: 100%; max-width: 100vw; position: relative; }
 :root {
   --bg:#020305; --s1:#090b12; --s2:#0d0f17; --s3:#141723;
   --text:#e6e9f0; --dim:#525b73; --border:#1a1e2d;
@@ -49,7 +49,7 @@ html { background: var(--bg); }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent!important}
 html{font-size:18px;scroll-behavior:smooth}
 @media(min-width:901px){html{font-size:19px}}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;min-height:100dvh;overscroll-behavior:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal;overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-synthesis:none;font-kerning:normal;overflow-x:hidden;width:100%;max-width:100vw;position:relative}
 /* Prevent 300ms tap delay and text-selection jank on all interactive elements for mobile/PWA */
 a,button,input,select,label,[role=button],.cl label,.cl li,.revise-btn-diff,.pd-item,.subj-hdr,.day-card,.epill,.revise-item{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent!important}
 /* Cross-Platform UI Polish (Android, iOS, Windows, macOS) */
@@ -92,9 +92,9 @@ body {
   #auth-overlay{padding:0}
   .auth-box{border-radius:0;border:none;min-height:100vh;min-height:100dvh;padding:max(44px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));margin:0;box-shadow:none;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:100%}
 }
-#app{display:none}
+#app{display:none;width:100%;max-width:100%;overflow-x:hidden}
 #app.visible{display:block;padding-top:0}
-.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, env(titlebar-area-y, 0px))) calc(40px + env(titlebar-area-width, 0px) * 0) 12px;padding-left:max(40px, env(titlebar-area-x, 0px));padding-right:calc(40px + 100vw - env(titlebar-area-width, 100vw) - env(titlebar-area-x, 0px));display:flex;align-items:flex-end;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;isolation:isolate;app-region:drag;-webkit-app-region:drag}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:max(12px, env(safe-area-inset-top, env(titlebar-area-y, 0px))) calc(40px + env(titlebar-area-width, 0px) * 0) 12px;padding-left:max(40px, env(titlebar-area-x, 0px));padding-right:calc(40px + 100vw - env(titlebar-area-width, 100vw) - env(titlebar-area-x, 0px));display:flex;align-items:flex-end;justify-content:space-between;min-height:calc(56px + env(safe-area-inset-top, 0px));position:sticky;top:0;left:0;right:0;z-index:200;gap:12px;isolation:isolate;app-region:drag;-webkit-app-region:drag;box-sizing:border-box}
 .logo, .tnav, .profile-btn, .notif-btn { app-region: no-drag; -webkit-app-region: no-drag; }
 .topbar::before{content:'';position:absolute;inset:0;background:inherit;z-index:-1}
 [data-theme="light"] .topbar{background:#f2f4f7}
@@ -103,7 +103,13 @@ body {
   input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
     font-size: 16px !important;
   }
-  .topbar{padding:max(12px, env(safe-area-inset-top, 12px)) 16px 12px!important;min-height:calc(50px + env(safe-area-inset-top, 0px))!important;position:sticky;top:0;width:100%}
+  .topbar{
+    padding: max(12px, env(safe-area-inset-top, 12px)) max(14px, env(safe-area-inset-right, 14px)) 12px max(14px, env(safe-area-inset-left, 14px)) !important;
+    min-height: calc(50px + env(safe-area-inset-top, 0px)) !important;
+    position: sticky; top: 0; left: 0; right: 0;
+    width: 100% !important; max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }
 @media (display-mode: standalone), (display-mode: fullscreen) {
   .topbar{padding-top:max(12px, env(safe-area-inset-top, 12px))!important;min-height:calc(50px + env(safe-area-inset-top, 0px))!important}
@@ -119,14 +125,23 @@ body {
 #btt{display:none;position:fixed;bottom:calc(28px + env(safe-area-inset-bottom, 0px));right:calc(20px + env(safe-area-inset-right, 0px));z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1);will-change:transform;font-weight:700;letter-spacing:0}
 #btt:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.6),0 0 20px rgba(84,162,255,0.4)}
 #btt:active{transform:scale(.92);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+@media(max-width:600px){
+  #btt{
+    width:38px;
+    height:38px;
+    font-size:1rem;
+    bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+    right:calc(14px + env(safe-area-inset-right, 0px));
+  }
+}
 @media(min-width:601px){#btt{display:none!important}}
 .user-chip{font-size:.68rem;color:var(--dim);font-family:var(--mono);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
 .signout-btn{font-size:.68rem;padding:4px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-family:var(--font);transition:.15s;white-space:nowrap;flex-shrink:0}
 .signout-btn:hover{border-color:var(--red);color:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.wrap{max-width:1280px;margin:0 auto;padding:32px 40px}
+.wrap{max-width:1280px;width:100%;margin:0 auto;padding:32px 40px;box-sizing:border-box}
 @media(max-width:900px){.wrap{padding:20px 18px}}
-@media(max-width:600px){.wrap{padding:14px 13px}}
+@media(max-width:600px){.wrap{padding:14px 13px calc(80px + env(safe-area-inset-bottom, 0px)) 13px !important}}
 .hdr-row{margin-bottom:22px}
 .hdr-row h1{font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.04em}
 .hdr-row p{font-size:.78rem;font-family:var(--mono);color:var(--dim);margin-top:3px}
@@ -161,11 +176,12 @@ body {
 .sec{margin:32px 0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding-bottom:12px}
 .sec h2{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em}
 .sec p{font-size:.7rem;color:var(--dim)}
-.day-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:800px){.day-grid{grid-template-columns:1fr}}
+.day-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:100%;max-width:100%;min-width:0}
+@media(max-width:800px){.day-grid{grid-template-columns:minmax(0,1fr)!important}}
 .pending-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:11px;display:flex;align-items:center;gap:8px}
 .pending-lbl::before{content:'';width:3px;height:14px;background:var(--red);border-radius:2px;display:inline-block}
-.day-card{background:var(--s1);border-radius:var(--radius);padding:22px 24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:inset 0 1px 1px rgba(255,255,255,0.04), var(--shadow);transition:border-color .2s ease, background-color .2s ease;-webkit-transform:translateZ(0);transform:translateZ(0);contain:layout paint}
+.day-card{background:var(--s1);border-radius:var(--radius);padding:22px 24px;border:1px solid;position:relative;overflow:hidden;margin-bottom:0;box-shadow:inset 0 1px 1px rgba(255,255,255,0.04), var(--shadow);transition:border-color .2s ease, background-color .2s ease;-webkit-transform:translateZ(0);transform:translateZ(0);contain:layout paint;min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:480px){.day-card{padding:16px 14px;border-radius:14px}}
 .day-card+.day-card{margin-top:14px}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .day-card.banking{border-color:rgba(77,150,240,.2);background:linear-gradient(0deg,rgba(77,150,240,.035),rgba(77,150,240,.035)),var(--s1)}.day-card.banking::before{background:var(--banking)}
@@ -191,18 +207,19 @@ body {
 .day-sub{font-size:.9rem;color:var(--text);font-family:var(--font);font-weight:600;margin-bottom:14px;letter-spacing:-0.01em}
 .exam-tag{display:inline-block;font-size:.62rem;font-family:var(--mono);padding:2px 9px;border-radius:99px;margin-bottom:9px;font-weight:700;background:rgba(224,149,0,.1);color:var(--accent);border:1px solid rgba(224,149,0,.2)}
 .no-pending{padding:14px 16px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--green);font-family:var(--mono)}
-.revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.revise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px;width:100%;max-width:100%;min-width:0}
 /* Modal shared styles */
-.lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:90px;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.lb-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;width:100%;max-width:100%;box-sizing:border-box}
+.lb-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;flex:1;min-width:min(100%,90px);box-shadow:0 8px 32px rgba(0,0,0,0.2);box-sizing:border-box}
 [data-theme="light"] .lb-stat{background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
 .lb-stat-val{font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:2px}
 .lb-stat-lbl{font-size:.65rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em}
-@media(max-width:720px){.revise-grid{grid-template-columns:1fr}}
-.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s;-webkit-tap-highlight-color:transparent;contain:layout paint}
+@media(max-width:720px){.revise-grid{grid-template-columns:minmax(0,1fr)!important}}
+.revise-item{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;align-items:stretch;gap:10px;transition:border-color .15s;-webkit-tap-highlight-color:transparent;min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+@media(max-width:480px){.revise-item{padding:12px 12px;border-radius:10px}}
 
 .revise-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.revise-text{flex:1;font-size:.82rem;line-height:1.45;color:var(--text)}
+.revise-text{flex:1;min-width:0;font-size:.82rem;line-height:1.45;color:var(--text)}
 .revise-meta{font-size:.62rem;font-family:var(--mono);color:var(--dim);margin-top:2px}
 .revise-btn{flex-shrink:0;padding:7px 14px;border:1px solid var(--green);border-radius:8px;background:transparent;color:var(--green);font-size:.72rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .2s ease, color .2s ease;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
 @media(hover:hover){.revise-btn:hover{background:var(--green);color:#000}}.revise-btn:active{background:var(--green);color:#000}
@@ -212,34 +229,39 @@ body {
 .defer-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* Exam-Anchored Spaced Repetition Mastery Hub */
-.sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.08) 0%,rgba(40,212,142,0.06) 100%),var(--s1);border:1px solid rgba(84,162,255,0.25);border-radius:16px;padding:18px 20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.18);position:relative;overflow:hidden}
+.sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.08) 0%,rgba(40,212,142,0.06) 100%),var(--s1);border:1px solid rgba(84,162,255,0.25);border-radius:16px;padding:18px 20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.18);position:relative;overflow:hidden;width:100%;max-width:100%;box-sizing:border-box}
 [data-theme="light"] .sr-hero-banner{background:linear-gradient(135deg,rgba(84,162,255,0.1) 0%,rgba(40,212,142,0.08) 100%),#fff;border-color:rgba(84,162,255,0.35);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
 .sr-hero-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-.sr-exam-title{font-size:1.05rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sr-exam-title{font-size:1.05rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;word-break:break-word}
 .sr-pill-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.sr-pill-countdown{background:rgba(84,162,255,0.14);color:var(--blue);border:1px solid rgba(84,162,255,0.3);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono);letter-spacing:-0.01em;display:inline-flex;align-items:center;gap:5px}
-.sr-pill-target{background:rgba(224,149,0,0.12);color:var(--accent);border:1px solid rgba(224,149,0,0.25);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono)}
-.sr-readiness-wrap{margin-bottom:16px}
-.sr-readiness-labels{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:0.82rem}
+.sr-pill-countdown{background:rgba(84,162,255,0.14);color:var(--blue);border:1px solid rgba(84,162,255,0.3);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono);letter-spacing:-0.01em;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.sr-pill-target{background:rgba(224,149,0,0.12);color:var(--accent);border:1px solid rgba(224,149,0,0.25);padding:4px 11px;border-radius:99px;font-size:0.72rem;font-weight:700;font-family:var(--mono);white-space:nowrap}
+.sr-readiness-wrap{margin-bottom:16px;width:100%;max-width:100%}
+.sr-readiness-labels{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:0.82rem;width:100%}
 .sr-readiness-bar{width:100%;height:8px;background:var(--s3);border-radius:99px;overflow:hidden;position:relative}
 .sr-readiness-fill{height:100%;border-radius:99px;transition:width 0.6s cubic-bezier(0.16,1,0.3,1)}
-.sr-metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-@media(max-width:600px){.sr-metrics-grid{grid-template-columns:1fr;gap:8px}}
-.sr-metric-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
-.sr-metric-val{font-size:1.1rem;font-weight:800;color:var(--text);font-family:var(--font)}
+.sr-metrics-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px;width:100%}
+@media(max-width:600px){.sr-metrics-grid{grid-template-columns:minmax(0,1fr);gap:8px}}
+.sr-metric-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;min-width:0}
+.sr-metric-val{font-size:1.1rem;font-weight:800;color:var(--text);font-family:var(--font);word-break:break-word}
 .sr-metric-lbl{font-size:0.64rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
-.sr-pacing-box{background:rgba(40,212,142,0.07);border:1px solid rgba(40,212,142,0.2);border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:0.78rem;color:var(--text);line-height:1.45;display:flex;align-items:flex-start;gap:10px}
-.sr-waves-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-@media(max-width:640px){.sr-waves-bar{grid-template-columns:1fr}}
-.sr-wave-step{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.7rem;color:var(--dim);transition:all 0.2s ease}
+.sr-pacing-box{background:rgba(40,212,142,0.07);border:1px solid rgba(40,212,142,0.2);border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:0.78rem;color:var(--text);line-height:1.45;display:flex;align-items:flex-start;gap:10px;word-break:break-word;width:100%;box-sizing:border-box}
+.sr-waves-bar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;width:100%}
+@media(max-width:640px){.sr-waves-bar{grid-template-columns:minmax(0,1fr)}}
+.sr-wave-step{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.7rem;color:var(--dim);transition:all 0.2s ease;min-width:0;word-break:break-word}
 .sr-wave-step.active{border-color:var(--blue);background:rgba(84,162,255,0.08);color:var(--text);font-weight:700}
 .sr-wave-step strong{display:block;font-size:0.74rem;margin-bottom:2px}
-.sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.sr-tab-btn{padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px}
+.sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;width:100%;max-width:100%;box-sizing:border-box}
+.sr-tab-btn{padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
 .sr-tab-btn:hover{border-color:var(--blue);color:var(--text)}
 .sr-tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 10px rgba(84,162,255,0.3)}
 .sr-tab-count{background:rgba(255,255,255,0.22);padding:1px 6px;border-radius:99px;font-size:0.66rem;font-family:var(--mono)}
 .sr-tab-btn:not(.active) .sr-tab-count{background:var(--s3);color:var(--text)}
+@media(max-width:480px){
+  .sr-hero-banner{padding:14px 12px;border-radius:14px}
+  .sr-tabs{gap:6px}
+  .sr-tab-btn{padding:6px 11px;font-size:0.7rem}
+}
 input[type="date"], input[type="time"] {
   appearance: none;
   -webkit-appearance: none;
@@ -363,9 +385,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .mock-mini{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
 .mock-mini-lbl{font-size:.62rem;font-family:var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
 .mock-mini .cl input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
-.subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
-@media(max-width:820px){.subj-grid{grid-template-columns:1fr}}
-.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);content-visibility:auto;contain-intrinsic-size:0 350px}
+.subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:16px;width:100%;max-width:100%;min-width:0}
+@media(max-width:820px){.subj-grid{grid-template-columns:minmax(0,1fr)!important}}
+.subj-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);content-visibility:auto;contain-intrinsic-size:0 350px;min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:480px){.subj-card{padding:14px 12px;border-radius:14px}}
 .subj-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .subj-hdr h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text);font-family:var(--font)}
 .mbadge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700}
@@ -487,7 +510,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.17</div>
+      <div class="wn-title" id="wn-title">Version 2.2.18</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -669,7 +692,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.17</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.18</div>
         </div>
       </div>
     </div>
@@ -750,7 +773,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.17)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.18)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1026,7 +1049,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.17';
+const APP_VERSION = '2.2.18';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -1256,7 +1279,7 @@ const SCH_CAT09={
  "2026-08-12":{p:"accounting",l:"Accounting · Day 7/7 🎉",ids:["acc13","acc14"]},
  "2026-08-13":{p:"audit",     l:"Audit · Day 3/5",       ids:["aud5","aud6"]},
  "2026-08-14":{p:"banking",   l:"Banking · Day 8/8 🎉",  ids:["bnk15","bnk16"]},
- "2026-08-15":{p:"audit",     l:"Audit · Day 4/5",       ids:["aud7","aud8"]},
+ "2026-08-15":{p:"audit",     l:"Audit · Day 4/5 & 5/5 🎉", ids:["aud7","aud8","aud9","aud10"]},
  "2026-08-16":{p:"eve",       l:"Exam Day - Cat 09",     ids:[]}
 };
 COURSE_DATA['CAT09']={sch:SCH_CAT09,labels:LABELS,subjs:SUBJS_CAT09};
@@ -2129,17 +2152,20 @@ function applyData(data){
     ];
     let migratedAny = false;
     toMigrate.forEach(m => {
-      remoteData[m.id] = true;
-      if (!remoteData._sr) remoteData._sr = {};
-      remoteData._sr[m.id] = {
-        completed: ts(),
-        lastRev: ts(),
-        count: 1, // Start them at interval idx 1
-        next: addDaysStr(ts(), m.stagger),
-        interval: m.stagger,
-        ease: 2.5
-      };
-      migratedAny = true;
+      if (remoteData[m.id]) {
+        if (!remoteData._sr) remoteData._sr = {};
+        if (!remoteData._sr[m.id]) {
+          remoteData._sr[m.id] = {
+            completed: ts(),
+            lastRev: ts(),
+            count: 1, // Start them at interval idx 1
+            next: addDaysStr(ts(), m.stagger),
+            interval: m.stagger,
+            ease: 2.5
+          };
+          migratedAny = true;
+        }
+      }
     });
     if (migratedAny) {
       setTimeout(saveToFirestore, 1000);
@@ -2191,8 +2217,8 @@ function applyData(data){
         }
       }
 
-      // Migrate practice question progress (kap, bpp, sh) from children to parent
-      ['kap', 'bpp', 'sh'].forEach(qb => {
+      // Migrate practice question progress (kap, bpp, sh, er) from children to parent
+      ['kap', 'bpp', 'sh', 'er'].forEach(qb => {
         if (!remoteData[`${parentId}_${qb}`]) {
           const hasChildQb = children.some(cid => !!remoteData[`${cid}_${qb}`]);
           if (hasChildQb) remoteData[`${parentId}_${qb}`] = true;
@@ -2367,6 +2393,7 @@ function makeCard(){
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>⏸️ Plan Paused</h2>${dateBadge}</div>
         <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">The ${courseName} exam has been postponed. The daily study plan is paused until a new date is published. You can still revise your pending topics and the Full Syllabus below.</p></div>`;
+      window._lastDayCardHtml = true;
       return;
     }
     // Late starter — fall through to normal plan rendering below
@@ -2401,6 +2428,7 @@ function makeCard(){
         dc.innerHTML = `<div class="day-card done">
           ${tag}<div class="day-top"><h2>🏁 Exam Completed</h2>${dateBadge}</div>
           <p style="font-size:.85rem;color:var(--dim);margin-top:8px">Exam date (${target.dateStr}) has passed. Great effort!</p></div>`;
+        window._lastDayCardHtml = true;
         return;
       }
       let msg = "Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.";
@@ -2410,6 +2438,7 @@ function makeCard(){
       dc.innerHTML = `<div class="day-card catchup">
         ${tag}<div class="day-top"><h2>📅 Catchup & Revision Day</h2>${dateBadge}</div>
         <p style="font-size:.85rem;color:var(--dim);margin-top:8px;line-height:1.5">${msg}</p></div>`;
+      window._lastDayCardHtml = true;
       return;
     }
     // No plan entry for today (e.g. gap day or beyond schedule)
@@ -2419,6 +2448,7 @@ function makeCard(){
       dc.innerHTML=`<div class="day-card catchup">
         <div class="day-top"><h2>📅 No Plan Today</h2>${dateBadge}</div>
         <p style="font-size:.82rem;color:var(--dim);margin-top:8px;line-height:1.5">Nothing scheduled for today. Use this time to revise topics from the Full Syllabus below.</p></div>`;
+      window._lastDayCardHtml = true;
       return;
     }
     const activeExam=courseExams.find(e=>e.target&&!e.postponed)||courseExams.find(e=>!e.postponed)||courseExams[0];
@@ -2427,6 +2457,7 @@ function makeCard(){
     dc.innerHTML=`<div class="day-card ${done?'done':'eve'}">
       <div class="day-top"><h2>${done?'🏁 Exam Done':'📖 Rest & Prepare'}</h2>${dateBadge}</div>
       <p style="font-size:.82rem;color:var(--dim);margin-top:8px">${done?'Syllabus covered ✓ Best of luck!':'Exam tomorrow — rest well.'}</p></div>`;
+    window._lastDayCardHtml = true;
     return;
   }
   let inner='';
@@ -2440,10 +2471,11 @@ function makeCard(){
   }
 
   if(sched.p==='mock'){
+    const mockDate = ts();
     inner=`${tag}${topicHtml}<div class="day-sub">Weekly Exam / Mock Day</div><ul class="cl">
-      <li><label><input type="checkbox" id="m1" ${remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
-      <li><label><input type="checkbox" id="m2" ${remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
-      <li><label><input type="checkbox" id="m3" ${remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
+      <li><label><input type="checkbox" id="m1_${mockDate}" ${remoteData['m1_'+mockDate] || remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
+      <li><label><input type="checkbox" id="m2_${mockDate}" ${remoteData['m2_'+mockDate] || remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
+      <li><label><input type="checkbox" id="m3_${mockDate}" ${remoteData['m3_'+mockDate] || remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='catchup'){
     inner=`${tag}${topicHtml}<div class="day-sub">Catchup Day</div><ul class="cl">
       <li><label><input type="checkbox" id="cu1_${ts()}" ${remoteData['cu1_'+ts()]?'checked':''}><span>Revise pending topics</span></label></li>
@@ -2652,26 +2684,12 @@ function updateAll(){
     let total = 0;
     let done = 0;
     
-    if (remoteData.activeCourse === 'CLERK26') {
-      statsSubjs = SUBJS_CLERK;
-      Object.values(statsSubjs).forEach(v => {
+    Object.values(statsSubjs).forEach(v => {
+      if (v.ids) {
         total += v.ids.length;
         done += v.ids.filter(id => !!remoteData[id]).length;
-      });
-    } else {
-      const boxes=syllabusBoxes;
-      if(boxes && boxes.length) {
-        total = boxes.length;
-        done = boxes.filter(b=>!!remoteData[b.id]).length;
-      } else {
-        Object.values(statsSubjs).forEach(v => {
-          if (v.ids) {
-            total += v.ids.length;
-            done += v.ids.filter(id => !!remoteData[id]).length;
-          }
-        });
       }
-    }
+    });
     
     const pct = total ? Math.round(done/total*100) : 0;
     if(domGfill)domGfill.style.width=pct+'%';
@@ -2970,7 +2988,8 @@ function onCheck(id, val) {
   let actData = null;
 
   // Helper: is this a mock/exam completion (no SR needed)?
-  const isNonTopicId = id.startsWith('mock') || id.startsWith('fr_p2_d') || id.startsWith('aa_mock') || id === 'fr19' || id === 'fr20' || id === 'fr19_p2' || id === 'fr20_p2';
+  const isClerkNonTopic = id.startsWith('clk_d') && typeof SUBJS_CLERK !== 'undefined' && !Object.values(SUBJS_CLERK).some(s => s.ids && s.ids.includes(id));
+  const isNonTopicId = isClerkNonTopic || id.startsWith('mock') || id.startsWith('fr_p2_d') || id.startsWith('aa_mock') || id === 'fr19' || id === 'fr20' || id === 'fr19_p2' || id === 'fr20_p2';
 
   if (val) {
     actData = logActivity();
@@ -3001,6 +3020,10 @@ function onCheck(id, val) {
       children.forEach(cid => {
         remoteData[cid] = val;
         extraPayload[cid] = val;
+        if (!val) {
+          if (remoteData._sr && remoteData._sr[cid]) delete remoteData._sr[cid];
+          extraPayload[`_sr.${cid}`] = deleteField();
+        }
         const dBox = document.querySelector(`.ds[data-id="${cid}"]`); if (dBox) dBox.checked = val;
         const pBox = document.querySelector(`.pending-ds[data-id="${cid}"]`); if (pBox) pBox.checked = val;
       });
@@ -3068,6 +3091,7 @@ function onCheck(id, val) {
   updateAll();
   window._lastReviseHtml = ''; // reset cache on every check so SR section is always fresh
   if (typeof renderRevisions === 'function') renderRevisions();
+  if (typeof renderPending === 'function') renderPending();
 }
 
 function getRevisionsDue(){
@@ -3110,6 +3134,7 @@ function renderRevisions(){
   if (examTarget && !examTarget.isPostponed && examTarget.daysLeft > 0) {
     let clampedAny = false;
     Object.entries(remoteData._sr || {}).forEach(([id, s]) => {
+      if (!activeLabels[id]) return; // Only clamp topics belonging to the active course
       if (s && s.next && s.next >= examTarget.dateStr) {
         s.next = addDaysStr(examTarget.dateStr, -1);
         if (s.next < today) s.next = today;
@@ -3131,7 +3156,6 @@ function renderRevisions(){
       if (activeCourse === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) return false;
       if (seenIds.has(id)) return false;                // deduplicate same id
       seenIds.add(id);
-      if (!remoteData[id]) remoteData[id] = true;
       if (!s.next && s.completed) s.next = s.completed;
       return true;
     })
@@ -3238,11 +3262,11 @@ function renderRevisions(){
 
       <div class="sr-readiness-wrap">
         <div class="sr-readiness-labels">
-          <strong style="color:var(--text);font-size:0.86rem;display:flex;align-items:center;gap:6px">
-            High-Score Exam Readiness Index
-            <span style="font-size:0.68rem;padding:2px 8px;border-radius:99px;background:${readinessColor}22;color:${readinessColor};border:1px solid ${readinessColor}44">${readinessBadge}</span>
+          <strong style="color:var(--text);font-size:0.86rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0">
+            <span>High-Score Exam Readiness Index</span>
+            <span style="font-size:0.68rem;padding:2px 8px;border-radius:99px;background:${readinessColor}22;color:${readinessColor};border:1px solid ${readinessColor}44;white-space:nowrap">${readinessBadge}</span>
           </strong>
-          <strong style="color:${readinessColor};font-size:1.05rem;font-family:var(--mono)">${readiness}%</strong>
+          <strong style="color:${readinessColor};font-size:1.05rem;font-family:var(--mono);white-space:nowrap">${readiness}%</strong>
         </div>
         <div class="sr-readiness-bar">
           <div class="sr-readiness-fill" style="width:${readiness}%;background:${readinessColor};"></div>
@@ -3331,21 +3355,21 @@ function renderRevisions(){
       : `📅 ${nextStr}`;
 
     return `
-      <div class="revise-item" style="display:flex;flex-direction:column;align-items:stretch;padding:15px 16px;background:var(--s1);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.04);transition:transform 0.15s ease, border-color 0.15s ease;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
-            <span style="font-size:0.65rem;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:6px;background:var(--s2);border:1px solid var(--border);color:var(--dim);white-space:nowrap">${passLabel}</span>
-            <div class="revise-text" style="font-size:0.86rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.label}</div>
+      <div class="revise-item" style="box-shadow:0 2px 10px rgba(0,0,0,0.04);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;min-width:0;width:100%;">
+          <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0;">
+            <span style="font-size:0.65rem;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:6px;background:var(--s2);border:1px solid var(--border);color:var(--dim);white-space:nowrap;flex-shrink:0;margin-top:1px">${passLabel}</span>
+            <div class="revise-text" style="font-size:0.86rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:normal;line-height:1.35;word-break:break-word;min-width:0;flex:1;" title="${item.label}">${item.label}</div>
           </div>
-          <span style="font-size:0.68rem;font-weight:700;font-family:var(--mono);padding:3px 8px;border-radius:99px;border:1px solid;white-space:nowrap;background:${badgeColor}">${badgeText}</span>
+          <span style="font-size:0.68rem;font-weight:700;font-family:var(--mono);padding:3px 8px;border-radius:99px;border:1px solid;white-space:nowrap;flex-shrink:0;background:${badgeColor}">${badgeText}</span>
         </div>
 
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:0.72rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:0.72rem;gap:8px;flex-wrap:wrap;">
           <span style="color:var(--dim);">Memory Retention: <strong style="color:${memColor}">${item.mem}%</strong></span>
           ${examBufferStr}
         </div>
 
-        <div style="width:100%;height:5px;background:var(--s3);border-radius:99px;margin-bottom:14px;overflow:hidden">
+        <div style="width:100%;height:5px;background:var(--s3);border-radius:99px;margin-bottom:12px;overflow:hidden">
           <div style="width:${item.mem}%;height:100%;background:${memColor};border-radius:99px;transition:width 0.4s ease"></div>
         </div>
 
@@ -4206,7 +4230,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.17'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.18'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -4215,38 +4239,38 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
+        <div class="wn-item-icon">📱</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Mobile UI &amp; Horizontal Scroll Shield</div>
+          <div class="wn-item-desc">Completely eliminated horizontal wobble and side-scrolling across mobile devices. Constrained all grids, headers, and hero metrics cleanly within 100% viewport width.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🧠</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Optimized Spaced Repetition Cards</div>
+          <div class="wn-item-desc">Full standard titles wrap cleanly without truncation. Pass badges and status indicators (🚨 Overdue, ⏰ Due Today) stay firmly anchored on screen.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🚀</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Back-to-Top Floating Clearance</div>
+          <div class="wn-item-desc">Re-anchored floating quick-navigation button with safe bottom padding so it never obscures the 'Log Revision Session' action button.</div>
+        </div>
+      </div>
+      <div class="wn-item">
         <div class="wn-item-icon">🎯</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Exam-Anchored Spaced Repetition</div>
-          <div class="wn-item-desc">Spaced repetition schedules across all courses now automatically anchor to your target exam date (Dec 10 for ACCA FR, Dec 7 for AA). Review intervals dynamically compress as exam day approaches to guarantee 3 to 5 recall passes before exam day.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🏆</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">High-Score Exam Readiness Hub</div>
-          <div class="wn-item-desc">Interactive gauge in the Spaced Repetition section calculates your true readiness index based on syllabus coverage (40%), multi-pass review depth (35%), and active memory retention (25%) aiming for 75%+ distinction.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">⚡</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Strategic Pacing &amp; 3-Wave Roadmap</div>
-          <div class="wn-item-desc">Real-time daily pace indicator guides weekly syllabus completion and daily reviews. Visual 3-wave roadmap outlines Concept Mastery, Exam Kit Practice, and Final 7-Day Timed Mock Sprint.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🛡️</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Smart Pre-Exam Date Clamping &amp; Stability</div>
-          <div class="wn-item-desc">All review intervals are hard-capped to finish before exam morning. Fixed timetable catchup cards, unified exam target countdowns across drawer and statistics, and full course-reset safety.</div>
+          <div class="wn-item-title">Target Exam Readiness Engine</div>
+          <div class="wn-item-desc">Active memory retention and multi-pass review tracking calibrated to your target exam date.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v2.2.17</div>
-          <div class="wn-item-desc">Enhanced offline fallback support for subdirectories and smooth controller activation without unexpected page reloads.</div>
+          <div class="wn-item-title">Updated Service Worker v2.2.18</div>
+          <div class="wn-item-desc">Refined offline cache lifecycle and instant updates across all devices.</div>
         </div>
       </div>
     </div>
