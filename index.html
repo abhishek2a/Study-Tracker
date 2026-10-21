@@ -528,15 +528,17 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 <!-- What's New modal -->
 <div id="whats-new-overlay" role="dialog" aria-modal="true" aria-labelledby="wn-title">
   <div class="wn-box">
-    <div class="wn-hdr">
+    <div class="wn-hdr" style="position:relative;">
+      <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.20</div>
+      <div class="wn-title" id="wn-title">Version 2.2.21</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
       <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">Highlights</div>
-        <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Accurate Best Time of Day Stats</div><div class="wn-item-desc">Recomputed live from your logged study sessions.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">📦</div><div class="wn-item-text"><div class="wn-item-title">Demerged Accounting Standards</div><div class="wn-item-desc">Independent checkboxes for IAS 8, 10, 16, 20, 23, 40, 41, and IFRS 13.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🔔</div><div class="wn-item-text"><div class="wn-item-title">Resolved Update Badge &amp; What's New Conflict</div><div class="wn-item-desc">The floating update notification badge is suppressed while viewing release notes, preventing it from obscuring the footer action button on mobile.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Seamless Update Reloads</div><div class="wn-item-desc">Tapping Reload on the update prompt acknowledges release notes and prevents repeated modal popups.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">✕</div><div class="wn-item-text"><div class="wn-item-title">Header Close &amp; Backdrop Dismissal</div><div class="wn-item-desc">Added a direct header close button and backdrop click dismissal to What's New, plus a quick-dismiss option on the update toast badge.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
@@ -712,7 +714,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.20</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.21</div>
         </div>
       </div>
     </div>
@@ -793,7 +795,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.20)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.21)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1069,7 +1071,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.20';
+const APP_VERSION = '2.2.21';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -4271,8 +4273,67 @@ async function handleAutoTransitions(){
   }
 }
 
-// ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.20'; // bump this to force What's New popup for all users
+// ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
+const WHATS_NEW_VERSION = '2.2.21'; // bump this to force What's New popup for all users
+
+let _pendingUpdateWorker = null;
+
+function hideUpdateToast() {
+  const toast = document.getElementById('update-toast');
+  if (toast) {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(100px)';
+    setTimeout(() => {
+      if (toast && toast.style.opacity === '0') toast.style.visibility = 'hidden';
+    }, 400);
+  }
+}
+window.hideUpdateToast = hideUpdateToast;
+
+function promptUpdate(worker) {
+  if (worker) _pendingUpdateWorker = worker;
+  const wn = document.getElementById('whats-new-overlay');
+  // Suppress update badge while What's New is actively open so it never collides or blocks modal action
+  if (wn && wn.classList.contains('open')) {
+    return;
+  }
+  const toast = document.getElementById('update-toast');
+  const btn = document.getElementById('update-btn');
+  if (toast && btn) {
+    toast.style.visibility = 'visible';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    btn.onclick = () => {
+      try { localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION); } catch(e) {}
+      if (_pendingUpdateWorker) {
+        try {
+          _pendingUpdateWorker.postMessage({ type: 'SKIP_WAITING' });
+        } catch(e) {
+          window.location.reload();
+        }
+      } else {
+        window.location.reload();
+      }
+    };
+  } else if (worker) {
+    try { localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION); } catch(e) {}
+    worker.postMessage({ type: 'SKIP_WAITING' });
+  }
+}
+window.promptUpdate = promptUpdate;
+
+function closeWhatsNew(){
+  const overlay = document.getElementById('whats-new-overlay');
+  if(overlay) overlay.classList.remove('open');
+  try { localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION); } catch(e) {}
+  // If an update worker was waiting, gracefully show the update badge now that What's New is closed
+  if (_pendingUpdateWorker && typeof promptUpdate === 'function') {
+    setTimeout(() => {
+      promptUpdate(_pendingUpdateWorker);
+    }, 350);
+  }
+}
+window.closeWhatsNew = closeWhatsNew;
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -4281,38 +4342,38 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
-        <div class="wn-item-icon">🛡️</div>
+        <div class="wn-item-icon">🔔</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Eliminated Accidental Touch Border Blinks</div>
-          <div class="wn-item-desc">Removed aggressive global focus outline rings and hover borders on touch devices. Tapping or brushing across cards, tabs, and buttons no longer triggers flickering borders or accidental outlines.</div>
+          <div class="wn-item-title">Resolved Update Badge &amp; What's New Conflict</div>
+          <div class="wn-item-desc">The floating update notification badge is now suppressed while viewing release notes, preventing it from obscuring the footer action button or release items on mobile.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">🔄</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Smooth Revision Tabs &amp; Side Topics Scroll</div>
-          <div class="wn-item-desc">Fixed swipe gesture interruption on mobile revision tabs. You can now scroll horizontally across all categories (Due Today, Weak Retention, Pre-Exam Waves, and All Topics) with zero glitching or accidental activations.</div>
+          <div class="wn-item-title">Seamless Update Reloads</div>
+          <div class="wn-item-desc">Tapping Reload on the update prompt seamlessly acknowledges release notes and prevents repeated modal popups across app refreshes.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">⚡</div>
+        <div class="wn-item-icon">✕</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Instant Tab Switching &amp; Auto-Focus</div>
-          <div class="wn-item-desc">Tapping revision tabs now updates instantaneously without redrawing the hero banner, smoothly centering the active tab into view.</div>
+          <div class="wn-item-title">Header Close &amp; Backdrop Dismissal</div>
+          <div class="wn-item-desc">Added a direct header close button and backdrop click dismissal to What's New, plus a quick-dismiss option on the update toast badge.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">📅</div>
+        <div class="wn-item-icon">🛡️</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Compact Clean Date Badges</div>
-          <div class="wn-item-desc">Upcoming revision cards now feature human-friendly date badges (e.g. Oct 24) instead of raw database timestamps.</div>
+          <div class="wn-item-title">Accidental Touch Border Fix</div>
+          <div class="wn-item-desc">Clean touch interaction without flashing outlines or accidental hover borders on cards and tabs.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v2.2.20</div>
-          <div class="wn-item-desc">Cache alignment and offline performance updates across all devices.</div>
+          <div class="wn-item-title">Updated Service Worker v${APP_VERSION}</div>
+          <div class="wn-item-desc">Synchronized offline cache and instant lifecycle activation across all devices.</div>
         </div>
       </div>
     </div>
@@ -4326,6 +4387,10 @@ function showWhatsNew(force = false){
 
   const overlay = document.getElementById('whats-new-overlay');
   if(!overlay) return;
+  
+  // Hide update toast while What's New is active so it never collides
+  if (typeof hideUpdateToast === 'function') hideUpdateToast();
+
   const bodyEl = document.getElementById('wn-body');
   const titleEl = document.getElementById('wn-title');
   const subEl = document.getElementById('wn-sub');
@@ -4336,13 +4401,19 @@ function showWhatsNew(force = false){
 }
 window.showWhatsNew = showWhatsNew;
 
-// Wire What's New close button safely
+// Wire What's New close buttons and backdrop safely
 const _wnCloseBtn = document.getElementById('wn-close-btn');
-if(_wnCloseBtn) _wnCloseBtn.addEventListener('click',()=>{
-  const overlay = document.getElementById('whats-new-overlay');
-  if(overlay) overlay.classList.remove('open');
-  localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION);
-});
+if(_wnCloseBtn) _wnCloseBtn.addEventListener('click', closeWhatsNew);
+const _wnCloseIcon = document.getElementById('wn-close-icon');
+if(_wnCloseIcon) _wnCloseIcon.addEventListener('click', closeWhatsNew);
+const _wnOverlay = document.getElementById('whats-new-overlay');
+if(_wnOverlay) {
+  _wnOverlay.addEventListener('click', function(e) {
+    if (e.target === this) closeWhatsNew();
+  });
+}
+const _updateCloseBtn = document.getElementById('update-close-btn');
+if(_updateCloseBtn) _updateCloseBtn.addEventListener('click', hideUpdateToast);
 
 // ── IN-APP ADAPTIVE SMART STUDY COACH ─────────────────────────────────────
 function checkAndNotify() {
@@ -5815,7 +5886,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   const wn = document.getElementById('whats-new-overlay');
-  if (wn && wn.classList.contains('open')) { wn.classList.remove('open'); localStorage.setItem('wn_seen_v', WHATS_NEW_VERSION); return; }
+  if (wn && wn.classList.contains('open')) { closeWhatsNew(); return; }
   const ls = document.getElementById('log-session-overlay');
   if (ls && ls.style.visibility === 'visible') { closeLogSession(); return; }
 });
@@ -5839,18 +5910,6 @@ try {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => {
         if (reg.update) reg.update();
-        const promptUpdate = (worker) => {
-          const toast = document.getElementById('update-toast');
-          const btn = document.getElementById('update-btn');
-          if (toast && btn) {
-            toast.style.visibility = 'visible';
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateX(-50%) translateY(0)';
-            btn.onclick = () => worker.postMessage({ type: 'SKIP_WAITING' });
-          } else {
-            worker.postMessage({ type: 'SKIP_WAITING' });
-          }
-        };
         if (reg.waiting) promptUpdate(reg.waiting);
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
@@ -5943,11 +6002,12 @@ try {
   }
 } catch(e) { console.warn('A2HS error:', e); }
 </script>
-<div id="update-toast" style="position:fixed;bottom:calc(20px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--blue);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,150,240,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:9999;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
-  ✨ New update available!
-  <button id="update-btn" onclick="window.location.reload()" style="background:#fff;color:var(--blue);border:none;border-radius:20px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:0.15s">Reload</button>
+<div id="update-toast" style="position:fixed;bottom:calc(20px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--blue);color:#fff;padding:10px 16px 10px 18px;border-radius:30px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(77,150,240,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:1900;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;max-width:calc(100vw - 32px);box-sizing:border-box;">
+  <span>✨ New update available!</span>
+  <button id="update-btn" style="background:#fff;color:var(--blue);border:none;border-radius:20px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:0.15s">Reload</button>
+  <button id="update-close-btn" aria-label="Dismiss update notification" style="background:transparent;border:none;color:rgba(255,255,255,0.7);font-size:1.1rem;cursor:pointer;padding:2px 4px;line-height:1;display:flex;align-items:center;justify-content:center;transition:color 0.15s">✕</button>
 </div>
-<div id="session-toast" style="position:fixed;bottom:calc(20px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,240,150,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:9999;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
+<div id="session-toast" style="position:fixed;bottom:calc(20px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,240,150,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:1900;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
 </div>
 
 <style>
