@@ -1,7 +1,7 @@
-// Study Tracker Service Worker — v2.2.18
+// Study Tracker Service Worker — v2.2.19
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.2.18';
+const VERSION = 'v2.2.19';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
 const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
 

@@ -122,16 +122,17 @@ body {
 .tnav{font-size:.73rem;font-weight:600;padding:5px 11px;border-radius:7px;color:var(--dim);cursor:pointer;border:none;background:transparent;font-family:var(--font);transition:.15s;white-space:nowrap}
 .tnav:hover{background:var(--s3);color:var(--text)}
 @media(max-width:600px){.tnav{display:none}}
-#btt{display:none;position:fixed;bottom:calc(28px + env(safe-area-inset-bottom, 0px));right:calc(20px + env(safe-area-inset-right, 0px));z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1);will-change:transform;font-weight:700;letter-spacing:0}
-#btt:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.6),0 0 20px rgba(84,162,255,0.4)}
+#btt{display:none;position:fixed;bottom:calc(28px + env(safe-area-inset-bottom, 0px));right:calc(20px + env(safe-area-inset-right, 0px));z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, rgba(84,162,255,0.18), rgba(40,212,142,0.15)), var(--s1);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:1.2rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 14px rgba(84,162,255,0.25);align-items:center;justify-content:center;transition:opacity .25s,transform .25s cubic-bezier(.34,1.56,.64,1);will-change:transform;font-weight:700;letter-spacing:0;opacity:0.9}
+#btt:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.6),0 0 20px rgba(84,162,255,0.4);opacity:1}
 #btt:active{transform:scale(.92);box-shadow:0 4px 12px rgba(0,0,0,.4)}
 @media(max-width:600px){
   #btt{
-    width:38px;
-    height:38px;
-    font-size:1rem;
+    width:36px;
+    height:36px;
+    font-size:0.95rem;
     bottom:calc(16px + env(safe-area-inset-bottom, 0px));
     right:calc(14px + env(safe-area-inset-right, 0px));
+    opacity:0.85;
   }
 }
 @media(min-width:601px){#btt{display:none!important}}
@@ -251,16 +252,17 @@ body {
 .sr-wave-step{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.7rem;color:var(--dim);transition:all 0.2s ease;min-width:0;word-break:break-word}
 .sr-wave-step.active{border-color:var(--blue);background:rgba(84,162,255,0.08);color:var(--text);font-weight:700}
 .sr-wave-step strong{display:block;font-size:0.74rem;margin-bottom:2px}
-.sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;width:100%;max-width:100%;box-sizing:border-box}
-.sr-tab-btn{padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.sr-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;overflow-y:hidden;padding:4px 4px 8px 4px;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-x:contain;scroll-behavior:smooth;width:100%;max-width:100%;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+.sr-tabs::-webkit-scrollbar{display:none}
+.sr-tab-btn{padding:8px 14px;border-radius:99px;border:1px solid var(--border);background:var(--s1);color:var(--dim);font-size:0.75rem;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:background .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;touch-action:pan-x pan-y;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .sr-tab-btn:hover{border-color:var(--blue);color:var(--text)}
 .sr-tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 10px rgba(84,162,255,0.3)}
 .sr-tab-count{background:rgba(255,255,255,0.22);padding:1px 6px;border-radius:99px;font-size:0.66rem;font-family:var(--mono)}
 .sr-tab-btn:not(.active) .sr-tab-count{background:var(--s3);color:var(--text)}
 @media(max-width:480px){
   .sr-hero-banner{padding:14px 12px;border-radius:14px}
-  .sr-tabs{gap:6px}
-  .sr-tab-btn{padding:6px 11px;font-size:0.7rem}
+  .sr-tabs{gap:6px;padding-bottom:6px}
+  .sr-tab-btn{padding:7px 11px;font-size:0.72rem}
 }
 input[type="date"], input[type="time"] {
   appearance: none;
@@ -510,7 +512,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   <div class="wn-box">
     <div class="wn-hdr">
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.18</div>
+      <div class="wn-title" id="wn-title">Version 2.2.19</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
@@ -692,7 +694,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.18</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.19</div>
         </div>
       </div>
     </div>
@@ -773,7 +775,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.18)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.19)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1049,7 +1051,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.18';
+const APP_VERSION = '2.2.19';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -2068,7 +2070,7 @@ window.addEventListener('scroll',()=>{
   if(!bttEl)return;
   if(!bttTicking) {
     window.requestAnimationFrame(() => {
-      const show=window.scrollY>300;
+      const show=window.scrollY>550;
       if(show !== bttVisible) {
         bttEl.style.display=show?'flex':'none';
         bttVisible = show;
@@ -3333,7 +3335,18 @@ function renderRevisions(){
 
   const renderItem = (item, isDue) => {
     const overdue = item.next < today;
-    const nextStr = item.next === addDaysStr(today, 1) ? 'Tomorrow' : item.next === today ? 'Today' : item.next;
+    let nextStr = item.next;
+    if (item.next === today) {
+      nextStr = 'Today';
+    } else if (item.next === addDaysStr(today, 1)) {
+      nextStr = 'Tomorrow';
+    } else if (item.next) {
+      const [ny, nm, nd] = item.next.split('-').map(Number);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      if (ny && nm && nd && months[nm - 1]) {
+        nextStr = `${months[nm - 1]} ${nd}`;
+      }
+    }
     const memColor = item.mem < 50 ? 'var(--red)' : item.mem < 80 ? 'var(--accent)' : 'var(--green)';
     const passCount = item.count || 0;
     const passLabel = passCount === 0 ? '1st Recall' : passCount === 1 ? '2nd Pass' : passCount === 2 ? '3rd Pass' : `${passCount + 1}th Pass`;
@@ -3382,106 +3395,117 @@ function renderRevisions(){
     `;
   };
 
-  let listHtml = '';
-  if (window._srActiveTab === 'due') {
-    if (due.length) {
-      listHtml = `<div class="revise-grid">${due.map(d => renderItem(d, true)).join('')}</div>`;
-    } else if (allSr.length > 0) {
-      listHtml = `
-        <div style="background:rgba(40,212,142,0.08);border:1px solid rgba(40,212,142,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
-          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🎉</span>
-          <strong style="color:var(--green);font-size:0.96rem;display:block;margin-bottom:4px;">All Due Revisions Cleared For Today!</strong>
-          <span style="font-size:0.78rem;color:var(--dim);display:block;margin-bottom:12px;">You have 0 overdue topics right now. Maintain your edge for ${examTarget ? examTarget.shortName : 'exam day'} by reviewing weak topics or checking upcoming waves below.</span>
-          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
-            <button class="sr-tab-btn" data-tab="weak" style="background:var(--s2);border-color:var(--border)">⚡ Review Weak Topics (${weak.length})</button>
-            <button class="sr-tab-btn" data-tab="upcoming" style="background:var(--s2);border-color:var(--border)">📅 View Pre-Exam Waves (${upcoming.length})</button>
+  const getListHtml = (tab) => {
+    if (tab === 'due') {
+      if (due.length) {
+        return `<div class="revise-grid">${due.map(d => renderItem(d, true)).join('')}</div>`;
+      } else if (allSr.length > 0) {
+        return `
+          <div style="background:rgba(40,212,142,0.08);border:1px solid rgba(40,212,142,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
+            <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🎉</span>
+            <strong style="color:var(--green);font-size:0.96rem;display:block;margin-bottom:4px;">All Due Revisions Cleared For Today!</strong>
+            <span style="font-size:0.78rem;color:var(--dim);display:block;margin-bottom:12px;">You have 0 overdue topics right now. Maintain your edge for ${examTarget ? examTarget.shortName : 'exam day'} by reviewing weak topics or checking upcoming waves below.</span>
+            <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+              <button class="sr-tab-btn" data-tab="weak" style="background:var(--s2);border-color:var(--border)">⚡ Review Weak Topics (${weak.length})</button>
+              <button class="sr-tab-btn" data-tab="upcoming" style="background:var(--s2);border-color:var(--border)">📅 View Pre-Exam Waves (${upcoming.length})</button>
+            </div>
           </div>
-        </div>
-      `;
-    } else {
-      listHtml = `
-        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:26px 20px;text-align:center;width:100%;">
-          <span style="font-size:2rem;display:block;margin-bottom:8px;">📚</span>
-          <strong style="color:var(--text);font-size:0.94rem;display:block;margin-bottom:4px;">No Revision Topics Yet</strong>
-          <span style="font-size:0.78rem;color:var(--dim);">Tick completed standards in the syllabus above or log a study session to kick off your spaced repetition schedule for ${examTarget ? examTarget.shortName : 'exam day'}!</span>
-        </div>
-      `;
+        `;
+      } else {
+        return `
+          <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:26px 20px;text-align:center;width:100%;">
+            <span style="font-size:2rem;display:block;margin-bottom:8px;">📚</span>
+            <strong style="color:var(--text);font-size:0.94rem;display:block;margin-bottom:4px;">No Revision Topics Yet</strong>
+            <span style="font-size:0.78rem;color:var(--dim);">Tick completed standards in the syllabus above or log a study session to kick off your spaced repetition schedule for ${examTarget ? examTarget.shortName : 'exam day'}!</span>
+          </div>
+        `;
+      }
+    } else if (tab === 'weak') {
+      if (weak.length) {
+        return `<div class="revise-grid">${weak.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
+      } else {
+        return `
+          <div style="background:rgba(84,162,255,0.08);border:1px solid rgba(84,162,255,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
+            <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🌟</span>
+            <strong style="color:var(--blue);font-size:0.96rem;display:block;margin-bottom:4px;">Outstanding Memory Retention!</strong>
+            <span style="font-size:0.78rem;color:var(--dim);">No weak topics found (<70%). All your reviewed standards currently have strong active retention!</span>
+          </div>
+        `;
+      }
+    } else if (tab === 'upcoming') {
+      if (upcoming.length) {
+        return `<div class="revise-grid">${upcoming.map(d => renderItem(d, false)).join('')}</div>`;
+      } else {
+        return `
+          <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
+            <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📅</span>
+            <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Upcoming Scheduled Reviews</strong>
+            <span style="font-size:0.78rem;color:var(--dim);">All topics are either due today or awaiting initial study in the syllabus.</span>
+          </div>
+        `;
+      }
+    } else if (tab === 'all') {
+      if (allSr.length) {
+        return `<div class="revise-grid">${allSr.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
+      } else {
+        return `
+          <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
+            <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📚</span>
+            <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Topics Tracked Yet</strong>
+            <span style="font-size:0.78rem;color:var(--dim);">Complete syllabus standards to populate your spaced repetition engine.</span>
+          </div>
+        `;
+      }
     }
-  } else if (window._srActiveTab === 'weak') {
-    if (weak.length) {
-      listHtml = `<div class="revise-grid">${weak.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
-    } else {
-      listHtml = `
-        <div style="background:rgba(84,162,255,0.08);border:1px solid rgba(84,162,255,0.25);border-radius:14px;padding:20px;text-align:center;width:100%;">
-          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">🌟</span>
-          <strong style="color:var(--blue);font-size:0.96rem;display:block;margin-bottom:4px;">Outstanding Memory Retention!</strong>
-          <span style="font-size:0.78rem;color:var(--dim);">No weak topics found (<70%). All your reviewed standards currently have strong active retention!</span>
-        </div>
-      `;
-    }
-  } else if (window._srActiveTab === 'upcoming') {
-    if (upcoming.length) {
-      listHtml = `<div class="revise-grid">${upcoming.map(d => renderItem(d, false)).join('')}</div>`;
-    } else {
-      listHtml = `
-        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
-          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📅</span>
-          <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Upcoming Scheduled Reviews</strong>
-          <span style="font-size:0.78rem;color:var(--dim);">All topics are either due today or awaiting initial study in the syllabus.</span>
-        </div>
-      `;
-    }
-  } else if (window._srActiveTab === 'all') {
-    if (allSr.length) {
-      listHtml = `<div class="revise-grid">${allSr.map(d => renderItem(d, d.next <= today)).join('')}</div>`;
-    } else {
-      listHtml = `
-        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:14px;padding:20px;text-align:center;width:100%;">
-          <span style="font-size:1.8rem;display:block;margin-bottom:6px;">📚</span>
-          <strong style="color:var(--text);font-size:0.92rem;display:block;margin-bottom:4px;">No Topics Tracked Yet</strong>
-          <span style="font-size:0.78rem;color:var(--dim);">Complete syllabus standards to populate your spaced repetition engine.</span>
-        </div>
-      `;
+    return '';
+  };
+  window._getSrListHtml = getListHtml;
+
+  const listWrapperHtml = `<div id="sr-list-container">${getListHtml(window._srActiveTab)}</div>`;
+  const fullHtml = heroHtml + tabsHtml + listWrapperHtml;
+
+  const existingTabs = rc.querySelector('#sr-filter-tabs');
+  const prevScrollLeft = existingTabs ? existingTabs.scrollLeft : 0;
+
+  if (window._lastReviseHtml !== fullHtml) {
+    window._lastReviseHtml = fullHtml;
+    rc.innerHTML = fullHtml;
+    const newTabs = rc.querySelector('#sr-filter-tabs');
+    if (newTabs) {
+      if (prevScrollLeft > 0) newTabs.scrollLeft = prevScrollLeft;
+      const activeBtn = newTabs.querySelector(`.sr-tab-btn[data-tab="${window._srActiveTab}"]`);
+      if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }
   }
-
-  const fullHtml = heroHtml + tabsHtml + listHtml;
-
-  if (window._lastReviseHtml === fullHtml) return;
-  window._lastReviseHtml = fullHtml;
-  rc.innerHTML = fullHtml;
   
   if (!window._revisecardListenerAttached) {
     window._revisecardListenerAttached = true;
-    let _reviseTouch = false;
-    rc.addEventListener('touchend', function(e) {
-      const tab = e.target.closest('.sr-tab-btn');
-      if (tab) {
-        e.preventDefault();
-        window._srActiveTab = tab.getAttribute('data-tab');
-        window._lastReviseHtml = '';
-        renderRevisions();
-        return;
-      }
-      const b = e.target.closest('.revise-log-btn');
-      if (b) {
-        e.preventDefault();
-        _reviseTouch = true;
-        if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
-        setTimeout(() => { _reviseTouch = false; }, 500);
-      }
-    });
     rc.addEventListener('click', function(e) {
       const tab = e.target.closest('.sr-tab-btn');
       if (tab) {
-        window._srActiveTab = tab.getAttribute('data-tab');
-        window._lastReviseHtml = '';
-        renderRevisions();
+        const targetTab = tab.getAttribute('data-tab');
+        if (targetTab) {
+          window._srActiveTab = targetTab;
+          const tabsBar = rc.querySelector('#sr-filter-tabs');
+          const listCont = rc.querySelector('#sr-list-container');
+          if (tabsBar && listCont && window._getSrListHtml) {
+            tabsBar.querySelectorAll('.sr-tab-btn').forEach(btn => {
+              const isActive = btn.getAttribute('data-tab') === targetTab;
+              btn.classList.toggle('active', isActive);
+              if (isActive) {
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+              }
+            });
+            listCont.innerHTML = window._getSrListHtml(targetTab);
+            return;
+          }
+          window._lastReviseHtml = '';
+          renderRevisions();
+        }
         return;
       }
       const b = e.target.closest('.revise-log-btn');
       if (b) {
-        if (_reviseTouch) return;
         if(window.openReviseLogSession) window.openReviseLogSession(b.getAttribute('data-rid'));
       }
     });
@@ -4230,7 +4254,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW ────────────────────────────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.18'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.19'; // bump this to force What's New popup for all users
 
 function buildWhatsNewHTML(){
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
@@ -4239,38 +4263,38 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
-        <div class="wn-item-icon">📱</div>
+        <div class="wn-item-icon">🔄</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Mobile UI &amp; Horizontal Scroll Shield</div>
-          <div class="wn-item-desc">Completely eliminated horizontal wobble and side-scrolling across mobile devices. Constrained all grids, headers, and hero metrics cleanly within 100% viewport width.</div>
+          <div class="wn-item-title">Smooth Revision Tabs &amp; Side Topics Scroll</div>
+          <div class="wn-item-desc">Fixed swipe gesture interruption on mobile revision tabs. You can now scroll horizontally across all categories (Due Today, Weak Retention, Pre-Exam Waves, and All Topics) with zero glitching or accidental activations.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">🧠</div>
+        <div class="wn-item-icon">⚡</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Optimized Spaced Repetition Cards</div>
-          <div class="wn-item-desc">Full standard titles wrap cleanly without truncation. Pass badges and status indicators (🚨 Overdue, ⏰ Due Today) stay firmly anchored on screen.</div>
+          <div class="wn-item-title">Instant Tab Switching &amp; Auto-Focus</div>
+          <div class="wn-item-desc">Tapping revision tabs now updates instantaneously without redrawing the hero banner, smoothly centering the active tab into view.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">📅</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Compact Clean Date Badges</div>
+          <div class="wn-item-desc">Upcoming revision cards now feature human-friendly date badges (e.g. Oct 24) instead of raw database timestamps.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">🚀</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Back-to-Top Floating Clearance</div>
-          <div class="wn-item-desc">Re-anchored floating quick-navigation button with safe bottom padding so it never obscures the 'Log Revision Session' action button.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🎯</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Target Exam Readiness Engine</div>
-          <div class="wn-item-desc">Active memory retention and multi-pass review tracking calibrated to your target exam date.</div>
+          <div class="wn-item-title">Refined Back-to-Top Clearance</div>
+          <div class="wn-item-desc">Tuned scroll threshold so the floating quick-navigation button stays out of your way until you scroll deep into the page.</div>
         </div>
       </div>
       <div class="wn-item">
         <div class="wn-item-icon">&#9889;</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v2.2.18</div>
-          <div class="wn-item-desc">Refined offline cache lifecycle and instant updates across all devices.</div>
+          <div class="wn-item-title">Updated Service Worker v2.2.19</div>
+          <div class="wn-item-desc">Cache alignment and offline performance updates across all devices.</div>
         </div>
       </div>
     </div>
