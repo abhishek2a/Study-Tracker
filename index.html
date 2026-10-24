@@ -142,7 +142,7 @@ body {
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .wrap{max-width:1280px;width:100%;margin:0 auto;padding:32px 40px;box-sizing:border-box}
 @media(max-width:900px){.wrap{padding:20px 18px}}
-@media(max-width:600px){.wrap{padding:14px 13px calc(80px + env(safe-area-inset-bottom, 0px)) 13px !important}}
+@media(max-width:600px){.wrap{padding:14px max(14px, env(safe-area-inset-right, 14px)) calc(80px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 14px)) !important}}
 .hdr-row{margin-bottom:22px}
 .hdr-row h1{font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.04em}
 .hdr-row p{font-size:.78rem;font-family:var(--mono);color:var(--dim);margin-top:3px}
@@ -152,7 +152,7 @@ body {
   .log-session-btn{width:100%;flex:1 0 100%;box-shadow:none}
 }
 .exam-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:160px;transition:all .25s cubic-bezier(0.2,0.8,0.2,1);box-shadow:var(--shadow);cursor:default;contain:layout paint}
+.epill{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:min(100%, 150px);transition:all .25s cubic-bezier(0.2,0.8,0.2,1);box-shadow:var(--shadow);cursor:default;contain:layout paint}
 @media(hover:hover){.epill:hover{transform:translateY(-2px);border-color:rgba(252,174,40,0.35);box-shadow:0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(252,174,40,0.1)}}
 .epill.next-exam{border-color:rgba(77,150,240,.4);background:linear-gradient(0deg,rgba(77,150,240,.08),rgba(77,150,240,.08)),var(--s1)}
 .epill.done-exam{border-color:rgba(43,189,136,.3);background:linear-gradient(0deg,rgba(43,189,136,.06),rgba(43,189,136,.06)),var(--s1);opacity:.85}
@@ -531,14 +531,14 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     <div class="wn-hdr" style="position:relative;">
       <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.21</div>
+      <div class="wn-title" id="wn-title">Version 2.2.22</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
       <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">Highlights</div>
-        <div class="wn-item"><div class="wn-item-icon">🔔</div><div class="wn-item-text"><div class="wn-item-title">Resolved Update Badge &amp; What's New Conflict</div><div class="wn-item-desc">The floating update notification badge is suppressed while viewing release notes, preventing it from obscuring the footer action button on mobile.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">🔄</div><div class="wn-item-text"><div class="wn-item-title">Seamless Update Reloads</div><div class="wn-item-desc">Tapping Reload on the update prompt acknowledges release notes and prevents repeated modal popups.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">✕</div><div class="wn-item-text"><div class="wn-item-title">Header Close &amp; Backdrop Dismissal</div><div class="wn-item-desc">Added a direct header close button and backdrop click dismissal to What's New, plus a quick-dismiss option on the update toast badge.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📝</div><div class="wn-item-text"><div class="wn-item-title">Weekly Mock &amp; Catchup Persistence</div><div class="wn-item-desc">Weekly exam mock and catchup checklist items now automatically wire up, persist, and synchronize with your study records across sessions.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">💡</div><div class="wn-item-text"><div class="wn-item-title">Stable Daily Study Tips</div><div class="wn-item-desc">Eliminated study tip flickering on checklist clicks with stable daily study wisdom and tailored ACCA AA &amp; FR guidance.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Mobile UI &amp; Alignment Polish</div><div class="wn-item-desc">Refined mobile padding alignment, adaptive countdown cards, and clean vertical rhythm for special catchup sessions.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
@@ -714,7 +714,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.21</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.22</div>
         </div>
       </div>
     </div>
@@ -795,7 +795,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.21)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.22)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1071,7 +1071,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.21';
+const APP_VERSION = '2.2.22';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -2280,9 +2280,9 @@ function applyData(data){
     if (b.checked !== c) b.checked = c;
   });
   const dm=$('daily_mock');if(dm){const c=!!data['mock_'+ts()]; if(dm.checked!==c) dm.checked=c;}
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
+  ['m1_'+ts(),'m2_'+ts(),'m3_'+ts(),'m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
-    if(b){const c=!!data['misc_'+id]; if(b.checked!==c) b.checked=c;}
+    if(b){const c=!!(data[id] || data['misc_'+id]); if(b.checked!==c) b.checked=c;}
   });
   ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
     const b=document.getElementById(id);
@@ -2494,12 +2494,14 @@ function makeCard(){
 
   if(sched.p==='mock'){
     const mockDate = ts();
-    inner=`${tag}${topicHtml}<div class="day-sub">Weekly Exam / Mock Day</div><ul class="cl">
+    const mockHead = topicHtml ? '<div class="day-sub" style="margin-top:14px">Weekly Exam / Mock Tasks</div>' : '<div class="day-sub">Weekly Exam / Mock Day</div>';
+    inner=`${tag}${topicHtml}${mockHead}<ul class="cl">
       <li><label><input type="checkbox" id="m1_${mockDate}" ${remoteData['m1_'+mockDate] || remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
       <li><label><input type="checkbox" id="m2_${mockDate}" ${remoteData['m2_'+mockDate] || remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
       <li><label><input type="checkbox" id="m3_${mockDate}" ${remoteData['m3_'+mockDate] || remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
   } else if(sched.p==='catchup'){
-    inner=`${tag}${topicHtml}<div class="day-sub">Catchup Day</div><ul class="cl">
+    const catchupHead = topicHtml ? '<div class="day-sub" style="margin-top:14px">Catchup Day Tasks</div>' : '<div class="day-sub">Catchup Day</div>';
+    inner=`${tag}${topicHtml}${catchupHead}<ul class="cl">
       <li><label><input type="checkbox" id="cu1_${ts()}" ${remoteData['cu1_'+ts()]?'checked':''}><span>Revise pending topics</span></label></li>
       <li><label><input type="checkbox" id="cu2_${ts()}" ${remoteData['cu2_'+ts()]?'checked':''}><span>Clarify doubts with mentor</span></label></li>
       <li><label><input type="checkbox" id="cu3_${ts()}" ${remoteData['cu3_'+ts()]?'checked':''}><span>Practice past questions</span></label></li></ul>`;
@@ -2603,9 +2605,12 @@ function makeCard(){
   });
   const dm=$('daily_mock');
   if(dm)dm.addEventListener('change',e=>{syncMinorCheck('mock_'+ts(), e.target.checked);});
-  ['m1','m2','m3','e1','e2','e3'].forEach(id=>{
+  ['m1_'+ts(),'m2_'+ts(),'m3_'+ts(),'m1','m2','m3','e1','e2','e3'].forEach(id=>{
     const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{syncMinorCheck('misc_'+id, e.target.checked);});
+    if(b)b.addEventListener('change',e=>{
+      const key = (id.startsWith('m') && id.includes('_')) ? id : 'misc_'+id;
+      syncMinorCheck(key, e.target.checked);
+    });
   });
   ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
     const b=document.getElementById(id);
@@ -2753,16 +2758,32 @@ function updateAll(){
   });
 }
 
+let _currentTipKey = '';
 function renderStudyTip() {
   const tipEl = document.getElementById('acca-study-tip');
   if (!tipEl) return;
   const active = remoteData.activeCourse || DEFAULT_COURSE;
   if (!active.startsWith('ACCA') && active !== 'AA26') {
     tipEl.style.display = 'none';
+    _currentTipKey = '';
     return;
   }
-  const tipsArray = active === 'AA26' ? ACCA_AA_TIPS : ACCA_FR_TIPS;
-  const tipIndex = Math.floor(Math.random() * tipsArray.length);
+  const isAA = active === 'AA26';
+  const tipTitle = document.getElementById('acca-tip-title');
+  if (tipTitle) {
+    tipTitle.innerHTML = isAA ? '💡 ACCA AA Study Tip' : '💡 ACCA FR Study Tip';
+  }
+  const key = `${active}_${ts()}`;
+  if (_currentTipKey === key && tipEl.style.display === 'block') {
+    return;
+  }
+  _currentTipKey = key;
+  const tipsArray = isAA ? ACCA_AA_TIPS : ACCA_FR_TIPS;
+  if (!tipsArray || tipsArray.length === 0) return;
+  let dayHash = 0;
+  const todayStr = ts();
+  for (let i = 0; i < todayStr.length; i++) dayHash = ((dayHash << 5) - dayHash) + todayStr.charCodeAt(i);
+  const tipIndex = Math.abs(dayHash) % tipsArray.length;
   
   const tipText = document.getElementById('acca-tip-text');
   if (!tipText) return;
@@ -4274,7 +4295,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.21'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.22'; // bump this to force What's New popup for all users
 
 let _pendingUpdateWorker = null;
 
@@ -4342,31 +4363,31 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
+        <div class="wn-item-icon">📝</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Weekly Mock &amp; Catchup Task Persistence</div>
+          <div class="wn-item-desc">Weekly exam mock checklist items (timed attempt, scheme review, weak topics) and catchup tasks now automatically wire up, persist to cloud storage, and retain state across sessions.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">💡</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Stable Daily Study Tips</div>
+          <div class="wn-item-desc">Eliminated tip jitter and random rerolling on syllabus checkbox clicks with a deterministic daily tip, and dynamic ACCA AA vs FR guidance headers.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">📱</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Mobile UI &amp; Alignment Polish</div>
+          <div class="wn-item-desc">Refined mobile padding alignment to 14px flush with the header, optimized flexible card widths on narrow screens, and polished catchup day layouts.</div>
+        </div>
+      </div>
+      <div class="wn-item">
         <div class="wn-item-icon">🔔</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Resolved Update Badge &amp; What's New Conflict</div>
-          <div class="wn-item-desc">The floating update notification badge is now suppressed while viewing release notes, preventing it from obscuring the footer action button or release items on mobile.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🔄</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Seamless Update Reloads</div>
-          <div class="wn-item-desc">Tapping Reload on the update prompt seamlessly acknowledges release notes and prevents repeated modal popups across app refreshes.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">✕</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Header Close &amp; Backdrop Dismissal</div>
-          <div class="wn-item-desc">Added a direct header close button and backdrop click dismissal to What's New, plus a quick-dismiss option on the update toast badge.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🛡️</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Accidental Touch Border Fix</div>
-          <div class="wn-item-desc">Clean touch interaction without flashing outlines or accidental hover borders on cards and tabs.</div>
+          <div class="wn-item-title">Update Notification &amp; Modal Polish</div>
+          <div class="wn-item-desc">Smooth update banner interactions, direct modal dismissal, and seamless reload handling across devices.</div>
         </div>
       </div>
       <div class="wn-item">
