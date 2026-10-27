@@ -531,14 +531,14 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     <div class="wn-hdr" style="position:relative;">
       <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.22</div>
+      <div class="wn-title" id="wn-title">Version 2.2.23</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
       <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">Highlights</div>
-        <div class="wn-item"><div class="wn-item-icon">📝</div><div class="wn-item-text"><div class="wn-item-title">Weekly Mock &amp; Catchup Persistence</div><div class="wn-item-desc">Weekly exam mock and catchup checklist items now automatically wire up, persist, and synchronize with your study records across sessions.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">💡</div><div class="wn-item-text"><div class="wn-item-title">Stable Daily Study Tips</div><div class="wn-item-desc">Eliminated study tip flickering on checklist clicks with stable daily study wisdom and tailored ACCA AA &amp; FR guidance.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">📱</div><div class="wn-item-text"><div class="wn-item-title">Mobile UI &amp; Alignment Polish</div><div class="wn-item-desc">Refined mobile padding alignment, adaptive countdown cards, and clean vertical rhythm for special catchup sessions.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">⏱️</div><div class="wn-item-text"><div class="wn-item-title">Peak Study Time &amp; Correlator Fix</div><div class="wn-item-desc">Resolved the 100% bug on Best Time to Study. Now accurately calculates study output share, topic volume, and true circadian performance across Morning, Afternoon, Evening, and Night.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Visual Daily Distribution Heat Bar</div><div class="wn-item-desc">Added a sleek unified segmented activity bar and peak highlight rings to visually analyze your study schedule.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📝</div><div class="wn-item-text"><div class="wn-item-title">Enhanced Session History &amp; Difficulty Badges</div><div class="wn-item-desc">Recorded study sessions now capture session duration and display difficulty ratings (Easy, Medium, Hard) directly in your stats history.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
@@ -656,6 +656,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     </div>
     <div id="productivity-correlator-card" style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div id="productivity-summary-badge" style="margin-bottom:16px;"></div>
+      <div id="productivity-distribution-bar" style="display:none;margin-bottom:16px;"></div>
       <div class="lb-stats" id="productivity-buckets" style="gap:10px;margin:0;flex-wrap:wrap;"></div>
       <div id="productivity-insight-box" style="margin-top:16px;padding:14px 16px;border-radius:12px;font-size:0.84rem;line-height:1.5;background:var(--s2);border:1px solid var(--border);"></div>
     </div>
@@ -714,7 +715,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.22</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.23</div>
         </div>
       </div>
     </div>
@@ -795,7 +796,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.22)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.23)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1071,7 +1072,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.22';
+const APP_VERSION = '2.2.23';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -4019,131 +4020,285 @@ function renderProductivityCorrelator() {
   const badgeEl = $('productivity-summary-badge');
   const bucketsEl = $('productivity-buckets');
   const insightEl = $('productivity-insight-box');
+  const distBarEl = $('productivity-distribution-bar');
   if (!card || !bucketsEl || !insightEl) return;
 
   const bucketMeta = [
-    { key: 'morning', label: 'Morning (6am-12pm)', icon: '🌅' },
-    { key: 'afternoon', label: 'Afternoon (12pm-6pm)', icon: '☀️' },
-    { key: 'evening', label: 'Evening (6pm-10pm)', icon: '🌆' },
-    { key: 'night', label: 'Late Night (10pm-6am)', icon: '🌙' }
+    { key: 'morning', label: 'Morning (6am-12pm)', shortLabel: 'Morning', icon: '🌅', color: '#54a2ff' },
+    { key: 'afternoon', label: 'Afternoon (12pm-6pm)', shortLabel: 'Afternoon', icon: '☀️', color: '#f59e0b' },
+    { key: 'evening', label: 'Evening (6pm-10pm)', shortLabel: 'Evening', icon: '🌆', color: '#a855f7' },
+    { key: 'night', label: 'Late Night (10pm-6am)', shortLabel: 'Late Night', icon: '🌙', color: '#6366f1' }
   ];
 
-  // Recompute from _loggedSessions (always accurate, no stale data)
-  // For each bucket: count unique topic IDs logged as "attempts".
-  // A topic counts as "mastered" only if remoteData[id] === true.
-  // Notes-only sessions (no topics) count as 1 attempt + 1 mastered.
-  const bucketTopics = { morning: new Map(), afternoon: new Map(), evening: new Map(), night: new Map() };
   const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
   const cd = COURSE_DATA[activeCourse];
   const validTopicIds = new Set();
   if (cd && cd.subjs) {
     Object.values(cd.subjs).forEach(s => { if (s && s.ids) s.ids.forEach(id => validTopicIds.add(id)); });
   }
+
+  // Filter logged sessions for active course
   const loggedSessions = (remoteData._loggedSessions || []).filter(s => {
     if (s.course) return s.course === activeCourse;
     if (s._topicIds && s._topicIds.length > 0) return s._topicIds.some(id => validTopicIds.has(id));
     return true;
   });
 
+  // Track activity per bucket
+  const bucketData = {
+    morning: { count: 0, sessions: 0, durationMin: 0, focusSum: 0, uniqueTopics: new Set() },
+    afternoon: { count: 0, sessions: 0, durationMin: 0, focusSum: 0, uniqueTopics: new Set() },
+    evening: { count: 0, sessions: 0, durationMin: 0, focusSum: 0, uniqueTopics: new Set() },
+    night: { count: 0, sessions: 0, durationMin: 0, focusSum: 0, uniqueTopics: new Set() }
+  };
+
   loggedSessions.forEach(session => {
-    const bk = session.bucket;
-    if (!bk || !bucketTopics[bk]) return;
-    const ids = session._topicIds;
-    if (ids && ids.length > 0) {
-      ids.forEach(id => {
-        if (!bucketTopics[bk].has(id)) {
-          bucketTopics[bk].set(id, remoteData[id] === true);
-        } else if (remoteData[id] === true) {
-          bucketTopics[bk].set(id, true); // upgrade to mastered if now complete
+    let bk = session.bucket;
+    if (!bk || !bucketData[bk]) {
+      // derive bucket from session.time if missing
+      try {
+        const timePart = (session.time || '').split('-')[0].trim();
+        let h = 12;
+        if (timePart.includes('AM') || timePart.includes('PM') || timePart.includes('am') || timePart.includes('pm')) {
+          const match = timePart.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+          if (match) {
+            h = parseInt(match[1], 10);
+            const ap = match[3] ? match[3].toUpperCase() : null;
+            if (ap === 'PM' && h < 12) h += 12;
+            if (ap === 'AM' && h === 12) h = 0;
+          }
+        } else if (timePart.includes(':')) {
+          h = parseInt(timePart.split(':')[0], 10);
         }
-      });
-    } else {
-      // Notes-only session: sentinel key per session
-      const sentinel = '__note__' + session.id;
-      if (!bucketTopics[bk].has(sentinel)) bucketTopics[bk].set(sentinel, true);
+        if (h >= 6 && h < 12) bk = 'morning';
+        else if (h >= 12 && h < 18) bk = 'afternoon';
+        else if (h >= 18 && h < 22) bk = 'evening';
+        else bk = 'night';
+      } catch(e) { bk = 'afternoon'; }
     }
+    if (!bucketData[bk]) return;
+
+    const ids = session._topicIds || [];
+    const topicCount = ids.length > 0 ? ids.length : (session.count || 1);
+    bucketData[bk].count += topicCount;
+    bucketData[bk].sessions += 1;
+    ids.forEach(id => bucketData[bk].uniqueTopics.add(id));
+
+    // Duration calculation
+    let dur = session.durationMin;
+    if (!dur && session.time && session.time.includes('-')) {
+      try {
+        const parts = session.time.split('-').map(p => p.trim());
+        const parseMinutes = (str) => {
+          const match = str.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+          if (!match) return 0;
+          let hr = parseInt(match[1], 10);
+          const mn = parseInt(match[2], 10);
+          const ap = match[3] ? match[3].toUpperCase() : null;
+          if (ap === 'PM' && hr < 12) hr += 12;
+          if (ap === 'AM' && hr === 12) hr = 0;
+          return hr * 60 + mn;
+        };
+        const sMin = parseMinutes(parts[0]);
+        const eMin = parseMinutes(parts[1]);
+        let d = eMin - sMin;
+        if (d < 0) d += 24 * 60;
+        if (d > 0 && d <= 720) dur = d;
+      } catch(e) {}
+    }
+    bucketData[bk].durationMin += (dur || (topicCount * 40));
+
+    // Cognitive focus weight: easy (1.0), medium (0.85), hard (0.60)
+    let focusWeight = 0.85;
+    if (session.difficulty === 'easy') focusWeight = 1.0;
+    else if (session.difficulty === 'hard') focusWeight = 0.60;
+    bucketData[bk].focusSum += focusWeight;
   });
+
+  // If no sessions were logged through the modal, fallback to checklist ticks from _timeAccuracy
+  const hasLoggedSessions = loggedSessions.length > 0;
+  if (!hasLoggedSessions && remoteData._timeAccuracy) {
+    bucketMeta.forEach(bm => {
+      const stat = remoteData._timeAccuracy[bm.key];
+      if (stat && stat.attempts > 0) {
+        bucketData[bm.key].count = stat.attempts;
+        bucketData[bm.key].sessions = Math.max(1, Math.round(stat.attempts / 2));
+        bucketData[bm.key].focusSum = stat.attempts * 0.85;
+      }
+    });
+  }
+
+  // Calculate total activity across all buckets
+  let totalActivity = 0;
+  bucketMeta.forEach(bm => {
+    totalActivity += bucketData[bm.key].count;
+  });
+  if (totalActivity === 0) {
+    bucketMeta.forEach(bm => { totalActivity += bucketData[bm.key].sessions; });
+  }
 
   const analyzed = bucketMeta.map(bm => {
-    let attempts = 0, correct = 0;
-    bucketTopics[bm.key].forEach(mastered => {
-      attempts++;
-      if (mastered) correct++;
-    });
-    const acc = attempts > 0 ? Math.round((correct / attempts) * 100) : null;
-    return { ...bm, attempts, correct, acc };
+    const d = bucketData[bm.key];
+    const activity = d.count > 0 ? d.count : d.sessions;
+    const share = totalActivity > 0 ? Math.round((activity / totalActivity) * 100) : 0;
+    const focusScore = d.sessions > 0 ? Math.round((d.focusSum / d.sessions) * 100) : (d.count > 0 ? 85 : null);
+    return {
+      ...bm,
+      topicsCount: d.count,
+      sessionsCount: d.sessions,
+      durationMin: d.durationMin,
+      share: activity > 0 ? share : 0,
+      focusScore,
+      activity
+    };
   });
 
-  // Order active time buckets by accuracy descending
-  const active = analyzed.filter(b => b.acc !== null && b.attempts > 0).sort((a, b) => b.acc - a.acc);
-  const peak = active.length > 0 ? active[0] : analyzed[0];
-  const lowest = active.length > 1 ? active[active.length - 1] : null;
+  // Order active buckets by activity share descending, then focus score
+  const activeBuckets = analyzed.filter(b => b.activity > 0).sort((a, b) => b.activity - a.activity || (b.focusScore || 0) - (a.focusScore || 0));
+  const peak = activeBuckets.length > 0 ? activeBuckets[0] : null;
+  const lowest = activeBuckets.length > 1 ? activeBuckets[activeBuckets.length - 1] : null;
 
+  // Render Summary Badge
   if (badgeEl) {
-    if (active.length > 0 && peak.acc !== null) {
+    if (peak && totalActivity > 0) {
       badgeEl.innerHTML = `
-        <span style="font-size:0.75rem;font-weight:800;background:rgba(40,212,142,0.16);color:var(--green);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
-          <span>⚡ PEAK COGNITIVE EFFICIENCY:</span> <span>${peak.icon} ${peak.label.split(' ')[0].toUpperCase()} (${peak.acc}% MASTERY)</span>
+        <span style="font-size:0.75rem;font-weight:800;background:rgba(84,162,255,0.14);color:var(--blue);border:1px solid rgba(84,162,255,0.3);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
+          <span>⚡ PEAK STUDY TIME:</span> <span>${peak.icon} ${peak.shortLabel.toUpperCase()} (${peak.share}% OF STUDY OUTPUT)</span>
         </span>
       `;
     } else {
       badgeEl.innerHTML = `
         <span style="font-size:0.75rem;font-weight:700;background:var(--s2);color:var(--dim);border:1px solid var(--border);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
-          <span>💡 STUDY TIP:</span> <span>LOG SESSIONS TO DISCOVER YOUR PEAK PRODUCTIVITY HOURS</span>
+          <span>💡 STUDY TIP:</span> <span>LOG SESSIONS OR CHECK SYLLABUS TOPICS TO DISCOVER YOUR PEAK HOURS</span>
         </span>
       `;
     }
   }
 
+  // Render Unified Daily Distribution Bar
+  if (distBarEl) {
+    if (totalActivity > 0) {
+      const segments = analyzed.filter(b => b.share > 0).map(b => {
+        return `<div title="${b.shortLabel}: ${b.share}% (${b.topicsCount} topics)" style="width:${b.share}%;height:100%;background:${b.color};transition:width 0.4s ease;"></div>`;
+      }).join('');
+      distBarEl.innerHTML = `
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.72rem;color:var(--dim);font-weight:600;">
+            <span style="display:flex;align-items:center;gap:5px;">📊 <span>Study Time Distribution</span></span>
+            <span style="font-family:var(--mono);color:var(--text);">${totalActivity} topic${totalActivity !== 1 ? 's' : ''} recorded</span>
+          </div>
+          <div style="width:100%;height:8px;background:var(--s3);border-radius:99px;overflow:hidden;display:flex;">
+            ${segments}
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:0.68rem;color:var(--dim);">
+            ${analyzed.filter(b => b.share > 0).map(b => `
+              <span style="display:inline-flex;align-items:center;gap:4px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:${b.color};display:inline-block;"></span>
+                <span>${b.shortLabel}: <strong style="color:var(--text);font-family:var(--mono);">${b.share}%</strong></span>
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      distBarEl.style.display = 'block';
+    } else {
+      distBarEl.innerHTML = '';
+      distBarEl.style.display = 'none';
+    }
+  }
+
+  // Render 4 Bucket Cards
   bucketsEl.innerHTML = analyzed.map(b => {
-    let textColor = 'var(--text)';
-    if (b.acc !== null && b.acc >= 75) textColor = 'var(--green)';
-    else if (b.acc !== null && b.acc < 55) textColor = 'var(--red)';
-    else if (b.acc !== null) textColor = '#54a2ff';
+    const isPeak = peak && peak.key === b.key && totalActivity > 0;
+    const cardBorder = isPeak ? 'border:1.5px solid rgba(84,162,255,0.45);' : 'border:1px solid var(--border);';
+    const cardBg = isPeak ? 'background:linear-gradient(170deg, rgba(84,162,255,0.08), var(--s2));box-shadow:0 6px 18px rgba(84,162,255,0.12);' : 'background:var(--s2);';
+    const textColor = b.share > 0 ? (isPeak ? 'var(--blue)' : 'var(--text)') : 'var(--dim)';
+
+    let timeRange = '6am - 12pm';
+    if (b.key === 'afternoon') timeRange = '12pm - 6pm';
+    else if (b.key === 'evening') timeRange = '6pm - 10pm';
+    else if (b.key === 'night') timeRange = '10pm - 6am';
+
+    let detailStr = '0 topics · No activity';
+    if (b.topicsCount > 0 && b.sessionsCount > 0) {
+      detailStr = `${b.topicsCount} topic${b.topicsCount !== 1 ? 's' : ''} · ${b.sessionsCount} session${b.sessionsCount !== 1 ? 's' : ''}`;
+    } else if (b.topicsCount > 0) {
+      detailStr = `${b.topicsCount} topic${b.topicsCount !== 1 ? 's' : ''} completed`;
+    } else if (b.sessionsCount > 0) {
+      detailStr = `${b.sessionsCount} session${b.sessionsCount !== 1 ? 's' : ''} logged`;
+    }
+
+    const durationStr = b.durationMin > 0 
+      ? (b.durationMin >= 60 ? `${(b.durationMin / 60).toFixed(1)}h` : `${b.durationMin}m`) 
+      : null;
 
     return `
-      <div class="lb-stat" style="flex:1;min-width:140px;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;">
-        <div style="font-size:0.75rem;color:var(--dim);display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-          <span>${b.icon}</span> <strong style="color:var(--text);">${b.label.split(' ')[0]}</strong>
+      <div class="lb-stat" style="flex:1;min-width:140px;${cardBg}${cardBorder}border-radius:14px;padding:14px 16px;position:relative;overflow:hidden;transition:all 0.2s ease;">
+        <div style="font-size:0.75rem;color:var(--dim);display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span>${b.icon}</span> <strong style="color:var(--text);font-size:0.82rem;">${b.shortLabel}</strong>
+          </div>
+          ${isPeak ? '<span style="font-size:0.62rem;font-weight:800;color:var(--blue);background:rgba(84,162,255,0.16);padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">Peak</span>' : ''}
         </div>
-        <div class="lb-stat-val" style="color:${textColor};font-size:1.5rem;font-weight:800;margin-bottom:4px;">
-          ${b.acc !== null ? b.acc + '%' : '—'}
+        <div style="font-size:0.65rem;color:var(--dim);font-family:var(--mono);margin-bottom:8px;">${timeRange}</div>
+        <div class="lb-stat-val" style="color:${textColor};font-size:1.6rem;font-weight:800;margin-bottom:4px;letter-spacing:-0.02em;">
+          ${b.share > 0 ? b.share + '%' : '—'}
         </div>
-        <div style="font-size:0.7rem;color:var(--dim);font-family:var(--font);font-weight:500;">
-          ${b.correct} of ${b.attempts} unique topics mastered
+        <div style="width:100%;height:4px;background:var(--s3);border-radius:99px;margin:8px 0;overflow:hidden;">
+          <div style="width:${b.share}%;height:100%;background:${b.color};border-radius:99px;transition:width 0.4s ease;"></div>
+        </div>
+        <div style="font-size:0.7rem;color:var(--dim);font-family:var(--font);font-weight:500;line-height:1.35;">
+          ${detailStr}${durationStr ? ` · <span style="font-family:var(--mono);color:var(--text);opacity:0.85">${durationStr}</span>` : ''}
         </div>
       </div>
     `;
   }).join('');
 
-  if (peak && lowest && lowest.acc < peak.acc) {
-    const diff = peak.acc - lowest.acc;
-    const activeCourse = remoteData.activeCourse || 'CSEB11';
-    let courseAdvice = "your hardest syllabus topics and challenging practice problems";
+  // Render Actionable Advice in Insight Box
+  if (peak && lowest && activeBuckets.length > 1 && peak.share > lowest.share) {
+    const diff = peak.share - lowest.share;
+    let courseAdvice = "your hardest syllabus topics, problem sets, and demanding calculations";
     if (activeCourse.startsWith('ACCA')) {
-      courseAdvice = "your toughest IFRS standards, consolidations, and complex accounting calculations";
+      courseAdvice = "your toughest IFRS standards, group consolidations, and multi-part Section C questions";
     } else if (activeCourse === 'AA26') {
-      courseAdvice = "your most complex audit procedures, risk assessments, and challenging ethical scenarios";
+      courseAdvice = "complex audit risk evaluations, substantive procedures, and scenario reporting questions";
     } else if (activeCourse === 'CAT09') {
-      courseAdvice = "heavy KCS Act statutory rules, legal sections, and challenging co-operative theory";
+      courseAdvice = "heavy KCS Act statutory rules, legal provisions, and detailed co-operative theory";
     } else if (activeCourse === 'CLERK26' || activeCourse === 'CSEB11') {
-      courseAdvice = "difficult banking reasoning, tricky accounting calculations, and core co-operation rules";
+      courseAdvice = "difficult banking numericals, logical reasoning puzzles, and core co-operation provisions";
     }
+
     insightEl.innerHTML = `
-      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours &amp; Schedule Advice</strong>
-      <span style="color:var(--text);opacity:0.92;display:block;margin-bottom:8px;">
-        You study best during the <strong>${peak.label}</strong>, achieving a high <strong>${peak.acc}%</strong> topic completion rate! However, your focus drops by <strong>${diff}%</strong> during the <strong>${lowest.label}</strong> (down to <strong>${lowest.acc}%</strong>).
+      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours &amp; Circadian Schedule Advice</strong>
+      <span style="color:var(--text);opacity:0.92;display:block;margin-bottom:10px;line-height:1.55;">
+        You achieve your highest study output during the <strong>${peak.label}</strong>, completing <strong>${peak.share}%</strong> of your total topics! Your productivity is lowest during the <strong>${lowest.label}</strong> (${lowest.share}% of output, a <strong>${diff}% drop</strong>).
       </span>
-      <div style="background:rgba(84,162,255,0.08);border-left:4px solid var(--blue);padding:10px 12px;border-radius:8px;">
-        <strong style="color:var(--accent);font-size:0.8rem;display:block;margin-bottom:2px;">🎯 STUDY SMART ADVICE:</strong>
-        <span style="font-size:0.8rem;color:var(--text);opacity:0.9;">Tackle ${courseAdvice} during the <strong>${peak.label.split(' ')[0]}</strong> when your mind is freshest. Save light reading, quick revisions, or rest for your slower hours!</span>
+      <div style="background:rgba(84,162,255,0.08);border-left:4px solid var(--blue);padding:10px 14px;border-radius:8px;">
+        <strong style="color:var(--accent);font-size:0.78rem;display:block;margin-bottom:3px;letter-spacing:0.04em;">🎯 STUDY SMART SCHEDULE:</strong>
+        <span style="font-size:0.8rem;color:var(--text);opacity:0.92;line-height:1.5;display:block;">
+          Schedule ${courseAdvice} during the <strong>${peak.shortLabel}</strong> when your mental stamina is at its peak. Save quick flashcard flips, light reading, or rest for your <strong>${lowest.shortLabel}</strong>!
+        </span>
       </div>
+    `;
+  } else if (peak && activeBuckets.length === 1) {
+    insightEl.innerHTML = `
+      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours Analysis</strong>
+      <span style="color:var(--text);opacity:0.92;line-height:1.5;display:block;">
+        All your recorded study activity is currently concentrated in the <strong>${peak.label}</strong> (${peak.topicsCount} topic${peak.topicsCount !== 1 ? 's' : ''}). Try scheduling study sessions in other windows (Morning vs Afternoon vs Evening) to discover your optimal circadian flow!
+      </span>
+    `;
+  } else if (totalActivity > 0) {
+    insightEl.innerHTML = `
+      <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours Analysis</strong>
+      <span style="color:var(--text);opacity:0.92;line-height:1.5;display:block;">
+        Your study output is evenly balanced across multiple times of the day! Keep completing topics and logging study sessions to uncover your natural peak study hours.
+      </span>
     `;
   } else {
     insightEl.innerHTML = `
       <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours Analysis</strong>
-      <span style="color:var(--text);opacity:0.92;">
-        Your study performance is currently balanced across different times of the day! Keep completing topics and revisions across morning, afternoon, evening, and night to discover your personal peak study hours.
+      <span style="color:var(--dim);line-height:1.5;display:block;">
+        No study sessions logged yet. Tap the <strong>📝 Log Study Session</strong> button on the dashboard or check off syllabus topics to unlock your personalized peak productivity insights here!
       </span>
     `;
   }
@@ -4295,7 +4450,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.22'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.23'; // bump this to force What's New popup for all users
 
 let _pendingUpdateWorker = null;
 
@@ -4363,17 +4518,24 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
-        <div class="wn-item-icon">📝</div>
+        <div class="wn-item-icon">⏱️</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Weekly Mock &amp; Catchup Task Persistence</div>
-          <div class="wn-item-desc">Weekly exam mock checklist items (timed attempt, scheme review, weak topics) and catchup tasks now automatically wire up, persist to cloud storage, and retain state across sessions.</div>
+          <div class="wn-item-title">Peak Study Time &amp; Correlator Fix</div>
+          <div class="wn-item-desc">Resolved the issue where all times of day showed 100%. The correlator now accurately displays your actual study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">💡</div>
+        <div class="wn-item-icon">📊</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Stable Daily Study Tips</div>
-          <div class="wn-item-desc">Eliminated tip jitter and random rerolling on syllabus checkbox clicks with a deterministic daily tip, and dynamic ACCA AA vs FR guidance headers.</div>
+          <div class="wn-item-title">Visual Daily Distribution Heat Bar</div>
+          <div class="wn-item-desc">Interactive unified segmented distribution bar and peak highlight rings to visually analyze your study schedule and focus windows.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">📝</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Enhanced Session History &amp; Difficulty Badges</div>
+          <div class="wn-item-desc">Recorded study sessions now capture session duration and display difficulty ratings (Easy, Medium, Hard) directly in your stats history.</div>
         </div>
       </div>
       <div class="wn-item">
@@ -4381,13 +4543,6 @@ function buildWhatsNewHTML(){
         <div class="wn-item-text">
           <div class="wn-item-title">Mobile UI &amp; Alignment Polish</div>
           <div class="wn-item-desc">Refined mobile padding alignment to 14px flush with the header, optimized flexible card widths on narrow screens, and polished catchup day layouts.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">🔔</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Update Notification &amp; Modal Polish</div>
-          <div class="wn-item-desc">Smooth update banner interactions, direct modal dismissal, and seamless reload handling across devices.</div>
         </div>
       </div>
       <div class="wn-item">
@@ -5442,12 +5597,20 @@ function renderStatsLoggedSessions() {
     const safeFormattedTime = escapeHTML(formattedTime || '');
     const safeDate = escapeHTML(s.date || '');
     const safeId = escapeHTML(s.id || '');
+    const diffBadge = s.difficulty ? `
+      <span style="font-size:0.68rem;font-weight:700;padding:2px 7px;border-radius:6px;${s.difficulty === 'easy' ? 'background:rgba(40,212,142,0.14);color:var(--green);' : s.difficulty === 'hard' ? 'background:rgba(224,80,80,0.14);color:var(--red);' : 'background:rgba(84,162,255,0.14);color:var(--blue);'}">
+        ${s.difficulty === 'easy' ? '😊 Easy' : s.difficulty === 'hard' ? '😵 Hard' : '😐 Medium'}
+      </span>
+    ` : '';
+    const durStr = s.durationMin ? `<span style="font-size:0.7rem;font-weight:600;color:var(--dim);font-family:var(--mono);">${s.durationMin >= 60 ? (s.durationMin / 60).toFixed(1) + 'h' : s.durationMin + 'm'}</span>` : '';
 
     card.innerHTML = `
         <div style="flex:1;min-width:200px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
             <span style="font-size:0.9rem;font-weight:800;color:var(--text);display:inline-block;word-break:break-word;margin-right:4px;">${safeSubj}</span>
             <span style="font-size:0.7rem;font-weight:700;color:var(--blue);background:rgba(84,162,255,0.12);padding:2px 8px;border-radius:99px;white-space:nowrap;">${s.count} topic${s.count !== 1 ? 's' : ''} completed</span>
+            ${diffBadge}
+            ${durStr}
           </div>
           <div style="font-size:0.78rem;color:var(--dim);line-height:1.4;overflow:hidden;text-overflow:ellipsis;">
             ${safeTopics}
@@ -5547,7 +5710,6 @@ function deleteLoggedSession(id) {
   updateAll();
   if (typeof renderPending === 'function') renderPending();
   if (typeof renderRevisions === 'function') renderRevisions();
-  if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   if (typeof renderProductivityCorrelator === 'function') renderProductivityCorrelator();
   renderStatsLoggedSessions();
 }
@@ -5730,6 +5892,15 @@ async function saveLogSession() {
 
   if (!remoteData._loggedSessions) remoteData._loggedSessions = [];
   const select = $('ls-subject');
+  let durationMin = 60;
+  try {
+    const [sh, sm] = timeVal.split(':').map(Number);
+    const [eh, em] = endTimeVal.split(':').map(Number);
+    let diff = (eh * 60 + em) - (sh * 60 + sm);
+    if (diff < 0) diff += 24 * 60;
+    if (diff > 0) durationMin = diff;
+  } catch(e) {}
+
   const sessionRecord = {
     id: 'sec_' + Date.now(),
     course: remoteData.activeCourse || DEFAULT_COURSE,
@@ -5737,6 +5908,8 @@ async function saveLogSession() {
     time: format12Hour(timeVal) + ' - ' + format12Hour(endTimeVal),
     bucket: bucket,
     count: topicIds.length,
+    durationMin: durationMin,
+    difficulty: selectedDiff,
     subjName: select ? (select.options[select.selectedIndex]?.text.split(' (')[0] || 'Syllabus') : 'Syllabus',
     topics: topicIds.map(id => (typeof getCourseData === 'function' ? getCourseData().labels[id] : id) || id).slice(0, 5),
     notes: $('ls-notes') ? $('ls-notes').value.trim() : '',
