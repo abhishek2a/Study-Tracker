@@ -531,14 +531,14 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     <div class="wn-hdr" style="position:relative;">
       <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.23</div>
+      <div class="wn-title" id="wn-title">Version 2.2.24</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
       <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">Highlights</div>
-        <div class="wn-item"><div class="wn-item-icon">⏱️</div><div class="wn-item-text"><div class="wn-item-title">Peak Study Time &amp; Correlator Fix</div><div class="wn-item-desc">Resolved the 100% bug on Best Time to Study. Now accurately calculates study output share, topic volume, and true circadian performance across Morning, Afternoon, Evening, and Night.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🏆</div><div class="wn-item-text"><div class="wn-item-title">90+ Rank Holder Target</div><div class="wn-item-desc">Updated exam-anchored spaced repetition target badge and top readiness index to 90+ Rank Holder benchmark.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">⏱️</div><div class="wn-item-text"><div class="wn-item-title">Peak Study Time &amp; Correlator</div><div class="wn-item-desc">Accurately tracks study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div></div></div>
         <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Visual Daily Distribution Heat Bar</div><div class="wn-item-desc">Added a sleek unified segmented activity bar and peak highlight rings to visually analyze your study schedule.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">📝</div><div class="wn-item-text"><div class="wn-item-title">Enhanced Session History &amp; Difficulty Badges</div><div class="wn-item-desc">Recorded study sessions now capture session duration and display difficulty ratings (Easy, Medium, Hard) directly in your stats history.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
@@ -715,7 +715,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.23</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.24</div>
         </div>
       </div>
     </div>
@@ -796,7 +796,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.23)</span>
+          <span id="settings-whats-new-text">View What's New (v2.2.24)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1072,7 +1072,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.23';
+const APP_VERSION = '2.2.24';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -2893,7 +2893,7 @@ function getCourseExamTarget(courseKey) {
   let name = 'ACCA Financial Reporting (FR)';
   let shortName = 'Dec 10 FR Exam';
   let isPostponed = false;
-  let targetScore = '75%+ Distinction';
+  let targetScore = '90+ Rank Holder';
   let subjectCode = 'FR';
 
   if (c === 'ACCA26_P2') {
@@ -3238,15 +3238,15 @@ function renderRevisions(){
 
   let readinessColor = 'var(--red)';
   let readinessBadge = '⚠️ Building Foundation';
-  if (readiness >= 85) {
+  if (readiness >= 90) {
     readinessColor = 'var(--green)';
-    readinessBadge = '🏆 85%+ Rank Ready';
-  } else if (readiness >= 70) {
+    readinessBadge = '🏆 90+ Rank Holder';
+  } else if (readiness >= 75) {
     readinessColor = 'var(--blue)';
-    readinessBadge = '🌟 70–84 Marks (Distinction)';
+    readinessBadge = '🌟 75–89 Marks (Distinction)';
   } else if (readiness >= 50) {
     readinessColor = 'var(--accent)';
-    readinessBadge = '📈 50–69 Marks';
+    readinessBadge = '📈 50–74 Marks';
   }
 
   // Pacing Strategy & Roadmap
@@ -3300,7 +3300,7 @@ function renderRevisions(){
           ${examTarget && !examTarget.isPostponed && daysLeft > 0 ? `
             <div class="sr-pill-countdown">⏰ ${daysLeft} Days to ${examTarget.shortName}</div>
           ` : ''}
-          <div class="sr-pill-target">🏆 ${examTarget ? examTarget.targetScore : '75%+ Distinction'}</div>
+          <div class="sr-pill-target">🏆 ${examTarget ? examTarget.targetScore : '90+ Rank Holder'}</div>
         </div>
       </div>
 
@@ -4450,7 +4450,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.23'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.2.24'; // bump this to force What's New popup for all users
 
 let _pendingUpdateWorker = null;
 
@@ -4518,10 +4518,17 @@ function buildWhatsNewHTML(){
     <div class="wn-section">
       <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
       <div class="wn-item">
+        <div class="wn-item-icon">🏆</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">90+ Rank Holder Target Benchmark</div>
+          <div class="wn-item-desc">Updated the spaced repetition exam target badge and top readiness index to the ambitious 90+ Rank Holder standard.</div>
+        </div>
+      </div>
+      <div class="wn-item">
         <div class="wn-item-icon">⏱️</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Peak Study Time &amp; Correlator Fix</div>
-          <div class="wn-item-desc">Resolved the issue where all times of day showed 100%. The correlator now accurately displays your actual study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div>
+          <div class="wn-item-title">Peak Study Time &amp; Correlator</div>
+          <div class="wn-item-desc">Accurately tracks your actual study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div>
         </div>
       </div>
       <div class="wn-item">
@@ -4536,13 +4543,6 @@ function buildWhatsNewHTML(){
         <div class="wn-item-text">
           <div class="wn-item-title">Enhanced Session History &amp; Difficulty Badges</div>
           <div class="wn-item-desc">Recorded study sessions now capture session duration and display difficulty ratings (Easy, Medium, Hard) directly in your stats history.</div>
-        </div>
-      </div>
-      <div class="wn-item">
-        <div class="wn-item-icon">📱</div>
-        <div class="wn-item-text">
-          <div class="wn-item-title">Mobile UI &amp; Alignment Polish</div>
-          <div class="wn-item-desc">Refined mobile padding alignment to 14px flush with the header, optimized flexible card widths on narrow screens, and polished catchup day layouts.</div>
         </div>
       </div>
       <div class="wn-item">
