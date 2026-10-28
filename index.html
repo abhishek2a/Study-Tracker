@@ -531,14 +531,14 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     <div class="wn-hdr" style="position:relative;">
       <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.2.24</div>
+      <div class="wn-title" id="wn-title">Version 2.3.0</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
-      <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">Highlights</div>
-        <div class="wn-item"><div class="wn-item-icon">🏆</div><div class="wn-item-text"><div class="wn-item-title">90+ Rank Holder Target</div><div class="wn-item-desc">Updated exam-anchored spaced repetition target badge and top readiness index to 90+ Rank Holder benchmark.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">⏱️</div><div class="wn-item-text"><div class="wn-item-title">Peak Study Time &amp; Correlator</div><div class="wn-item-desc">Accurately tracks study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">📊</div><div class="wn-item-text"><div class="wn-item-title">Visual Daily Distribution Heat Bar</div><div class="wn-item-desc">Added a sleek unified segmented activity bar and peak highlight rings to visually analyze your study schedule.</div></div></div>
+      <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">🤖 Gen 2 Adaptive AI Highlights</div>
+        <div class="wn-item"><div class="wn-item-icon">🧬</div><div class="wn-item-text"><div class="wn-item-title">Forgetting Curve Per Topic</div><div class="wn-item-desc">Tracks real retention decay dynamically per topic based on interval, reviews, and cognitive ease.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">🔮</div><div class="wn-item-text"><div class="wn-item-title">Predictive Weak Topic Alerts</div><div class="wn-item-desc">Proactively detects topics tracking to slip below 60% retention within 3 days before you forget them.</div></div></div>
+        <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">Exam Score Simulator</div><div class="wn-item-desc">Live projected exam score range computed from syllabus coverage, multi-pass depth, and retention.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
@@ -715,7 +715,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.2.24</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.3.0</div>
         </div>
       </div>
     </div>
@@ -796,7 +796,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.2.24)</span>
+          <span id="settings-whats-new-text">View What's New (v2.3.0)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -1072,7 +1072,7 @@ try {
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.2.24';
+const APP_VERSION = '2.3.0';
 // Course data registry — add new courses here as COURSE_CODES[key]
 const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
 const DEFAULT_COURSE='CSEB11';
@@ -2764,35 +2764,65 @@ function renderStudyTip() {
   const tipEl = document.getElementById('acca-study-tip');
   if (!tipEl) return;
   const active = remoteData.activeCourse || DEFAULT_COURSE;
-  if (!active.startsWith('ACCA') && active !== 'AA26') {
-    tipEl.style.display = 'none';
-    _currentTipKey = '';
-    return;
-  }
-  const isAA = active === 'AA26';
+  const courseName = COURSE_CODES[active] || active;
   const tipTitle = document.getElementById('acca-tip-title');
-  if (tipTitle) {
-    tipTitle.innerHTML = isAA ? '💡 ACCA AA Study Tip' : '💡 ACCA FR Study Tip';
+  const tipText = document.getElementById('acca-tip-text');
+  if (!tipText) return;
+
+  const cd = COURSE_DATA[active];
+  const activeLabels = cd ? (cd.labels || {}) : {};
+  const srData = remoteData._sr || {};
+
+  // Check for weak topics or repeatedly hard topics (Gen 2 Adaptive Tip Engine)
+  let weakNames = [];
+  if (typeof getDriftedTopics === 'function') {
+    const drifted = getDriftedTopics(remoteData._loggedSessions || [], activeLabels);
+    if (drifted && drifted.length > 0) weakNames.push(drifted[0].name);
   }
-  const key = `${active}_${ts()}`;
+  if (weakNames.length === 0 && typeof getPredictiveWeakTopics === 'function') {
+    const pred = getPredictiveWeakTopics(activeLabels, srData);
+    if (pred && pred.length > 0) weakNames.push(pred[0].name);
+  }
+  if (weakNames.length === 0) {
+    Object.entries(srData).forEach(([id, s]) => {
+      if (activeLabels[id] && remoteData[id] && typeof getMemoryRetention === 'function') {
+        const mem = getMemoryRetention(id);
+        if (mem < 65 && weakNames.length < 2) weakNames.push(activeLabels[id]);
+      }
+    });
+  }
+
+  const key = `${active}_${ts()}_${weakNames.join('_')}`;
   if (_currentTipKey === key && tipEl.style.display === 'block') {
     return;
   }
   _currentTipKey = key;
-  const tipsArray = isAA ? ACCA_AA_TIPS : ACCA_FR_TIPS;
-  if (!tipsArray || tipsArray.length === 0) return;
+
+  if (typeof getAdaptiveDailyTip === 'function') {
+    const tip = getAdaptiveDailyTip(weakNames, active);
+    if (tipTitle) {
+      tipTitle.innerHTML = weakNames.length > 0
+        ? `💡 ADAPTIVE STUDY TIP · ${courseName.toUpperCase()}`
+        : `💡 DAILY STUDY TIP · ${courseName.toUpperCase()}`;
+    }
+    tipText.innerHTML = tip;
+    tipEl.style.display = 'block';
+    return;
+  }
+
+  // Fallback for ACCA courses if Gen 2 engine not yet ready
+  const isAA = active === 'AA26';
+  const tipsArray = isAA ? ACCA_AA_TIPS : (active.startsWith('ACCA') ? ACCA_FR_TIPS : null);
+  if (!tipsArray || tipsArray.length === 0) {
+    tipEl.style.display = 'none';
+    return;
+  }
+  if (tipTitle) tipTitle.innerHTML = isAA ? '💡 ACCA AA Study Tip' : '💡 ACCA FR Study Tip';
   let dayHash = 0;
   const todayStr = ts();
   for (let i = 0; i < todayStr.length; i++) dayHash = ((dayHash << 5) - dayHash) + todayStr.charCodeAt(i);
   const tipIndex = Math.abs(dayHash) % tipsArray.length;
-  
-  const tipText = document.getElementById('acca-tip-text');
-  if (!tipText) return;
-  if (tipsArray === ACCA_FR_TIPS && tipIndex === 15) {
-    tipText.innerHTML = `<strong>${tipsArray[tipIndex]}</strong>`;
-  } else {
-    tipText.textContent = tipsArray[tipIndex];
-  }
+  tipText.textContent = tipsArray[tipIndex];
   tipEl.style.display = 'block';
 }
 
@@ -2952,13 +2982,14 @@ function getCourseExamTarget(courseKey) {
   };
 }
 
-function calcExamAnchoredInterval(daysToExam, currentCount, difficulty, ease) {
+function calcExamAnchoredInterval(daysToExam, currentCount, difficulty, ease, isDrifted) {
   if (daysToExam > 60 || isNaN(daysToExam)) {
     const BASE_SCHEDULE = [1, 3, 7, 14, 30, 60];
     let idx = currentCount || 0;
     if (difficulty === 'easy') idx = Math.min(idx + 1, BASE_SCHEDULE.length - 1);
     else if (difficulty === 'hard') idx = Math.max(idx - 1, 0);
     let interval = BASE_SCHEDULE[Math.min(idx, BASE_SCHEDULE.length - 1)];
+    if (isDrifted) interval = Math.min(interval, Math.max(1, Math.min(2, Math.floor(interval * 0.5))));
     if (!isNaN(daysToExam) && daysToExam > 0) {
       interval = Math.min(interval, Math.max(1, daysToExam - 1));
     }
@@ -2990,6 +3021,10 @@ function calcExamAnchoredInterval(daysToExam, currentCount, difficulty, ease) {
   else if (difficulty === 'hard') idx = Math.max(idx - 1, 0);
 
   let interval = baseIntervals[Math.min(idx, baseIntervals.length - 1)];
+  if (isDrifted) {
+    // Gen 2 Difficulty Drift: tighten interval so repeatedly hard topics are reviewed sooner
+    interval = Math.min(interval, Math.max(1, Math.min(2, Math.floor(interval * 0.5))));
+  }
   const maxCap = Math.max(1, Math.floor(daysToExam * maxRatio));
   interval = Math.min(interval, maxCap);
 
@@ -3016,9 +3051,13 @@ function getMemoryRetention(id) {
   const lastMs = new Date(lastDateStr + 'T00:00:00Z').getTime();
   if (isNaN(nowMs) || isNaN(lastMs)) return 100;
   const elapsedDays = Math.max(0, (nowMs - lastMs) / 86400000);
-  const strength = Math.max(1, s.interval || 1);
-  // Target 90% retention at the scheduled interval: R = exp(ln(0.9) * t / I)
-  const retention = Math.exp(-0.10536 * (elapsedDays / strength));
+  // Gen 2 Calibrated Retention Curve: scales with interval, review passes, and cognitive ease
+  const interval = Math.max(1, s.interval || 1);
+  const count = typeof s.count === 'number' ? s.count : 0;
+  const ease = Math.max(1.3, Math.min(3.5, s.ease || 2.5));
+  const stability = Math.max(1, interval * (1 + (count * 0.25)) * (ease / 2.5));
+  // Target 90% retention at the calibrated stability interval: R = exp(ln(0.9) * t / S)
+  const retention = Math.exp(-0.10536 * (elapsedDays / stability));
   const pct = Math.max(0, Math.min(100, Math.round(retention * 100)));
   return isNaN(pct) ? 100 : pct;
 }
@@ -3207,9 +3246,12 @@ function renderRevisions(){
       const mem = getMemoryRetention(id);
       return {id, label: activeLabels[id], ...s, mem};
     });
+
+  const driftedIds = new Set((typeof getDriftedTopics === 'function' ? getDriftedTopics(remoteData._loggedSessions || [], activeLabels) : []).map(t => t.id));
+  const predictiveWeakIds = new Set((typeof getPredictiveWeakTopics === 'function' ? getPredictiveWeakTopics(activeLabels, remoteData._sr || {}) : []).map(t => t.id));
     
   const due = allSr.filter(s => s.next && s.next <= today).sort((a,b) => a.next.localeCompare(b.next));
-  const weak = allSr.filter(s => s.mem < 70 || (s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== today)).sort((a,b) => a.mem - b.mem);
+  const weak = allSr.filter(s => s.mem < 70 || (s.ease !== undefined && s.ease <= 2.1 && s.lastRev !== today) || driftedIds.has(s.id) || predictiveWeakIds.has(s.id)).sort((a,b) => a.mem - b.mem);
   const dueAndWeakIds = new Set([...due.map(s => s.id), ...weak.map(s => s.id)]);
   const upcoming = allSr.filter(s => s.next && s.next > today && !dueAndWeakIds.has(s.id)).sort((a,b) => a.next.localeCompare(b.next));
 
@@ -3315,6 +3357,16 @@ function renderRevisions(){
         <div class="sr-readiness-bar">
           <div class="sr-readiness-fill" style="width:${readiness}%;background:${readinessColor};"></div>
         </div>
+        ${(() => {
+          const sim = (typeof simulateExamScore === 'function') ? simulateExamScore(covPct, multiPassPct, avgMem, activeCourse) : null;
+          if (!sim) return '';
+          return `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:0.72rem;color:var(--dim);flex-wrap:wrap;gap:4px;">
+              <span>📈 <strong>Simulated Exam Score:</strong> <span style="color:var(--blue);font-weight:800;font-family:var(--mono);">${sim.low}–${sim.high} Marks</span></span>
+              <span style="font-size:0.68rem;opacity:0.85;">${sim.grade}</span>
+            </div>
+          `;
+        })()}
       </div>
 
       <div class="sr-metrics-grid">
@@ -3409,11 +3461,18 @@ function renderRevisions(){
       ? (overdue ? '🚨 Overdue' : '⏰ Due Today')
       : `📅 ${nextStr}`;
 
+    const isDrifted = driftedIds.has(item.id);
+    const isPredictive = predictiveWeakIds.has(item.id);
+    const driftBadge = isDrifted ? `<span style="font-size:0.62rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(224,80,80,0.14);color:var(--red);border:1px solid rgba(224,80,80,0.3);white-space:nowrap;flex-shrink:0;">⚠️ Repeatedly Hard</span>` : '';
+    const predBadge = (!isDrifted && isPredictive) ? `<span style="font-size:0.62rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(252,174,40,0.14);color:var(--accent);border:1px solid rgba(252,174,40,0.3);white-space:nowrap;flex-shrink:0;">🔮 Fast Decay</span>` : '';
+
     return `
       <div class="revise-item" style="box-shadow:0 2px 10px rgba(0,0,0,0.04);">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;min-width:0;width:100%;">
-          <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0;flex-wrap:wrap;">
             <span style="font-size:0.65rem;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:6px;background:var(--s2);border:1px solid var(--border);color:var(--dim);white-space:nowrap;flex-shrink:0;margin-top:1px">${passLabel}</span>
+            ${driftBadge}
+            ${predBadge}
             <div class="revise-text" style="font-size:0.86rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:normal;line-height:1.35;word-break:break-word;min-width:0;flex:1;" title="${item.label}">${item.label}</div>
           </div>
           <span style="font-size:0.68rem;font-weight:700;font-family:var(--mono);padding:3px 8px;border-radius:99px;border:1px solid;white-space:nowrap;flex-shrink:0;background:${badgeColor}">${badgeText}</span>
@@ -4258,7 +4317,14 @@ function renderProductivityCorrelator() {
   if (peak && lowest && activeBuckets.length > 1 && peak.share > lowest.share) {
     const diff = peak.share - lowest.share;
     let courseAdvice = "your hardest syllabus topics, problem sets, and demanding calculations";
-    if (activeCourse.startsWith('ACCA')) {
+    const labelsForSched = (cd && cd.labels) ? cd.labels : {};
+    let specificHardList = (typeof getDriftedTopics === 'function') ? getDriftedTopics(loggedSessions, labelsForSched) : [];
+    if (specificHardList.length === 0 && typeof getPredictiveWeakTopics === 'function') {
+      specificHardList = getPredictiveWeakTopics(labelsForSched, remoteData._sr || {});
+    }
+    if (specificHardList.length > 0) {
+      courseAdvice = `your high-priority focus topics (${specificHardList.map(t => `<em>${t.name}</em>`).join(', ')}) and demanding problem sets`;
+    } else if (activeCourse.startsWith('ACCA')) {
       courseAdvice = "your toughest IFRS standards, group consolidations, and multi-part Section C questions";
     } else if (activeCourse === 'AA26') {
       courseAdvice = "complex audit risk evaluations, substantive procedures, and scenario reporting questions";
@@ -4450,7 +4516,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
-const WHATS_NEW_VERSION = '2.2.24'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.3.0'; // bump this to force What's New popup for all users
 
 let _pendingUpdateWorker = null;
 
@@ -4516,40 +4582,54 @@ function buildWhatsNewHTML(){
 
   return `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">&#128203; What's New &mdash; v${APP_VERSION}</div>
+      <div class="wn-section-lbl" style="color:var(--accent);">🤖 What's New &mdash; v${APP_VERSION} · Gen 2 Adaptive AI</div>
       <div class="wn-item">
-        <div class="wn-item-icon">🏆</div>
+        <div class="wn-item-icon">🧬</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">90+ Rank Holder Target Benchmark</div>
-          <div class="wn-item-desc">Updated the spaced repetition exam target badge and top readiness index to the ambitious 90+ Rank Holder standard.</div>
+          <div class="wn-item-title">Forgetting Curve Per Topic</div>
+          <div class="wn-item-desc">Individual retention curves for each topic — tracks how fast you forget it, not just if you've done it.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">⏱️</div>
+        <div class="wn-item-icon">🔮</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Peak Study Time &amp; Correlator</div>
-          <div class="wn-item-desc">Accurately tracks your actual study output share, topic volume, and circadian rhythm performance across Morning, Afternoon, Evening, and Night.</div>
+          <div class="wn-item-title">Predictive Weak Topic Alert</div>
+          <div class="wn-item-desc">AI flags topics about to decay below 60% retention before they're forgotten, so you can revise proactively.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">📊</div>
+        <div class="wn-item-icon">🎯</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Visual Daily Distribution Heat Bar</div>
-          <div class="wn-item-desc">Interactive unified segmented distribution bar and peak highlight rings to visually analyze your study schedule and focus windows.</div>
+          <div class="wn-item-title">Smart Session Scheduler</div>
+          <div class="wn-item-desc">Matches your hardest topics to your peak study hours and easy reviews to off-peak windows automatically.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">📝</div>
+        <div class="wn-item-icon">📈</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Enhanced Session History &amp; Difficulty Badges</div>
-          <div class="wn-item-desc">Recorded study sessions now capture session duration and display difficulty ratings (Easy, Medium, Hard) directly in your stats history.</div>
+          <div class="wn-item-title">Exam Score Simulator</div>
+          <div class="wn-item-desc">Live projected score range (e.g. "Tracking 82–91 marks") based on syllabus coverage, revision depth, and retention strength.</div>
         </div>
       </div>
       <div class="wn-item">
-        <div class="wn-item-icon">&#9889;</div>
+        <div class="wn-item-icon">💡</div>
         <div class="wn-item-text">
-          <div class="wn-item-title">Updated Service Worker v${APP_VERSION}</div>
-          <div class="wn-item-desc">Synchronized offline cache and instant lifecycle activation across all devices.</div>
+          <div class="wn-item-title">Adaptive Daily Tips Engine</div>
+          <div class="wn-item-desc">Study tips now personalized to your actual weak topics today, not random picks — powered by your real retention data.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">⚠️</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Difficulty Drift Detection</div>
+          <div class="wn-item-desc">If a topic is logged Hard 3+ times in a row, AI automatically escalates its revision priority and flags it as a key risk.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🛡️</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Study Fatigue Guard</div>
+          <div class="wn-item-desc">Detects consecutive hard sessions and suggests a lighter review day to prevent burnout and memory overload.</div>
         </div>
       </div>
     </div>
@@ -4676,7 +4756,21 @@ function checkAndNotify() {
     .slice(0, 3);
 
   const weakNames = weakTopics.map(t => (labels[t.id] || t.id).replace(/_p2$/,'')).join(', ');
-  const weakText = weakTopics.length > 0 ? `<div style="font-size:0.76rem;color:var(--dim);margin-top:8px;line-height:1.45;font-weight:400;"><strong style="color:var(--accent);font-weight:600;">⚠️ Weak areas:</strong> ${weakNames}</div>` : '';
+  let weakText = weakTopics.length > 0 ? `<div style="font-size:0.76rem;color:var(--dim);margin-top:8px;line-height:1.45;font-weight:400;"><strong style="color:var(--accent);font-weight:600;">⚠️ Weak areas:</strong> ${weakNames}</div>` : '';
+
+  // Gen 2 Predictive & Drift Insights
+  const drifted = (typeof getDriftedTopics === 'function') ? getDriftedTopics(remoteData._loggedSessions || [], labels) : [];
+  if (drifted.length > 0) {
+    weakText += `<div style="font-size:0.76rem;color:var(--dim);margin-top:4px;line-height:1.45;font-weight:400;"><strong style="color:var(--red);font-weight:600;">⚠️ Difficulty Drift (Hard 3+×):</strong> ${drifted.map(t=>t.name).join(', ')}</div>`;
+  }
+  const predDecay = (typeof getPredictiveWeakTopics === 'function') ? getPredictiveWeakTopics(labels, srData) : [];
+  if (predDecay.length > 0) {
+    weakText += `<div style="font-size:0.76rem;color:var(--dim);margin-top:4px;line-height:1.45;font-weight:400;"><strong style="color:var(--accent);font-weight:600;">🔮 Fast Decay Alert:</strong> ${predDecay.map(t=>t.name).join(', ')} (decaying in 3d)</div>`;
+  }
+  const fatigueStreak = (typeof detectStudyFatigue === 'function') ? detectStudyFatigue(remoteData._loggedSessions || []) : 0;
+  if (fatigueStreak >= 4) {
+    weakText += `<div style="font-size:0.76rem;color:var(--dim);margin-top:4px;line-height:1.45;font-weight:400;"><strong style="color:var(--accent);font-weight:600;">🛡️ Fatigue Guard:</strong> ${fatigueStreak} consecutive Hard sessions detected. Take a lighter review day to allow brain encoding!</div>`;
+  }
   const covText = `<div style="font-size:0.76rem;color:var(--dim);margin-top:8px;line-height:1.45;font-weight:400;"><strong style="color:var(--blue);font-weight:600;">📊 Syllabus covered:</strong> ${covPct}% (${covered} of ${total})</div>`;
 
   const progressSectionHtml = '';
@@ -5813,8 +5907,11 @@ async function saveLogSession() {
         daysToExam = Math.max(1, Math.round((examMs - revMs) / 86400000));
       }
 
+      const isTopicDrifted = (typeof getDriftedTopics === 'function')
+        ? getDriftedTopics(remoteData._loggedSessions || [], {}).some(t => t.id === id)
+        : false;
       s.interval = typeof calcExamAnchoredInterval === 'function' 
-        ? calcExamAnchoredInterval(daysToExam, s.count, selectedDiff, s.ease)
+        ? calcExamAnchoredInterval(daysToExam, s.count, selectedDiff, s.ease, isTopicDrifted)
         : 1;
 
       // Adjust ease factor
@@ -5952,7 +6049,170 @@ async function saveLogSession() {
 }
 window.saveLogSession = saveLogSession;
 
-// 💡 AI Study Insights Engine
+// ══════════════════════════════════════════════════════════════════════════
+// 🤖 GEN 2 ADAPTIVE AI ENGINE — v2.3.0
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── GEN 2 FEATURE 1: Forgetting Curve Per Topic ───────────────────────────
+// Returns a 0–100 retention estimate for a topic using its individual SR data.
+// Uses a simplified Ebbinghaus model: R = e^(-t / (S * ease)) * 100
+// where t = days since last review, S = stability factor (count-based)
+function getTopicRetentionCurve(topicId) {
+  if (typeof getMemoryRetention === 'function') {
+    return getMemoryRetention(topicId);
+  }
+  const sr = remoteData._sr && remoteData._sr[topicId];
+  if (!sr || !sr.lastRev) return null;
+  const [ry, rm, rd] = sr.lastRev.split('-').map(Number);
+  const revMs = Date.UTC(ry, rm - 1, rd);
+  const daysSince = Math.max(0, (Date.now() - revMs) / 86400000);
+  const interval = Math.max(1, sr.interval || 1);
+  const count = typeof sr.count === 'number' ? sr.count : 0;
+  const ease = Math.max(1.3, Math.min(3.5, sr.ease || 2.5));
+  const stability = Math.max(1, interval * (1 + (count * 0.25)) * (ease / 2.5));
+  const retention = Math.round(Math.exp(-0.10536 * (daysSince / stability)) * 100);
+  return Math.max(0, Math.min(100, retention));
+}
+
+// ── GEN 2 FEATURE 2: Predictive Weak Topic Detection ─────────────────────
+// Projects which topics will fall below 60% retention within next 3 days.
+function getPredictiveWeakTopics(activeLabels, srData) {
+  const atRisk = [];
+  const nowMs = Date.now();
+  for (const [id, sr] of Object.entries(srData || {})) {
+    if (!activeLabels[id] || !remoteData[id] || !sr.lastRev) continue;
+    const currentRetention = getTopicRetentionCurve(id);
+    if (currentRetention === null) continue;
+    // Simulate 3 days forward
+    const [ry, rm, rd] = sr.lastRev.split('-').map(Number);
+    const revMs = Date.UTC(ry, rm - 1, rd);
+    const daysSince3 = Math.max(0, ((nowMs + 3 * 86400000) - revMs) / 86400000);
+    const interval = Math.max(1, sr.interval || 1);
+    const count = typeof sr.count === 'number' ? sr.count : 0;
+    const ease = Math.max(1.3, Math.min(3.5, sr.ease || 2.5));
+    const stability = Math.max(1, interval * (1 + (count * 0.25)) * (ease / 2.5));
+    const retentionIn3Days = Math.round(Math.exp(-0.10536 * (daysSince3 / stability)) * 100);
+    // Flag if: currently >= 60% but will decay below 60% within 3 days
+    if (currentRetention >= 60 && retentionIn3Days < 60) {
+      atRisk.push({ id, name: activeLabels[id], currentRetention, retentionIn3Days });
+    }
+  }
+  return atRisk.sort((a, b) => a.retentionIn3Days - b.retentionIn3Days).slice(0, 3);
+}
+
+// ── GEN 2 FEATURE 6: Difficulty Drift Detection ───────────────────────────
+// Detects topics logged as Hard 3+ consecutive times → escalate priority.
+function getDriftedTopics(logged, activeLabels) {
+  const topicHardStreak = {};
+  // Sessions ordered newest-first in remoteData._loggedSessions
+  const sessions = [...logged].reverse(); // oldest first for chronological streak
+  sessions.forEach(s => {
+    if (!s._topicIds || !s.difficulty) return;
+    s._topicIds.forEach(id => {
+      if (!activeLabels[id]) return;
+      if (!topicHardStreak[id]) topicHardStreak[id] = { streak: 0, total: 0 };
+      if (s.difficulty === 'hard') {
+        topicHardStreak[id].streak++;
+        topicHardStreak[id].total++;
+      } else {
+        topicHardStreak[id].streak = 0; // reset streak on non-hard
+      }
+    });
+  });
+  return Object.entries(topicHardStreak)
+    .filter(([, v]) => v.streak >= 3)
+    .map(([id, v]) => ({ id, name: activeLabels[id] || id, hardStreak: v.streak }))
+    .sort((a, b) => b.hardStreak - a.hardStreak)
+    .slice(0, 3);
+}
+
+// ── GEN 2 FEATURE 7: Study Fatigue Guard ─────────────────────────────────
+// Detects N consecutive hard sessions recently.
+function detectStudyFatigue(logged) {
+  const recent = logged.slice(0, 8); // last 8 sessions
+  let hardCount = 0;
+  for (const s of recent) {
+    if (s.difficulty === 'hard') hardCount++;
+    else break; // streak broken
+  }
+  return hardCount;
+}
+
+// ── GEN 2 FEATURE 4: Exam Score Simulator ────────────────────────────────
+// Projects a score band based on coverage %, revision depth, and retention.
+function simulateExamScore(covPct, revPct, avgRetention, activeCourse) {
+  // Weighted formula: coverage 45%, revision 30%, retention 25%
+  const raw = (covPct * 0.45) + (revPct * 0.30) + (avgRetention * 0.25);
+  // Scale to marks (CSEB/ACCA style: max 100)
+  const base = Math.round(raw * 0.85); // conservative floor
+  const ceil = Math.min(100, Math.round(raw * 1.08)); // optimistic ceiling
+  let grade = '';
+  if (base >= 90) grade = '🏆 90+ Rank Holder territory';
+  else if (base >= 75) grade = '🌟 Distinction range (75–89)';
+  else if (base >= 50) grade = '📈 Pass range (50–74)';
+  else grade = '⚠️ At-risk (below 50)';
+  return { low: base, high: ceil, grade };
+}
+
+// ── GEN 2 FEATURE 3: Smart Session Scheduler ─────────────────────────────
+// Returns which time bucket to use for hard vs easy topics today.
+function getSmartScheduleAdvice(srData, activeLabels) {
+  // Find peak bucket from existing logged sessions
+  const bucketData = { morning: 0, afternoon: 0, evening: 0, night: 0 };
+  (remoteData._loggedSessions || []).forEach(s => {
+    if (s.bucket && bucketData[s.bucket] !== undefined) {
+      bucketData[s.bucket] += (s._topicIds ? s._topicIds.length : 1);
+    }
+  });
+  const peakBucket = Object.entries(bucketData).sort((a, b) => b[1] - a[1])[0];
+  if (!peakBucket || peakBucket[1] === 0) return null;
+  const bucketLabels = { morning: '🌅 Morning (6am–12pm)', afternoon: '☀️ Afternoon (12pm–6pm)', evening: '🌆 Evening (6pm–10pm)', night: '🌙 Late Night' };
+  // Find hard topics due
+  const hardTopics = Object.entries(srData)
+    .filter(([id, s]) => activeLabels[id] && remoteData[id] && s.ease < 2.0)
+    .map(([id]) => activeLabels[id])
+    .slice(0, 2);
+  return { peak: bucketLabels[peakBucket[0]] || peakBucket[0], hardTopics };
+}
+
+// ── GEN 2 FEATURE 5: Adaptive Daily Tips Engine ───────────────────────────
+// Returns a tip tailored to current weak topics, not a random pick.
+function getAdaptiveDailyTip(weakTopicNames, activeCourse) {
+  const courseKey = activeCourse || DEFAULT_COURSE;
+  let tips = [];
+
+  // Weak-topic-driven tips (highest priority)
+  if (weakTopicNames && weakTopicNames.length > 0) {
+    const wn = weakTopicNames[0];
+    tips.push(`Your retention on <strong>${wn}</strong> is dropping. Try active recall: close your notes and write everything you remember about it, then compare with your notes to fill gaps.`);
+    tips.push(`<strong>${wn}</strong> has been flagged as a weak area. Before your next session, spend 10 minutes making a quick cheat-sheet summary of its key rules — writing reinforces memory more than re-reading.`);
+  }
+
+  // Course-specific fallback tips
+  if (courseKey.startsWith('ACCA') || courseKey === 'AA26') {
+    tips = tips.concat([
+      'For any IFRS standard, frame it as: Recognition → Measurement → Presentation → Disclosure. This structured approach handles unfamiliar questions with ease.',
+      'After every practice question, pause and explain <em>why</em> the answer is correct without looking. If you can explain it, you truly understand it — not just recall it.',
+      'Build your "Mistake Book": jot down recurring errors like wrong dates, missed adjustments, or SOPL/OCI confusion. Review it before every mock.',
+    ]);
+  } else {
+    tips = tips.concat([
+      'Use the 3-pass method: skim the chapter first for structure, read it actively with questions in mind, then close it and recall the key points aloud.',
+      'Before every study session, spend 2 minutes writing from memory what you already know about the topic. This primes your brain for deeper encoding.',
+      'Solve at least 10 MCQs per topic after studying — not before. Questions test application; they don\'t replace understanding the concept first.',
+    ]);
+  }
+
+  // Deterministic pick based on day + topic hash to keep it stable within a day
+  const dayNum = Math.floor(Date.now() / 86400000);
+  const topicHash = weakTopicNames && weakTopicNames.length > 0
+    ? weakTopicNames[0].split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+    : 0;
+  const idx = (dayNum + topicHash) % tips.length;
+  return tips[idx];
+}
+
+// ── MAIN: AI Study Insights Engine (Gen 2) ───────────────────────────────
 function generateStudyInsights() {
   const container = $('ai-study-insights');
   const list = $('ai-insights-list');
@@ -5962,103 +6222,168 @@ function generateStudyInsights() {
   const activity = remoteData._activity || {};
   const logged = remoteData._loggedSessions || [];
   const srData = remoteData._sr || {};
-
-  // 1 & 2. Burnout Detection and Topic Efficiency (Scoped to active course)
   const activeCourseForInsights = remoteData.activeCourse || DEFAULT_COURSE;
   const cdForInsights = COURSE_DATA[activeCourseForInsights];
   const activeLabelsForInsights = (cdForInsights && cdForInsights.labels) ? cdForInsights.labels : {};
   const todayDate = ts();
-  let todaysSessions = 0;
-  const topicEff = {};
+  const nowMs = Date.now();
 
-  logged.forEach(session => {
-    const belongs = session.course === activeCourseForInsights ||
-      (session._topicIds && session._topicIds.some(id => activeLabelsForInsights[id]));
-    if (!belongs) return;
+  // Filter sessions to active course
+  const activeSessions = logged.filter(s =>
+    s.course === activeCourseForInsights ||
+    (s._topicIds && s._topicIds.some(id => activeLabelsForInsights[id]))
+  );
 
-    // Check burnout
-    if (session.date && session.date.startsWith(todayDate)) todaysSessions++;
-    
-    // Check topic efficiency
-    if (session._topicIds) {
-      session._topicIds.forEach(id => {
-        if (activeLabelsForInsights[id]) {
-          topicEff[id] = (topicEff[id] || 0) + 1;
-        }
-      });
-    }
+  // ── FEATURE 7: Fatigue Guard ──────────────────────────────────────────
+  const hardStreakCount = detectStudyFatigue(activeSessions);
+  if (hardStreakCount >= 4) {
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--accent);">🛡️ Study Fatigue Guard:</strong> Your last <strong>${hardStreakCount} sessions</strong> were all rated Hard. Your brain needs consolidation time! Consider a lighter review-only session today — revisit already-completed topics instead of new ones to prevent burnout.
+      </div>
+    `);
+  }
+
+  // ── FEATURE 6: Difficulty Drift Detection ────────────────────────────
+  const driftedTopics = getDriftedTopics(activeSessions, activeLabelsForInsights);
+  if (driftedTopics.length > 0) {
+    const dNames = driftedTopics.map(t => `<em>${t.name}</em> (${t.hardStreak}× Hard)`).join(', ');
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--red);">⚠️ Difficulty Drift Detected:</strong> ${dNames} — logged as Hard repeatedly. These are your <strong>key risk topics</strong>. Prioritise them for revision and switch study strategy: try teaching the concept aloud or drawing a mind map instead of re-reading.
+      </div>
+    `);
+  }
+
+  // ── FEATURE 2: Predictive Weak Topic Alert ────────────────────────────
+  const predictiveWeak = getPredictiveWeakTopics(activeLabelsForInsights, srData);
+  if (predictiveWeak.length > 0) {
+    const pNames = predictiveWeak.map(t => `<em>${t.name}</em> (${t.retentionIn3Days}% in 3d)`).join(', ');
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--accent);">🔮 Predicted Decay Alert:</strong> ${pNames} will fall below 60% retention within 3 days. Revise them <strong>today</strong> before they slip — a 10-minute active recall now prevents hours of relearning later.
+      </div>
+    `);
+  }
+
+  // ── FEATURE 1: Forgetting Curve Insight ──────────────────────────────
+  // Find topic with lowest current retention (already completed)
+  let lowestId = null, lowestRet = 101;
+  for (const id of Object.keys(srData)) {
+    if (!activeLabelsForInsights[id] || !remoteData[id]) continue;
+    if (activeCourseForInsights === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) continue;
+    const ret = getTopicRetentionCurve(id);
+    if (ret !== null && ret < lowestRet) { lowestRet = ret; lowestId = id; }
+  }
+  if (lowestId && lowestRet < 55 && !predictiveWeak.find(t => t.id === lowestId)) {
+    const tName = activeLabelsForInsights[lowestId];
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--red);">🧬 Memory Decay Risk:</strong> Your retention of <em>${tName}</em> is at <strong>${lowestRet}%</strong>. At this level your brain is likely to forget key details under exam pressure. Schedule a 15-minute active recall review today!
+      </div>
+    `);
+  }
+
+  // ── FEATURE 3: Smart Session Scheduler ───────────────────────────────
+  const schedAdvice = getSmartScheduleAdvice(srData, activeLabelsForInsights);
+  if (schedAdvice && schedAdvice.hardTopics && schedAdvice.hardTopics.length > 0) {
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--blue);">🎯 Smart Schedule:</strong> Your peak study output is during <strong>${schedAdvice.peak}</strong>. For today, schedule your hardest topics (${schedAdvice.hardTopics.map(n=>`<em>${n}</em>`).join(', ')}) in that window — save light revision and flashcards for your off-peak hours.
+      </div>
+    `);
+  }
+
+  // ── FEATURE 4: Exam Score Simulator ──────────────────────────────────
+  // Compute inputs
+  const cdSim = cdForInsights || {};
+  let simTotal = 0, simCovered = 0, simRevPoints = 0;
+  const MAX_REV_SIM = 6;
+  let retentionSum = 0, retentionCount = 0;
+  Object.values(cdSim.subjs || {}).forEach(s => {
+    if (!s || !s.ids) return;
+    s.ids.forEach(id => {
+      simTotal++;
+      if (remoteData[id]) { simCovered++; }
+      if (remoteData[id] && srData[id]) {
+        simRevPoints += Math.min(srData[id].count || 0, MAX_REV_SIM);
+        const ret = getTopicRetentionCurve(id);
+        if (ret !== null) { retentionSum += ret; retentionCount++; }
+      }
+    });
   });
+  const simCovPct = simTotal > 0 ? Math.round((simCovered / simTotal) * 100) : 0;
+  const simRevPct = simTotal > 0 ? Math.round((simRevPoints / (simTotal * MAX_REV_SIM)) * 100) : 0;
+  const avgRetention = retentionCount > 0 ? Math.round(retentionSum / retentionCount) : simCovPct;
+  if (simCovPct >= 15) { // Only show once we have enough data
+    const sim = simulateExamScore(simCovPct, simRevPct, avgRetention, activeCourseForInsights);
+    insights.push(`
+      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+        <strong style="color:var(--green);">📈 Exam Score Simulator:</strong> Based on <strong>${simCovPct}%</strong> syllabus coverage, <strong>${simRevPct}%</strong> revision depth, and <strong>${avgRetention}%</strong> avg retention — you're currently tracking <strong style="color:var(--blue);">${sim.low}–${sim.high} marks</strong>. ${sim.grade}.
+        <div style="font-size:0.72rem;color:var(--dim);margin-top:4px;font-style:italic;">Projection updates as you study and revise more topics.</div>
+      </div>
+    `);
+  }
 
+  // ── FEATURE 5: Adaptive Daily Tips ───────────────────────────────────
+  // Collect weak topic names for personalization
+  const allCourseTopicsSim = [];
+  Object.values(cdSim.subjs || {}).forEach(s => { if (s && s.ids) allCourseTopicsSim.push(...s.ids); });
+  const weakForTips = allCourseTopicsSim
+    .filter(id => remoteData[id] && srData[id])
+    .map(id => ({ id, mem: getTopicRetentionCurve(id) || 50, name: activeLabelsForInsights[id] || id }))
+    .filter(t => t.mem < 60)
+    .sort((a, b) => a.mem - b.mem)
+    .slice(0, 2)
+    .map(t => t.name);
+
+  const adaptiveTip = getAdaptiveDailyTip(weakForTips, activeCourseForInsights);
+  insights.push(`
+    <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+      <strong style="color:var(--blue);">💡 Today's Adaptive Tip:</strong> ${adaptiveTip}
+    </div>
+  `);
+
+  // ── LEGACY: Burnout Detection ─────────────────────────────────────────
+  let todaysSessions = 0;
+  activeSessions.forEach(s => { if (s.date && s.date.startsWith(todayDate)) todaysSessions++; });
   if (todaysSessions >= 6) {
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--accent);">⚠️ Overstudy Warning:</strong> You have logged <strong>${todaysSessions} sessions</strong> today. Make sure you are taking adequate breaks to avoid burnout and allow your brain to encode information.
+        <strong style="color:var(--accent);">⚠️ Overstudy Warning:</strong> You have logged <strong>${todaysSessions} sessions</strong> today. Make sure you're taking adequate breaks to allow your brain to encode and consolidate information.
       </div>
     `);
   }
 
-  let stuckTopic = null;
-  let stuckCount = 0;
+  // ── LEGACY: Topic Efficiency (Stuck Loop) ────────────────────────────
+  const topicEff = {};
+  activeSessions.forEach(s => {
+    if (s._topicIds) s._topicIds.forEach(id => {
+      if (activeLabelsForInsights[id]) topicEff[id] = (topicEff[id] || 0) + 1;
+    });
+  });
+  let stuckTopic = null, stuckCount = 0;
   for (const [id, count] of Object.entries(topicEff)) {
     if (!remoteData[id] && count >= 3 && count > stuckCount && activeLabelsForInsights[id]) {
-      stuckCount = count;
-      stuckTopic = id;
+      stuckCount = count; stuckTopic = id;
     }
   }
-
   if (stuckTopic) {
-    const tName = activeLabelsForInsights[stuckTopic] || 'a heavy topic';
+    const tName = activeLabelsForInsights[stuckTopic] || 'a topic';
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--accent);">Study Efficiency:</strong> You've logged <strong>${stuckCount} sessions</strong> on <em>${tName}</em> but haven't marked it complete yet. You might be stuck in a 'passive reading' loop. Switch to active recall or practice questions today!
+        <strong style="color:var(--accent);">Study Efficiency:</strong> You've logged <strong>${stuckCount} sessions</strong> on <em>${tName}</em> without marking it complete. You may be stuck in passive re-reading. Switch to active recall or timed MCQ practice!
       </div>
     `);
   }
 
-  // 3. Revision Warning (Stale topics) — only for ACTIVE COURSE topics
-  let staleTopic = null;
-  let staleDays = 0;
-  const nowMs = Date.now();
-  for (const [id, s] of Object.entries(srData)) {
-    if (!activeLabelsForInsights[id]) continue; // Skip topics from other courses
-    if (activeCourseForInsights === 'ACCA26_P2' && typeof FR_P2_CHILD_TO_PARENT !== 'undefined' && FR_P2_CHILD_TO_PARENT[id]) continue;
-    const lastRevDate = s.lastRev || s.completed;
-    if (remoteData[id] && lastRevDate) {
-      const [ry, rm, rd] = lastRevDate.split('-').map(Number);
-      const revMs = new Date(ry, rm - 1, rd).getTime();
-      const daysSince = Math.floor((nowMs - revMs) / 86400000);
-      if (daysSince >= 14 && daysSince > staleDays) {
-        staleDays = daysSince;
-        staleTopic = id;
-      }
-    }
-  }
-
-  if (staleTopic && !stuckTopic) { // Don't overwhelm with too many warnings
-    const tName = activeLabelsForInsights[staleTopic] || 'an older topic';
-    insights.push(`
-      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--red);">Memory Decay Risk:</strong> It's been <strong>${staleDays} days</strong> since you last reviewed <em>${tName}</em>. It is at high risk of being forgotten. Add it to tomorrow's quick revision!
-      </div>
-    `);
-  }
-
-  // 4. Fallback positive insight
+  // ── FALLBACK ──────────────────────────────────────────────────────────
   if (insights.length === 0) {
     const activeDays = Object.keys(activity).length;
-    if (activeDays >= 3) {
-      insights.push(`
-        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-          <strong style="color:var(--green);">On Track:</strong> You've logged ${activeDays} active study days. Your stats are looking solid and balanced. Keep pushing forward!
-        </div>
-      `);
-    } else {
-      insights.push(`
-        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-          <strong style="color:var(--dim);">Not enough data yet:</strong> Log more study sessions to unlock personalized, data-driven AI insights here!
-        </div>
-      `);
-    }
+    insights.push(activeDays >= 3
+      ? `<div style="font-size:0.8rem;color:var(--text);line-height:1.5;"><strong style="color:var(--green);">✅ On Track:</strong> You've logged ${activeDays} active study days. Your Gen 2 AI is monitoring your retention curves. Keep logging sessions to unlock deeper insights!</div>`
+      : `<div style="font-size:0.8rem;color:var(--text);line-height:1.5;"><strong style="color:var(--dim);">Not enough data yet:</strong> Log more study sessions to unlock personalized Gen 2 AI insights — forgetting curves, score simulation, fatigue guard, and more!</div>`
+    );
   }
 
   list.innerHTML = insights.join('<div style="height:1px;background:var(--border);margin:12px 0;"></div>');
