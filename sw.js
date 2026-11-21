@@ -1,9 +1,9 @@
-// Study Tracker Service Worker — v2.3.0
+// Study Tracker Service Worker — v2.3.7
 // Strategy: Network-first for core files, Cache-first for CDN assets
 
-const VERSION = 'v2.3.0';
+const VERSION = 'v2.3.7';
 const CACHE_CORE = `study-tracker-core-${VERSION}`;
-const CACHE_CDN  = `study-tracker-cdn-${VERSION}`;
+const CACHE_CDN  = 'study-tracker-cdn-v1';
 
 // Core app files — always network-first, fall back to cache
 const CORE_FILES = [
@@ -42,7 +42,7 @@ function offlineFallback(url, request) {
       { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     );
   }
-  // For non-HTML (JS, JSON, images etc.) return a minimal 503
+  // For non-HTML (JS, JSON, images etc.) return a proper 503 so dynamic imports catch properly
   return new Response('Service Unavailable (offline)', {
     status: 503,
     statusText: 'Service Unavailable',
@@ -121,9 +121,9 @@ self.addEventListener('fetch', e => {
           }
           return fresh;
         } catch (_) {
-          return offlineFallback(url);
+          return offlineFallback(url, e.request);
         }
-      }).catch(() => offlineFallback(url))
+      }).catch(() => offlineFallback(url, e.request))
     );
     return;
   }
@@ -147,7 +147,9 @@ self.addEventListener('fetch', e => {
           // Network failed — try cache
           let cached = await caches.match(e.request, { ignoreSearch: true });
           if (!cached && e.request.mode === 'navigate') {
-            cached = (await caches.match('./index.html')) || (await caches.match('./'));
+            cached = (await caches.match('./index.html')) || 
+                     (await caches.match('./')) || 
+                     (await caches.match('index.html'));
           }
           return cached || offlineFallback(url, e.request);
         }

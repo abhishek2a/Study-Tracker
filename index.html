@@ -30,6 +30,8 @@
 <script>if(window.location.protocol!=='file:'){var _m=document.createElement('link');_m.rel='manifest';_m.href='manifest.json';document.head.appendChild(_m);}</script>
 <link rel="icon" href="logo.svg?v=1.3.2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg?v=1.3.2">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <title>Study Tracker</title>
 <style>
 html { background: var(--bg); overflow-x: hidden; width: 100%; max-width: 100vw; position: relative; }
@@ -202,6 +204,8 @@ body {
 .day-card.done{border-color:rgba(43,189,136,.28);background:linear-gradient(0deg,rgba(43,189,136,.045),rgba(43,189,136,.045)),var(--s1)}.day-card.done::before{background:var(--green)}
 .day-card.pending-card{border-color:rgba(224,80,80,.22);background:linear-gradient(0deg,rgba(224,80,80,.035),rgba(224,80,80,.035)),var(--s1)}.day-card.pending-card::before{background:var(--red)}
 .day-card.catchup{border-color:rgba(77,150,240,.3);background:linear-gradient(0deg,rgba(77,150,240,.05),rgba(77,150,240,.05)),var(--s1)}.day-card.catchup::before{background:var(--blue)}
+.day-card.mock{border-color:rgba(239,68,68,.3);background:linear-gradient(0deg,rgba(239,68,68,.04),rgba(239,68,68,.04)),var(--s1)}.day-card.mock::before{background:linear-gradient(90deg,var(--red),var(--accent))}
+.day-card.exam-edge-card,.day-card.exam_edge{border-color:rgba(84,162,255,.3);background:linear-gradient(0deg,rgba(84,162,255,.035),rgba(84,162,255,.035)),var(--s1)}.day-card.exam-edge-card::before,.day-card.exam_edge::before{background:linear-gradient(90deg,var(--accent),var(--blue))}
 .day-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
 .day-top h2{font-size:1.05rem;font-weight:700;flex:1}
 .day-badge{font-family:var(--mono);font-size:.65rem;color:var(--dim);padding:3px 9px;background:var(--s2);border:1px solid var(--border);border-radius:99px;white-space:nowrap;flex-shrink:0}
@@ -358,7 +362,6 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
   font-family:"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
   transform-origin:top right;
   transition:opacity .25s cubic-bezier(0.175,0.885,0.32,1.275),transform .35s cubic-bezier(0.175,0.885,0.32,1.275),visibility .25s;
-  will-change:transform,opacity;
 }
 .profile-drop:not([data-open='1']){
   opacity:0;visibility:hidden;pointer-events:none;
@@ -384,7 +387,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 .pd-sep{height:1px;background:var(--border);margin:3px 0}
 .pd-item.danger{color:var(--dim)}
 .pd-item.danger:hover{color:var(--red);background:rgba(224,80,80,.08)}
-.lb-box{width:100%;max-width:540px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 16px 40px rgba(0,0,0,.6);overflow:hidden;animation:modalPop .45s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
+.lb-box{width:min(540px,calc(100vw - 32px));max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,0.1);border-radius:20px;display:flex;flex-direction:column;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 16px 40px rgba(0,0,0,.6);overflow:hidden;animation:modalPop .45s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
 [data-theme="light"] .lb-box{background:var(--s1);border:1px solid rgba(0,0,0,0.1);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5), 0 12px 32px rgba(0,0,0,.2)}
 .lb-hdr{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:transparent;flex-shrink:0}
 [data-theme="light"] .lb-hdr{border-bottom:1px solid rgba(0,0,0,0.05)}
@@ -395,9 +398,300 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 .lb-body{padding:24px;overflow-y:auto;flex:1;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .lb-body::-webkit-scrollbar{display:none}
 @media(max-width:600px){
-  #settings-overlay, #log-session-overlay, #whats-new-overlay {align-items:flex-end !important;padding:0 !important;}
-  .lb-box, .wn-box {max-width:100%;max-height:calc(100% - 20px) !important;border-radius:24px 24px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom)}
+  #settings-overlay, #log-session-overlay, #whats-new-overlay, #exam-edge-overlay {align-items:flex-end !important;padding:0 !important;}
+  .lb-box, .wn-box {max-width:100%;width:100% !important;max-height:calc(100% - 20px) !important;border-radius:24px 24px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom)}
   .lb-body{padding:16px;padding-bottom:max(32px, env(safe-area-inset-bottom))}
+  #ee-lb-box{max-height:calc(100% - 10px) !important;}
+}
+#ee-day-strip{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  background:var(--s2);
+  overflow-x:auto;
+  overflow-y:hidden;
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  flex-shrink:0 !important;
+  min-height:86px !important;
+  box-sizing:border-box;
+}
+#ee-day-strip::-webkit-scrollbar{display:none;}
+.ee-day-pill{
+  flex-shrink:0 !important;
+  scroll-snap-align:start;
+  min-width:76px !important;
+  width:auto !important;
+  padding:8px 12px !important;
+  border-radius:12px;
+  background:var(--s1);
+  border:1px solid var(--border);
+  color:var(--text);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-family:var(--font);
+  transition:border-color .15s ease, background-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  box-sizing:border-box !important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.04);
+}
+.ee-day-pill:hover{
+  border-color:var(--blue);
+  transform:translateY(-1px);
+}
+.ee-day-pill.active{
+  background:var(--blue) !important;
+  border-color:var(--blue) !important;
+  color:#fff !important;
+  box-shadow:0 4px 14px rgba(84,162,255,0.35) !important;
+  transform:translateY(-1px);
+}
+[data-theme="light"] .ee-day-pill{
+  background:#fff;
+  border:1px solid var(--border);
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.ee-day-num{
+  font-size:.80rem;
+  font-weight:800;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+  line-height:1.1;
+  color:var(--text);
+}
+.ee-day-date{
+  font-size:.64rem;
+  color:var(--dim);
+  font-family:var(--mono);
+  font-weight:600;
+  white-space:nowrap;
+  line-height:1;
+}
+.ee-day-sub{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  margin-top:1px;
+}
+.ee-day-badge{
+  font-size:.56rem;
+  font-weight:700;
+  font-family:var(--mono);
+  background:var(--s2);
+  color:var(--dim);
+  border:1px solid var(--border);
+  padding:1px 5px;
+  border-radius:5px;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.ee-day-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  flex-shrink:0;
+  display:inline-block;
+}
+.ee-day-dot.mock{
+  background:var(--red);
+  box-shadow:0 0 4px var(--red);
+}
+.ee-day-pill.active .ee-day-num{color:#fff !important;}
+.ee-day-pill.active .ee-day-date{color:rgba(255,255,255,.9) !important;}
+.ee-day-pill.active .ee-day-badge{background:rgba(255,255,255,.22) !important;color:#fff !important;border-color:transparent !important;}
+.ee-day-pill.active .ee-day-dot.mock{background:#fff;box-shadow:0 0 6px #fff;}
+.ee-tabs-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 16px;
+  background:var(--s1);
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+  flex-shrink:0;
+}
+.ee-tabs{
+  display:inline-flex;
+  background:var(--s2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:3px;
+  gap:4px;
+}
+.ee-tab-btn{
+  padding:6px 14px;
+  border-radius:8px;
+  font-size:0.78rem;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  background:transparent;
+  color:var(--dim);
+  transition:all .15s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--font);
+}
+.ee-tab-btn:hover{color:var(--text);background:var(--s3);}
+.ee-tab-btn.active{
+  background:var(--blue);
+  color:#fff;
+  box-shadow:0 2px 8px rgba(84,162,255,.35);
+}
+.ee-tab-badge{
+  font-size:0.65rem;
+  padding:1px 6px;
+  border-radius:6px;
+  font-family:var(--mono);
+  background:var(--s3);
+  color:var(--text);
+}
+.ee-tab-btn.active .ee-tab-badge{
+  background:rgba(255,255,255,0.22);
+  color:#fff;
+}
+.ee-time-badge{
+  font-size:0.70rem;
+  font-weight:700;
+  font-family:var(--mono);
+  padding:4px 9px;
+  border-radius:8px;
+  background:rgba(84,162,255,0.1);
+  color:var(--blue);
+  border:1px solid rgba(84,162,255,0.25);
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.ee-active-card{
+  background:linear-gradient(135deg,rgba(84,162,255,0.06) 0%,rgba(40,212,142,0.04) 100%),var(--s1);
+  border:1px solid rgba(84,162,255,0.25);
+  border-radius:16px;
+  padding:16px 18px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.ee-active-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--blue));
+}
+.ee-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.68rem;
+  font-family:var(--mono);
+  font-weight:700;
+  background:rgba(84,162,255,0.12);
+  color:var(--blue);
+  border:1px solid rgba(84,162,255,0.3);
+  padding:2px 8px;
+  border-radius:6px;
+}
+.ee-chip-remove{
+  cursor:pointer;
+  opacity:0.6;
+  font-size:0.75rem;
+  line-height:1;
+  transition:opacity .15s;
+}
+.ee-chip-remove:hover{opacity:1;color:var(--red);}
+.ee-std-group-hdr{
+  font-size:0.70rem;
+  font-weight:800;
+  color:var(--dim);
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  font-family:var(--mono);
+  margin:12px 0 6px 2px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.ee-std-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 14px;
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  transition:border-color .15s ease, background-color .15s ease;
+  user-select:none;
+}
+.ee-std-item:hover{
+  border-color:var(--blue);
+  background:var(--s2);
+}
+.ee-std-item.selected{
+  border-color:rgba(84,162,255,0.45);
+  background:rgba(84,162,255,0.06);
+}
+.ee-std-item .cl input[type=checkbox]:checked{
+  background:var(--blue);
+  border-color:var(--blue);
+}
+.ee-mock-card{
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  transition:border-color .15s ease;
+}
+.ee-mock-card:hover{
+  border-color:rgba(84,162,255,0.4);
+}
+.ee-mock-card.completed{
+  border-color:rgba(40,212,142,0.35);
+  background:rgba(40,212,142,0.04);
+}
+.ee-mock-badge{
+  font-size:0.68rem;
+  font-weight:700;
+  font-family:var(--mono);
+  padding:3px 8px;
+  border-radius:6px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+}
+.ee-mock-score-input{
+  width:68px;
+  background:var(--s2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:5px 8px;
+  font-size:0.75rem;
+  color:var(--text);
+  font-family:var(--mono);
+  text-align:center;
+  outline:none;
+  transition:border-color .15s ease;
+  box-sizing:border-box;
+}
+.ee-mock-score-input:focus{
+  border-color:var(--blue);
 }
 .cl span{font-size:.9rem;line-height:1.55;color:var(--text);font-family:var(--font);font-weight:600;display:inline-block;transition:color .15s ease,opacity .15s ease}
 .mock-mini{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
@@ -443,8 +737,8 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
   .q-practice-hdr{margin:7px 0 3px 12px}
 }
 /* What's New modal */
-#whats-new-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
-#whats-new-overlay.open{opacity:1;visibility:visible}
+#whats-new-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility .25s}
+#whats-new-overlay.open{opacity:1;visibility:visible;pointer-events:auto}
 .wn-box{width:100%;max-width:480px;max-height:calc(100% - 40px);background:var(--s1);border:1px solid rgba(255,255,255,.1);border-radius:24px;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.7),0 8px 24px rgba(0,0,0,.4);overflow:hidden;animation:modalPop .45s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
 [data-theme="light"] .wn-box{background:var(--s1)}
 .wn-hdr{padding:24px 24px 16px;background:linear-gradient(135deg,rgba(84,162,255,.12),rgba(40,212,142,.08));border-bottom:1px solid rgba(255,255,255,.07)}
@@ -474,6 +768,17 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 /* Auth code hint */
 .auth-code-hint{font-size:.68rem;color:var(--dim);font-family:var(--mono);margin-top:5px;line-height:1.4;padding:7px 10px;background:var(--s2);border-radius:8px;border:1px solid var(--border)}
 [data-theme="light"] .auth-code-hint{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08)}
+/* A2HS PWA Banner */
+.a2hs-banner { position:fixed; bottom:calc(24px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(150px); opacity:0; visibility:hidden; width:92%; max-width:420px; background:var(--s1); border:1px solid var(--border); border-radius:18px; display:flex; align-items:center; gap:12px; padding:14px 16px; box-shadow:0 16px 40px rgba(0,0,0,0.6); z-index:9998; transition:0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+.a2hs-banner.show { transform:translateX(-50%) translateY(0); opacity:1; visibility:visible; }
+.a2hs-icon { width:42px; height:42px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--blue), #8468F5); display:grid; place-content:center; color:#fff; font-size:1.3rem; box-shadow:0 4px 12px rgba(77,150,240,0.3); }
+.a2hs-text { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.a2hs-text strong { font-size:0.95rem; color:var(--text); font-weight:700; letter-spacing:-0.01em; margin-bottom:2px; }
+.a2hs-text span { font-size:0.75rem; color:var(--dim); line-height:1.3; }
+.a2hs-btn { background:var(--blue); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-size:0.8rem; font-weight:700; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+.a2hs-btn:hover { background:#3a82d6; }
+.a2hs-close { background:transparent; border:none; color:var(--dim); font-size:1.1rem; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; transition:color 0.2s; }
+.a2hs-close:hover { color:var(--red); }
 </style>
 </head>
 <body>
@@ -484,22 +789,67 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
   <div class="splash-bar"><div class="splash-fill"></div></div>
 </div>
 <script>
-  setTimeout(function() {
-    var s = document.getElementById('splash');
-    if (s && !s.classList.contains('splash-done')) {
-      s.classList.add('splash-done');
-      setTimeout(function() { if (s && s.parentNode) s.style.display = 'none'; }, 450);
+  window._authResolved = false;
+  window._appRendered = false;
+  window._moduleLoaded = false;
+
+  (function() {
+    function showScriptErrorNotice() {
+      if (document.getElementById('module-load-notice')) return;
+      var notice = document.createElement('div');
+      notice.id = 'module-load-notice';
+      notice.style.cssText = 'background:rgba(242,92,92,0.12);border:1px solid var(--red,#f25c5c);color:var(--text,#e6e9f0);padding:14px 18px;border-radius:12px;margin:16px 0;font-size:0.82rem;line-height:1.5;font-family:var(--font,system-ui);text-align:left;';
+      var isFile = window.location.protocol === 'file:';
+      notice.innerHTML = '<strong style="color:var(--red,#f25c5c)">⚠️ Application Script Notice:</strong><br>' +
+        (isFile 
+          ? 'Browsers block ES module scripts when opened directly via <code>file://</code> due to CORS restrictions. Please serve this app over a local HTTP server (e.g. <code>http://localhost</code>, VS Code Live Server, or Python <code>python -m http.server</code>).'
+          : 'Required application scripts could not be loaded or were blocked by an ad-blocker / offline network. Please check your connection or disable ad-blockers for this page and reload.');
+      
+      var target = document.querySelector('.wrap') || document.getElementById('app') || document.body;
+      if (target) {
+        target.insertBefore(notice, target.firstChild);
+      }
     }
-    var app = document.getElementById('app');
-    var auth = document.getElementById('auth-overlay');
-    if (app && !app.classList.contains('visible') && auth) {
-      auth.classList.remove('hidden');
+
+    function ensureVisible() {
+      var s = document.getElementById('splash');
+      if (s) {
+        s.classList.add('splash-done');
+        setTimeout(function() { if (s && s.parentNode) s.style.display = 'none'; }, 250);
+      }
+
+      var app = document.getElementById('app');
+      var auth = document.getElementById('auth-overlay');
+
+      // Check if module script failed to load entirely
+      if (!window._moduleLoaded) {
+        showScriptErrorNotice();
+        if (app) app.classList.add('visible');
+        return;
+      }
+
+      // App should ALWAYS be visible and populated with offline/cached shell
+      if (typeof window.renderOfflineShell === 'function') {
+        window.renderOfflineShell();
+      }
+      if (app) app.classList.add('visible');
+      if (auth && !window._authExplicitlyOpened) {
+        auth.classList.add('hidden');
+      }
     }
-  }, 2200);
+    window.ensureUIVisible = ensureVisible;
+    // Failsafe timeout: under NO circumstances should the user see a blank screen after 1.8s
+    setTimeout(ensureVisible, 1800);
+    // Extra safety listener for unhandled errors
+    window.addEventListener('error', function() {
+      setTimeout(ensureVisible, 200);
+    });
+  })();
 </script>
 
 <div id="auth-overlay" class="hidden">
-  <div class="auth-box">
+  <div class="auth-box" style="position:relative">
+    <button class="lb-close" id="auth-close-btn" aria-label="Close" type="button" style="position:absolute;top:16px;right:18px;font-size:1.15rem;background:none;border:none;color:var(--dim);cursor:pointer;padding:4px 8px;line-height:1;border-radius:6px;transition:.2s">✕</button>
     <div class="auth-logo">Study <span>Tracker</span></div>
     <div class="auth-sub">Sign in to sync your progress across devices</div>
     <div class="auth-tabs">
@@ -521,6 +871,9 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <button class="auth-btn" id="reset-btn" style="background:var(--s3);color:var(--text);border:1px solid var(--border)">Send Reset Link</button>
       <div id="reset-msg" style="font-size:.72rem;margin-top:8px;min-height:16px;font-family:var(--mono)"></div>
     </div>
+    <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <button type="button" id="auth-guest-btn" style="background:none;border:none;color:var(--blue);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:6px">Continue as Guest (Offline Mode) →</button>
+    </div>
     <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
@@ -531,18 +884,105 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
     <div class="wn-hdr" style="position:relative;">
       <button class="lb-close" id="wn-close-icon" aria-label="Close What's New" style="position:absolute;top:14px;right:16px;">✕</button>
       <div class="wn-badge">🎉 What's New</div>
-      <div class="wn-title" id="wn-title">Version 2.3.0</div>
+      <div class="wn-title" id="wn-title">Version 2.3.7</div>
       <div class="wn-sub" id="wn-sub">Here's what changed in this update</div>
     </div>
     <div class="wn-body" id="wn-body">
-      <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">🤖 Gen 2 Adaptive AI Highlights</div>
+      <div class="wn-section"><div class="wn-section-lbl" style="color:var(--accent);">🤖 Gen 2 Adaptive AI &amp; Best Time Correlator</div>
+        <div class="wn-item"><div class="wn-item-icon">⏱️</div><div class="wn-item-text"><div class="wn-item-title">Adaptive Best Time Correlator</div><div class="wn-item-desc">Unifies logged sessions and syllabus checklist completions into exact circadian productivity breakdown with topic counts and % share.</div></div></div>
         <div class="wn-item"><div class="wn-item-icon">🧬</div><div class="wn-item-text"><div class="wn-item-title">Forgetting Curve Per Topic</div><div class="wn-item-desc">Tracks real retention decay dynamically per topic based on interval, reviews, and cognitive ease.</div></div></div>
-        <div class="wn-item"><div class="wn-item-icon">🔮</div><div class="wn-item-text"><div class="wn-item-title">Predictive Weak Topic Alerts</div><div class="wn-item-desc">Proactively detects topics tracking to slip below 60% retention within 3 days before you forget them.</div></div></div>
         <div class="wn-item"><div class="wn-item-icon">📈</div><div class="wn-item-text"><div class="wn-item-title">Exam Score Simulator</div><div class="wn-item-desc">Live projected exam score range computed from syllabus coverage, multi-pass depth, and retention.</div></div></div>
       </div>
     </div>
     <div class="wn-footer">
       <button class="wn-btn" id="wn-close-btn">Got it · Let's Study 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exam Edge: 10-Day Intensive Revision & Standards Modal -->
+<div id="exam-edge-overlay" role="dialog" aria-modal="true" aria-labelledby="ee-title" style="position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s">
+  <div class="lb-box" id="ee-lb-box" style="width:min(680px,calc(100vw - 32px));max-height:min(720px,calc(100vh - 32px));display:flex;flex-direction:column;">
+    <!-- Header -->
+    <div class="lb-hdr" style="padding:16px 20px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2 id="ee-title" style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.3;">⚡ Exam Edge · Intensive Revision &amp; Mocks</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;">
+          <span style="background:rgba(84,162,255,0.12);color:var(--blue);border:1px solid rgba(84,162,255,0.3);font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:6px;font-family:var(--mono);">⏱ 10 DAYS</span>
+          <span style="font-size:0.70rem;color:var(--dim);font-family:var(--mono);">Starts 22 Nov · Daily 02:30 PM - 05:30 PM · 10 Live Classes + 9 Full Mocks</span>
+        </div>
+      </div>
+      <button class="lb-close" id="ee-close-btn" aria-label="Close Exam Edge planner">✕</button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="ee-tabs-wrap">
+      <div class="ee-tabs">
+        <button id="ee-tab-btn-classes" class="ee-tab-btn active" data-ee-tab="classes" type="button">
+          📅 Classes <span class="ee-tab-badge">10 Days</span>
+        </button>
+        <button id="ee-tab-btn-mocks" class="ee-tab-btn" data-ee-tab="mocks" type="button">
+          🎯 9 Full Mocks <span id="ee-mocks-progress-pill" class="ee-tab-badge">0/9</span>
+        </button>
+      </div>
+      <div class="ee-time-badge">
+        <span style="color:var(--red);font-size:0.6rem;">●</span> 02:30 – 05:30 PM IST
+      </div>
+    </div>
+
+    <!-- Classes View Container -->
+    <div id="ee-classes-view" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;">
+      <!-- Day Selector Strip (10 Days) -->
+      <div id="ee-day-strip"></div>
+
+      <!-- Modal Body -->
+      <div class="lb-body" style="padding:14px 16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;">
+        
+        <!-- Current Day Info Banner -->
+        <div id="ee-active-day-info"></div>
+
+        <!-- Quick Action Toolbar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="font-weight:700;font-size:0.82rem;color:var(--text);display:flex;align-items:center;gap:6px;">
+            <span>📚 Standards Covered</span>
+            <span id="ee-selected-count-badge" style="font-size:0.70rem;background:var(--blue);color:#fff;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-weight:800;min-width:20px;text-align:center;">0</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button data-ee-action="auto-fill" style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:0.72rem;padding:5px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;" title="Fill all 10 days with recommended standards distribution">
+              ✨ Auto-Fill
+            </button>
+            <button data-ee-action="clear-day" style="background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;">
+              Clear Day
+            </button>
+          </div>
+        </div>
+
+        <!-- Search & Filter Input -->
+        <div style="position:relative;">
+          <input type="text" id="ee-search-input" placeholder="🔍 Filter standards (e.g. IAS 16, Leases, Revenue, Consolidation)..." style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:0.84rem;color:var(--text);font-family:var(--font);outline:none;box-sizing:border-box;">
+        </div>
+
+        <!-- Standards Checklist Grouped by Category -->
+        <div id="ee-standards-container" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Mocks View Container (Hidden by default, shown when tab is mocks) -->
+    <div id="ee-mocks-view" style="display:none;flex-direction:column;flex:1;overflow-y:auto;padding:14px 16px;gap:12px;min-height:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+      <div id="ee-mocks-summary-box"></div>
+      <div id="ee-mocks-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--s1);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;">
+      <div style="font-size:0.72rem;color:var(--dim);font-family:var(--mono);display:flex;align-items:center;gap:6px;">
+        <span style="color:var(--green);font-size:0.65rem;">●</span> Auto-saved to cloud &amp; syncs with syllabus
+      </div>
+      <button data-ee-action="done" class="btn-primary" style="background:var(--blue);border:none;color:#fff;font-weight:700;font-size:0.84rem;padding:9px 22px;border-radius:10px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(84,162,255,0.35);">
+        Done &amp; Save
+      </button>
     </div>
   </div>
 </div>
@@ -607,7 +1047,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 
 
 
-<div id="stats-overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title" style="display:none;position:fixed;inset:0;z-index:990;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:max(40px, env(safe-area-inset-bottom));opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px);will-change:transform,opacity">
+<div id="stats-overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title" style="display:none;position:fixed;inset:0;z-index:990;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:max(40px, env(safe-area-inset-bottom));opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateY(20px)">
 
   <div class="topbar" style="position:-webkit-sticky;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:100;padding-bottom:12px;">
     <div class="logo" id="stats-title">Study <span>Statistics</span></div>
@@ -678,7 +1118,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
   </div>
 </div>
 
-<div id="app">
+<div id="app" class="visible">
 <button id="btt" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <div class="topbar">
     <div class="logo">Study <span>Tracker</span></div>
@@ -710,12 +1150,14 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
           </div>
           <div id="pd-course-err" style="font-size:.62rem;color:var(--red);font-family:var(--mono);padding:2px 10px 4px;min-height:14px"></div>
           <div class="pd-sep"></div>
+          <button class="pd-item" id="pd-exam-edge-item" role="menuitem" onclick="openExamEdgeModal();closeDrop();" style="color:#ff9800;font-weight:700;">⚡ Exam Edge (10-Day Plan)</button>
+          <div class="pd-sep"></div>
           <button class="pd-item" id="pd-stats-item" role="menuitem">📊 Statistics</button>
           <div class="pd-sep"></div>
           <button class="pd-item" id="pd-settings-item" role="menuitem">⚙️ Settings</button>
           <div class="pd-sep"></div>
           <button class="pd-item danger" id="signout-item" role="menuitem">Sign out</button>
-          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.3.0</div>
+          <div id="app-version-disp" style="padding:6px 12px 4px;font-size:.58rem;font-family:var(--mono);color:var(--text);opacity:.4;text-align:center">v2.3.7</div>
         </div>
       </div>
     </div>
@@ -796,7 +1238,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
         <label style="display:block;font-size:.72rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Release Notes</label>
         <button id="settings-whats-new-btn" class="auth-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;margin:0">
-          <span id="settings-whats-new-text">View What's New (v2.3.0)</span>
+          <span id="settings-whats-new-text">View What's New (v2.3.7)</span>
         </button>
       </div>
       <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
@@ -825,6 +1267,7 @@ input[type="text"]:focus-visible,input[type="email"]:focus-visible,input[type="p
 </div>
 
 <script type="module">
+window._moduleLoaded = true;
 window._loadingChart = null;
 window.lazyLoadChartJS = async function() {
   if (typeof Chart !== 'undefined') return;
@@ -854,8 +1297,6 @@ window.lazyLoadConfetti = async function() {
 };
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
-import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-performance.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, deleteUser
@@ -863,10 +1304,6 @@ import {
 import {
   initializeFirestore, persistentLocalCache, getFirestore, doc, onSnapshot, setDoc, updateDoc, getDoc, getDocs, deleteDoc, deleteField, collection, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import {
-  initializeAppCheck,
-  ReCaptchaV3Provider
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyAR4ePrBjKl95F0fJfBej6VbW4VJUas9pk",
@@ -878,28 +1315,57 @@ const app = initializeApp({
   measurementId:"G-W0VWF51FSW"
 });
 
-let appCheck;
-try {
-  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+// AppCheck: restricted strictly to production domains to prevent breaking localhost, LAN IPs, and IDE previews
+const isProductionDomain = ['study-tracker-4ba08.web.app', 'study-tracker-4ba08.firebaseapp.com'].includes(window.location.hostname);
+let appCheck = null;
+if (isProductionDomain) {
+  try {
+    const { initializeAppCheck, ReCaptchaV3Provider } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js");
     appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider("6Lc-QYItAAAAAMtjgzf-qwtheV8xYEP85ZsTW5ZF"),
       isTokenAutoRefreshEnabled: true
     });
-  }
-} catch(e) { console.warn('AppCheck blocked or failed:', e); }
-let analytics, perf, appStartPerfTime = performance.now(), _firstScreenTrace = null;
-try {
-  analytics = getAnalytics(app);
-  perf = getPerformance(app);
-  _firstScreenTrace = trace(perf, 'time_to_first_screen');
-  _firstScreenTrace.start();
-} catch(e){ console.warn('Analytics/Performance disabled or blocked:', e); }
+  } catch(e) { console.warn('AppCheck blocked or failed:', e); }
+}
+
+let analytics = null, perf = null, appStartPerfTime = performance.now(), _firstScreenTrace = null;
+let logEventFn = null;
+const _queuedEvents = [];
 
 function logAppEvent(eventName, params = {}) {
-  try { if (analytics && typeof logEvent === 'function') logEvent(analytics, eventName, params); }
-  catch(err) { console.warn('Telemetry event error:', err); }
+  try {
+    if (analytics && typeof logEventFn === 'function') {
+      logEventFn(analytics, eventName, params);
+    } else {
+      _queuedEvents.push({ eventName, params });
+    }
+  } catch(err) { console.warn('Telemetry event error:', err); }
 }
 window.logAppEvent = logAppEvent;
+
+// Non-blocking background load for telemetry so getAuth, Firestore & offline shell render immediately
+(async () => {
+  try {
+    const { getAnalytics, logEvent } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js");
+    analytics = getAnalytics(app);
+    logEventFn = logEvent;
+    while (_queuedEvents.length > 0) {
+      const item = _queuedEvents.shift();
+      if (item && item.eventName) {
+        try { logEventFn(analytics, item.eventName, item.params); } catch (_) {}
+      }
+    }
+  } catch(e) { console.warn('Analytics disabled or blocked:', e); }
+
+  try {
+    const { getPerformance, trace } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-performance.js");
+    perf = getPerformance(app);
+    _firstScreenTrace = trace(perf, 'time_to_first_screen');
+    if (_firstScreenTrace && typeof _firstScreenTrace.start === 'function') {
+      _firstScreenTrace.start();
+    }
+  } catch(e) { console.warn('Performance disabled or blocked:', e); }
+})();
 
 function escapeHTML(str) {
   if (!str) return '';
@@ -932,6 +1398,7 @@ try {
 }
 
 let currentUid=null,unsubSnap=null,remoteData={ activeCourse: localStorage.getItem('cached_ac') || null },writeDebounce=null;
+window.remoteData = remoteData;
 // cached DOM refs
 let domGfill,domPct,domSpills;
 // deferred dates: {date -> deferUntilTimestamp}
@@ -1024,7 +1491,37 @@ async function submitAuth(){
   }
 };
 
-async function doSignOut(){ try { await signOut(auth); } catch (e) { console.error('Signout failed', e); } };
+async function doSignOut(){
+  try {
+    await signOut(auth);
+  } catch (e) { console.error('Signout failed', e); }
+  const curCourse = (typeof remoteData !== 'undefined' && remoteData.activeCourse) || localStorage.getItem('cached_ac') || (COURSE_DATA['ACCA26_P2'] ? 'ACCA26_P2' : DEFAULT_COURSE);
+  remoteData = { activeCourse: curCourse, courses: [curCourse] };
+  if (typeof renderOfflineShell === 'function') renderOfflineShell(true);
+  const appEl = $('app'); if(appEl) appEl.classList.add('visible');
+  const authEl = $('auth-overlay'); if(authEl) authEl.classList.add('hidden');
+  if (typeof closeDrop === 'function') closeDrop();
+};
+
+function closeAuthOverlay() {
+  window._authExplicitlyOpened = false;
+  const authEl = $('auth-overlay');
+  if (authEl) authEl.classList.add('hidden');
+  const appEl = $('app');
+  if (appEl) appEl.classList.add('visible');
+  if (typeof renderOfflineShell === 'function') renderOfflineShell();
+}
+window.closeAuthOverlay = closeAuthOverlay;
+
+function openAuthModal(mode = 'login') {
+  window._authExplicitlyOpened = true;
+  const authEl = $('auth-overlay');
+  if (authEl) {
+    authEl.classList.remove('hidden');
+    switchTab(mode);
+  }
+}
+window.openAuthModal = openAuthModal;
 
 function showForgot(){
   $('forgot-form').style.display='block';
@@ -1067,16 +1564,20 @@ try {
   const asb = $('auth-submit-btn'); if(asb) asb.addEventListener('click',submitAuth);
   const flb = $('forgot-link-btn'); if(flb) flb.addEventListener('click',showForgot);
   const rb = $('reset-btn'); if(rb) rb.addEventListener('click',doReset);
+  const acb = $('auth-close-btn'); if(acb) acb.addEventListener('click', closeAuthOverlay);
+  const agb = $('auth-guest-btn'); if(agb) agb.addEventListener('click', closeAuthOverlay);
+  const aov = $('auth-overlay'); if(aov) aov.addEventListener('click', e => { if(e.target === aov) closeAuthOverlay(); });
   ['auth-email','auth-pass','auth-pass2','auth-name','auth-code'].forEach(id=>{
     const el=$(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
   });
 } catch(err) { console.warn('Auth button wire error:', err); }
 
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.3.7';
 // Course data registry — add new courses here as COURSE_CODES[key]
-const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA'};
-const DEFAULT_COURSE='CSEB11';
+const COURSE_CODES={'CSEB11':'CSEB','CAT09':'Asst Secretary','ACCA26':'ACCA FR','ACCA26_P2':'ACCA FR','CLERK26':'CSEB Clerk','AA26':'ACCA AA','EXAM_EDGE':'Exam Edge (FR)'};
+const DEFAULT_COURSE='ACCA26_P2';
 const COURSE_DATA={};
+window.COURSE_DATA = COURSE_DATA;
 
 const ACCA_FR_TIPS = [
   "When solving a calculation, don’t just memorise the formula. Understand what each figure represents and why it is included. This makes unfamiliar questions much easier.",
@@ -1350,38 +1851,6 @@ const SUBJS_FR={
   // exam section removed — fr19/fr20 are shown as recommended items in the tracker card
 };
 
-const TOPIC_META_FR={
-  fr1:  { w: 1 },
-  fr2a: { w: 2 },
-  fr2b: { w: 2 },
-  fr3:  { w: 3, tag: "⚡" },
-  fr4a: { w: 1 },
-  fr4b: { w: 2 },
-  fr5a: { w: 2 },
-  fr5b: { w: 2 },
-  fr6:  { w: 3, tag: "⚡" },
-  fr7:  { w: 2 },
-  fr8:  { w: 3 },
-  fr9:  { w: 4, tag: "🔥" },
-  fr10b:{ w: 1 },
-  fr11: { w: 3 },
-  fr12: { w: 4, tag: "⚡" },
-  fr13: { w: 4, tag: "🔥" },
-  fr14: { w: 2 },
-  fr15: { w: 5, tag: "🔥" },
-  fr16: { w: 4, tag: "⚡" },
-  fr17a:{ w: 1 },
-  fr17b:{ w: 2 },
-  fr18: { w: 4 },
-  fr_ias2: { w: 2 },
-  fr_ias41: { w: 1 },
-  fr_ias27: { w: 2 },
-  fr_ias28: { w: 2 },
-  fr10a: { w: 1 },
-  fr19: { w: 1 },
-  fr20: { w: 1 }
-};
-
 COURSE_DATA['ACCA26']={sch:{},labels:LABELS_FR,subjs:SUBJS_FR,dynamic:false};
 
 // 🎓 ACCA FR Phase 2 (Sep 11 2026 - Dec 10 2026) 🎓
@@ -1471,10 +1940,6 @@ Object.entries(FR_P2_PART_MAP).forEach(([parentId, children]) => {
   });
 });
 
-const TOPIC_META_FR_P2 = {};
-[2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39].forEach(i => TOPIC_META_FR_P2['fr_new_' + i] = {w:1});
-['ifrs13', 'ias2', 'ias41', 'ias20', 'ifrs5', 'ias8', 'ias10', 'ias37', 'ifrs16', 'ifrs9', 'ias12', 'ifrs15', 'fsprep', 'cons', 'cashflow', 'interp', 'eqp'].forEach(k => TOPIC_META_FR_P2['fr_new_' + k] = {w:1});
-
 const SCH_ACCA_P2 = {
   "2026-09-15": { ids: [], p: "catchup", title: "15-09-26 - Catchup Day" },
   "2026-09-16": { ids: [], p: "catchup", title: "16-09-26 - Catchup Day" },
@@ -1535,9 +2000,108 @@ const SCH_ACCA_P2 = {
   "2026-11-10": { ids: ["fr_new_36"], title: "10-11-26 - Interpretation (Part 3)" },
   "2026-11-11": { ids: ["fr_new_37"], title: "11-11-26 - Interpretation (Part 4)" },
   "2026-11-12": { ids: ["fr_new_38"], title: "12-11-26 - Extra Question Practice 1" },
-  "2026-11-13": { ids: ["fr_new_39"], title: "13-11-26 - Extra Question Practice 2" }
+  "2026-11-13": { ids: ["fr_new_39"], title: "13-11-26 - Extra Question Practice 2" },
+  "2026-11-22": { ids: [], p: "exam_edge", dayNum: 1, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 1, mockTitle: "Mock 1", title: "Day 1/10 · Accounting Standards + Mock 1" },
+  "2026-11-23": { ids: [], p: "exam_edge", dayNum: 2, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", title: "Day 2/10 · Accounting Standards" },
+  "2026-11-24": { ids: [], p: "exam_edge", dayNum: 3, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 2, mockTitle: "Mock 2", title: "Day 3/10 · Accounting Standards + Mock 2" },
+  "2026-11-25": { ids: [], p: "exam_edge", dayNum: 4, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", title: "Day 4/10 · Accounting Standards" },
+  "2026-11-26": { ids: [], p: "exam_edge", dayNum: 5, classTopic: "Cashflow and Theory", time: "02:30 PM - 05:30 PM", title: "Day 5/10 · Cashflow and Theory" },
+  "2026-11-27": { ids: [], p: "exam_edge", dayNum: 6, classTopic: "Consolidation", time: "02:30 PM - 05:30 PM", mockNum: 3, mockTitle: "Mock 3", title: "Day 6/10 · Consolidation + Mock 3" },
+  "2026-11-28": { ids: [], p: "exam_edge", dayNum: 7, classTopic: "Consolidation", time: "02:30 PM - 05:30 PM", title: "Day 7/10 · Consolidation" },
+  "2026-11-29": { ids: [], p: "exam_edge", dayNum: 8, classTopic: "Interpretation", time: "02:30 PM - 05:30 PM", mockNum: 4, mockTitle: "Mock 4", title: "Day 8/10 · Interpretation + Mock 4" },
+  "2026-11-30": { ids: [], p: "exam_edge", dayNum: 9, classTopic: "Interpretation", time: "02:30 PM - 05:30 PM", title: "Day 9/10 · Interpretation" },
+  "2026-12-01": { ids: [], p: "exam_edge", dayNum: 10, classTopic: "Exam Simulation", time: "02:30 PM - 05:30 PM", mockNum: 5, mockTitle: "Mock 5", title: "Day 10/10 · Exam Simulation + Mock 5" },
+  "2026-12-02": { ids: [], p: "catchup", title: "02-12-26 · Catchup & Mock 5 Detailed Review" },
+  "2026-12-03": { ids: [], p: "mock", mockNum: 6, mockTitle: "Mock 6", title: "03-12-26 · 🎯 Mock 6 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-04": { ids: [], p: "catchup", title: "04-12-26 · Mock 6 Review & Weak-Area Focus" },
+  "2026-12-05": { ids: [], p: "mock", mockNum: 7, mockTitle: "Mock 7", title: "05-12-26 · 🎯 Mock 7 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-06": { ids: [], p: "mock", mockNum: 8, mockTitle: "Mock 8", title: "06-12-26 · 🎯 Mock 8 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-07": { ids: [], p: "catchup", title: "07-12-26 · Mock 8 Review & Standard Workings Revision" },
+  "2026-12-08": { ids: [], p: "mock", mockNum: 9, mockTitle: "Mock 9", title: "08-12-26 · 🎯 Mock 9 Final Mock Exam (Full Timed Simulation)" },
+  "2026-12-09": { ids: [], p: "eve", title: "09-12-26 · 🌙 Rest & Mental Prep — Exam Tomorrow" },
+  "2026-12-10": { ids: [], p: "exam", title: "10-12-26 · 🏁 ACCA Financial Reporting (FR) Exam" }
 };
 COURSE_DATA['ACCA26_P2']={sch:SCH_ACCA_P2,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:true};
+
+const SCH_EXAM_EDGE = {
+  "2026-11-22": { ids: [], p: "exam_edge", dayNum: 1, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 1, mockTitle: "Mock 1", title: "Day 1/10 · Accounting Standards + Mock 1" },
+  "2026-11-23": { ids: [], p: "exam_edge", dayNum: 2, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", title: "Day 2/10 · Accounting Standards" },
+  "2026-11-24": { ids: [], p: "exam_edge", dayNum: 3, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 2, mockTitle: "Mock 2", title: "Day 3/10 · Accounting Standards + Mock 2" },
+  "2026-11-25": { ids: [], p: "exam_edge", dayNum: 4, classTopic: "Accounting Standards", time: "02:30 PM - 05:30 PM", title: "Day 4/10 · Accounting Standards" },
+  "2026-11-26": { ids: [], p: "exam_edge", dayNum: 5, classTopic: "Cashflow and Theory", time: "02:30 PM - 05:30 PM", title: "Day 5/10 · Cashflow and Theory" },
+  "2026-11-27": { ids: [], p: "exam_edge", dayNum: 6, classTopic: "Consolidation", time: "02:30 PM - 05:30 PM", mockNum: 3, mockTitle: "Mock 3", title: "Day 6/10 · Consolidation + Mock 3" },
+  "2026-11-28": { ids: [], p: "exam_edge", dayNum: 7, classTopic: "Consolidation", time: "02:30 PM - 05:30 PM", title: "Day 7/10 · Consolidation" },
+  "2026-11-29": { ids: [], p: "exam_edge", dayNum: 8, classTopic: "Interpretation", time: "02:30 PM - 05:30 PM", mockNum: 4, mockTitle: "Mock 4", title: "Day 8/10 · Interpretation + Mock 4" },
+  "2026-11-30": { ids: [], p: "exam_edge", dayNum: 9, classTopic: "Interpretation", time: "02:30 PM - 05:30 PM", title: "Day 9/10 · Interpretation" },
+  "2026-12-01": { ids: [], p: "exam_edge", dayNum: 10, classTopic: "Exam Simulation", time: "02:30 PM - 05:30 PM", mockNum: 5, mockTitle: "Mock 5", title: "Day 10/10 · Exam Simulation + Mock 5" },
+  "2026-12-02": { ids: [], p: "catchup", title: "02-12-26 · Catchup & Mock 5 Detailed Review" },
+  "2026-12-03": { ids: [], p: "mock", mockNum: 6, mockTitle: "Mock 6", title: "03-12-26 · 🎯 Mock 6 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-04": { ids: [], p: "catchup", title: "04-12-26 · Mock 6 Review & Weak-Area Focus" },
+  "2026-12-05": { ids: [], p: "mock", mockNum: 7, mockTitle: "Mock 7", title: "05-12-26 · 🎯 Mock 7 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-06": { ids: [], p: "mock", mockNum: 8, mockTitle: "Mock 8", title: "06-12-26 · 🎯 Mock 8 Full Exam (Strictly Timed 3h 15m)" },
+  "2026-12-07": { ids: [], p: "catchup", title: "07-12-26 · Mock 8 Review & Standard Workings Revision" },
+  "2026-12-08": { ids: [], p: "mock", mockNum: 9, mockTitle: "Mock 9", title: "08-12-26 · 🎯 Mock 9 Final Mock Exam (Full Timed Simulation)" },
+  "2026-12-09": { ids: [], p: "eve", title: "09-12-26 · 🌙 Rest & Mental Prep — Exam Tomorrow" },
+  "2026-12-10": { ids: [], p: "exam", title: "10-12-26 · 🏁 ACCA Financial Reporting (FR) Exam" }
+};
+COURSE_DATA['EXAM_EDGE']={sch:SCH_EXAM_EDGE,labels:LABELS_FR_P2,subjs:SUBJS_FR_P2,dynamic:false};
+
+const EXAM_EDGE_DAYS = [
+  { date: "2026-11-22", dayNum: 1, label: "Day 1 (22 Nov)", topic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 1, mockTitle: "Mock 1", defaultIds: ["fr_new_4", "fr_new_5", "fr_new_ias2", "fr_new_7"], defaultTitle: "Day 1/10 · Accounting Standards + Mock 1" },
+  { date: "2026-11-23", dayNum: 2, label: "Day 2 (23 Nov)", topic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: null, defaultIds: ["fr_new_8", "fr_new_9", "fr_new_ias20", "fr_new_ifrs5"], defaultTitle: "Day 2/10 · Accounting Standards" },
+  { date: "2026-11-24", dayNum: 3, label: "Day 3 (24 Nov)", topic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: 2, mockTitle: "Mock 2", defaultIds: ["fr_new_ifrs16", "fr_new_ifrs13", "fr_new_ias41"], defaultTitle: "Day 3/10 · Accounting Standards + Mock 2" },
+  { date: "2026-11-25", dayNum: 4, label: "Day 4 (25 Nov)", topic: "Accounting Standards", time: "02:30 PM - 05:30 PM", mockNum: null, defaultIds: ["fr_new_ifrs15", "fr_new_ifrs9"], defaultTitle: "Day 4/10 · Accounting Standards" },
+  { date: "2026-11-26", dayNum: 5, label: "Day 5 (26 Nov)", topic: "Cashflow and Theory", time: "02:30 PM - 05:30 PM", mockNum: null, defaultIds: ["fr_new_cashflow", "fr_new_2", "fr_new_3"], defaultTitle: "Day 5/10 · Cashflow and Theory" },
+  { date: "2026-11-27", dayNum: 6, label: "Day 6 (27 Nov)", topic: "Consolidation", time: "02:30 PM - 05:30 PM", mockNum: 3, mockTitle: "Mock 3", defaultIds: ["fr_new_cons", "fr_new_ias37", "fr_new_ias12"], defaultTitle: "Day 6/10 · Consolidation + Mock 3" },
+  { date: "2026-11-28", dayNum: 7, label: "Day 7 (28 Nov)", topic: "Consolidation", time: "02:30 PM - 05:30 PM", mockNum: null, defaultIds: ["fr_new_cons", "fr_new_24", "fr_new_32"], defaultTitle: "Day 7/10 · Consolidation" },
+  { date: "2026-11-29", dayNum: 8, label: "Day 8 (29 Nov)", topic: "Interpretation", time: "02:30 PM - 05:30 PM", mockNum: 4, mockTitle: "Mock 4", defaultIds: ["fr_new_interp"], defaultTitle: "Day 8/10 · Interpretation + Mock 4" },
+  { date: "2026-11-30", dayNum: 9, label: "Day 9 (30 Nov)", topic: "Interpretation", time: "02:30 PM - 05:30 PM", mockNum: null, defaultIds: ["fr_new_interp", "fr_new_fsprep"], defaultTitle: "Day 9/10 · Interpretation" },
+  { date: "2026-12-01", dayNum: 10, label: "Day 10 (01 Dec)", topic: "Exam Simulation", time: "02:30 PM - 05:30 PM", mockNum: 5, mockTitle: "Mock 5", defaultIds: ["fr_new_eqp"], defaultTitle: "Day 10/10 · Exam Simulation + Mock 5" }
+];
+
+const FR_MOCKS_SCHEDULE = [
+  { mockNum: 1, date: "2026-11-22", name: "Mock 1", duration: "3h 15m", note: "Day 1 Class: Accounting Standards (02:30 PM - 05:30 PM)", isExamEdgeDay: true, dayNum: 1, classTopic: "Accounting Standards" },
+  { mockNum: 2, date: "2026-11-24", name: "Mock 2", duration: "3h 15m", note: "Day 3 Class: Accounting Standards (02:30 PM - 05:30 PM)", isExamEdgeDay: true, dayNum: 3, classTopic: "Accounting Standards" },
+  { mockNum: 3, date: "2026-11-27", name: "Mock 3", duration: "3h 15m", note: "Day 6 Class: Consolidation (02:30 PM - 05:30 PM)", isExamEdgeDay: true, dayNum: 6, classTopic: "Consolidation" },
+  { mockNum: 4, date: "2026-11-29", name: "Mock 4", duration: "3h 15m", note: "Day 8 Class: Interpretation (02:30 PM - 05:30 PM)", isExamEdgeDay: true, dayNum: 8, classTopic: "Interpretation" },
+  { mockNum: 5, date: "2026-12-01", name: "Mock 5", duration: "3h 15m", note: "Day 10 Class: Exam Simulation (02:30 PM - 05:30 PM)", isExamEdgeDay: true, dayNum: 10, classTopic: "Exam Simulation" },
+  { mockNum: 6, date: "2026-12-03", name: "Mock 6", duration: "3h 15m", note: "Post-Revision Timed CBE Full Mock", isExamEdgeDay: false },
+  { mockNum: 7, date: "2026-12-05", name: "Mock 7", duration: "3h 15m", note: "Post-Revision Timed CBE Full Mock", isExamEdgeDay: false },
+  { mockNum: 8, date: "2026-12-06", name: "Mock 8", duration: "3h 15m", note: "Post-Revision Timed CBE Full Mock", isExamEdgeDay: false },
+  { mockNum: 9, date: "2026-12-08", name: "Mock 9", duration: "3h 15m", note: "Final Pre-Exam Dress Rehearsal Mock Simulation", isExamEdgeDay: false }
+];
+window.EXAM_EDGE_DAYS = EXAM_EDGE_DAYS;
+window.FR_MOCKS_SCHEDULE = FR_MOCKS_SCHEDULE;
+
+const EXAM_EDGE_STANDARDS = [
+  { id: 'fr_new_2', code: 'Conceptual Framework', name: 'Qualitative characteristics, elements, recognition & derecognition', group: 'Foundations' },
+  { id: 'fr_new_3', code: 'IFRS 18', name: 'Presentation and Disclosure in Financial Statements', group: 'Foundations' },
+  { id: 'fr_new_ifrs13', code: 'IFRS 13', name: 'Fair Value Measurement (Hierarchy, valuation techniques)', group: 'Foundations' },
+  { id: 'fr_new_ias2', code: 'IAS 2', name: 'Inventories (Cost formula, NRV, write-downs)', group: 'Assets' },
+  { id: 'fr_new_4', code: 'IAS 16', name: 'Property, Plant & Equipment (Revaluation, depreciation, component)', group: 'Assets' },
+  { id: 'fr_new_5', code: 'IAS 40', name: 'Investment Property (Fair value model vs Cost model)', group: 'Assets' },
+  { id: 'fr_new_7', code: 'IAS 23', name: 'Borrowing Costs (Capitalisation criteria & suspension)', group: 'Assets' },
+  { id: 'fr_new_ias20', code: 'IAS 20', name: 'Government Grants (Asset-related, income grants, repayment)', group: 'Assets' },
+  { id: 'fr_new_8', code: 'IAS 38', name: 'Intangible Assets (R&D criteria, amortisation, goodwill)', group: 'Assets' },
+  { id: 'fr_new_ifrs5', code: 'IFRS 5', name: 'Non-current Assets Held for Sale & Discontinued Operations', group: 'Assets' },
+  { id: 'fr_new_9', code: 'IAS 36', name: 'Impairment of Assets (CGU, recoverable amount, reversals)', group: 'Assets' },
+  { id: 'fr_new_ias41', code: 'IAS 41', name: 'Agriculture (Biological assets, agricultural produce)', group: 'Assets' },
+  { id: 'fr_new_ifrs16', code: 'IFRS 16', name: 'Leases (ROU Asset, Lease Liability, Lessee & Lessor Accounting)', group: 'Leases' },
+  { id: 'fr_new_ifrs9', code: 'IFRS 9', name: 'Financial Instruments (Classification, Amortised Cost, FVOCI, ECL)', group: 'Instruments' },
+  { id: 'fr_new_ifrs15', code: 'IFRS 15', name: 'Revenue from Contracts with Customers (5-Step Model, Variable Cons)', group: 'Revenue' },
+  { id: 'fr_new_ias37', code: 'IAS 37', name: 'Provisions, Contingent Liabilities & Contingent Assets', group: 'Liabilities' },
+  { id: 'fr_new_ias12', code: 'IAS 12', name: 'Income Taxes (Current tax, Temporary differences, Deferred tax)', group: 'Tax' },
+  { id: 'fr_new_ias8', code: 'IAS 8', name: 'Accounting Policies, Changes in Accounting Estimates & Errors', group: 'Reporting' },
+  { id: 'fr_new_ias10', code: 'IAS 10', name: 'Events After the Reporting Period (Adjusting vs Non-adjusting)', group: 'Reporting' },
+  { id: 'fr_new_24', code: 'IAS 33', name: 'Earnings Per Share (Basic EPS, Diluted EPS, Bonus & Rights)', group: 'Reporting' },
+  { id: 'fr_new_32', code: 'IAS 21', name: 'The Effects of Changes in Foreign Exchange Rates', group: 'Reporting' },
+  { id: 'fr_new_fsprep', code: 'FS Preparation', name: 'Single Entity Preparation (SOPL, SOCIE, SFP, Note adjustments)', group: 'Financial Statements' },
+  { id: 'fr_new_cashflow', code: 'IAS 7', name: 'Statement of Cash Flows (Operating, Investing, Financing)', group: 'Financial Statements' },
+  { id: 'fr_new_cons', code: 'Consolidation', name: 'Group Accounts (IFRS 3 Goodwill, NCI, PURP, Intercompany, IAS 28)', group: 'Consolidation' },
+  { id: 'fr_new_interp', code: 'Interpretation', name: 'Financial Performance & Ratio Analysis (Profitability, Liquidity)', group: 'Analysis' },
+  { id: 'fr_new_eqp', code: 'Mock Drills', name: 'Past Exam Question Practice & Section A/B/C Drills', group: 'Practice' }
+];
+window.EXAM_EDGE_STANDARDS = EXAM_EDGE_STANDARDS;
 
 // CSEB Junior Clerk (Sep 12, 2026 onward)
 const SCH_CLERK={
@@ -1798,26 +2362,6 @@ const SUBJS_CLERK={
   cat_accounting: { ids: ["clk_d55","clk_d56","clk_d57","clk_d58","clk_d59","clk_d61","clk_d69","clk_d74","clk_d79","clk_d84","clk_d89","clk_d91","clk_d92","clk_d93","clk_d94","clk_d96","clk_d97","clk_d98","clk_d99","clk_d100","clk_d101","clk_d103"], c: "var(--accounting)", n: "Accounting (VII)", m: "20 Marks" },
 };
 
-const TOPIC_META_CLERK={
-  clk_d1:{w:1},clk_d2:{w:1},clk_d3:{w:1},clk_d4:{w:1},clk_d5:{w:1},clk_d6:{w:1},clk_d7:{w:1},clk_d8:{w:1},clk_d9:{w:1},
-  clk_d10:{w:1},clk_d11:{w:1},clk_d12:{w:1},clk_d13:{w:1},clk_d14:{w:1},clk_d15:{w:1},clk_d16:{w:1},clk_d17:{w:1},
-  clk_d18:{w:1},clk_d19:{w:1},clk_d20:{w:1},clk_d21:{w:1},clk_d22:{w:1},clk_d23:{w:1},clk_d24:{w:1},clk_d25:{w:1},
-  clk_d26:{w:1},clk_d27:{w:1},clk_d28:{w:1},clk_d29:{w:1},clk_d30:{w:1},clk_d31:{w:1},clk_d32:{w:1},clk_d33:{w:1},
-  clk_d34:{w:1},clk_d35:{w:1},clk_d36:{w:1},clk_d37:{w:1},clk_d38:{w:1},clk_d39:{w:1},clk_d40:{w:1},clk_d41:{w:1},
-  clk_d42:{w:1},clk_d43:{w:1},clk_d44:{w:1},clk_d45:{w:1},clk_d46:{w:1},clk_d47:{w:1},clk_d48:{w:1},clk_d49:{w:1},
-  clk_d50:{w:1},clk_d51:{w:1},clk_d52:{w:1},clk_d53:{w:1},clk_d54:{w:1},clk_d55:{w:1},clk_d56:{w:1},clk_d57:{w:1},
-  clk_d58:{w:1},clk_d59:{w:1},clk_d60:{w:1},clk_d61:{w:1},clk_d62:{w:1},clk_d63:{w:1},clk_d64:{w:1},clk_d65:{w:1},
-  clk_d66:{w:1},clk_d67:{w:1},clk_d68:{w:1},clk_d69:{w:1},clk_d70:{w:1},clk_d71:{w:1},clk_d72:{w:1},clk_d73:{w:1},
-  clk_d74:{w:1},clk_d75:{w:1},clk_d76:{w:1},clk_d77:{w:1},clk_d78:{w:1},clk_d79:{w:1},clk_d80:{w:1},clk_d81:{w:1},
-  clk_d82:{w:1},clk_d83:{w:1},clk_d84:{w:1},clk_d85:{w:1},clk_d86:{w:1},clk_d87:{w:1},clk_d88:{w:1},clk_d89:{w:1},
-  clk_d90:{w:1},clk_d91:{w:1},clk_d92:{w:1},clk_d93:{w:1},clk_d94:{w:1},clk_d95:{w:1},clk_d96:{w:1},clk_d97:{w:1},
-  clk_d98:{w:1},clk_d99:{w:1},clk_d100:{w:1},clk_d101:{w:1},clk_d102:{w:1},clk_d103:{w:1},clk_d104:{w:1},clk_d105:{w:1},
-  clk_d106:{w:1},clk_d107:{w:1},clk_d108:{w:1},clk_d109:{w:1},clk_d110:{w:1},clk_d111:{w:1},clk_d112:{w:1},
-  clk_d113:{w:1},clk_d114:{w:1},clk_d115:{w:1},clk_d116:{w:1},clk_d117:{w:1},clk_d118:{w:1},clk_d119:{w:1},
-  clk_d120:{w:1},clk_d121:{w:1}
-};
-
-
 // ── ACCA AA (Audit and Assurance) ──────────────────────────
 const LABELS_AA = {
   // A Audit framework and regulation
@@ -2055,6 +2599,19 @@ function getCourseData() {
     return { ...data, sch: getShiftedACCASchedule('2026-08-07') };
   }
 
+  if (activeCourseKey === 'ACCA26_P2' || activeCourseKey === 'EXAM_EDGE') {
+    const customSched = typeof getExamEdgeCustomSchedule === 'function' ? getExamEdgeCustomSchedule() : {};
+    if (customSched && Object.keys(customSched).length > 0 && data && data.sch) {
+      const mergedSch = { ...data.sch };
+      for (const [dStr, customIds] of Object.entries(customSched)) {
+        if (mergedSch[dStr] && Array.isArray(customIds)) {
+          mergedSch[dStr] = { ...mergedSch[dStr], ids: customIds };
+        }
+      }
+      return { ...data, sch: mergedSch };
+    }
+  }
+
   if ((activeCourseKey === 'CSEB11' || !COURSE_DATA[activeCourseKey]) && typeof getLateStartDate === 'function') {
     const ls = getLateStartDate();
     if (ls && data && data.sch === SCH) {
@@ -2066,10 +2623,13 @@ function getCourseData() {
 
 const now=null; // kept for API compat; use new Date() inline instead
 function getTodayStr(){
+  if (typeof window !== 'undefined' && window._overrideTodayStr) return window._overrideTodayStr;
   const localDate = new Date();
   return `${localDate.getFullYear()}-${String(localDate.getMonth()+1).padStart(2,'0')}-${String(localDate.getDate()).padStart(2,'0')}`;
 }
 const ts=getTodayStr; // ts() now function call everywhere
+window.getTodayStr = getTodayStr;
+window.ts = ts;
 
 function triggerHaptic() {}
 window.triggerHaptic = triggerHaptic;
@@ -2355,15 +2915,25 @@ function renderPending(){
   if(_lastPendingHtml===html)return; // no change — skip repaint
   _lastPendingHtml=html;
   pc.innerHTML=html;
-  pc.querySelectorAll('.pending-ds').forEach(b=>{
-    b.addEventListener('change',e=>{
-      const sid=e.target.getAttribute('data-id');
-      remoteData[sid]=e.target.checked;onCheck(sid,e.target.checked);
+  if (!window._pendingCardListenerAttached) {
+    window._pendingCardListenerAttached = true;
+    pc.addEventListener('change', e => {
+      const target = e.target;
+      if (target && target.classList.contains('pending-ds')) {
+        const sid = target.getAttribute('data-id');
+        if (sid) {
+          remoteData[sid] = target.checked;
+          onCheck(sid, target.checked);
+        }
+      }
     });
-  });
-  pc.querySelectorAll('.defer-btn').forEach(b=>{
-    b.addEventListener('click',e=>{deferDate(b.getAttribute('data-date'),b.closest('.day-card'));});
-  });
+    pc.addEventListener('click', e => {
+      const btn = e.target.closest('.defer-btn');
+      if (btn) {
+        deferDate(btn.getAttribute('data-date'), btn.closest('.day-card'));
+      }
+    });
+  }
 }
 
 
@@ -2401,8 +2971,8 @@ function makeCard(){
   const lateStart = getLateStartDate();
   if (dc) dc.style.display = '';
 
-  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26' || activeCourse === 'AA26') {
-    // ACCA Phase 1/2 and Clerk: show daily schedule card
+  if (activeCourse === 'ACCA26' || activeCourse === 'ACCA26_P2' || activeCourse === 'CLERK26' || activeCourse === 'AA26' || activeCourse === 'EXAM_EDGE') {
+    // ACCA Phase 1/2, Clerk, and Exam Edge: show daily schedule card
     if(todaySec) todaySec.style.display = '';
     if(pendingSec) pendingSec.style.display = '';
     if(pendingCard) pendingCard.style.display = '';
@@ -2435,6 +3005,7 @@ function makeCard(){
     CAT09: {text:'Asst Secretary · Cat 09 · Exam TBA',date:new Date(2026,7,16)},
     ACCA26: {text: lateStart ? `Sep 10 FR Exam · Started ${lateStart}` : 'Sep 10 FR Exam', date:new Date(Date.UTC(2026, 8, 10))},
     ACCA26_P2: {text: 'Dec 10 FR Exam', date:new Date(Date.UTC(2026, 11, 10))},
+    EXAM_EDGE: {text: 'Dec 10 FR Exam · Exam Edge', date:new Date(Date.UTC(2026, 11, 10))},
     CLERK26: {text: 'Junior Clerk - Exam TBA', date:null},
     AA26: {text: 'Dec 7 AA Exam', date:new Date(Date.UTC(2026, 11, 7))}
   };
@@ -2442,8 +3013,8 @@ function makeCard(){
   const tag=`<div style="margin-bottom:6px;"><span class="exam-tag">${meta.text}</span></div>`;
   
   if(!sched){
-    // ACCA, AA, and Clerk courses don't use the legacy EXAMS array — use getCourseExamTarget
-    if (activeCourse.startsWith('ACCA') || activeCourse === 'AA26' || activeCourse === 'CLERK26') {
+    // ACCA, AA, Exam Edge, and Clerk courses don't use the legacy EXAMS array — use getCourseExamTarget
+    if (activeCourse.startsWith('ACCA') || activeCourse === 'AA26' || activeCourse === 'CLERK26' || activeCourse === 'EXAM_EDGE') {
       const target = typeof getCourseExamTarget === 'function' ? getCourseExamTarget(activeCourse) : null;
       const todayStr = ts();
       const done = target && !target.isPostponed && todayStr > target.dateStr;
@@ -2451,6 +3022,43 @@ function makeCard(){
         dc.innerHTML = `<div class="day-card done">
           ${tag}<div class="day-top"><h2>🏁 Exam Completed</h2>${dateBadge}</div>
           <p style="font-size:.85rem;color:var(--dim);margin-top:8px">Exam date (${target.dateStr}) has passed. Great effort!</p></div>`;
+        window._lastDayCardHtml = true;
+        return;
+      }
+
+      // If today is 2026-11-21 (or before Nov 22) and in FR / Exam Edge:
+      if ((activeCourse === 'ACCA26_P2' || activeCourse === 'EXAM_EDGE' || activeCourse === 'ACCA26') && todayStr <= '2026-11-21') {
+        dc.innerHTML = `
+          <div class="day-card catchup" style="border:1px solid rgba(84,162,255,0.35);background:linear-gradient(180deg, rgba(84,162,255,0.08) 0%, var(--s1) 100%);">
+            ${tag}
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+              <span class="exam-tag" style="background:rgba(84,162,255,0.14);border:1px solid rgba(84,162,255,0.35);color:var(--blue);font-weight:700;padding:4px 10px;border-radius:6px;font-size:0.75rem;">⚡ STARTS TOMORROW</span>
+              <span class="day-badge" style="background:rgba(84,162,255,0.1);border:1px solid rgba(84,162,255,0.25);color:var(--blue);font-weight:700;">🕒 02:30 PM - 05:30 PM</span>
+            </div>
+            <div class="day-top">
+              <h2>🚀 Exam Edge Intensive Revision + 9 Mocks</h2>
+              ${dateBadge}
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);padding:12px 14px;border-radius:10px;margin:12px 0;">
+              <div style="font-size:1.6rem;line-height:1;">⏰</div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.88rem;color:var(--text);">Class: 02:30 PM - 05:30 PM (10-Day Sprint)</div>
+                <div style="font-size:0.78rem;color:var(--dim);margin-top:2px;">Tomorrow (22 Nov): <strong>Accounting Standards</strong> + <strong>Mock 1</strong></div>
+              </div>
+            </div>
+            <p style="font-size:.85rem;color:var(--text);margin-top:8px;line-height:1.5">
+              The <strong>10-Day Exam Edge Intensive Revision</strong> begins tomorrow at <strong>02:30 PM - 05:30 PM</strong> starting with <strong>Accounting Standards</strong> and <strong>Mock 1</strong>. You can manually pick which standards to cover on each day, or load our recommended standards breakdown!
+            </p>
+            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+              <button onclick="openExamEdgeModal('2026-11-22')" class="btn-primary" style="background:var(--blue);border:none;padding:10px 16px;border-radius:10px;font-size:0.85rem;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(84,162,255,0.35);">
+                ⚡ Tomorrow: Accounting Standards &amp; Mock 1
+              </button>
+              <button onclick="openExamEdgeModal()" class="btn-secondary" style="background:var(--s2);border:1px solid var(--border);padding:10px 16px;border-radius:10px;font-size:0.85rem;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                📅 Classes (10 Days) &amp; 🎯 9 Mocks
+              </button>
+            </div>
+          </div>
+        `;
         window._lastDayCardHtml = true;
         return;
       }
@@ -2495,11 +3103,15 @@ function makeCard(){
 
   if(sched.p==='mock'){
     const mockDate = ts();
-    const mockHead = topicHtml ? '<div class="day-sub" style="margin-top:14px">Weekly Exam / Mock Tasks</div>' : '<div class="day-sub">Weekly Exam / Mock Day</div>';
+    const mockNum = sched.mockNum || (typeof FR_MOCKS_SCHEDULE !== 'undefined' ? (FR_MOCKS_SCHEDULE.find(m => m.date === mockDate)?.mockNum) : null) || '';
+    const mockHead = topicHtml ? `<div class="day-sub" style="margin-top:14px">🎯 Mock ${mockNum} Exam Tasks</div>` : `<div class="day-sub">🎯 Mock ${mockNum} Exam Day</div>`;
+    const isMockDone = !!(remoteData['mock_fr_' + mockNum] || remoteData['m1_' + mockDate] || remoteData['misc_m1']);
     inner=`${tag}${topicHtml}${mockHead}<ul class="cl">
-      <li><label><input type="checkbox" id="m1_${mockDate}" ${remoteData['m1_'+mockDate] || remoteData['misc_m1']?'checked':''}><span>Complete full mock (timed)</span></label></li>
-      <li><label><input type="checkbox" id="m2_${mockDate}" ${remoteData['m2_'+mockDate] || remoteData['misc_m2']?'checked':''}><span>Review every wrong answer</span></label></li>
-      <li><label><input type="checkbox" id="m3_${mockDate}" ${remoteData['m3_'+mockDate] || remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak topics</span></label></li></ul>`;
+      <li><label><input type="checkbox" class="ee-mock-check" data-mock-num="${mockNum || 'exam'}" ${isMockDone ? 'checked' : ''}><span>Complete Full Mock ${mockNum} Exam (Strictly Timed 3h 15m)</span></label></li>
+      <li><label><input type="checkbox" id="m2_${mockDate}" ${remoteData['m2_'+mockDate] || remoteData['misc_m2']?'checked':''}><span>Review every wrong answer against model answer &amp; marking scheme</span></label></li>
+      <li><label><input type="checkbox" id="m3_${mockDate}" ${remoteData['m3_'+mockDate] || remoteData['misc_m3']?'checked':''}><span>Revise top 3 weak areas identified in mock</span></label></li>
+      <li><label><input type="checkbox" id="m4_${mockDate}" ${remoteData['m4_'+mockDate] || remoteData['misc_m4']?'checked':''}><span>Update Error Notebook &amp; timing analysis</span></label></li>
+    </ul>`;
   } else if(sched.p==='catchup'){
     const catchupHead = topicHtml ? '<div class="day-sub" style="margin-top:14px">Catchup Day Tasks</div>' : '<div class="day-sub">Catchup Day</div>';
     inner=`${tag}${topicHtml}${catchupHead}<ul class="cl">
@@ -2511,6 +3123,137 @@ function makeCard(){
       <li><label><input type="checkbox" id="e1" ${remoteData['misc_e1']?'checked':''}><span>Review short notes only</span></label></li>
       <li><label><input type="checkbox" id="e2" ${remoteData['misc_e2']?'checked':''}><span>Prepare: Hall ticket, ID, pens, water</span></label></li>
       <li><label><input type="checkbox" id="e3" ${remoteData['misc_e3']?'checked':''}><span>Sleep by 10 PM 🌙</span></label></li></ul>`;
+  } else if(sched.p==='exam_edge'){
+    const todayStr = ts();
+    const dayNum = sched.dayNum || 1;
+    const sessionTime = sched.time || '02:30 PM - 05:30 PM';
+    const classTopic = sched.classTopic || (typeof EXAM_EDGE_DAYS !== 'undefined' && EXAM_EDGE_DAYS.find(d => d.date === todayStr)?.topic) || 'Accounting Standards';
+    const mockNum = sched.mockNum || (typeof FR_MOCKS_SCHEDULE !== 'undefined' && FR_MOCKS_SCHEDULE.find(m => m.date === todayStr)?.mockNum);
+    
+    // Check user manual selections for this date
+    const customSched = typeof getExamEdgeCustomSchedule === 'function' ? getExamEdgeCustomSchedule() : {};
+    const selectedIds = (customSched && customSched[todayStr] && Array.isArray(customSched[todayStr])) 
+      ? customSched[todayStr] 
+      : (sched.ids || []);
+    
+    let standardsListHtml = '';
+    if (selectedIds.length > 0) {
+      const items = selectedIds.map(id => {
+        const std = (typeof EXAM_EDGE_STANDARDS !== 'undefined' ? EXAM_EDGE_STANDARDS.find(s => s.id === id) : null) || { code: id, name: labels[id] || id };
+        const isDone = !!remoteData[id];
+        return `
+          <li style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:var(--s2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
+            <label style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;margin:0;">
+              <input type="checkbox" class="ds" data-id="${id}" ${isDone ? 'checked' : ''} style="width:18px;height:18px;cursor:pointer;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="background:rgba(84,162,255,0.12);border:1px solid rgba(84,162,255,0.3);color:var(--blue);font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:5px;font-family:var(--mono);">${std.code}</span>
+                  <span style="font-weight:700;font-size:0.86rem;color:var(--text);">${std.code !== std.name ? std.name.split('(')[0].trim() : std.name}</span>
+                </div>
+                ${std.name && std.name.includes('(') ? `<div style="font-size:0.72rem;color:var(--dim);margin-top:2px;">${std.name}</div>` : ''}
+              </div>
+            </label>
+            <button onclick="removeExamEdgeStandard('${todayStr}', '${id}')" title="Remove standard from today" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--dim)'">✕</button>
+          </li>
+        `;
+      }).join('');
+      standardsListHtml = `<ul style="list-style:none;padding:0;margin:10px 0 12px 0;">${items}</ul>`;
+    } else {
+      standardsListHtml = `
+        <div style="background:var(--s2);border:1px dashed rgba(84,162,255,0.35);border-radius:12px;padding:16px;text-align:center;margin:12px 0;">
+          <div style="font-size:1.3rem;margin-bottom:4px;">📋</div>
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text);margin-bottom:4px;">No standards selected yet for today's session</div>
+          <div style="font-size:0.78rem;color:var(--dim);margin-bottom:12px;">Manually select which standards you are covering in today's ${sessionTime} intensive revision.</div>
+          <button onclick="openExamEdgeModal('${todayStr}')" class="btn-primary" style="background:var(--blue);border:none;color:#fff;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(84,162,255,0.35);">
+            ➕ Manually Select Standards
+          </button>
+        </div>
+      `;
+    }
+
+    let mockBannerHtml = '';
+    if (mockNum) {
+      const isMockDone = !!remoteData['mock_fr_' + mockNum];
+      mockBannerHtml = `
+        <div style="background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(84,162,255,0.06));border:1px solid rgba(239,68,68,0.35);border-radius:12px;padding:12px 14px;margin:12px 0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;line-height:1;">🎯</span>
+              <div>
+                <strong style="color:var(--text);font-size:0.88rem;">Mock ${mockNum} Scheduled Today (Strictly Timed 3h 15m)</strong>
+                <div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Concurrent with Day ${dayNum} class (${classTopic}). Complete timed CBE practice.</div>
+              </div>
+            </div>
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:var(--s1);padding:4px 10px;border-radius:8px;border:1px solid var(--border);">
+              <input type="checkbox" class="ee-mock-check" data-mock-num="${mockNum}" ${isMockDone ? 'checked' : ''} style="width:17px;height:17px;">
+              <span style="font-size:0.76rem;font-weight:700;color:${isMockDone ? 'var(--green)' : 'var(--text)'};">${isMockDone ? '✓ Mock Done' : 'Mark Mock Done'}</span>
+            </label>
+          </div>
+        </div>
+      `;
+    }
+
+    inner = `
+      ${tag}
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <span class="exam-tag" style="background:rgba(84,162,255,0.14);border:1px solid rgba(84,162,255,0.35);color:var(--blue);font-weight:700;padding:4px 10px;border-radius:6px;font-size:0.75rem;">⚡ EXAM EDGE · INTENSIVE REVISION</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${mockNum ? `<span class="day-badge" style="background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.4);color:var(--red);font-weight:700;">🎯 Mock ${mockNum}</span>` : ''}
+          <span class="day-badge" style="background:rgba(84,162,255,0.1);border:1px solid rgba(84,162,255,0.25);color:var(--blue);font-weight:700;">🕒 ${sessionTime}</span>
+        </div>
+      </div>
+      <div class="day-top">
+        <h2>${sched.title || `Day ${dayNum}/10 · ${classTopic}${mockNum ? ` + Mock ${mockNum}` : ''}`}</h2>
+        ${dateBadge}
+      </div>
+
+      <div class="exam-edge-session-banner" style="display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);padding:12px 14px;border-radius:10px;margin:12px 0;">
+        <div style="font-size:1.6rem;line-height:1;">⏰</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:0.88rem;color:var(--text);">Class: ${classTopic} &bull; ${sessionTime}</div>
+          <div style="font-size:0.78rem;color:var(--dim);margin-top:2px;">Live Intensive 3-Hour Session &amp; Exam Practice</div>
+        </div>
+        <span class="badge" style="background:rgba(84,162,255,0.12);color:var(--blue);font-weight:700;padding:4px 8px;border-radius:6px;font-size:0.72rem;font-family:var(--mono);">Day ${dayNum} of 10</span>
+      </div>
+
+      ${mockBannerHtml}
+
+      <!-- Standards Covered Section -->
+      <div style="margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;">
+          <div class="day-sub" style="margin:0;font-weight:700;color:var(--text);">📋 Standards Covered in this Session</div>
+          <button onclick="openExamEdgeModal('${todayStr}')" style="background:rgba(84,162,255,0.12);border:1px solid rgba(84,162,255,0.3);color:var(--blue);font-size:0.75rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600;">
+            ✏️ Manual Selection
+          </button>
+        </div>
+        ${standardsListHtml}
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button onclick="openExamEdgeModal('${todayStr}')" style="background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:0.8rem;padding:7px 12px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+          ➕ Add / Change Standards
+        </button>
+        <button onclick="openExamEdgeModal();switchExamEdgeTab('mocks');" style="background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.8rem;padding:7px 12px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+          🎯 View All 9 Mocks
+        </button>
+      </div>
+
+      <!-- Daily Checklist -->
+      <div class="mock-mini" style="margin-top:14px;">
+        <div class="mock-mini-lbl" style="color:var(--accent);">📝 Exam Edge Daily Tasks</div>
+        <ul class="cl">
+          <li><label><input type="checkbox" id="ee_session_${todayStr}" ${remoteData['ee_session_'+todayStr]?'checked':''}><span>Attend / complete ${sessionTime} live class (${classTopic})</span></label></li>
+          <li><label><input type="checkbox" id="ee_quiz_${todayStr}" ${remoteData['ee_quiz_'+todayStr]?'checked':''}><span>Attempt exam questions &amp; standard workings on today's topics</span></label></li>
+          ${mockNum ? `
+          <li><label><input type="checkbox" class="ee-mock-check" data-mock-num="${mockNum}" ${remoteData['mock_fr_' + mockNum] ? 'checked' : ''}><span>Complete Mock ${mockNum} Exam (Strictly Timed 3h 15m)</span></label></li>
+          <li><label><input type="checkbox" id="ee_mock_review_${todayStr}" ${remoteData['ee_mock_review_'+todayStr]?'checked':''}><span>Review Mock ${mockNum} wrong answers &amp; update error notebook</span></label></li>
+          ` : `
+          <li><label><input type="checkbox" id="ee_mistake_${todayStr}" ${remoteData['ee_mistake_'+todayStr]?'checked':''}><span>Review mistakes &amp; update IFRS summary sheet</span></label></li>
+          `}
+        </ul>
+      </div>
+    `;
   } else {
     const items=sched.ids.map(id=>`<li><label><input type="checkbox" class="ds" data-id="${id}" ${remoteData[id]?'checked':''}><span>${labels[id]||id}</span></label></li>`).join('');
     inner=`${tag}<div class="day-sub">${titleStr} · Tick to sync syllabus</div><ul class="cl">${items}</ul>
@@ -2520,7 +3263,7 @@ function makeCard(){
   }
   
   let routineHtml = '';
-  if (activeCourse.startsWith('ACCA26') && sched) {
+  if (activeCourse.startsWith('ACCA26') && sched && sched.p !== 'exam_edge') {
     const title = (sched.title || sched.l || '').toLowerCase();
     const ids = sched.ids || [];
     
@@ -2597,27 +3340,54 @@ function makeCard(){
     `;
   }
   
+  if (!window._dayCardListenerAttached) {
+    window._dayCardListenerAttached = true;
+    dc.addEventListener('change', e => {
+      const target = e.target;
+      if (!target) return;
+      if (target.classList.contains('ds')) {
+        const id = target.getAttribute('data-id');
+        if (id) onCheck(id, target.checked);
+        return;
+      }
+      if (target.classList.contains('ee-mock-check') || target.hasAttribute('data-mock-num') || (target.id && target.id.startsWith('mock_fr_'))) {
+        const num = target.getAttribute('data-mock-num') || (target.id ? target.id.replace('mock_fr_', '') : '');
+        if (num) {
+          if (typeof toggleFRMock === 'function') toggleFRMock(num, target.checked);
+          else syncMinorCheck('mock_fr_' + num, target.checked);
+          return;
+        }
+      }
+      if (target.id) {
+        if (target.id === 'daily_mock') {
+          syncMinorCheck('mock_' + ts(), target.checked);
+          return;
+        }
+        if (target.id.startsWith('ee_') || target.id.startsWith('cu1_') || target.id.startsWith('cu2_') || target.id.startsWith('cu3_')) {
+          syncMinorCheck(target.id, target.checked);
+          return;
+        }
+        if (['m1','m2','m3','e1','e2','e3'].includes(target.id) || (target.id.startsWith('m') && target.id.includes('_'))) {
+          const key = (target.id.startsWith('m') && target.id.includes('_')) ? target.id : 'misc_' + target.id;
+          syncMinorCheck(key, target.checked);
+          return;
+        }
+      }
+    });
+  }
+
+  if (sched.p === 'exam_edge') {
+    window._lastDayCardHtml = true;
+    dc.innerHTML = `<div class="day-card exam-edge-card">${inner}</div>`;
+    return;
+  }
+
   const headerTitle = activeCourse === 'ACCA26_P2' ? "📌 90-Day Study Strategy" : activeCourse === 'ACCA26' ? "📌 30-Day Study Strategy" : "📌 Today's Topics";
   window._lastDayCardHtml = true;
   dc.innerHTML=`<div class="day-card ${sched.p}">
     <div class="day-top"><h2>${headerTitle}</h2>${dateBadge}</div>${inner}${routineHtml}</div>`;
-  dc.querySelectorAll('.ds').forEach(b=>{
-    b.addEventListener('change',e=>{onCheck(e.target.getAttribute('data-id'),e.target.checked);});
-  });
-  const dm=$('daily_mock');
-  if(dm)dm.addEventListener('change',e=>{syncMinorCheck('mock_'+ts(), e.target.checked);});
-  ['m1_'+ts(),'m2_'+ts(),'m3_'+ts(),'m1','m2','m3','e1','e2','e3'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{
-      const key = (id.startsWith('m') && id.includes('_')) ? id : 'misc_'+id;
-      syncMinorCheck(key, e.target.checked);
-    });
-  });
-  ['cu1_'+ts(),'cu2_'+ts(),'cu3_'+ts()].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)b.addEventListener('change',e=>{syncMinorCheck(id, e.target.checked);});
-  });
 }
+window.makeCard = makeCard;
 function renderSyllabus(){
   const {subjs,labels}=getCourseData();
   const sg=$('dynamic-syllabus');if(!sg)return;
@@ -2630,6 +3400,7 @@ function renderSyllabus(){
   const frag = document.createDocumentFragment();
 
   Object.entries(subjs).forEach(([k,v])=>{
+    if (!v || !v.ids || !Array.isArray(v.ids)) return;
     const items=v.ids.map(id=>{
       let subBoxes = '';
       if (isACCA && k !== 'exam' && k !== 'mocks' && id !== 'fr_new_38' && id !== 'fr_new_39' && id !== 'fr_new_eqp') {
@@ -2758,6 +3529,7 @@ function updateAll(){
     if (typeof renderStudyTip === 'function') renderStudyTip();
   });
 }
+window.updateAll = updateAll;
 
 let _currentTipKey = '';
 function renderStudyTip() {
@@ -2847,7 +3619,7 @@ function renderExamStrip(){
     return;
   }
   
-  if(active==='ACCA26' || active==='ACCA26_P2'){
+  if(active==='ACCA26' || active==='ACCA26_P2' || active==='EXAM_EDGE'){
     const p1Date = Date.UTC(2026,8,10);
     const p1Diff = Math.round((p1Date-todayUTC)/86400000);
     const p1Status = p1Diff<0?'✅ Completed':p1Diff===0?'🔥 TODAY':p1Diff+' days left';
@@ -2859,19 +3631,26 @@ function renderExamStrip(){
     const p2Color = p2Diff<0?'var(--green)':p2Diff===0?'var(--accent)':'var(--green)';
     
     let html = '';
-    if (p1Diff >= 0 && active !== 'ACCA26_P2') {
+    if (p1Diff >= 0 && active !== 'ACCA26_P2' && active !== 'EXAM_EDGE') {
       html += `<div class="epill next-exam">
         <div class="en">September FR Exam</div>
         <div class="ed">10 Sep 2026</div>
         <div class="en2">ACCA Financial Reporting<br><span style="opacity:.7">Sept Exam Session</span></div>
         <div class="edd" style="margin-top:4px;color:${p1Color}">${p1Status}</div></div>`;
     }
-    const shouldHighlightP2 = active === 'ACCA26_P2' || (p1Diff < 0 && p2Diff >= 0);
+    const shouldHighlightP2 = active === 'ACCA26_P2' || active === 'EXAM_EDGE' || (p1Diff < 0 && p2Diff >= 0);
     html += `<div class="epill ${shouldHighlightP2 ? 'next-exam' : ''}">
       <div class="en">December FR Exam</div>
       <div class="ed">10 Dec 2026</div>
       <div class="en2">ACCA Financial Reporting<br><span style="opacity:.7">Dec Exam Session</span></div>
       <div class="edd" style="margin-top:4px;color:${p2Color}">${p2Status}</div></div>`;
+
+    const mocksDoneCount = (typeof FR_MOCKS_SCHEDULE !== 'undefined') ? FR_MOCKS_SCHEDULE.filter(m => !!remoteData['mock_fr_' + m.mockNum]).length : 0;
+    html += `<div class="epill" onclick="openExamEdgeModal()" style="cursor:pointer;border-color:rgba(84,162,255,0.35);background:linear-gradient(0deg,rgba(84,162,255,0.06),rgba(84,162,255,0.06)),var(--s1);">
+      <div class="en" style="color:var(--blue);display:flex;align-items:center;gap:4px;">⚡ Exam Edge Sprint</div>
+      <div class="ed" style="color:var(--text);">10 Days @ 02:30 PM</div>
+      <div class="en2">22 Nov – 01 Dec · 9 Full Mocks</div>
+      <div class="edd" style="margin-top:4px;color:var(--accent);font-weight:700;">🎯 Mocks: ${mocksDoneCount}/9 Done · Stds Sync</div></div>`;
     es.innerHTML = html;
     return;
   }
@@ -2926,7 +3705,7 @@ function getCourseExamTarget(courseKey) {
   let targetScore = '90+ Rank Holder';
   let subjectCode = 'FR';
 
-  if (c === 'ACCA26_P2') {
+  if (c === 'ACCA26_P2' || c === 'EXAM_EDGE') {
     dateStr = '2026-12-10';
     name = 'ACCA Financial Reporting (FR - Dec 2026)';
     shortName = 'Dec 10 FR Exam';
@@ -3086,6 +3865,7 @@ function onCheck(id, val) {
       }
     }
   } else {
+    if (typeof recordTimeAccuracy === 'function') recordTimeAccuracy(true, true);
     if (!isNonTopicId && remoteData._sr && remoteData._sr[id]) {
       delete remoteData._sr[id];
     }
@@ -3646,6 +4426,8 @@ function renderCourses(data){
       e.stopPropagation();
       const code=btn.getAttribute('data-course');
       remoteData.activeCourse=code;
+      try { localStorage.setItem('cached_ac', code); } catch(_) {}
+      window._lastDayCardCacheKey = null;
       withViewTransition(() => {
         renderCourses(remoteData);renderExamStrip();updatePageTitle();
         makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
@@ -3660,7 +4442,11 @@ function renderCourses(data){
       const code=btn.getAttribute('data-remove');
       const updated=(remoteData.courses||[DEFAULT_COURSE]).filter(c=>c!==code);
       remoteData.courses=updated;
-      if((remoteData.activeCourse||DEFAULT_COURSE)===code)remoteData.activeCourse=updated.length?updated[0]:DEFAULT_COURSE;
+      if((remoteData.activeCourse||DEFAULT_COURSE)===code) {
+        remoteData.activeCourse=updated.length?updated[0]:DEFAULT_COURSE;
+        try { localStorage.setItem('cached_ac', remoteData.activeCourse); } catch(_) {}
+        window._lastDayCardCacheKey = null;
+      }
       withViewTransition(() => {
         renderCourses(remoteData);renderExamStrip();updatePageTitle();
         makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
@@ -3694,6 +4480,8 @@ if (addBtn) {
       updated = updated.filter(c => c !== 'CSEB11');
     }
     remoteData.courses=updated;remoteData.activeCourse=code;
+    try { localStorage.setItem('cached_ac', code); } catch(_) {}
+    window._lastDayCardCacheKey = null;
     withViewTransition(() => {
       inp.value='';renderCourses(remoteData);renderExamStrip();updatePageTitle();
       makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();
@@ -3703,24 +4491,60 @@ if (addBtn) {
   });
 }
 
+function renderOfflineShell(force) {
+  if (window._appRendered && !force) return;
+  try {
+    const activeCourse = remoteData.activeCourse || localStorage.getItem('cached_ac') || (COURSE_DATA['ACCA26_P2'] ? 'ACCA26_P2' : DEFAULT_COURSE);
+    remoteData.activeCourse = activeCourse;
+    if (!remoteData.courses || !remoteData.courses.length) {
+      remoteData.courses = [activeCourse];
+      if (activeCourse !== 'ACCA26_P2' && COURSE_DATA['ACCA26_P2']) {
+        remoteData.courses.push('ACCA26_P2');
+      }
+      if (activeCourse !== 'CSEB11' && COURSE_DATA['CSEB11']) {
+        remoteData.courses.push('CSEB11');
+      }
+    }
+    try { localStorage.setItem('cached_ac', activeCourse); } catch(_) {}
+    domGfill = $('gfill'); domPct = $('pct'); domSpills = $('spills');
+    const td = $('todaydisp');
+    if (td) td.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    try { deferred = JSON.parse(localStorage.getItem('cseb_deferred') || '{}'); } catch(e) { deferred = {}; }
+    renderExamStrip();
+    makeCard();
+    bindSyllabus();
+    updateAll();
+    renderPending();
+    renderRevisions();
+    renderCourses(remoteData);
+    remoteData._loaded = true;
+    window._appRendered = true;
+  } catch(err) {
+    console.warn('renderOfflineShell error:', err);
+  }
+}
+window.renderOfflineShell = renderOfflineShell;
+
+// Populate DOM containers immediately
+try { renderOfflineShell(); } catch(e) {}
+
 function hideSplash(){
   try {
-    const isPWA=window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches;
-    const delay=isPWA?350:500;
-    setTimeout(()=>{
-      const sp = $('splash');
-      if (sp) {
-        sp.classList.add('splash-done');
-        setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 450);
-      }
-      const app = $('app');
-      const authOv = $('auth-overlay');
-      if (app && authOv && !app.classList.contains('visible')){
-        authOv.classList.remove('hidden');
-      }
-    }, delay);
+    const sp = $('splash');
+    if (sp) {
+      sp.classList.add('splash-done');
+      setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 250);
+    }
+    const app = $('app');
+    const authOv = $('auth-overlay');
+    if (app) app.classList.add('visible');
+    if (authOv && !window._authExplicitlyOpened) authOv.classList.add('hidden');
+    if (!window._appRendered && typeof renderOfflineShell === 'function') {
+      renderOfflineShell();
+    }
   } catch(e) {
     const sp = $('splash'); if(sp) { sp.classList.add('splash-done'); sp.style.display='none'; }
+    const app = $('app'); if(app) app.classList.add('visible');
   }
 }
 
@@ -3728,21 +4552,16 @@ setTimeout(()=>{
   const sp = $('splash');
   if(sp && !sp.classList.contains('splash-done')){
     sp.classList.add('splash-done');
-    setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 450);
-    const app = $('app');
-    const authOv = $('auth-overlay');
-    if(app && authOv && !app.classList.contains('visible')) authOv.classList.remove('hidden');
+    setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 250);
   }
-}, 2500);
-
-
-
-const AudioEngine = {
-  playClick() {},
-  playAchievement() {},
-  playSuccess() {}
-};
-
+  const app = $('app');
+  const authOv = $('auth-overlay');
+  if(app) app.classList.add('visible');
+  if(authOv && !window._authExplicitlyOpened) authOv.classList.add('hidden');
+  if(!window._appRendered && typeof renderOfflineShell === 'function') {
+    renderOfflineShell();
+  }
+}, 1800);
 
 async function triggerConfetti() {
   if (confettiFired) return;
@@ -4051,7 +4870,40 @@ function renderSRForecastChart() {
 }
 window.renderSRForecastChart = renderSRForecastChart;
 
-function recordTimeAccuracy(isCorrect) {
+function getStudyTimeBucket(timeStr, defaultHour) {
+  if (!timeStr) {
+    const h = (typeof defaultHour === 'number') ? defaultHour : new Date().getHours();
+    if (h >= 6 && h < 12) return 'morning';
+    if (h >= 12 && h < 18) return 'afternoon';
+    if (h >= 18 && h < 22) return 'evening';
+    return 'night';
+  }
+  try {
+    const timePart = String(timeStr).split('-')[0].trim();
+    const match = timePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    if (match) {
+      let h = parseInt(match[1], 10);
+      const ap = match[3] ? match[3].toUpperCase() : null;
+      if (ap === 'PM' && h < 12) h += 12;
+      if (ap === 'AM' && h === 12) h = 0;
+      if (h >= 6 && h < 12) return 'morning';
+      if (h >= 12 && h < 18) return 'afternoon';
+      if (h >= 18 && h < 22) return 'evening';
+      return 'night';
+    }
+    const num = parseInt(timePart, 10);
+    if (!isNaN(num)) {
+      if (num >= 6 && num < 12) return 'morning';
+      if (num >= 12 && num < 18) return 'afternoon';
+      if (num >= 18 && num < 22) return 'evening';
+      return 'night';
+    }
+  } catch(e) {}
+  return 'afternoon';
+}
+window.getStudyTimeBucket = getStudyTimeBucket;
+
+function recordTimeAccuracy(isCorrect, isDecrement = false) {
   if (!remoteData._timeAccuracy) {
     remoteData._timeAccuracy = {
       morning: { attempts: 0, correct: 0 },
@@ -4060,15 +4912,15 @@ function recordTimeAccuracy(isCorrect) {
       night: { attempts: 0, correct: 0 }
     };
   }
-  const hour = new Date().getHours();
-  let bucket = 'night';
-  if (hour >= 6 && hour < 12) bucket = 'morning';
-  else if (hour >= 12 && hour < 18) bucket = 'afternoon';
-  else if (hour >= 18 && hour < 22) bucket = 'evening';
-
+  const bucket = getStudyTimeBucket();
   const stat = remoteData._timeAccuracy[bucket] || { attempts: 0, correct: 0 };
-  stat.attempts += 1;
-  if (isCorrect) stat.correct += 1;
+  if (isDecrement) {
+    stat.attempts = Math.max(0, stat.attempts - 1);
+    if (isCorrect) stat.correct = Math.max(0, stat.correct - 1);
+  } else {
+    stat.attempts += 1;
+    if (isCorrect) stat.correct += 1;
+  }
   remoteData._timeAccuracy[bucket] = stat;
 }
 window.recordTimeAccuracy = recordTimeAccuracy;
@@ -4096,11 +4948,21 @@ function renderProductivityCorrelator() {
     Object.values(cd.subjs).forEach(s => { if (s && s.ids) s.ids.forEach(id => validTopicIds.add(id)); });
   }
 
+  // Cross-course mapping for Phase 2 / allied courses
+  const isAlliedCourse = (c1, c2) => {
+    if (c1 === c2) return true;
+    const isACCA = c => c === 'ACCA26' || c === 'ACCA26_P2' || c === 'EXAM_EDGE';
+    if (isACCA(c1) && isACCA(c2)) return true;
+    if ((c1 === 'CSEB11' || c1 === 'CLERK26') && (c2 === 'CSEB11' || c2 === 'CLERK26')) return true;
+    return false;
+  };
+
   // Filter logged sessions for active course
   const loggedSessions = (remoteData._loggedSessions || []).filter(s => {
-    if (s.course) return s.course === activeCourse;
+    if (s.course && isAlliedCourse(s.course, activeCourse)) return true;
     if (s._topicIds && s._topicIds.length > 0) return s._topicIds.some(id => validTopicIds.has(id));
-    return true;
+    if (!s.course && (!s._topicIds || s._topicIds.length === 0)) return true;
+    return false;
   });
 
   // Track activity per bucket
@@ -4114,28 +4976,9 @@ function renderProductivityCorrelator() {
   loggedSessions.forEach(session => {
     let bk = session.bucket;
     if (!bk || !bucketData[bk]) {
-      // derive bucket from session.time if missing
-      try {
-        const timePart = (session.time || '').split('-')[0].trim();
-        let h = 12;
-        if (timePart.includes('AM') || timePart.includes('PM') || timePart.includes('am') || timePart.includes('pm')) {
-          const match = timePart.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-          if (match) {
-            h = parseInt(match[1], 10);
-            const ap = match[3] ? match[3].toUpperCase() : null;
-            if (ap === 'PM' && h < 12) h += 12;
-            if (ap === 'AM' && h === 12) h = 0;
-          }
-        } else if (timePart.includes(':')) {
-          h = parseInt(timePart.split(':')[0], 10);
-        }
-        if (h >= 6 && h < 12) bk = 'morning';
-        else if (h >= 12 && h < 18) bk = 'afternoon';
-        else if (h >= 18 && h < 22) bk = 'evening';
-        else bk = 'night';
-      } catch(e) { bk = 'afternoon'; }
+      bk = getStudyTimeBucket(session.time);
     }
-    if (!bucketData[bk]) return;
+    if (!bucketData[bk]) bk = 'afternoon';
 
     const ids = session._topicIds || [];
     const topicCount = ids.length > 0 ? ids.length : (session.count || 1);
@@ -4174,15 +5017,22 @@ function renderProductivityCorrelator() {
     bucketData[bk].focusSum += focusWeight;
   });
 
-  // If no sessions were logged through the modal, fallback to checklist ticks from _timeAccuracy
-  const hasLoggedSessions = loggedSessions.length > 0;
-  if (!hasLoggedSessions && remoteData._timeAccuracy) {
+  // UNIFY WITH CHECKLIST TICKS FROM _timeAccuracy
+  // (Never ignore checklist ticks even if logged sessions exist!)
+  if (remoteData._timeAccuracy) {
     bucketMeta.forEach(bm => {
       const stat = remoteData._timeAccuracy[bm.key];
       if (stat && stat.attempts > 0) {
-        bucketData[bm.key].count = stat.attempts;
-        bucketData[bm.key].sessions = Math.max(1, Math.round(stat.attempts / 2));
-        bucketData[bm.key].focusSum = stat.attempts * 0.85;
+        // Any attempts beyond the logged session topics count are checklist ticks
+        const extraChecklistTopics = Math.max(0, stat.attempts - bucketData[bm.key].count);
+        if (extraChecklistTopics > 0) {
+          bucketData[bm.key].count += extraChecklistTopics;
+          if (bucketData[bm.key].sessions === 0) {
+            bucketData[bm.key].sessions = Math.max(1, Math.round(extraChecklistTopics / 2));
+          }
+          bucketData[bm.key].durationMin += extraChecklistTopics * 25;
+          bucketData[bm.key].focusSum += extraChecklistTopics * 0.85;
+        }
       }
     });
   }
@@ -4222,7 +5072,7 @@ function renderProductivityCorrelator() {
     if (peak && totalActivity > 0) {
       badgeEl.innerHTML = `
         <span style="font-size:0.75rem;font-weight:800;background:rgba(84,162,255,0.14);color:var(--blue);border:1px solid rgba(84,162,255,0.3);padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
-          <span>⚡ PEAK STUDY TIME:</span> <span>${peak.icon} ${peak.shortLabel.toUpperCase()} (${peak.share}% OF STUDY OUTPUT)</span>
+          <span>⚡ PEAK STUDY TIME:</span> <span>${peak.icon} ${peak.shortLabel.toUpperCase()} (${peak.topicsCount} ${peak.topicsCount === 1 ? 'TOPIC' : 'TOPICS'} · ${peak.share}% OF OUTPUT)</span>
         </span>
       `;
     } else {
@@ -4238,7 +5088,7 @@ function renderProductivityCorrelator() {
   if (distBarEl) {
     if (totalActivity > 0) {
       const segments = analyzed.filter(b => b.share > 0).map(b => {
-        return `<div title="${b.shortLabel}: ${b.share}% (${b.topicsCount} topics)" style="width:${b.share}%;height:100%;background:${b.color};transition:width 0.4s ease;"></div>`;
+        return `<div title="${b.shortLabel}: ${b.share}% (${b.topicsCount} topic${b.topicsCount !== 1 ? 's' : ''})" style="width:${b.share}%;height:100%;background:${b.color};transition:width 0.4s ease;"></div>`;
       }).join('');
       distBarEl.innerHTML = `
         <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
@@ -4253,7 +5103,7 @@ function renderProductivityCorrelator() {
             ${analyzed.filter(b => b.share > 0).map(b => `
               <span style="display:inline-flex;align-items:center;gap:4px;">
                 <span style="width:8px;height:8px;border-radius:50%;background:${b.color};display:inline-block;"></span>
-                <span>${b.shortLabel}: <strong style="color:var(--text);font-family:var(--mono);">${b.share}%</strong></span>
+                <span>${b.shortLabel}: <strong style="color:var(--text);font-family:var(--mono);">${b.share}%</strong> <span style="opacity:0.75">(${b.topicsCount}t)</span></span>
               </span>
             `).join('')}
           </div>
@@ -4271,7 +5121,7 @@ function renderProductivityCorrelator() {
     const isPeak = peak && peak.key === b.key && totalActivity > 0;
     const cardBorder = isPeak ? 'border:1.5px solid rgba(84,162,255,0.45);' : 'border:1px solid var(--border);';
     const cardBg = isPeak ? 'background:linear-gradient(170deg, rgba(84,162,255,0.08), var(--s2));box-shadow:0 6px 18px rgba(84,162,255,0.12);' : 'background:var(--s2);';
-    const textColor = b.share > 0 ? (isPeak ? 'var(--blue)' : 'var(--text)') : 'var(--dim)';
+    const textColor = b.topicsCount > 0 ? (isPeak ? 'var(--blue)' : 'var(--text)') : 'var(--dim)';
 
     let timeRange = '6am - 12pm';
     if (b.key === 'afternoon') timeRange = '12pm - 6pm';
@@ -4300,8 +5150,11 @@ function renderProductivityCorrelator() {
           ${isPeak ? '<span style="font-size:0.62rem;font-weight:800;color:var(--blue);background:rgba(84,162,255,0.16);padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">Peak</span>' : ''}
         </div>
         <div style="font-size:0.65rem;color:var(--dim);font-family:var(--mono);margin-bottom:8px;">${timeRange}</div>
-        <div class="lb-stat-val" style="color:${textColor};font-size:1.6rem;font-weight:800;margin-bottom:4px;letter-spacing:-0.02em;">
-          ${b.share > 0 ? b.share + '%' : '—'}
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:4px;margin-bottom:4px;">
+          <div class="lb-stat-val" style="color:${textColor};font-size:1.55rem;font-weight:800;letter-spacing:-0.02em;line-height:1;">
+            ${b.topicsCount}<span style="font-size:0.74rem;font-weight:600;color:var(--dim);margin-left:4px;">${b.topicsCount === 1 ? 'topic' : 'topics'}</span>
+          </div>
+          <span style="font-size:0.75rem;font-weight:800;font-family:var(--mono);color:${b.share > 0 ? b.color : 'var(--dim)'};background:${b.share > 0 ? 'rgba(255,255,255,0.06)' : 'transparent'};padding:${b.share > 0 ? '2px 6px' : '0'};border-radius:6px;">${b.share > 0 ? b.share + '%' : '0%'}</span>
         </div>
         <div style="width:100%;height:4px;background:var(--s3);border-radius:99px;margin:8px 0;overflow:hidden;">
           <div style="width:${b.share}%;height:100%;background:${b.color};border-radius:99px;transition:width 0.4s ease;"></div>
@@ -4324,7 +5177,7 @@ function renderProductivityCorrelator() {
     }
     if (specificHardList.length > 0) {
       courseAdvice = `your high-priority focus topics (${specificHardList.map(t => `<em>${t.name}</em>`).join(', ')}) and demanding problem sets`;
-    } else if (activeCourse.startsWith('ACCA')) {
+    } else if (activeCourse.startsWith('ACCA') || activeCourse === 'EXAM_EDGE') {
       courseAdvice = "your toughest IFRS standards, group consolidations, and multi-part Section C questions";
     } else if (activeCourse === 'AA26') {
       courseAdvice = "complex audit risk evaluations, substantive procedures, and scenario reporting questions";
@@ -4337,7 +5190,7 @@ function renderProductivityCorrelator() {
     insightEl.innerHTML = `
       <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours &amp; Circadian Schedule Advice</strong>
       <span style="color:var(--text);opacity:0.92;display:block;margin-bottom:10px;line-height:1.55;">
-        You achieve your highest study output during the <strong>${peak.label}</strong>, completing <strong>${peak.share}%</strong> of your total topics! Your productivity is lowest during the <strong>${lowest.label}</strong> (${lowest.share}% of output, a <strong>${diff}% drop</strong>).
+        You achieve your highest study output during the <strong>${peak.label}</strong>, completing <strong>${peak.topicsCount} topic${peak.topicsCount !== 1 ? 's' : ''} (${peak.share}% of output)</strong>! Your productivity is lowest during the <strong>${lowest.label}</strong> (${lowest.topicsCount} topic${lowest.topicsCount !== 1 ? 's' : ''}, ${lowest.share}% of output, a <strong>${diff}% drop</strong>).
       </span>
       <div style="background:rgba(84,162,255,0.08);border-left:4px solid var(--blue);padding:10px 14px;border-radius:8px;">
         <strong style="color:var(--accent);font-size:0.78rem;display:block;margin-bottom:3px;letter-spacing:0.04em;">🎯 STUDY SMART SCHEDULE:</strong>
@@ -4350,7 +5203,7 @@ function renderProductivityCorrelator() {
     insightEl.innerHTML = `
       <strong style="color:var(--blue);display:block;font-size:0.92rem;margin-bottom:6px;">🧠 Peak Study Hours Analysis</strong>
       <span style="color:var(--text);opacity:0.92;line-height:1.5;display:block;">
-        All your recorded study activity is currently concentrated in the <strong>${peak.label}</strong> (${peak.topicsCount} topic${peak.topicsCount !== 1 ? 's' : ''}). Try scheduling study sessions in other windows (Morning vs Afternoon vs Evening) to discover your optimal circadian flow!
+        All your recorded study activity so far is in the <strong>${peak.label}</strong> (${peak.topicsCount} topic${peak.topicsCount !== 1 ? 's' : ''}). Study during other windows (Afternoon, Evening, or Night) to unlock your comparative circadian productivity profile!
       </span>
     `;
   } else if (totalActivity > 0) {
@@ -4373,13 +5226,23 @@ window.renderProductivityCorrelator = renderProductivityCorrelator;
 
 
 function initApp(user){
+  // 1. Reveal app UI immediately before anything else
+  try {
+    const appEl = $('app');
+    const authEl = $('auth-overlay');
+    const sp = $('splash');
+    if (authEl) authEl.classList.add('hidden');
+    if (appEl) appEl.classList.add('visible');
+    if (sp) {
+      sp.classList.add('splash-done');
+      setTimeout(() => { if (sp && sp.parentNode) sp.style.display = 'none'; }, 200);
+    }
+  } catch(_) {}
+
   hideSplash();
   try {
-    $('auth-overlay').classList.add('hidden');
-    $('app').classList.add('visible');
-    
-    const name=user.displayName||user.email.split('@')[0]||'Student';
-    const initials=name.slice(0,2).toUpperCase();
+    const name = (user && user.displayName) || (user && user.email ? user.email.split('@')[0] : '') || 'Student';
+    const initials = name.slice(0, 2).toUpperCase() || 'ST';
     const av = $('profile-avatar'); if(av) av.textContent=initials;
     const pn = $('profile-name'); if(pn) pn.textContent=name;
     const pdn = $('pd-name'); if(pdn) pdn.textContent=user.displayName||name;
@@ -4390,10 +5253,8 @@ function initApp(user){
     const wnBtnSpan = document.querySelector('#settings-whats-new-btn span'); if(wnBtnSpan) wnBtnSpan.textContent = `View What's New (v${APP_VERSION})`;
   } catch(e) { console.error('UI init error:', e); }
   try{
-    renderExamStrip();
-    domGfill=$('gfill');domPct=$('pct');domSpills=$('spills');
-    try{deferred=JSON.parse(localStorage.getItem('cseb_deferred')||'{}');}catch(e){deferred={};}
-    makeCard();bindSyllabus();updateAll();renderPending();renderRevisions();renderCourses(remoteData);
+    renderOfflineShell(true);
+    window._appRendered = true;
   }catch(err){
     console.error('initApp render error:',err);
     const wrap=document.querySelector('.wrap');
@@ -4412,45 +5273,51 @@ function initApp(user){
   
   syncState('syncing');
   unsubSnap=onSnapshot(doc(db,'users',user.uid),{includeMetadataChanges:true},snap=>{
-    const snapData = snap.data() || {};
-    const incomingJSON = JSON.stringify(snapData);
-    const isLocalPending = snap.metadata.hasPendingWrites || (_fsTimer !== null) || (window._localWritePending && (Date.now() - window._localWritePending < 800));
-    if (incomingJSON !== _lastAppliedJSON && !isLocalPending) {
-      _lastAppliedJSON = incomingJSON;
-      if(snap.exists()){
-        const oldCourse = remoteData.activeCourse;
-        const wasLoaded = remoteData._loaded;
-        remoteData={ activeCourse: remoteData.activeCourse, ...snapData, _loaded: true };
-        if (remoteData.activeCourse) localStorage.setItem('cached_ac', remoteData.activeCourse);
-        if (!wasLoaded || oldCourse !== remoteData.activeCourse) {
-          makeCard();
-          bindSyllabus();
+    try {
+      const snapData = snap.data() || {};
+      const incomingJSON = JSON.stringify(snapData);
+      const isLocalPending = snap.metadata.hasPendingWrites || (_fsTimer !== null) || (window._localWritePending && (Date.now() - window._localWritePending < 800));
+      if (incomingJSON !== _lastAppliedJSON && !isLocalPending) {
+        _lastAppliedJSON = incomingJSON;
+        if(snap.exists()){
+          const oldCourse = remoteData.activeCourse;
+          const wasLoaded = remoteData._loaded;
+          remoteData={ activeCourse: remoteData.activeCourse, ...snapData, _loaded: true };
+          if (remoteData.activeCourse) localStorage.setItem('cached_ac', remoteData.activeCourse);
+          if ((!wasLoaded && !window._appRendered) || oldCourse !== remoteData.activeCourse) {
+            makeCard();
+            bindSyllabus();
+          }
+          applyData(remoteData);
+        } else {
+          remoteData._loaded = true;
         }
-        applyData(remoteData);
       } else {
         remoteData._loaded = true;
       }
-    } else {
-      remoteData._loaded = true;
-    }
-    
+      
 
-    if (!window.initialLoadComplete && !snap.metadata.hasPendingWrites && snap.exists()) {
-      showWhatsNew();
-      renderNotifToggle();
-      checkAndNotify();
-      handleAutoTransitions();
-      window.initialLoadComplete = true;
-      const params = new URLSearchParams(window.location.search);
-      const action = params.get('action');
-      if (action === 'log') openLogSession();
-      if (action === 'stats') openStats();
-      // Clean up URL without reloading
-      if (action) window.history.replaceState({}, document.title, window.location.pathname);
+      if (!window.initialLoadComplete && !snap.metadata.hasPendingWrites && snap.exists()) {
+        try { showWhatsNew(); } catch(e) { console.warn('showWhatsNew err:', e); }
+        try { renderNotifToggle(); } catch(e) {}
+        try { checkAndNotify(); } catch(e) { console.warn('checkAndNotify err:', e); }
+        try { handleAutoTransitions(); } catch(e) {}
+        window.initialLoadComplete = true;
+        const params = new URLSearchParams(window.location.search);
+        const action = params.get('action');
+        if (action === 'log') openLogSession();
+        if (action === 'stats') openStats();
+        // Clean up URL without reloading
+        if (action) window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
+    } catch(snapErr) {
+      console.error('Snapshot processing error:', snapErr);
+      syncState('');
     }
-    syncState(snap.metadata.hasPendingWrites?'syncing':'synced');
   },err=>{console.error('Snapshot error',err);syncState('');});
 }
+window.initApp = initApp;
 
 // ── AUTO TRANSITIONS ──────────────────────────────────────────────────────
 // Transitions for courses that shift into new phases or schedules automatically
@@ -4516,7 +5383,7 @@ async function handleAutoTransitions(){
 }
 
 // ── WHAT'S NEW & UPDATE LIFECYCLE ───────────────────────────────────────
-const WHATS_NEW_VERSION = '2.3.0'; // bump this to force What's New popup for all users
+const WHATS_NEW_VERSION = '2.3.7'; // bump this to force What's New popup for all users
 
 let _pendingUpdateWorker = null;
 
@@ -4582,7 +5449,28 @@ function buildWhatsNewHTML(){
 
   return `
     <div class="wn-section">
-      <div class="wn-section-lbl" style="color:var(--accent);">🤖 What's New &mdash; v${APP_VERSION} · Gen 2 Adaptive AI</div>
+      <div class="wn-section-lbl" style="color:var(--accent);">🤖 What's New &mdash; v${APP_VERSION} · Exam Edge &amp; Full Mocks Runway</div>
+      <div class="wn-item">
+        <div class="wn-item-icon">⚡</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Official 10-Day Exam Edge Class Schedule</div>
+          <div class="wn-item-desc">Exact timings (02:30 PM - 05:30 PM) for all 10 days with official topic breakdowns: Accounting Standards, Cashflow & Theory, Consolidation, Interpretation, and Exam Simulation.</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">🎯</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Complete 9-Mock Runway</div>
+          <div class="wn-item-desc">Integrated 9 full mocks (5 during Exam Edge + 4 post-revision timed CBE mocks) with score logging, countdowns, and completion sync!</div>
+        </div>
+      </div>
+      <div class="wn-item">
+        <div class="wn-item-icon">⏱️</div>
+        <div class="wn-item-text">
+          <div class="wn-item-title">Adaptive Best Time Correlator</div>
+          <div class="wn-item-desc">Unified tracking across session logs and syllabus ticks with explicit topic counts, % share, and circadian schedule advice.</div>
+        </div>
+      </div>
       <div class="wn-item">
         <div class="wn-item-icon">🧬</div>
         <div class="wn-item-text">
@@ -4636,24 +5524,28 @@ function buildWhatsNewHTML(){
   `;
 }
 function showWhatsNew(force = false){
-  const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
-  
-  const seen = localStorage.getItem('wn_seen_v');
-  if(!force && seen === WHATS_NEW_VERSION) return; // already seen this version
+  try {
+    const activeCourse = remoteData.activeCourse || DEFAULT_COURSE;
+    
+    const seen = localStorage.getItem('wn_seen_v');
+    if(!force && seen === WHATS_NEW_VERSION) return; // already seen this version
 
-  const overlay = document.getElementById('whats-new-overlay');
-  if(!overlay) return;
-  
-  // Hide update toast while What's New is active so it never collides
-  if (typeof hideUpdateToast === 'function') hideUpdateToast();
+    const overlay = document.getElementById('whats-new-overlay');
+    if(!overlay) return;
+    
+    // Hide update toast while What's New is active so it never collides
+    if (typeof hideUpdateToast === 'function') hideUpdateToast();
 
-  const bodyEl = document.getElementById('wn-body');
-  const titleEl = document.getElementById('wn-title');
-  const subEl = document.getElementById('wn-sub');
-  if (bodyEl) bodyEl.innerHTML = buildWhatsNewHTML();
-  if (titleEl) titleEl.textContent = 'Version ' + APP_VERSION;
-  if (subEl) subEl.textContent = `${COURSE_CODES[activeCourse] || activeCourse} · Here's what changed in this update`;
-  overlay.classList.add('open');
+    const bodyEl = document.getElementById('wn-body');
+    const titleEl = document.getElementById('wn-title');
+    const subEl = document.getElementById('wn-sub');
+    if (bodyEl) bodyEl.innerHTML = buildWhatsNewHTML();
+    if (titleEl) titleEl.textContent = 'Version ' + APP_VERSION;
+    if (subEl) subEl.textContent = `${COURSE_CODES[activeCourse] || activeCourse} · Here's what changed in this update`;
+    overlay.classList.add('open');
+  } catch(err) {
+    console.warn('showWhatsNew error:', err);
+  }
 }
 window.showWhatsNew = showWhatsNew;
 
@@ -5058,24 +5950,44 @@ function renderNotifToggle(){
 }
 
 onAuthStateChanged(auth,user=>{
+  window._authResolved = true;
   try {
     if(user){
       currentUid=user.uid;
       initApp(user);
     } else {
       currentUid=null;if(unsubSnap){unsubSnap();unsubSnap=null;}
-      remoteData={};syllabusBoxes=[];
-      try{localStorage.removeItem('cseb_deferred');}catch(e){}
       hideSplash();
-      const sp = $('splash'); if(sp) { sp.classList.add('splash-done'); setTimeout(() => { if(sp && sp.parentNode) sp.style.display='none'; }, 450); }
-      const appEl = $('app'); if(appEl) appEl.classList.remove('visible');
-      const authEl = $('auth-overlay'); if(authEl) authEl.classList.remove('hidden');
+      const sp = $('splash'); if(sp) { sp.classList.add('splash-done'); setTimeout(() => { if(sp && sp.parentNode) sp.style.display='none'; }, 250); }
+      const appEl = $('app'); if(appEl) appEl.classList.add('visible');
+      const authEl = $('auth-overlay');
+      if(authEl && !window._authExplicitlyOpened) authEl.classList.add('hidden');
+
+      const cachedCourse = (typeof remoteData !== 'undefined' && remoteData.activeCourse) || localStorage.getItem('cached_ac') || (COURSE_DATA['ACCA26_P2'] ? 'ACCA26_P2' : DEFAULT_COURSE);
+      remoteData.activeCourse = cachedCourse;
+      renderOfflineShell(true);
+
+      const av = $('profile-avatar'); if(av) av.textContent='ST';
+      const pn = $('profile-name'); if(pn) pn.textContent='Offline';
+      const pdn = $('pd-name'); if(pdn) pdn.textContent='Offline / Guest';
+      const pde = $('pd-email'); if(pde) pde.textContent='Saved locally on device';
+      const pds = $('pd-sync'); if(pds) pds.textContent='● Offline Mode';
+      const soItem = $('signout-item');
+      if(soItem) {
+        soItem.textContent='Sign In / Sync';
+        soItem.classList.remove('danger');
+      }
+      const td = $('todaydisp'); if(td) td.textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      const appVerEl = $('app-version-disp'); if(appVerEl) appVerEl.textContent = 'v' + APP_VERSION;
       const ab=$('auth-submit-btn');
       if(ab){ab.disabled=false;ab.textContent='Sign In';switchTab('login');}
     }
   } catch(err) {
     console.error('Auth handler error:', err);
+    const appEl = $('app'); if(appEl) appEl.classList.add('visible');
+    const authEl = $('auth-overlay'); if(authEl && !window._authExplicitlyOpened) authEl.classList.add('hidden');
     hideSplash();
+    try { renderOfflineShell(true); } catch(_) {}
   }
 });
 
@@ -5426,9 +6338,754 @@ if(statsBtn) statsBtn.addEventListener('click', function(e) {
   openStats();
 });
 
-const el_signout = document.getElementById('signout-item'); if(el_signout) el_signout.addEventListener('click',function(e){
-  e.stopPropagation();doSignOut();
+const el_signout = document.getElementById('signout-item');
+if(el_signout) el_signout.addEventListener('click',function(e){
+  e.stopPropagation();
+  closeDrop();
+  if (currentUid) {
+    doSignOut();
+  } else {
+    openAuthModal('login');
+  }
 });
+
+// ──────────────────────────────────────────────
+// ⚡ EXAM EDGE 10-DAY INTENSIVE REVISION ENGINE (2:30 PM & MANUAL STANDARDS)
+// ──────────────────────────────────────────────
+
+let _activeExamEdgeDate = '2026-11-22';
+let _eeSearchQuery = '';
+
+function getExamEdgeCustomSchedule() {
+  if (typeof remoteData !== 'undefined' && remoteData && remoteData._examEdgeSchedule && typeof remoteData._examEdgeSchedule === 'object' && Object.keys(remoteData._examEdgeSchedule).length > 0) {
+    return remoteData._examEdgeSchedule;
+  }
+  try {
+    const raw = localStorage.getItem('cseb_exam_edge');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) return parsed;
+    }
+  } catch(e) {}
+  const defaults = {};
+  if (typeof EXAM_EDGE_DAYS !== 'undefined') {
+    EXAM_EDGE_DAYS.forEach(d => {
+      defaults[d.date] = [...(d.defaultIds || [])];
+    });
+  }
+  return defaults;
+}
+window.getExamEdgeCustomSchedule = getExamEdgeCustomSchedule;
+
+function saveExamEdgeCustomSchedule(updatedMap) {
+  if (!remoteData._examEdgeSchedule) remoteData._examEdgeSchedule = {};
+  remoteData._examEdgeSchedule = { ...remoteData._examEdgeSchedule, ...updatedMap };
+  try {
+    localStorage.setItem('cseb_exam_edge', JSON.stringify(remoteData._examEdgeSchedule));
+    localStorage.setItem('cseb_data', JSON.stringify(remoteData));
+  } catch(e) {}
+
+  window._localWritePending = Date.now();
+  const clean = { ...remoteData };
+  delete clean._loaded;
+  _lastAppliedJSON = JSON.stringify(clean);
+
+  if (currentUid && db) {
+    updateDoc(doc(db, 'users', currentUid), {
+      _examEdgeSchedule: remoteData._examEdgeSchedule
+    }).catch(err => console.warn('[ExamEdge] Firestore save failed:', err));
+  }
+}
+window.saveExamEdgeCustomSchedule = saveExamEdgeCustomSchedule;
+
+let _activeExamEdgeTab = 'classes';
+
+function switchExamEdgeTab(tab) {
+  _activeExamEdgeTab = tab;
+  const btnClasses = $('ee-tab-btn-classes');
+  const btnMocks = $('ee-tab-btn-mocks');
+  const viewClasses = $('ee-classes-view');
+  const viewMocks = $('ee-mocks-view');
+
+  if (btnClasses) btnClasses.classList.toggle('active', tab === 'classes');
+  if (btnMocks) btnMocks.classList.toggle('active', tab === 'mocks');
+
+  if (viewClasses) viewClasses.style.display = tab === 'classes' ? 'flex' : 'none';
+  if (viewMocks) viewMocks.style.display = tab === 'mocks' ? 'flex' : 'none';
+
+  renderExamEdgeModal(false);
+}
+window.switchExamEdgeTab = switchExamEdgeTab;
+
+function toggleFRMock(mockNum, isDone) {
+  const num = Number(mockNum);
+  if (!num) return;
+  const doneBool = !!isDone;
+  const keyFR = 'mock_fr_' + num;
+  remoteData[keyFR] = doneBool;
+
+  const mObj = (typeof FR_MOCKS_SCHEDULE !== 'undefined') ? FR_MOCKS_SCHEDULE.find(m => m.mockNum === num) : null;
+  const payload = { [keyFR]: doneBool };
+
+  if (mObj && mObj.date) {
+    const keyM1 = 'm1_' + mObj.date;
+    remoteData[keyM1] = doneBool;
+    payload[keyM1] = doneBool;
+  }
+
+  try { localStorage.setItem('cseb_data', JSON.stringify(remoteData)); } catch (_) {}
+
+  if (currentUid && db) {
+    window._localWritePending = Date.now();
+    updateDoc(doc(db, 'users', currentUid), payload)
+      .catch(err => console.warn('[ExamEdge] Mock write failed:', err));
+  }
+
+  if (doneBool) {
+    logAppEvent('mock_completed', { mock_num: num, course: remoteData.activeCourse || DEFAULT_COURSE });
+    try {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+      }
+    } catch (_) {}
+  }
+
+  // Synchronize all mock checkboxes across DOM
+  document.querySelectorAll(`[data-mock-num="${num}"]`).forEach(cb => {
+    if (cb && cb.checked !== doneBool) cb.checked = doneBool;
+  });
+
+  // Update Mocks count pill in header
+  const mocksCountPill = $('ee-mocks-progress-pill');
+  if (mocksCountPill && typeof FR_MOCKS_SCHEDULE !== 'undefined') {
+    const doneCount = FR_MOCKS_SCHEDULE.filter(m => !!remoteData['mock_fr_' + m.mockNum]).length;
+    mocksCountPill.textContent = `${doneCount}/9`;
+  }
+
+  // Update mock card state in Mocks view if rendered
+  const mockCard = document.querySelector(`[data-mock-card-num="${num}"]`);
+  if (mockCard) {
+    mockCard.classList.toggle('completed', doneBool);
+  }
+
+  window._lastDayCardCacheKey = null;
+  makeCard();
+  renderExamStrip();
+}
+window.toggleFRMock = toggleFRMock;
+
+function saveFRMockScore(mockNum, score) {
+  const num = Number(mockNum);
+  if (!num) return;
+  const key = 'mock_fr_score_' + num;
+  const val = parseFloat(score);
+
+  if (!isNaN(val) && val >= 0 && val <= 100) {
+    remoteData[key] = val;
+    if (currentUid && db) {
+      window._localWritePending = Date.now();
+      updateDoc(doc(db, 'users', currentUid), { [key]: val }).catch(err => console.warn('[ExamEdge] Score save failed:', err));
+    }
+  } else if (!score || String(score).trim() === '') {
+    delete remoteData[key];
+    if (currentUid && db) {
+      window._localWritePending = Date.now();
+      updateDoc(doc(db, 'users', currentUid), { [key]: deleteField() }).catch(err => console.warn('[ExamEdge] Score delete failed:', err));
+    }
+  }
+  try { localStorage.setItem('cseb_data', JSON.stringify(remoteData)); } catch (_) {}
+}
+window.saveFRMockScore = saveFRMockScore;
+
+function openExamEdgeModal(targetDate) {
+  const overlay = $('exam-edge-overlay');
+  if (!overlay) return;
+
+  const todayStr = ts();
+  if (targetDate && EXAM_EDGE_DAYS.some(d => d.date === targetDate)) {
+    _activeExamEdgeDate = targetDate;
+    switchExamEdgeTab('classes');
+  } else if (EXAM_EDGE_DAYS.some(d => d.date === todayStr)) {
+    _activeExamEdgeDate = todayStr;
+  } else {
+    _activeExamEdgeDate = '2026-11-22';
+  }
+
+  _eeSearchQuery = '';
+  const searchInput = $('ee-search-input');
+  if (searchInput) searchInput.value = '';
+
+  overlay.style.visibility = 'visible';
+  overlay.style.opacity = '1';
+  document.body.style.overflow = 'hidden';
+
+  renderExamEdgeModal(true);
+}
+window.openExamEdgeModal = openExamEdgeModal;
+
+function closeExamEdgeModal() {
+  const overlay = $('exam-edge-overlay');
+  if (!overlay) return;
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    if (overlay && overlay.style.opacity === '0') {
+      overlay.style.visibility = 'hidden';
+      document.body.style.overflow = '';
+    }
+  }, 250);
+
+  // Single clean repaint of dashboard when modal closes
+  window._lastDayCardCacheKey = null;
+  makeCard();
+  updateAll();
+  renderExamStrip();
+}
+window.closeExamEdgeModal = closeExamEdgeModal;
+
+function selectExamEdgeDay(dateStr) {
+  _activeExamEdgeDate = dateStr;
+
+  const dayStrip = $('ee-day-strip');
+  if (dayStrip && dayStrip.children.length > 0) {
+    const pills = dayStrip.querySelectorAll('.ee-day-pill');
+    pills.forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-ee-date') === dateStr);
+    });
+    const activePill = dayStrip.querySelector('[data-ee-date="' + dateStr + '"]');
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  renderExamEdgeActiveDay();
+}
+window.selectExamEdgeDay = selectExamEdgeDay;
+
+function updateExamEdgeDayPillBadges() {
+  const dayStrip = $('ee-day-strip');
+  if (!dayStrip) return;
+  const customSched = getExamEdgeCustomSchedule();
+  EXAM_EDGE_DAYS.forEach(d => {
+    const pill = dayStrip.querySelector('[data-ee-date="' + d.date + '"]');
+    if (pill) {
+      const badge = pill.querySelector('.ee-day-badge');
+      if (badge) {
+        const count = (customSched[d.date] && Array.isArray(customSched[d.date])) ? customSched[d.date].length : 0;
+        badge.textContent = count > 0 ? `${count} stds` : 'pick';
+      }
+    }
+  });
+}
+
+function toggleExamEdgeStandard(standardId) {
+  const customSched = getExamEdgeCustomSchedule();
+  const currentList = Array.isArray(customSched[_activeExamEdgeDate]) ? [...customSched[_activeExamEdgeDate]] : [];
+
+  const idx = currentList.indexOf(standardId);
+  const nowChecked = idx < 0;
+  if (nowChecked) {
+    currentList.push(standardId);
+  } else {
+    currentList.splice(idx, 1);
+  }
+
+  saveExamEdgeCustomSchedule({ [_activeExamEdgeDate]: currentList });
+
+  // Update in-place in standards checklist
+  const itemEl = document.querySelector(`.ee-std-item[data-std-id="${standardId}"]`);
+  if (itemEl) {
+    itemEl.classList.toggle('selected', nowChecked);
+    itemEl.setAttribute('aria-checked', String(nowChecked));
+    const cb = itemEl.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = nowChecked;
+    const statusTxt = itemEl.querySelector('.ee-std-status');
+    if (statusTxt) {
+      statusTxt.textContent = nowChecked ? '✓ Added' : '+ Add';
+      statusTxt.style.color = nowChecked ? 'var(--blue)' : 'var(--dim)';
+    }
+  }
+
+  // Update chips and active day card in-place
+  renderExamEdgeActiveDay(true);
+  updateExamEdgeDayPillBadges();
+}
+window.toggleExamEdgeStandard = toggleExamEdgeStandard;
+
+function removeExamEdgeStandard(dateStr, standardId) {
+  const customSched = getExamEdgeCustomSchedule();
+  const currentList = Array.isArray(customSched[dateStr]) ? [...customSched[dateStr]] : [];
+  const idx = currentList.indexOf(standardId);
+  if (idx >= 0) {
+    currentList.splice(idx, 1);
+    saveExamEdgeCustomSchedule({ [dateStr]: currentList });
+    if (dateStr === _activeExamEdgeDate) {
+      const itemEl = document.querySelector(`.ee-std-item[data-std-id="${standardId}"]`);
+      if (itemEl) {
+        itemEl.classList.remove('selected');
+        itemEl.setAttribute('aria-checked', 'false');
+        const cb = itemEl.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = false;
+        const statusTxt = itemEl.querySelector('.ee-std-status');
+        if (statusTxt) {
+          statusTxt.textContent = '+ Add';
+          statusTxt.style.color = 'var(--dim)';
+        }
+      }
+      renderExamEdgeActiveDay(true);
+      updateExamEdgeDayPillBadges();
+    }
+  }
+}
+window.removeExamEdgeStandard = removeExamEdgeStandard;
+
+function autoPopulateExamEdgeRecommended() {
+  const currentSched = getExamEdgeCustomSchedule();
+  const hasExisting = Object.values(currentSched).some(arr => Array.isArray(arr) && arr.length > 0);
+  if (hasExisting) {
+    const ok = window.confirm("This will replace your current standard assignments across all 10 days with the recommended plan. Continue?");
+    if (!ok) return;
+  }
+  const newMap = {};
+  EXAM_EDGE_DAYS.forEach(d => {
+    newMap[d.date] = [...d.defaultIds];
+  });
+  saveExamEdgeCustomSchedule(newMap);
+  updateExamEdgeDayPillBadges();
+  renderExamEdgeActiveDay();
+  renderExamEdgeStandardsList();
+  showAutoFillNotification();
+}
+window.autoPopulateExamEdgeRecommended = autoPopulateExamEdgeRecommended;
+
+function clearCurrentExamEdgeDay() {
+  saveExamEdgeCustomSchedule({ [_activeExamEdgeDate]: [] });
+  updateExamEdgeDayPillBadges();
+  renderExamEdgeActiveDay();
+  renderExamEdgeStandardsList();
+}
+window.clearCurrentExamEdgeDay = clearCurrentExamEdgeDay;
+
+function filterExamEdgeStandards() {
+  const searchInput = $('ee-search-input');
+  _eeSearchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  renderExamEdgeStandardsList();
+}
+window.filterExamEdgeStandards = filterExamEdgeStandards;
+
+function showAutoFillNotification() {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--s1);color:var(--text);border:1px solid var(--blue);box-shadow:0 8px 24px rgba(0,0,0,0.5);padding:10px 18px;border-radius:12px;font-size:0.85rem;font-weight:700;z-index:9999;animation:modalPop 0.3s ease;display:flex;align-items:center;gap:8px;';
+  toast.innerHTML = '<span style="color:var(--green)">✓</span> Loaded recommended standards plan for all 10 days!';
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 2500);
+}
+
+function renderExamEdgeActiveDay(chipsOnly) {
+  const infoBanner = $('ee-active-day-info');
+  const countBadge = $('ee-selected-count-badge');
+  const customSched = getExamEdgeCustomSchedule();
+
+  const currentDayObj = EXAM_EDGE_DAYS.find(d => d.date === _activeExamEdgeDate) || EXAM_EDGE_DAYS[0];
+  const selectedIds = Array.isArray(customSched[_activeExamEdgeDate]) ? customSched[_activeExamEdgeDate] : [];
+
+  if (countBadge) countBadge.textContent = selectedIds.length;
+
+  if (chipsOnly && infoBanner) {
+    const chipsContainer = infoBanner.querySelector('#ee-active-chips');
+    const descEl = infoBanner.querySelector('#ee-active-desc');
+    if (chipsContainer) {
+      chipsContainer.innerHTML = selectedIds.map(sid => {
+        const s = EXAM_EDGE_STANDARDS.find(st => st.id === sid);
+        const code = s ? s.code : sid;
+        return `<span class="ee-chip"><span>${code}</span><span class="ee-chip-remove" data-ee-action="remove-chip" data-chip-id="${sid}" title="Remove ${code}">✕</span></span>`;
+      }).join('');
+    }
+    if (descEl) {
+      descEl.innerHTML = selectedIds.length > 0 
+        ? `Covering <strong style="color:var(--text);">${selectedIds.length}</strong> standard${selectedIds.length > 1 ? 's' : ''} in today's intensive revision session` 
+        : 'No standards chosen yet for this day — select below or tap Auto-Fill.';
+    }
+    return;
+  }
+
+  if (infoBanner) {
+    const [y, m, d] = _activeExamEdgeDate.split('-').map(Number);
+    const dateFormatted = new Date(y, m - 1, d).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+    const isMockDone = currentDayObj.mockNum ? !!remoteData['mock_fr_' + currentDayObj.mockNum] : false;
+
+    const mockBadgeHtml = currentDayObj.mockNum ? `
+      <div style="margin-top:12px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(84,162,255,0.06));border:1px solid rgba(239,68,68,0.35);padding:10px 14px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:1.1rem;line-height:1;">🎯</span>
+          <div>
+            <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Mock ${currentDayObj.mockNum} Scheduled Today</div>
+            <div style="font-size:0.72rem;color:var(--dim);font-family:var(--mono);">Strictly Timed 3h 15m CBE Full Exam</div>
+          </div>
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:var(--s1);padding:6px 12px;border-radius:8px;border:1px solid var(--border);">
+          <input type="checkbox" class="ee-mock-check" data-mock-num="${currentDayObj.mockNum}" ${isMockDone ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer;">
+          <span style="font-size:0.75rem;font-weight:700;color:${isMockDone ? 'var(--green)' : 'var(--text)'};">${isMockDone ? '✓ Mock Done' : 'Mark Done'}</span>
+        </label>
+      </div>
+    ` : '';
+
+    infoBanner.innerHTML = `
+      <div class="ee-active-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <strong style="color:var(--text);font-size:0.96rem;">Day ${currentDayObj.dayNum} · ${dateFormatted}</strong>
+              <span class="ee-time-badge">02:30 PM – 05:30 PM IST</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text);font-weight:700;margin-top:6px;display:flex;align-items:center;gap:6px;">
+              <span style="color:var(--blue);">📖 Class Topic:</span> <span>${currentDayObj.topic}</span>
+            </div>
+            <div id="ee-active-desc" style="font-size:0.74rem;color:var(--dim);margin-top:3px;">
+              ${selectedIds.length > 0 
+                ? `Covering <strong style="color:var(--text);">${selectedIds.length}</strong> standard${selectedIds.length > 1 ? 's' : ''} in today's intensive revision session` 
+                : 'No standards chosen yet for this day — select below or tap Auto-Fill.'}
+            </div>
+          </div>
+          <div id="ee-active-chips" style="display:flex;gap:4px;flex-wrap:wrap;max-width:240px;justify-content:flex-end;">
+            ${selectedIds.map(sid => {
+              const s = EXAM_EDGE_STANDARDS.find(st => st.id === sid);
+              const code = s ? s.code : sid;
+              return `<span class="ee-chip"><span>${code}</span><span class="ee-chip-remove" data-ee-action="remove-chip" data-chip-id="${sid}" title="Remove ${code}">✕</span></span>`;
+            }).join('')}
+          </div>
+        </div>
+        ${mockBadgeHtml}
+      </div>
+    `;
+  }
+
+  if (!chipsOnly) {
+    renderExamEdgeStandardsList();
+  }
+}
+window.renderExamEdgeActiveDay = renderExamEdgeActiveDay;
+
+function renderExamEdgeModal(forceRebuildStrip) {
+  const mocksCountPill = $('ee-mocks-progress-pill');
+  const mocksDoneCount = (typeof FR_MOCKS_SCHEDULE !== 'undefined') ? FR_MOCKS_SCHEDULE.filter(m => !!remoteData['mock_fr_' + m.mockNum]).length : 0;
+  if (mocksCountPill) mocksCountPill.textContent = `${mocksDoneCount}/9`;
+
+  if (_activeExamEdgeTab === 'mocks') {
+    renderExamEdgeMocks();
+    return;
+  }
+
+  // Classes View: Day Strip
+  const dayStrip = $('ee-day-strip');
+  const customSched = getExamEdgeCustomSchedule();
+
+  if (dayStrip && (forceRebuildStrip || dayStrip.children.length === 0)) {
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    dayStrip.innerHTML = EXAM_EDGE_DAYS.map(d => {
+      const isSelected = d.date === _activeExamEdgeDate;
+      const count = (customSched[d.date] && Array.isArray(customSched[d.date])) ? customSched[d.date].length : 0;
+      const [dy, dm, dd] = d.date.split('-').map(Number);
+      const dateFormatted = `${dd} ${monthNames[dm - 1]}`;
+      const countTxt = count > 0 ? `${count} stds` : 'pick';
+      return `
+        <button class="ee-day-pill${isSelected ? ' active' : ''}" type="button" data-ee-date="${d.date}">
+          <span class="ee-day-num">Day ${d.dayNum}</span>
+          <span class="ee-day-date">${dateFormatted}</span>
+          <span class="ee-day-sub">
+            <span class="ee-day-badge">${countTxt}</span>
+            ${d.mockNum ? `<span class="ee-day-dot mock" title="Mock ${d.mockNum} scheduled"></span>` : ''}
+          </span>
+        </button>
+      `;
+    }).join('') + '<div style="flex-shrink:0;width:12px;height:1px;"></div>';
+
+    requestAnimationFrame(() => {
+      const activePill = dayStrip.querySelector('[data-ee-date="' + _activeExamEdgeDate + '"]');
+      if (activePill) {
+        activePill.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+      }
+    });
+  } else if (dayStrip) {
+    updateExamEdgeDayPillBadges();
+    const pills = dayStrip.querySelectorAll('.ee-day-pill');
+    pills.forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-ee-date') === _activeExamEdgeDate);
+    });
+  }
+
+  renderExamEdgeActiveDay();
+}
+window.renderExamEdgeModal = renderExamEdgeModal;
+
+function renderExamEdgeMocks() {
+  const summaryBox = $('ee-mocks-summary-box');
+  const listEl = $('ee-mocks-list');
+  if (!summaryBox || !listEl || typeof FR_MOCKS_SCHEDULE === 'undefined') return;
+
+  const total = FR_MOCKS_SCHEDULE.length;
+  const doneCount = FR_MOCKS_SCHEDULE.filter(m => !!remoteData['mock_fr_' + m.mockNum]).length;
+  const pct = Math.round((doneCount / total) * 100);
+
+  summaryBox.innerHTML = `
+    <div class="prog-row" style="margin-bottom:0;padding:16px 20px;">
+      <div class="prog-top">
+        <div>
+          <div style="font-weight:800;font-size:0.95rem;color:var(--text);display:flex;align-items:center;gap:6px;">
+            <span>🎯 ACCA FR Complete 9-Mock Runway</span>
+          </div>
+          <div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">
+            5 Mocks concurrent with Exam Edge classes + 4 Post-Revision Mocks leading to Exam Day (10 Dec).
+          </div>
+        </div>
+        <strong>${doneCount} / ${total} (${pct}%)</strong>
+      </div>
+      <div class="track" style="margin-bottom:0;height:7px;">
+        <div class="fill" style="width:${pct}%;"></div>
+      </div>
+    </div>
+  `;
+
+  const todayStr = ts();
+  const [ty, tm, td] = todayStr.split('-').map(Number);
+  const todayUTC = Date.UTC(ty, tm - 1, td);
+
+  listEl.innerHTML = FR_MOCKS_SCHEDULE.map(m => {
+    const isDone = !!remoteData['mock_fr_' + m.mockNum];
+    const score = remoteData['mock_fr_score_' + m.mockNum] !== undefined ? remoteData['mock_fr_score_' + m.mockNum] : '';
+
+    const [my, mm, md] = m.date.split('-').map(Number);
+    const mockUTC = Date.UTC(my, mm - 1, md);
+    const diffDays = Math.round((mockUTC - todayUTC) / 86400000);
+    const dateFormatted = new Date(my, mm - 1, md).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+
+    let statusBadge = '';
+    if (isDone) {
+      statusBadge = `<span class="ee-mock-badge" style="background:rgba(40,212,142,0.16);color:var(--green);border:1px solid rgba(40,212,142,0.35);">✓ Done ${score !== '' ? `(${score}%)` : ''}</span>`;
+    } else if (diffDays === 0) {
+      statusBadge = `<span class="ee-mock-badge" style="background:rgba(239,68,68,0.18);color:var(--red);border:1px solid rgba(239,68,68,0.4);">🔥 TODAY</span>`;
+    } else if (diffDays < 0) {
+      statusBadge = `<span class="ee-mock-badge" style="background:rgba(252,174,40,0.16);color:var(--accent);border:1px solid rgba(252,174,40,0.35);">⚠️ Due</span>`;
+    } else {
+      statusBadge = `<span class="ee-mock-badge" style="background:var(--s2);color:var(--dim);border:1px solid var(--border);">In ${diffDays}d</span>`;
+    }
+
+    const actionButton = m.isExamEdgeDay ? `
+      <button data-ee-action="view-class-day" data-ee-date="${m.date}" style="background:var(--s2);border:1px solid var(--border);color:var(--dim);font-size:0.72rem;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:var(--font);font-weight:600;" title="View Day ${m.dayNum} Class">
+        📖 Day ${m.dayNum}
+      </button>
+    ` : '';
+
+    return `
+      <div class="ee-mock-card${isDone ? ' completed' : ''}" data-mock-card-num="${m.mockNum}">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+          <div class="cl" style="margin:0;">
+            <input type="checkbox" class="ee-mock-check" data-mock-num="${m.mockNum}" ${isDone ? 'checked' : ''} style="cursor:pointer;">
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <strong style="color:var(--text);font-size:0.88rem;font-family:var(--mono);">${m.name}</strong>
+              <span style="font-size:0.68rem;background:var(--s2);color:var(--dim);border:1px solid var(--border);padding:1px 6px;border-radius:4px;font-family:var(--mono);">${m.duration}</span>
+              ${m.isExamEdgeDay 
+                ? `<span style="font-size:0.66rem;background:rgba(84,162,255,0.12);color:var(--blue);border:1px solid rgba(84,162,255,0.25);padding:1px 6px;border-radius:4px;font-weight:600;">Day ${m.dayNum} · ${m.classTopic}</span>` 
+                : `<span style="font-size:0.66rem;background:var(--s2);color:var(--dim);border:1px solid var(--border);padding:1px 6px;border-radius:4px;">Full CBE Mock</span>`}
+            </div>
+            <div style="font-size:0.75rem;color:var(--dim);margin-top:3px;line-height:1.4;">
+              📅 <strong>${dateFormatted}</strong> &bull; ${m.note}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <input type="number" min="0" max="100" placeholder="Score %" value="${score}" data-mock-score-num="${m.mockNum}" class="ee-mock-score-input" title="Enter mock score percentage">
+          ${actionButton}
+          ${statusBadge}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+window.renderExamEdgeMocks = renderExamEdgeMocks;
+
+function renderExamEdgeStandardsList() {
+  const container = $('ee-standards-container');
+  if (!container) return;
+
+  const customSched = getExamEdgeCustomSchedule();
+  const selectedIds = new Set(Array.isArray(customSched[_activeExamEdgeDate]) ? customSched[_activeExamEdgeDate] : []);
+
+  let standards = EXAM_EDGE_STANDARDS;
+  if (_eeSearchQuery) {
+    const q = _eeSearchQuery.toLowerCase();
+    standards = standards.filter(s => 
+      s.code.toLowerCase().includes(q) || 
+      s.name.toLowerCase().includes(q) || 
+      s.group.toLowerCase().includes(q)
+    );
+  }
+
+  if (standards.length === 0) {
+    container.innerHTML = `
+      <div style="padding:24px;text-align:center;color:var(--dim);font-size:0.85rem;">
+        No standards match "${escapeHTML(_eeSearchQuery)}". Try searching for "IAS 16", "IFRS 15", "Consolidation", etc.
+      </div>
+    `;
+    return;
+  }
+
+  // Group by category
+  const groups = {};
+  standards.forEach(s => {
+    if (!groups[s.group]) groups[s.group] = [];
+    groups[s.group].push(s);
+  });
+
+  container.innerHTML = Object.entries(groups).map(([grpName, items]) => {
+    const itemsHtml = items.map(s => {
+      const isChecked = selectedIds.has(s.id);
+      const isCompletedInSyllabus = !!(remoteData && remoteData[s.id]);
+      return `
+        <div class="ee-std-item${isChecked ? ' selected' : ''}" data-std-id="${s.id}" role="checkbox" aria-checked="${isChecked}" tabindex="0">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+            <div class="cl" style="margin:0;pointer-events:none;">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} tabindex="-1">
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-weight:800;font-size:0.86rem;color:var(--text);font-family:var(--mono);">${s.code}</span>
+                ${isCompletedInSyllabus ? '<span style="font-size:0.65rem;color:var(--green);background:rgba(40,212,142,0.12);padding:1px 6px;border-radius:4px;font-weight:700;">✓ Done in Syllabus</span>' : ''}
+              </div>
+              <div style="font-size:0.75rem;color:var(--dim);margin-top:2px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.name}</div>
+            </div>
+          </div>
+          <span class="ee-std-status" style="font-size:0.72rem;font-weight:700;font-family:var(--mono);color:${isChecked ? 'var(--blue)' : 'var(--dim)'};flex-shrink:0;">
+            ${isChecked ? '✓ Added' : '+ Add'}
+          </span>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div>
+        <div class="ee-std-group-hdr">
+          <span>📌 ${grpName}</span>
+          <span style="font-weight:500;color:var(--dim);font-size:0.65rem;">(${items.length})</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${itemsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Attach delegated listeners to #exam-edge-overlay
+(() => {
+  const eeOverlay = document.getElementById('exam-edge-overlay');
+  if (!eeOverlay || window._eeOverlayDelegated) return;
+  window._eeOverlayDelegated = true;
+
+  // Search input debouncing
+  let _eeSearchDebounce = null;
+  const eeSearchInput = document.getElementById('ee-search-input');
+  if (eeSearchInput) {
+    eeSearchInput.addEventListener('input', e => {
+      clearTimeout(_eeSearchDebounce);
+      _eeSearchDebounce = setTimeout(() => {
+        _eeSearchQuery = e.target.value.toLowerCase().trim();
+        renderExamEdgeStandardsList();
+      }, 150);
+    });
+  }
+
+  // Click delegation
+  eeOverlay.addEventListener('click', e => {
+    // Backdrop click-to-close
+    if (e.target === eeOverlay) {
+      closeExamEdgeModal();
+      return;
+    }
+
+    // Close button or Done & Save
+    if (e.target.closest('#ee-close-btn') || e.target.closest('[data-ee-action="done"]')) {
+      closeExamEdgeModal();
+      return;
+    }
+
+    // Tabs
+    const tabBtn = e.target.closest('[data-ee-tab]');
+    if (tabBtn) {
+      const tab = tabBtn.getAttribute('data-ee-tab');
+      if (tab) switchExamEdgeTab(tab);
+      return;
+    }
+
+    // Day pills
+    const dayPill = e.target.closest('.ee-day-pill');
+    if (dayPill) {
+      const dateStr = dayPill.getAttribute('data-ee-date');
+      if (dateStr) selectExamEdgeDay(dateStr);
+      return;
+    }
+
+    // Chip remove
+    const chipRemove = e.target.closest('[data-ee-action="remove-chip"]');
+    if (chipRemove) {
+      const sid = chipRemove.getAttribute('data-chip-id');
+      if (sid) toggleExamEdgeStandard(sid);
+      return;
+    }
+
+    // Action buttons
+    const actionBtn = e.target.closest('[data-ee-action]');
+    if (actionBtn) {
+      const action = actionBtn.getAttribute('data-ee-action');
+      if (action === 'auto-fill') autoPopulateExamEdgeRecommended();
+      else if (action === 'clear-day') clearCurrentExamEdgeDay();
+      else if (action === 'view-class-day') {
+        const d = actionBtn.getAttribute('data-ee-date');
+        switchExamEdgeTab('classes');
+        if (d) selectExamEdgeDay(d);
+      }
+      return;
+    }
+
+    // Standard items
+    const stdItem = e.target.closest('.ee-std-item');
+    if (stdItem) {
+      const sid = stdItem.getAttribute('data-std-id');
+      if (sid) toggleExamEdgeStandard(sid);
+      return;
+    }
+  });
+
+  // Change delegation for mock checkboxes and score inputs
+  eeOverlay.addEventListener('change', e => {
+    const target = e.target;
+    if (!target) return;
+    if (target.classList.contains('ee-mock-check') || target.hasAttribute('data-mock-num')) {
+      const mockNum = target.getAttribute('data-mock-num');
+      if (mockNum) toggleFRMock(mockNum, target.checked);
+      return;
+    }
+    if (target.hasAttribute('data-mock-score-num')) {
+      const mockNum = target.getAttribute('data-mock-score-num');
+      if (mockNum) saveFRMockScore(mockNum, target.value);
+      return;
+    }
+  });
+
+  // Keyboard navigation on standard items
+  eeOverlay.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const stdItem = e.target.closest('.ee-std-item');
+      if (stdItem) {
+        e.preventDefault();
+        const sid = stdItem.getAttribute('data-std-id');
+        if (sid) toggleExamEdgeStandard(sid);
+      }
+    }
+  });
+})();
 
 // ──────────────────────────────────────────────
 // 📝 LOG STUDY SESSION ENGINE
@@ -5791,14 +7448,36 @@ function deleteLoggedSession(id) {
         });
       }
     });
+    // Revert circadian activity in _timeAccuracy
+    const bk = targetSession.bucket || (typeof getStudyTimeBucket === 'function' ? getStudyTimeBucket(targetSession.time) : null);
+    if (bk && remoteData._timeAccuracy && remoteData._timeAccuracy[bk]) {
+      const countToRevert = (targetSession._topicIds && targetSession._topicIds.length > 0) ? targetSession._topicIds.length : (targetSession.count || 1);
+      const bStat = remoteData._timeAccuracy[bk];
+      bStat.attempts = Math.max(0, bStat.attempts - countToRevert);
+      if (targetSession.difficulty !== 'hard') {
+        bStat.correct = Math.max(0, bStat.correct - countToRevert);
+      }
+      remoteData._timeAccuracy[bk] = bStat;
+      dbPayload[`_timeAccuracy.${bk}`] = bStat;
+    }
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
     dbPayload._loggedSessions = remoteData._loggedSessions;
     if (currentUid) {
       updateDoc(doc(db, 'users', currentUid), dbPayload).catch(e => console.error('Delete log sync error', e));
     }
   } else {
+    if (targetSession) {
+      const bk = targetSession.bucket || (typeof getStudyTimeBucket === 'function' ? getStudyTimeBucket(targetSession.time) : null);
+      if (bk && remoteData._timeAccuracy && remoteData._timeAccuracy[bk]) {
+        const countToRevert = (targetSession._topicIds && targetSession._topicIds.length > 0) ? targetSession._topicIds.length : (targetSession.count || 1);
+        const bStat = remoteData._timeAccuracy[bk];
+        bStat.attempts = Math.max(0, bStat.attempts - countToRevert);
+        if (targetSession.difficulty !== 'hard') bStat.correct = Math.max(0, bStat.correct - countToRevert);
+        remoteData._timeAccuracy[bk] = bStat;
+      }
+    }
     remoteData._loggedSessions = remoteData._loggedSessions.filter(s => s.id !== id);
-    if (currentUid) updateDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions });
+    if (currentUid) updateDoc(doc(db, 'users', currentUid), { _loggedSessions: remoteData._loggedSessions, _timeAccuracy: remoteData._timeAccuracy });
   }
   if (typeof makeCard === 'function') makeCard();
   updateAll();
@@ -5827,8 +7506,18 @@ function clearAllLoggedSessions() {
   });
 
   remoteData._loggedSessions = remaining;
+  if (remaining.length === 0) {
+    remoteData._timeAccuracy = {
+      morning: { attempts: 0, correct: 0 },
+      afternoon: { attempts: 0, correct: 0 },
+      evening: { attempts: 0, correct: 0 },
+      night: { attempts: 0, correct: 0 }
+    };
+  }
   if (typeof currentUid !== 'undefined' && currentUid && typeof doc !== 'undefined' && typeof setDoc !== 'undefined' && typeof db !== 'undefined') {
-    setDoc(doc(db, 'users', currentUid), { _loggedSessions: remaining }, { merge: true })
+    const clearPayload = { _loggedSessions: remaining };
+    if (remaining.length === 0 && remoteData._timeAccuracy) clearPayload._timeAccuracy = remoteData._timeAccuracy;
+    setDoc(doc(db, 'users', currentUid), clearPayload, { merge: true })
       .catch(err => console.error('[Log Clear] Failed:', err));
   } else if (typeof saveToFirestore === 'function') {
     saveToFirestore();
@@ -5853,12 +7542,7 @@ async function saveLogSession() {
   const dateVal = lsDateEl.value || ts();
   const timeVal = lsTimeEl.value || "13:00";
   const endTimeVal = lsEndTimeEl.value || "14:00";
-  const hour = parseInt(timeVal.split(':')[0], 10);
-
-  let bucket = 'night';
-  if (hour >= 6 && hour < 12) bucket = 'morning';
-  else if (hour >= 12 && hour < 18) bucket = 'afternoon';
-  else if (hour >= 18 && hour < 22) bucket = 'evening';
+  const bucket = typeof getStudyTimeBucket === 'function' ? getStudyTimeBucket(timeVal) : 'afternoon';
 
   if (!remoteData._sr) remoteData._sr = {};
   if (!remoteData._activity) remoteData._activity = {};
@@ -5907,8 +7591,9 @@ async function saveLogSession() {
         daysToExam = Math.max(1, Math.round((examMs - revMs) / 86400000));
       }
 
+      const activeLabels = (COURSE_DATA[activeCourseKey] && COURSE_DATA[activeCourseKey].labels) || {};
       const isTopicDrifted = (typeof getDriftedTopics === 'function')
-        ? getDriftedTopics(remoteData._loggedSessions || [], {}).some(t => t.id === id)
+        ? getDriftedTopics(remoteData._loggedSessions || [], activeLabels).some(t => t.id === id)
         : false;
       s.interval = typeof calcExamAnchoredInterval === 'function' 
         ? calcExamAnchoredInterval(daysToExam, s.count, selectedDiff, s.ease, isTopicDrifted)
@@ -6050,7 +7735,7 @@ async function saveLogSession() {
 window.saveLogSession = saveLogSession;
 
 // ══════════════════════════════════════════════════════════════════════════
-// 🤖 GEN 2 ADAPTIVE AI ENGINE — v2.3.0
+// 🤖 GEN 2 ADAPTIVE AI ENGINE — v2.3.2
 // ══════════════════════════════════════════════════════════════════════════
 
 // ── GEN 2 FEATURE 1: Forgetting Curve Per Topic ───────────────────────────
@@ -6104,12 +7789,13 @@ function getPredictiveWeakTopics(activeLabels, srData) {
 // Detects topics logged as Hard 3+ consecutive times → escalate priority.
 function getDriftedTopics(logged, activeLabels) {
   const topicHardStreak = {};
+  const hasLabels = activeLabels && Object.keys(activeLabels).length > 0;
   // Sessions ordered newest-first in remoteData._loggedSessions
   const sessions = [...logged].reverse(); // oldest first for chronological streak
   sessions.forEach(s => {
     if (!s._topicIds || !s.difficulty) return;
     s._topicIds.forEach(id => {
-      if (!activeLabels[id]) return;
+      if (hasLabels && !activeLabels[id]) return;
       if (!topicHardStreak[id]) topicHardStreak[id] = { streak: 0, total: 0 };
       if (s.difficulty === 'hard') {
         topicHardStreak[id].streak++;
@@ -6121,7 +7807,7 @@ function getDriftedTopics(logged, activeLabels) {
   });
   return Object.entries(topicHardStreak)
     .filter(([, v]) => v.streak >= 3)
-    .map(([id, v]) => ({ id, name: activeLabels[id] || id, hardStreak: v.streak }))
+    .map(([id, v]) => ({ id, name: (activeLabels && activeLabels[id]) || id, hardStreak: v.streak }))
     .sort((a, b) => b.hardStreak - a.hardStreak)
     .slice(0, 3);
 }
@@ -6141,6 +7827,8 @@ function detectStudyFatigue(logged) {
 // ── GEN 2 FEATURE 4: Exam Score Simulator ────────────────────────────────
 // Projects a score band based on coverage %, revision depth, and retention.
 function simulateExamScore(covPct, revPct, avgRetention, activeCourse) {
+  // If no study activity has taken place yet, return null so we don't display "0-0 Marks"
+  if (covPct <= 0 && avgRetention <= 0) return null;
   // Weighted formula: coverage 45%, revision 30%, retention 25%
   const raw = (covPct * 0.45) + (revPct * 0.30) + (avgRetention * 0.25);
   // Scale to marks (CSEB/ACCA style: max 100)
@@ -6157,13 +7845,22 @@ function simulateExamScore(covPct, revPct, avgRetention, activeCourse) {
 // ── GEN 2 FEATURE 3: Smart Session Scheduler ─────────────────────────────
 // Returns which time bucket to use for hard vs easy topics today.
 function getSmartScheduleAdvice(srData, activeLabels) {
-  // Find peak bucket from existing logged sessions
+  // Find peak bucket from existing logged sessions and checklist completions
   const bucketData = { morning: 0, afternoon: 0, evening: 0, night: 0 };
   (remoteData._loggedSessions || []).forEach(s => {
-    if (s.bucket && bucketData[s.bucket] !== undefined) {
-      bucketData[s.bucket] += (s._topicIds ? s._topicIds.length : 1);
+    const bk = s.bucket || (typeof getStudyTimeBucket === 'function' ? getStudyTimeBucket(s.time) : null);
+    if (bk && bucketData[bk] !== undefined) {
+      bucketData[bk] += (s._topicIds ? s._topicIds.length : (s.count || 1));
     }
   });
+  if (remoteData._timeAccuracy) {
+    Object.keys(bucketData).forEach(k => {
+      const attempts = (remoteData._timeAccuracy[k] && remoteData._timeAccuracy[k].attempts) || 0;
+      if (attempts > bucketData[k]) {
+        bucketData[k] = attempts;
+      }
+    });
+  }
   const peakBucket = Object.entries(bucketData).sort((a, b) => b[1] - a[1])[0];
   if (!peakBucket || peakBucket[1] === 0) return null;
   const bucketLabels = { morning: '🌅 Morning (6am–12pm)', afternoon: '☀️ Afternoon (12pm–6pm)', evening: '🌆 Evening (6pm–10pm)', night: '🌙 Late Night' };
@@ -6286,10 +7983,13 @@ function generateStudyInsights() {
 
   // ── FEATURE 3: Smart Session Scheduler ───────────────────────────────
   const schedAdvice = getSmartScheduleAdvice(srData, activeLabelsForInsights);
-  if (schedAdvice && schedAdvice.hardTopics && schedAdvice.hardTopics.length > 0) {
+  if (schedAdvice && schedAdvice.peak) {
+    const hardTopicsText = (schedAdvice.hardTopics && schedAdvice.hardTopics.length > 0)
+      ? `For today, schedule your hardest topics (${schedAdvice.hardTopics.map(n=>`<em>${n}</em>`).join(', ')}) in that window — save light revision and flashcards for your off-peak hours.`
+      : `Dedicate that high-stamina window to your core syllabus topics, complex problem sets, and timed mock drills for maximum retention.`;
     insights.push(`
       <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--blue);">🎯 Smart Schedule:</strong> Your peak study output is during <strong>${schedAdvice.peak}</strong>. For today, schedule your hardest topics (${schedAdvice.hardTopics.map(n=>`<em>${n}</em>`).join(', ')}) in that window — save light revision and flashcards for your off-peak hours.
+        <strong style="color:var(--blue);">🎯 Smart Schedule:</strong> Your peak study output is during <strong>${schedAdvice.peak}</strong>. ${hardTopicsText}
       </div>
     `);
   }
@@ -6317,12 +8017,14 @@ function generateStudyInsights() {
   const avgRetention = retentionCount > 0 ? Math.round(retentionSum / retentionCount) : simCovPct;
   if (simCovPct >= 15) { // Only show once we have enough data
     const sim = simulateExamScore(simCovPct, simRevPct, avgRetention, activeCourseForInsights);
-    insights.push(`
-      <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
-        <strong style="color:var(--green);">📈 Exam Score Simulator:</strong> Based on <strong>${simCovPct}%</strong> syllabus coverage, <strong>${simRevPct}%</strong> revision depth, and <strong>${avgRetention}%</strong> avg retention — you're currently tracking <strong style="color:var(--blue);">${sim.low}–${sim.high} marks</strong>. ${sim.grade}.
-        <div style="font-size:0.72rem;color:var(--dim);margin-top:4px;font-style:italic;">Projection updates as you study and revise more topics.</div>
-      </div>
-    `);
+    if (sim) {
+      insights.push(`
+        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">
+          <strong style="color:var(--green);">📈 Exam Score Simulator:</strong> Based on <strong>${simCovPct}%</strong> syllabus coverage, <strong>${simRevPct}%</strong> revision depth, and <strong>${avgRetention}%</strong> avg retention — you're currently tracking <strong style="color:var(--blue);">${sim.low}–${sim.high} marks</strong>. ${sim.grade}.
+          <div style="font-size:0.72rem;color:var(--dim);margin-top:4px;font-style:italic;">Projection updates as you study and revise more topics.</div>
+        </div>
+      `);
+    }
   }
 
   // ── FEATURE 5: Adaptive Daily Tips ───────────────────────────────────
@@ -6393,6 +8095,11 @@ function generateStudyInsights() {
 // Escape key closes any open modal
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  const eeOv = document.getElementById('exam-edge-overlay');
+  if (eeOv && (eeOv.style.visibility === 'visible' || eeOv.style.opacity === '1')) {
+    closeExamEdgeModal();
+    return;
+  }
   const statsOv = document.getElementById('stats-overlay');
   if (statsOv && (statsOv.style.display === 'block' || statsOv.style.opacity === '1')) {
     closeStats();
@@ -6410,6 +8117,14 @@ document.addEventListener('keydown', e => {
   if (ls && ls.style.visibility === 'visible') { closeLogSession(); return; }
 });
 
+// Modal backdrop click-to-close for Log Study Session
+const lsOverlayEl = document.getElementById('log-session-overlay');
+if (lsOverlayEl) {
+  lsOverlayEl.addEventListener('click', e => {
+    if (e.target === lsOverlayEl) closeLogSession();
+  });
+}
+
 try { initTheme(); } catch(e) {}
 
 try {
@@ -6423,7 +8138,7 @@ try {
       }
       if (!refreshing) {
         refreshing = true;
-        window.location.reload();
+        setTimeout(() => { window.location.reload(); }, 150);
       }
     });
     window.addEventListener('load', () => {
@@ -6529,18 +8244,6 @@ try {
 <div id="session-toast" style="position:fixed;bottom:calc(20px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;visibility:hidden;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(77,240,150,0.4);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275);z-index:1900;font-family:var(--font);font-size:.85rem;font-weight:600;white-space:nowrap;">
 </div>
 
-<style>
-.a2hs-banner { position:fixed; bottom:calc(24px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(150px); opacity:0; visibility:hidden; width:92%; max-width:420px; background:var(--s1); border:1px solid var(--border); border-radius:18px; display:flex; align-items:center; gap:12px; padding:14px 16px; box-shadow:0 16px 40px rgba(0,0,0,0.6); z-index:9998; transition:0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
-.a2hs-banner.show { transform:translateX(-50%) translateY(0); opacity:1; visibility:visible; }
-.a2hs-icon { width:42px; height:42px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--blue), #8468F5); display:grid; place-content:center; color:#fff; font-size:1.3rem; box-shadow:0 4px 12px rgba(77,150,240,0.3); }
-.a2hs-text { flex:1; display:flex; flex-direction:column; justify-content:center; }
-.a2hs-text strong { font-size:0.95rem; color:var(--text); font-weight:700; letter-spacing:-0.01em; margin-bottom:2px; }
-.a2hs-text span { font-size:0.75rem; color:var(--dim); line-height:1.3; }
-.a2hs-btn { background:var(--blue); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-size:0.8rem; font-weight:700; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
-.a2hs-btn:hover { background:#3a82d6; }
-.a2hs-close { background:transparent; border:none; color:var(--dim); font-size:1.1rem; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; transition:color 0.2s; }
-.a2hs-close:hover { color:var(--red); }
-</style>
 <div id="a2hs-banner" class="a2hs-banner">
   <div class="a2hs-icon" style="background:transparent;overflow:hidden;"><img src="./logo.svg" alt="Logo" style="width:100%;height:100%;object-fit:cover;"></div>
   <div class="a2hs-text">
@@ -6553,9 +8256,4 @@ try {
 
 </body>
 </html>
-
-
-
-
-
 
